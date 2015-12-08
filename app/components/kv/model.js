@@ -242,15 +242,18 @@ const fromJson = (json) => I.Map({
 });
 
 export default (initial$, actions) =>
-  O.merge(
-    initial$.startWith(init())
-    .map(fromJson)
-    .do(log)
-    .map((kv) => () => kv),
-    modifiers(actions)
-  ).scan(applyModification, null)
-  .map((kv) => ({
-    kv,
-    layout: memLayout(kv.get('variables').size),
-  }))
+  O.combineLatest(
+    O.merge(
+      initial$.startWith(init())
+      .map(fromJson)
+      .do(log)
+      .map((kv) => () => kv),
+      modifiers(actions)
+    ).scan(applyModification, null),
+    actions.help$.startWith(true), (kv, help) => ({
+      kv,
+      help: help,
+      layout: memLayout(kv.get('variables').size),
+    })
+  )
 ;

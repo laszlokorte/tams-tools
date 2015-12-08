@@ -1,6 +1,7 @@
 import {
   h1, div, p, button ,span, ul, li,
   table, tr, th, td,
+  strong, br,
 } from '@cycle/dom';
 
 import {matchesLoop} from './model';
@@ -380,16 +381,31 @@ const renderTableContainer = (state) =>
   ])
 ;
 
+const renderHelp = (state) => [
+  button('.button-help', {attributes: {'data-help': true}},'Help'),
+  div('.explaination' + (!state.help ? '.state-hidden' : ''), [
+    h1('KV Diagram'),
+    ul('.help-list',[
+      li([strong('Change Size:'), br(),
+        'You can change the amount of inputs.',
+        'This will change the KV-diagrams\'s dimensions.']),
+      li([strong('Change Values:'), br(),
+        'Click on the table cells to cycle the value.',
+        br(), '(hold ALT key for reversed cycle direction)']),
+      li([strong('Create loops:'), br(),
+        'Drag between two cells while holding SHIFT to create a loop.']),
+      li([strong('Remove loops:'), br(),
+        'Click on a loop icon to delete the loop.']),
+    ]),
+    p(
+      button('.button-big', {attributes: {'data-help': false}},'Close')
+    )
+  ])
+];
+
 const render = (state) =>
   div([
-    div('.explaination', [
-      h1('KV Diagram'),
-      p('Change the amount of input variables.'),
-      p('Click on the table cells to cycle the value.' +
-        '(hold alt key for reversed cycle direction)'),
-      p('Drag between two cells while holding shift to create a loop.'),
-      p('Click on a loop icon to remove the loop.'),
-    ]),
+    renderHelp(state),
     renderToolbar(state),
     renderLoopList(state),
     renderDebug(state),

@@ -123,6 +123,10 @@ export const parseDataAttr = (attrName) => (evt) =>
   parseInt(evt.target.dataset[attrName], 10)
 ;
 
+export const pluckDataAttr = (attrName) => (evt) =>
+  evt.target.dataset[attrName]
+;
+
 export const log = (...args) => {
   console.log(...args);
   return args[0];

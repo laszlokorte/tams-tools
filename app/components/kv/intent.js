@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 
-import {preventDefault, parseDataAttr} from '../../lib/utils';
+import {preventDefault, parseDataAttr, pluckDataAttr} from '../../lib/utils';
 
 export default (DOM) => {
   const mouseUp$ = O
@@ -66,5 +66,12 @@ export default (DOM) => {
     moveEnd$:
       mouseUp$
         .withLatestFrom(drag$, (up, move) => move),
+    help$:
+      DOM
+        .select('[data-help]')
+        .events('click')
+        .do(preventDefault)
+        .map(pluckDataAttr('help'))
+        .map((val) => val === 'true'),
   };
 };

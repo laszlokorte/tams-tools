@@ -50,12 +50,78 @@ canvas, svg
   margin 0 auto
 
 .explaination
+  color #444
+  line-height 1.3
+  position absolute
+  background-color white
+  left 12.5%
+  top 10%
   width 75%
   margin 0 auto
-  text-align center
+  z-index 20
+  padding 1em 3em
+  box-shadow 0 0.2em 6em rgba(40,40,40,0.5)
+  opacity 1
+  transition opacity 0.5s ease-out
+
+  &.state-hidden
+    opacity 0
+    transition opacity 0.1s ease-out
+    pointer-events none
+
+.button-big
+  margin-top 2em
+  padding 0.7em 1em
+  min-width 6em
+  font-size 1em
+  color #fff
+  border none
+  background-color #555
+  border-radius 10em
+  outline none
+
+.button-big:active
+  background-color #333
+
+
+.button-help
+  display block
+  position absolute
+  right 2em
+  top 1.2em
+  width 3em
+  height 3em
+  font-size 1em
+  color #fff
+  border none
+  background-color #ccc
+  border-radius 10em
+  outline none
+  text-indent -999px
+  direction ltr
+  overflow hidden
+
+  &::after
+    position absolute
+    font-size 2em
+    top 0
+    left 0
+    right 0
+    display block
+    content '?'
+    text-indent 0
+    text-align center
+    line-height 1.5em
+
+.button-help:active
+  background-color #bbb
+
+.help-list
+  li
+    padding 0.4em 0
 
 .toolbar
-  margin 3em 0 1.5em
+  margin 1.5em 0
   text-align center
 
 .inline-list
@@ -403,19 +469,15 @@ canvas, svg
     margin 1px
 
   .kv-loop-edge-top
-    border-width 5px
     border-top-width 3px
 
   .kv-loop-edge-bottom
-    border-width 5px
     border-bottom-width 3px
 
   .kv-loop-edge-left
-    border-width 5px
     border-left-width 3px
 
   .kv-loop-edge-right
-    border-width 5px
     border-right-width 3px
 
   .kv-loops-container
