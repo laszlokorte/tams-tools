@@ -70,13 +70,13 @@ const renderKVLoops = (rows, cols) => {
 const _labelFor = ({variables, offset}, rowsOrColumns, {include, exclude}) =>
   rowsOrColumns.length > include &&
   rowsOrColumns.length > exclude &&
-  variables[
+  variables.get(
     offset +
     highestBit(
       ~rowsOrColumns[exclude] &
       rowsOrColumns[include]
     )
-  ] || null
+  ) || null
 ;
 
 const renderTableHead = (colCount, {top, left, right, bottom}) => [
@@ -149,25 +149,28 @@ const renderTableRowEnd = (rowIndex, {right}) =>
 ;
 
 const renderTableCell = (kv, column) => {
-  const pattern = formatBinary(column.scope, kv.variables.length);
+  const pattern = formatBinary(column.scope, kv.get('variables').size);
+  const scope = kv.get('data').get(column.scope);
+  const include = kv.get('loop').get('include');
+  const exclude = kv.get('loop').get('exclude');
   const active =
-    (kv.loop.include & column.scope) === kv.loop.include &&
-    (kv.loop.exclude & column.scope) === 0;
-  const error = active && (kv.data[column.scope] === false);
+    (include & column.scope) === include &&
+    (exclude & column.scope) === 0;
+  const error = active && (scope === false);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
       className: [
-        (active ? ' state-active' : null),
-        (error ? ' state-error' : null),
+        (active ? 'state-active' : null),
+        (error ? 'state-error' : null),
       ].join(' '),
       attributes: {
         'data-kv-offset': column.scope,
         'data-kv-pattern': pattern,
-        'data-kv-value': kv.data[column.scope],
+        'data-kv-value': scope,
       },
     },
-    renderKvValue(kv.data[column.scope])
+    renderKvValue(scope)
   );
 };
 
@@ -192,7 +195,7 @@ const tableLables = ({rows, cols, offset, variables}) => ({
 
 // generate a HTML Table from the given KV layout, kv data.
 // offset is just needed for recursive calls
-const renderTable = (layout, kv, offset = kv.variables.length) => {
+const renderTable = (layout, kv, offset = kv.get('variables').size) => {
   const cols = layout.columns;
   const rows = layout.rows;
   const rowCount = rows.length;
@@ -203,7 +206,7 @@ const renderTable = (layout, kv, offset = kv.variables.length) => {
     rows,
     cols,
     offset: labelOffset,
-    variables: kv.variables,
+    variables: kv.get('variables'),
   });
 
   return div('.kv-container', [
@@ -237,16 +240,16 @@ const renderToolbar = (state) =>
     button('.numberButton',
       {
         attributes: {'data-kv-counter': 'decrement'},
-        disabled: state.kv.variables.length <= 0,
+        disabled: state.kv.get('variables').size <= 0,
       },
       '-'),
     span('.input-count',
       {attributes: {'data-label': 'Inputs'}},
-      state.kv.variables.length),
+      state.kv.get('variables').size),
     button('.numberButton',
       {
         attributes: {'data-kv-counter': 'increment'},
-        disabled: state.kv.variables.length >= 9,
+        disabled: state.kv.get('variables').size >= 9,
       },
       '+'),
   ])
@@ -254,7 +257,7 @@ const renderToolbar = (state) =>
 
 const renderLoop = (state, loop) =>
   li([
-    button('.well', {style: {'background-color': loop.color}}, "2"),
+    button('.well', {style: {'background-color': loop.get('color')}}, "2"),
     button('.well-delete', 'Delete'),
   ])
 ;
@@ -263,7 +266,7 @@ const renderLoopList = (state) =>
   div('#loopTarget.loop-list', [
     span('.toolbar-title', 'Loops:'),
     ul('.inline-list', [
-      state.kv.loops.map((loop) => renderLoop(state, loop)),
+      state.kv.get('loops').map((loop) => renderLoop(state, loop)).toArray(),
       li(button('.well.well-add', 'Add Loop')),
     ]),
   ])
