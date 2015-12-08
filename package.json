@@ -1,0 +1,59 @@
+{
+  "name": "kvgenerator-cycle",
+  "version": "0.1.0",
+  "description": "Tool to generate and edit KV Diagrams",
+  "main": "index.js",
+  "scripts": {
+    "compile": "env NODE_ENV=production webpack --config webpack/prod.config.babel.js --progress",
+    "lint": "eslint .",
+    "start": "webpack-dev-server --config webpack/dev.config.babel.js --progress --inline --hot --host 0.0.0.0",
+    "test": "npm run lint",
+    "clear": "rm -rf ./build"
+  },
+  "author": "Laszlo Korte <me@laszlokorte.de> (https://www.laszlokorte.de/)",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.1.18",
+    "babel-core": "^6.2.1",
+    "babel-eslint": "^4.1.3",
+    "babel-loader": "^6.2.0",
+    "babel-plugin-syntax-flow": "^6.1.18",
+    "babel-plugin-transform-flow-strip-types": "^6.1.18",
+    "babel-plugin-typecheck": "^3.0.1",
+    "babel-preset-es2015": "^6.1.18",
+    "clean-webpack-plugin": "^0.1.3",
+    "compression-webpack-plugin": "^0.2.0",
+    "copy-webpack-plugin": "^0.2.0",
+    "css-loader": "^0.23.0",
+    "eslint": "^1.6.0",
+    "eslint-loader": "^1.0.0",
+    "eslint-plugin-babel": "^3.0.0",
+    "eslint-plugin-no-class": "^0.1.0",
+    "extract-text-webpack-plugin": "^0.9.1",
+    "file-loader": "^0.8.4",
+    "html-webpack-plugin": "^1.6.1",
+    "mocha": "^2.3.4",
+    "should": "^7.1.1",
+    "style-loader": "^0.13.0",
+    "stylus-loader": "^1.4.2",
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.14.0",
+    "webpack-merge": "^0.3.0",
+    "jeet": "^6.1.2",
+    "rupture": "^0.6.1"
+  },
+  "dependencies": {
+    "@cycle/core": "^6.0.0-rc2",
+    "@cycle/dom": "^8.0.0-rc2",
+    "@cycle/isolate": "^1.1.1",
+    "@cycle/storage": "^2.0.1",
+    "immutable": "^3.7.5",
+    "rx": "^4.0.0",
+    "virtual-dom": "^2.1.1"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  }
+}

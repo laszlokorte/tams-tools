@@ -1,0 +1,404 @@
+@import '../../styles/global'
+
+body
+  font-family sans-serif
+  margin 0
+  padding 0
+  touch-callout none
+  user-select none
+  cursor default
+
+*
+  box-sizing border-box
+
+button
+  cursor pointer
+
+.numberButton
+  vertical-align middle
+  font-size 1.6em
+  margin 0
+  padding 1px 3px 5px 3px
+  font-weight bold
+  border-radius 50%
+  width 1.3em
+  height 1.3em
+  line-height 1
+  background-color #333
+  border none
+  color #ccc
+  outline none
+  box-sizing content-box
+  transition background-color 0.3s ease-out, color 0.3s ease-out
+
+.numberButton:disabled
+  color #bbb
+  background-color #888
+  cursor default
+
+.numberButton:active
+  color #aaa
+  background-color #222
+  transition none
+
+#app > div > h1:first-child
+  text-align center
+
+canvas, svg
+  display block
+  border 1px solid FireBrick
+  width 75%
+  max-height 100%
+  height auto
+  margin 0 auto
+
+.explaination
+  width 75%
+  margin 0 auto
+  text-align center
+
+.toolbar
+  margin 3em 0 1.5em
+  text-align center
+
+.inline-list
+  list-style none
+  padding 0
+  margin 1em 0 0.5em
+
+.inline-list > li
+  display inline
+  margin 0 0.2em
+  float left
+
+.loop-list
+  top 0
+  background-color #333
+  color #fff
+  margin-bottom 2em
+
+.toolbar-title
+  display inline-block
+  padding 1.6em 1em
+
+.well
+  display block
+  padding 0
+  border-radius 30%
+  height 2.5em
+  width 2.5em
+  line-height 1.5em
+  font-size 0.9em
+  border 5px solid rgba(45,45,45,1)
+  background-color darkgrey
+  outline none
+  color rgba(30,30,30,0.4)
+  text-align center
+
+.well.state-active
+  border-color rgba(255,255,255,0)
+  box-shadow 0 0 2px rgba(40,40,40,0.5)
+
+.well:active
+  background-color darkgrey
+  border-color rgba(0,0,0,0.05)
+
+.well-add
+  background-color #444
+  color #ccc
+  font-weight bold
+  text-indent -9999px
+  overflow hidden
+  direction ltr
+  position relative
+
+.well-add::before
+  left 0
+  right 0
+  top 0
+  bottom 0
+  vertical-align middle
+  position absolute
+  content '+'
+  line-height 1.7em
+  text-indent 0
+  display block
+  text-align center
+
+.well-add:active
+  background-color #222
+
+.well-delete
+  position relative
+  top -2.6em
+  margin-bottom -1em
+  margin-right 1em
+  right -1.2em
+  font-size 1.2em
+  position relative
+  width 1.1em
+  height 1.1em
+  text-indent -999px
+  overflow hidden
+  direction ltr
+  border-radius 500px
+  border none
+  margin-top 5px
+  background-color rgba(20,20,20,1)
+  color #aaa
+  outline none
+  font-weight bold
+
+.well-delete
+  display none
+
+.well.state-active + .well-delete
+  display block
+
+.well-delete::before
+  font-size 0.5em
+  position absolute
+  top 0
+  left -0.1em
+  right 0
+  top 0
+  display block
+  text-align center
+  vertical-align middle
+  text-indent 0
+  content 'X'
+  line-height 2.2em
+
+.well-delete:active
+  background-color rgba(0,0,0,1)
+  color #999
+
+#debug
+  height 1em
+  margin 0
+  text-align center
+  font-family monospace
+  font-size 1.3em
+  color #0099DD
+
+.scroller
+  max-width 100%
+  overflow scroll
+
+#tableTarget
+  margin-bottom 5em
+  display flex
+  align-items center
+  justify-content center
+  min-width min-content
+  min-height min-content
+
+#loopTarget
+  display flex
+  align-items center top
+  justify-content center
+
+.input-count
+  padding 0 1em
+  font-size 1.3em
+  font-weight bold
+  line-height 1
+  vertical-align middle
+  position relative
+  margin-bottom 1em
+
+.input-count::after
+  position absolute
+  top 100%
+  left 0
+  right 0
+  content attr(data-label)
+  font-weight normal
+  font-size 0.65em
+  opacity 0.7
+
+.kv-container
+  float left
+  position relative
+
+.kv-loops-container
+  position absolute
+  left -4px
+  right -4px
+  top -4px
+  bottom -4px
+  margin 5px
+  text-align center
+  vertical-align middle
+  font-size 2em
+  font-weight bold
+  color rgba(200,0,55,0.4)
+  z-index 1
+  pointer-events none
+  line-height 150px
+
+.kv-loop
+  position absolute
+  border 6px solid grey
+  border-radius 15px
+  margin 3px
+
+.kv-table
+  table-layout fixed
+  border-spacing 5px
+  border-collapse separate
+
+.kv-cell-atom
+  vertical-align middle
+  text-align center
+  background-color lightgrey
+  cursor default
+  position relative
+  font-size 1.7em
+  font-weight bold
+
+
+.kv-cell-atom:hover
+  background-color #c9c9c9
+
+.kv-cell-atom:active
+  background-color #c0c0c0
+
+.kv-cell-atom:not([data-kv-value='true'])
+  color grey
+
+.kv-cell-atom[data-kv-value='false']
+  font-weight normal
+
+.kv-cell-atom::before
+  content attr(data-kv-offset)
+  position absolute
+  right 5%
+  top 5%
+  color rgba(255,255,255,0.8)
+  font-size 0.5em
+  z-index 0
+  border-radius 2px
+  pointer-events none
+
+.kv-cell-atom:hover::before
+  content attr(data-kv-pattern)
+  color #999
+  background-color rgba(200,200,200,1)
+  opacity 1
+  z-index 1
+  font-family monospace
+
+.kv-cell-atom.state-active:not(.state-error)
+  background-color #aaa
+
+.kv-cell-atom.state-error
+  color #fff
+  background-color #E23135
+
+[data-kv-height='0'] .kv-cell-atom
+  min-width 70px
+  min-height 70px
+  width 70px
+  height 70px
+
+[data-kv-height='1'] .kv-cell-atom
+   min-width 50px
+   min-height 50px
+   width 50px
+   height 50px
+
+[data-kv-height='2'] .kv-cell-atom
+   min-width 45px
+   min-height 45px
+   width 45px
+   height 45px
+
+.kv-table-cell-title
+  vertical-align middle
+  text-align center
+
+.kv-table-cell-title.kv-cell-neg
+  visibility hidden
+
+.kv-table-cell-title
+  border-color gray
+  border-style solid
+  border-width 0
+  padding 0
+  margin 0
+
+.kv-row-top > .kv-table-cell-title
+  height 30px
+  min-height 30px
+  max-height 30px
+  border-bottom-width 4px
+
+.kv-row-bottom > .kv-table-cell-title
+  height 30px
+  border-top-width 4px
+
+.kv-col-right
+  width 30px
+  min-width 30px
+  max-width 30px
+  border-left-width 4px
+
+.kv-col-left
+  width 30px
+  min-width 30px
+  max-width 30px
+  border-right-width 4px
+
+.kv-cell-container
+  padding 0
+
+[data-kv-height='1'] .kv-row-top > .kv-table-cell-title,
+[data-kv-height='1'] .kv-row-bottom > .kv-table-cell-title
+  height 25px
+  min-height 25px
+
+[data-kv-height='1'] .kv-col-right,
+[data-kv-height='1'] .kv-col-left
+  width 25px
+  min-width 25px
+
+.kv-loop-padding-top
+  margin-top 41px
+
+.kv-loop-padding-bottom
+  margin-bottom 41px
+
+.kv-loop-padding-left
+  margin-left 41px
+
+.kv-loop-padding-right
+  margin-right 41px
+
+[data-kv-height='1'] .kv-loop
+  border-width 5px
+  margin 1px
+
+[data-kv-height='1'] .kv-loops-container
+  position absolute
+  left 5px
+  right 5px
+  top 5px
+  bottom 5px
+  margin 4px
+
+[data-kv-height='1'] .kv-table
+  border-spacing 3px
+
+[data-kv-height='1'] .kv-loop-padding-top
+  margin-top 25px
+
+[data-kv-height='1'] .kv-loop-padding-bottom
+  margin-bottom 25px
+
+[data-kv-height='1'] .kv-loop-padding-left
+  margin-left 25px
+
+[data-kv-height='1'] .kv-loop-padding-right
+  margin-right 25px
+
