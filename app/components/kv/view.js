@@ -3,6 +3,8 @@ import {
   table, tr, th, td,
 } from '@cycle/dom';
 
+import I from 'immutable';
+
 import './view.styl';
 
 import {highestBit, formatBinary} from '../../lib/utils';
@@ -26,12 +28,12 @@ const renderKvValue = (val) => {
 // xa: 0-based index of the column the loop starts
 // ya: 0-based index of the row the loop starts
 // xb, yb: indices of the rows/columns where the loop ends
-const renderVKLoop = ({color, rowCount, colCount, xa, ya, xb, yb}) => {
-  const width = xb - xa + 1;
-  const height = yb - ya + 1;
+const renderVKLoop = ({color, rowCount, colCount, x, y}) => {
+  const width = x.to - x.from + 1;
+  const height = y.to - y.from + 1;
 
-  const left = Math.floor(100 * xa / colCount);
-  const top = Math.floor(100 * ya / rowCount);
+  const left = Math.floor(100 * x.from / colCount);
+  const top = Math.floor(100 * y.from / rowCount);
   const right = Math.ceil(100 * (colCount - width) / colCount) - left;
   const bottom = Math.ceil(100 * (rowCount - height) / rowCount) - top;
 
@@ -50,9 +52,30 @@ const renderVKLoop = ({color, rowCount, colCount, xa, ya, xb, yb}) => {
   });
 };
 
+const matchesLoop = (offset, include, exclude) =>
+  (include & offset) === include &&
+  (exclude & offset) === 0
+;
+
+const calcLoopRange = (dontcare, cols, include, exclude) => {
+  const fields = cols.map(
+    (col) => matchesLoop(col & ~dontcare, include & ~dontcare, exclude & ~dontcare)
+  );
+
+  const start = fields.findIndex((v) => v);
+  const width = fields.filter((v) => v).length;
+
+  console.log(start);
+
+  return {
+    from: start,
+    to: width + start - 1,
+  };
+};
+
 // Render the collection of loops for a kv leaf grid
 // rows, cols: number of rows and columns
-const renderKVLoops = (loops, rows, cols) => {
+const renderKVLoops = (loops, scope, rows, cols) => {
   const rowCount = rows.length;
   const colCount = cols.length;
 
@@ -62,15 +85,17 @@ const renderKVLoops = (loops, rows, cols) => {
     (colCount > 3 ? '.kv-loop-padding-bottom' : '') +
     (rowCount > 1 ? '.kv-loop-padding-left' : '');
 
+  const colMask = cols.reduce((a,b) => a | b);
+  const rowMask = rows.reduce((a,b) => a | b);
+  const scopeMask = colMask ^ rowMask;
+
   return div('.kv-loops-container' + padding,
-    loops.map((loop, i) =>
+    loops.map((loop) =>
       renderVKLoop({
         color: loop.get('color'),
         rowCount, colCount,
-        xa: i,
-        ya: i,
-        xb: i,
-        yb: i,
+        x: calcLoopRange(scopeMask & rowMask, cols, loop.get('include'), loop.get('exclude')),
+        y: calcLoopRange(scopeMask & colMask, rows, loop.get('include'), loop.get('exclude')),
       })
     ).toArray()
   );
@@ -162,9 +187,7 @@ const renderTableCell = (kv, column) => {
   const scope = kv.get('data').get(column.scope);
   const include = kv.get('loop').get('include');
   const exclude = kv.get('loop').get('exclude');
-  const active =
-    (include & column.scope) === include &&
-    (exclude & column.scope) === 0;
+  const active = matchesLoop(column.scope, include, exclude);
   const error = active && (scope === false);
 
   return td('.kv-table-cell-body.kv-cell-atom',
@@ -220,7 +243,7 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
 
   return div('.kv-container', [
     layout.treeHeight === 0 &&
-    renderKVLoops(kv.get('loops'), rows, cols) || null,
+    renderKVLoops(I.List.of(kv.get('loop')), 0, rows, cols) || null,
 
     table('.kv-table', {
       attributes: {'data-kv-height': layout.treeHeight},
