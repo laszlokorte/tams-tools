@@ -70,7 +70,7 @@ const renderKVLoops = (loops, rows, cols) => {
         xa: i,
         ya: i,
         xb: i,
-        yb: i
+        yb: i,
       })
     ).toArray()
   );
@@ -219,7 +219,9 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
   });
 
   return div('.kv-container', [
-    layout.treeHeight === 0 && renderKVLoops(kv.get('loops'), rows, cols) || null,
+    layout.treeHeight === 0 &&
+    renderKVLoops(kv.get('loops'), rows, cols) || null,
+
     table('.kv-table', {
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
