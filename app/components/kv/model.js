@@ -14,7 +14,12 @@ const colorPalette = [
   '#FF9800',
   '#FF5252',
   '#9C27B0',
+  '#3E81bF',
 ];
+
+const generateColor = (index) =>
+  colorPalette[index % colorPalette.length]
+;
 
 // create a new kv diagram with given size
 // size: number of inputs
@@ -36,11 +41,8 @@ const newKV = (size, base) => {
   return {
     variables: labels,
     data: array,
-    loops: colorPalette.map((color) => ({
-      color,
-      include: 0,
-      exclude: 0,
-    })),
+    loops: [
+    ],
     loop: {
       include: fillBits(length),
       exclude: fillBits(length),
@@ -129,7 +131,15 @@ const modifiers = (actions) => {
       );
     }),
     actions.moveEnd$.map(() => (state) => {
-      return state.set('loop',
+      const newLoop = state.get('loop');
+
+      return state.update('loops', (loops) => {
+        if (newLoop.include & newLoop.exclude) {
+          return loops;
+        } else {
+          return loops.push(newLoop.set('color', generateColor(loops.size)));
+        }
+      }).set('loop',
         loop(state.get('variables').size)
       );
     })

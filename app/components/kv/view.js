@@ -38,18 +38,42 @@ const renderVKLoop = ({color, rowCount, colCount, x, y}) => {
   const bottom = Math.ceil(100 * (rowCount - height) / rowCount) - top;
 
   if (left < 0 || top < 0 || right < 0 || bottom < 0) {
-    return '';
+    return null;
   }
 
-  return div('.kv-loop', {
-    style: {
-      top: `${top}%`,
-      right: `${right}%`,
-      bottom: `${bottom}%`,
-      left: `${left}%`,
-      'border-color': color,
-    },
-  });
+  if (x.wrap) {
+    return [
+      renderVKLoop({color, rowCount, colCount, x: {
+        from: 0,
+        to: x.from,
+      }, y}),
+      renderVKLoop({color, rowCount, colCount, x: {
+        from: colCount - x.to,
+        to: colCount - 1,
+      }, y}),
+    ];
+  } else if (y.wrap) {
+    return [
+      renderVKLoop({color, rowCount, colCount, y: {
+        from: 0,
+        to: y.from,
+      }, x}),
+      renderVKLoop({color, rowCount, colCount, y: {
+        from: rowCount - y.to,
+        to: rowCount - 1,
+      }, x}),
+    ];
+  } else {
+    return div('.kv-loop', {
+      style: {
+        top: `${top}%`,
+        right: `${right}%`,
+        bottom: `${bottom}%`,
+        left: `${left}%`,
+        'border-color': color,
+      },
+    });
+  }
 };
 
 const matchesLoop = (offset, include, exclude) =>
@@ -58,18 +82,19 @@ const matchesLoop = (offset, include, exclude) =>
 ;
 
 const calcLoopRange = (dontcare, cols, include, exclude) => {
-  const fields = cols.map(
-    (col) => matchesLoop(col & ~dontcare, include & ~dontcare, exclude & ~dontcare)
+  const fields = cols.map((col) =>
+    matchesLoop(col & ~dontcare,
+      include & ~dontcare,
+      exclude & ~dontcare)
   );
 
   const start = fields.findIndex((v) => v);
   const width = fields.filter((v) => v).length;
 
-  console.log(start);
-
   return {
     from: start,
-    to: width + start - 1,
+    to: start + width - 1,
+    wrap: !fields[start + width - 1],
   };
 };
 
@@ -94,8 +119,10 @@ const renderKVLoops = (loops, scope, rows, cols) => {
       renderVKLoop({
         color: loop.get('color'),
         rowCount, colCount,
-        x: calcLoopRange(scopeMask & rowMask, cols, loop.get('include'), loop.get('exclude')),
-        y: calcLoopRange(scopeMask & colMask, rows, loop.get('include'), loop.get('exclude')),
+        x: calcLoopRange(scopeMask & rowMask, cols,
+          loop.get('include'), loop.get('exclude')),
+        y: calcLoopRange(scopeMask & colMask, rows,
+          loop.get('include'), loop.get('exclude')),
       })
     ).toArray()
   );
@@ -243,7 +270,7 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
 
   return div('.kv-container', [
     layout.treeHeight === 0 &&
-    renderKVLoops(I.List.of(kv.get('loop')), 0, rows, cols) || null,
+    renderKVLoops(kv.get('loops'), 0, rows, cols) || null,
 
     table('.kv-table', {
       attributes: {'data-kv-height': layout.treeHeight},
