@@ -41,9 +41,6 @@ button
   background-color #222
   transition none
 
-#app > div > h1:first-child
-  text-align center
-
 canvas, svg
   display block
   border 1px solid FireBrick
@@ -72,7 +69,9 @@ canvas, svg
   float left
 
 .loop-list
-  top 0
+  display flex
+  align-items center top
+  justify-content center
   background-color #333
   color #fff
   margin-bottom 2em
@@ -173,7 +172,7 @@ canvas, svg
   background-color rgba(0,0,0,1)
   color #999
 
-#debug
+.debug-panel
   height 1em
   margin 0
   text-align center
@@ -185,18 +184,13 @@ canvas, svg
   max-width 100%
   overflow scroll
 
-#tableTarget
+.scoller-inner
   margin-bottom 5em
   display flex
   align-items center
   justify-content center
   min-width min-content
   min-height min-content
-
-#loopTarget
-  display flex
-  align-items center top
-  justify-content center
 
 .input-count
   padding 0 1em
@@ -321,23 +315,26 @@ canvas, svg
   color #fff
   background-color #E23135
 
-[data-kv-height='0'] .kv-cell-atom
-  min-width 70px
-  min-height 70px
-  width 70px
-  height 70px
+[data-kv-height='0']
+  .kv-cell-atom
+    min-width 70px
+    min-height 70px
+    width 70px
+    height 70px
 
-[data-kv-height='1'] .kv-cell-atom
-   min-width 50px
-   min-height 50px
-   width 50px
-   height 50px
+[data-kv-height='1']
+  .kv-cell-atom
+    min-width 50px
+    min-height 50px
+    width 50px
+    height 50px
 
-[data-kv-height='2'] .kv-cell-atom
-   min-width 45px
-   min-height 45px
-   width 45px
-   height 45px
+[data-kv-height='2']
+  .kv-cell-atom
+    min-width 45px
+    min-height 45px
+    width 45px
+    height 45px
 
 .kv-table-cell-title
   vertical-align middle
@@ -378,16 +375,6 @@ canvas, svg
 .kv-cell-container
   padding 0
 
-[data-kv-height='1'] .kv-row-top > .kv-table-cell-title,
-[data-kv-height='1'] .kv-row-bottom > .kv-table-cell-title
-  height 25px
-  min-height 25px
-
-[data-kv-height='1'] .kv-col-right,
-[data-kv-height='1'] .kv-col-left
-  width 25px
-  min-width 25px
-
 .kv-loop-padding-top
   margin-top 41px
 
@@ -400,30 +387,57 @@ canvas, svg
 .kv-loop-padding-right
   margin-right 41px
 
-[data-kv-height='1'] .kv-loop
-  border-width 5px
-  margin 1px
+[data-kv-height='1']
+  .kv-row-top > .kv-table-cell-title,
+  .kv-row-bottom > .kv-table-cell-title
+    height 25px
+    min-height 25px
 
-[data-kv-height='1'] .kv-loops-container
-  position absolute
-  left 5px
-  right 5px
-  top 5px
-  bottom 5px
-  margin 4px
+  .kv-col-right,
+  .kv-col-left
+    width 25px
+    min-width 25px
 
-[data-kv-height='1'] .kv-table
-  border-spacing 3px
+  .kv-loop
+    border-width 5px
+    margin 1px
 
-[data-kv-height='1'] .kv-loop-padding-top
-  margin-top 25px
+  .kv-loop-edge-top
+    border-width 5px
+    border-top-width 3px
 
-[data-kv-height='1'] .kv-loop-padding-bottom
-  margin-bottom 25px
+  .kv-loop-edge-bottom
+    border-width 5px
+    border-bottom-width 3px
 
-[data-kv-height='1'] .kv-loop-padding-left
-  margin-left 25px
+  .kv-loop-edge-left
+    border-width 5px
+    border-left-width 3px
 
-[data-kv-height='1'] .kv-loop-padding-right
-  margin-right 25px
+  .kv-loop-edge-right
+    border-width 5px
+    border-right-width 3px
+
+  .kv-loops-container
+    position absolute
+    left 5px
+    right 5px
+    top 5px
+    bottom 5px
+    margin 4px
+
+  .kv-table
+    border-spacing 3px
+
+  .kv-loop-padding-top
+    margin-top 25px
+
+  .kv-loop-padding-bottom
+    margin-bottom 25px
+
+  .kv-loop-padding-left
+    margin-left 25px
+
+  .kv-loop-padding-right
+    margin-right 25px
 

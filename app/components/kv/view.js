@@ -9,7 +9,7 @@ import './view.styl';
 import {highestBit, formatBinary} from '../../lib/utils';
 
 // convert a cell's value into a string
-const renderKvValue = (val) => {
+const renderValue = (val) => {
   if (val === null) {
     return '*';
   } else if (val === false) {
@@ -241,7 +241,7 @@ const renderTableCell = (kv, column) => {
         'data-kv-value': scope,
       },
     },
-    renderKvValue(scope)
+    renderValue(scope)
   );
 };
 
@@ -341,7 +341,7 @@ const renderLoopButton = (state, loop, index) =>
 ;
 
 const renderLoopList = (state) =>
-  div('#loopTarget.loop-list', [
+  div('.loop-list', [
     span('.toolbar-title', 'Loops:'),
     ul('.inline-list', [
       state.kv.get('loops').map((loop, i) =>
@@ -357,7 +357,7 @@ const renderDebug = (state) => {
   const exclude = state.kv.get('currentLoop').get('exclude');
   const size = state.kv.get('variables').size;
 
-  return div('#debug', (include ^ exclude) && [
+  return div('.debug-panel', (include ^ exclude) && [
     'include: ',
     formatBinary(include,
       size),
@@ -374,7 +374,7 @@ const renderBody = (state) =>
 
 const renderTableContainer = (state) =>
   div('.scroller', [
-    div('#tableTarget', [
+    div('.scoller-inner', [
       renderBody(state),
     ]),
   ])
@@ -382,8 +382,8 @@ const renderTableContainer = (state) =>
 
 const render = (state) =>
   div([
-    h1('KV Diagram'),
     div('.explaination', [
+      h1('KV Diagram'),
       p('Change the amount of input variables.'),
       p('Click on the table cells to cycle the value.' +
         '(hold alt key for reversed cycle direction)'),
