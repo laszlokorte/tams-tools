@@ -85,7 +85,7 @@ const resizeLoop = (loop, size) => {
 // add one input variable to the given kv
 const addInput = (kv) => {
   const oldSize = kv.get('variables').size;
-  if (oldSize > 8) {
+  if (oldSize > 7) {
     return kv;
   }
   return kv

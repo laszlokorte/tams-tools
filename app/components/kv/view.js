@@ -322,7 +322,7 @@ const renderToolbar = (state) =>
     button('.numberButton',
       {
         attributes: {'data-kv-counter': 'increment'},
-        disabled: state.kv.get('variables').size >= 9,
+        disabled: state.kv.get('variables').size >= 8,
       },
       '+'),
   ])
