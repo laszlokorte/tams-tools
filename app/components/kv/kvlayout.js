@@ -1,7 +1,7 @@
 import {zip} from '../../lib/utils';
 
 // The layouts for different kv sizes
-const kvLayouts = [
+const layouts = [
   // Layout for 0 inputs (1 value)
   (s) => {
     return [
@@ -56,24 +56,24 @@ const kvLayouts = [
 
 // generates a nested layout
 // defined later
-let kvSubLayout;
+let subLayout;
 
 // generates a KV layout for the given size
 // scope is just needed for recursive calls
-export const kvBuildLayout = (size, scope) => {
+export const buildLayout = (size, scope) => {
   const _scope = scope || 0;
-  const maxLayoutSize = kvLayouts.length - 1;
+  const maxLayoutSize = layouts.length - 1;
   const layoutType = size && (size - 1) % maxLayoutSize + 1;
-  const layouter = kvLayouts[layoutType];
+  const layouter = layouts[layoutType];
   const sizeDelta = layoutType;
   const newSize = size - sizeDelta;
   const stepSize = Math.pow(2, newSize);
   const treeHeight = Math.ceil(
-    Math.log(newSize + 1) / Math.log(kvLayouts.length)
+    Math.log(newSize + 1) / Math.log(layouts.length)
   );
 
   const rows = layouter(
-    kvSubLayout.bind(null, {size: newSize, scope: _scope, stepSize})
+    subLayout.bind(null, {size: newSize, scope: _scope, stepSize})
   );
 
   return {
@@ -93,7 +93,7 @@ export const kvBuildLayout = (size, scope) => {
   };
 };
 
-kvSubLayout = ({size, scope, stepSize}, i) => {
+subLayout = ({size, scope, stepSize}, i) => {
   if (size === 0) {
     return {
       scope: scope + i,
@@ -101,7 +101,7 @@ kvSubLayout = ({size, scope, stepSize}, i) => {
   } else {
     return {
       scope: scope + i,
-      children: kvBuildLayout(size, scope + i * stepSize),
+      children: buildLayout(size, scope + i * stepSize),
     };
   }
 };

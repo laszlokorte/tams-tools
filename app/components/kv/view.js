@@ -21,19 +21,19 @@ const renderKvValue = (val) => {
 };
 
 // render a percentually positioned loop of a given color
-// rows: the number of rows of the kv leaf grid
-// cols: the number of columns
+// rowCount: the number of rows of the kv leaf grid
+// colCount: the number of columns
 // xa: 0-based index of the column the loop starts
 // ya: 0-based index of the row the loop starts
 // xb, yb: indices of the rows/columns where the loop ends
-const renderVKLoop = ({color, rows, cols, xa, ya, xb, yb}) => {
+const renderVKLoop = ({color, rowCount, colCount, xa, ya, xb, yb}) => {
   const width = xb - xa + 1;
   const height = yb - ya + 1;
 
-  const left = Math.floor(100 * xa / cols);
-  const top = Math.floor(100 * ya / rows);
-  const right = Math.ceil(100 * (cols - width) / cols) - left;
-  const bottom = Math.ceil(100 * (rows - height) / rows) - top;
+  const left = Math.floor(100 * xa / colCount);
+  const top = Math.floor(100 * ya / rowCount);
+  const right = Math.ceil(100 * (colCount - width) / colCount) - left;
+  const bottom = Math.ceil(100 * (rowCount - height) / rowCount) - top;
 
   if (left < 0 || top < 0 || right < 0 || bottom < 0) {
     return '';
@@ -52,19 +52,28 @@ const renderVKLoop = ({color, rows, cols, xa, ya, xb, yb}) => {
 
 // Render the collection of loops for a kv leaf grid
 // rows, cols: number of rows and columns
-const renderKVLoops = (rows, cols) => {
-  const padding =
-    (cols > 1 ? '.kv-loop-padding-top' : '') +
-    (rows > 2 ? '.kv-loop-padding-right' : '') +
-    (cols > 3 ? '.kv-loop-padding-bottom' : '') +
-    (rows > 1 ? '.kv-loop-padding-left' : '');
+const renderKVLoops = (loops, rows, cols) => {
+  const rowCount = rows.length;
+  const colCount = cols.length;
 
-  return div('.kv-loops-container' + padding, [
-    renderVKLoop({color: '#E91E63', rows, cols, xa: 0, ya: 0, xb: 0, yb: 0}),
-    renderVKLoop({color: '#FF9800', rows, cols, xa: 0, ya: 1, xb: 1, yb: 2}),
-    renderVKLoop({color: '#FF5252', rows, cols, xa: 2, ya: 0, xb: 3, yb: 3}),
-    renderVKLoop({color: '#9C27B0', rows, cols, xa: 0, ya: 3, xb: 3, yb: 3}),
-  ]);
+  const padding =
+    (colCount > 1 ? '.kv-loop-padding-top' : '') +
+    (rowCount > 2 ? '.kv-loop-padding-right' : '') +
+    (colCount > 3 ? '.kv-loop-padding-bottom' : '') +
+    (rowCount > 1 ? '.kv-loop-padding-left' : '');
+
+  return div('.kv-loops-container' + padding,
+    loops.map((loop, i) =>
+      renderVKLoop({
+        color: loop.get('color'),
+        rowCount, colCount,
+        xa: i,
+        ya: i,
+        xb: i,
+        yb: i
+      })
+    ).toArray()
+  );
 };
 
 const _labelFor = ({variables, offset}, rowsOrColumns, {include, exclude}) =>
@@ -210,7 +219,7 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
   });
 
   return div('.kv-container', [
-    layout.treeHeight === 0 && renderKVLoops(rowCount, colCount) || null,
+    layout.treeHeight === 0 && renderKVLoops(kv.get('loops'), rows, cols) || null,
     table('.kv-table', {
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
@@ -272,6 +281,22 @@ const renderLoopList = (state) =>
   ])
 ;
 
+const renderDebug = (state) => {
+  const include = state.kv.get('loop').get('include');
+  const exclude = state.kv.get('loop').get('exclude');
+  const size = state.kv.get('variables').size;
+
+  return div('#debug', (include ^ exclude) && [
+    'include: ',
+    formatBinary(include,
+      size),
+    ' - ',
+    'exclude: ',
+    formatBinary(exclude,
+      size),
+  ] || null);
+};
+
 const renderBody = (state) =>
   renderTable(state.layout, state.kv)
 ;
@@ -294,6 +319,7 @@ const render = (state) =>
     ]),
     renderToolbar(state),
     renderLoopList(state),
+    renderDebug(state),
     renderTableContainer(state),
   ]);
 

@@ -2,7 +2,7 @@ import {Observable as O} from 'rx';
 import I from 'immutable';
 
 import {memoize, arrayOfSize, fillBits} from '../../lib/utils';
-import {kvBuildLayout as buildLayout} from './kvlayout';
+import {buildLayout} from './kvlayout';
 
 // Generate a variable name from a given index
 const generateVariableName = (index) => {
