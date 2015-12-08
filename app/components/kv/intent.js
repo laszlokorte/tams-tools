@@ -22,6 +22,7 @@ export default (DOM) => {
         targetOffset: startOffset,
       }).concat(
         mouseEnter$
+        .distinctUntilChanged()
         .map((targetOffset) => ({
           startOffset,
           targetOffset,
