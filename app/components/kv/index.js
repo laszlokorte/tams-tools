@@ -1,7 +1,5 @@
-import './index.styl';
-
 import {Observable as O} from 'rx';
-//import isolate from '@cycle/isolate';
+
 import model from './model';
 import view from './view';
 import intent from './intent';
@@ -12,7 +10,8 @@ export default (responses) => {
     //Storage
   } = responses;
 
-  const vtree$ = view(model(O.empty(), intent(DOM)));
+  const state$ = model(O.empty(), intent(DOM));
+  const vtree$ = view(state$);
 
   return {
     DOM: vtree$,

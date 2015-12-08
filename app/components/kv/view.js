@@ -1,12 +1,10 @@
-/**
- * This File Contains:
- *
- * Functions to generate HTML code to render a kv diagram.
- */
 import {
   h1, div, p, button ,span, ul, li,
   table, tr, th, td,
 } from '@cycle/dom';
+
+import './view.styl';
+
 import {highestBit, formatBinary} from '../../lib/utils';
 
 // convert a cell's value into a string
@@ -199,9 +197,7 @@ const renderTable = (layout, kv, offset = kv.variables.length) => {
   const rows = layout.rows;
   const rowCount = rows.length;
   const colCount = cols.length;
-  const variableCount = layout.count;
-
-  const labelOffset = offset - variableCount - 1;
+  const labelOffset = offset - layout.count - 1;
 
   const labels = tableLables({
     rows,

@@ -1,6 +1,7 @@
+import {Observable as O} from 'rx';
+
 export default (DOM) => {
-  const mouseUp$ = DOM.select('.kv-cell-atom[data-kv-offset]')
-    .events('mouseup')
+  const mouseUp$ = O.fromEvent(document, 'mouseup')
     .do((evt) => evt.preventDefault());
   const mouseEnter$ = DOM.select('.kv-cell-atom[data-kv-offset]')
     .events('mouseenter')
@@ -10,14 +11,20 @@ export default (DOM) => {
   const drag$ = DOM.select('.kv-cell-atom[data-kv-offset]')
     .events('mousedown')
     .do((evt) => evt.preventDefault())
+    .filter((evt) => evt.shiftKey)
     .map((evt) => parseInt(evt.target.dataset.kvOffset, 10))
     .filter((offset) => !isNaN(offset))
     .flatMap((startOffset) =>
-       mouseEnter$
+      O.just({
+        startOffset: startOffset,
+        targetOffset: startOffset,
+      }).concat(
+        mouseEnter$
         .map((targetOffset) => ({
           startOffset,
           targetOffset,
         })
+      )
       ).takeUntil(mouseUp$)
     );
 
@@ -33,6 +40,7 @@ export default (DOM) => {
     cycleValue$:
       DOM.select('.kv-cell-atom[data-kv-offset]')
         .events('click')
+        .filter((evt) => !evt.shiftKey)
         .map((evt) => ({
           reverse: evt.altKey,
           offset: parseInt(evt.target.dataset.kvOffset, 10),

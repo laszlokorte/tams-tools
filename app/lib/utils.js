@@ -101,6 +101,18 @@ export const formatBinary = (number, length) => {
   ).slice(-length);
 };
 
+// get a deep copy of the given object
 export const clone = (obj) =>
   JSON.parse(JSON.stringify(obj))
+;
+
+// get an array of given size
+export const arrayOfSize = (size) =>
+  Array(...{length: size})
+;
+
+// get a number for which the all bits
+// from 0 to length are set to 1
+export const fillBits = (length) =>
+  Math.pow(2, length) - 1
 ;

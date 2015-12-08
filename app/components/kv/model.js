@@ -1,17 +1,24 @@
 import {Observable as O} from 'rx';
 
-import {zip, memoize, clone} from '../../lib/utils';
+import {zip, memoize, clone, arrayOfSize, fillBits} from '../../lib/utils';
 
 // Generate a variable name from a given index
 export const generateVariableName = (index) => {
   return String.fromCharCode(65 + index);
 };
 
+export const colorPalette = [
+  '#E91E63',
+  '#FF9800',
+  '#FF5252',
+  '#9C27B0',
+];
+
 // create a new kv diagram with given size
 // size: number of inputs
 export const kvCreate = (size, base) => {
   const length = Math.pow(2, size);
-  const array = Array(...{length: length})
+  const array = arrayOfSize(length)
     .map((_,i) => {
       if (base && base.data.length > i) {
         return base.data[i];
@@ -19,7 +26,7 @@ export const kvCreate = (size, base) => {
       return i % 2 === 0;
     });
 
-  const labels = Array(...{length: size})
+  const labels = arrayOfSize(size)
     .map((_,i) => {
       return generateVariableName(i);
     });
@@ -27,31 +34,14 @@ export const kvCreate = (size, base) => {
   return {
     variables: labels,
     data: array,
-    loops: [
-      {
-        color: '#E91E63',
-        include: 0,
-        exclude: 0,
-      },
-      {
-        color: '#FF9800',
-        include: 0,
-        exclude: 0,
-      },
-      {
-        color: '#FF5252',
-        include: 0,
-        exclude: 0,
-      },
-      {
-        color: '#9C27B0',
-        include: 0,
-        exclude: 0,
-      },
-    ],
+    loops: colorPalette.map((color) => ({
+      color,
+      include: 0,
+      exclude: 0,
+    })),
     loop: {
-      include: Math.pow(2, length) - 1,
-      exclude: Math.pow(2, length) - 1,
+      include: fillBits(length),
+      exclude: fillBits(length),
     },
   };
 };
@@ -59,7 +49,7 @@ export const kvCreate = (size, base) => {
 // Set the active loop of the given kv
 // If start and end are not given the loop will be cleared
 export const kvLoopSet = (kv, start, end) => {
-  const all = Math.pow(2, kv.variables.length + 1) - 1;
+  const all = fillBits(kv.variables.length + 1);
   if (typeof start === 'undefined') {
     kv.loop.include = all;
     kv.loop.exclude = all;
@@ -103,41 +93,41 @@ const kvLayouts = [
   // Layout for 0 inputs (1 value)
   (s) => {
     return [
-      [s(1)],
+      [s(0)],
     ];
   },
 
   // Layout for 1 input (2 values)
   (s) => {
     return [
+      [s(0)],
       [s(1)],
-      [s(2)],
     ];
   },
 
   // Layout for 2 inputs (4 values)
   (s) => {
     return [
+      [s(0), s(2)],
       [s(1), s(3)],
-      [s(2), s(4)],
     ];
   },
 
   // Layout for 3 inputs (8 values)
   (s) => {
     return [
+      [s(0), s(2), s(6), s(4)],
       [s(1), s(3), s(7), s(5)],
-      [s(2), s(4), s(8), s(6)],
     ];
   },
 
   // Layout for 4 inputs (16 values)
   (s) => {
     return [
-      [s(1), s(3), s(7), s(5)],
+      [s(0), s(2), s(6), s(4)],
+      [s(8), s(10), s(14), s(12)],
       [s(9), s(11), s(15), s(13)],
-      [s(10), s(12), s(16), s(14)],
-      [s(2), s(4), s(8), s(6)],
+      [s(1), s(3), s(7), s(5)],
     ];
   },
 
@@ -149,7 +139,7 @@ const kvLayouts = [
 
   // The nth element (0-based) in this array has to be a function with
   // calls the callback it's given once with each value from
-  // (including) 1 to (including) 2^n
+  // (including) 0 to (excluding) 2^n
 ];
 
 // generates a nested layout
@@ -169,35 +159,36 @@ const kvBuildLayout = (size, scope) => {
     Math.log(newSize + 1) / Math.log(kvLayouts.length)
   );
 
-  const layout = layouter(
+  const rows = layouter(
     kvSubLayout.bind(null, {size: newSize, scope: _scope, stepSize})
   );
 
   return {
     treeHeight: treeHeight,
     count: sizeDelta,
-    columns: layout.reduce((prev, cols) =>
-      zip(prev, cols, (u,v) =>
-        ({scope: u.scope & v.scope})
+    columns: rows
+      .map((row) =>
+        row.map((col) => col.scope)
       )
-    ).map((obj) => obj.scope),
-    rows: layout.map((cols) =>
-      cols.reduce((p,v) => p & v.scope
-      , -1)
+      .reduce((prev, cols) =>
+        zip(prev, cols, (u,v) => u & v)
+      ),
+    rows: rows.map((cols) =>
+      cols.reduce((p,v) => p & v.scope, -1)
     ),
-    grid: layout,
+    grid: rows,
   };
 };
 
 kvSubLayout = ({size, scope, stepSize}, i) => {
   if (size === 0) {
     return {
-      scope: scope + i - 1,
+      scope: scope + i,
     };
   } else {
     return {
-      scope: scope + i - 1,
-      children: kvBuildLayout(size, scope + (i - 1) * stepSize),
+      scope: scope + i,
+      children: kvBuildLayout(size, scope + i * stepSize),
     };
   }
 };
