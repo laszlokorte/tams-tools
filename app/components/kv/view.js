@@ -88,47 +88,47 @@ const _labelFor = ({variables, offset}, rowsOrColumns, {include, exclude}) =>
   ) || null
 ;
 
-const renderTableHead = (colCount, {top, left, right, bottom}) => [
-  top &&
+const renderTableHead = (colCount, {top, left, right, bottom}) =>
+  top !== null &&
   tr('.kv-table-row-title.kv-row-top',[
     left !== null &&
     th('.kv-table-corner') || null,
 
-    top &&
+    top !== null &&
     th('.kv-table-cell-title.kv-cell-neg', `~${top}`) || null,
 
-    top &&
+    top !== null &&
     th('.kv-table-cell-title.kv-cell-pos',
       {colSpan: colCount / 2}, top) || null,
 
-    bottom &&
+    bottom !== null &&
     th('.kv-table-cell-title.kv-cell-neg',
       `~${top}`) || null,
 
     right !== null && th('.kv-table-corner') || null,
-  ]) || null,
-];
+  ]) || null
+;
 
-const renderTableFoot = (colCount, {left, right, bottom}) => [
-  tr('.kv-table-row-title.kv-row-bottom',[
+const renderTableFoot = (colCount, {left, right, bottom}) =>
+  bottom !== null && tr('.kv-table-row-title.kv-row-bottom', [
     left !== null &&
     th('.kv-table-corner') || null,
 
-    bottom &&
+    bottom !== null &&
     th('.kv-table-cell-title.kv-cell-neg',
       {colSpan: colCount / 2}, `~${bottom}`) || null,
 
-    bottom &&
+    bottom !== null &&
     th('.kv-table-cell-title.kv-cell-pos',
       {colSpan: colCount / 2}, bottom) || null,
 
     right !== null &&
     th('.kv-table-corner') || null,
-  ]),
-];
+  ]) || null
+;
 
 const renderTableRowStart = (rowIndex, rowCount, {left}) =>
-  left && [
+  left !== null && [
     rowIndex === 0 &&
     th('.kv-table-cell-title.kv-cell-neg.kv-col-left', {
       rowSpan: (rowCount / 2),
