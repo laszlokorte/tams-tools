@@ -54,6 +54,13 @@ export default (DOM) => {
           reverse: evt.altKey,
           offset: parseInt(evt.target.dataset.kvOffset, 10),
         })),
+    removeLoop$:
+      DOM
+        .select('[data-loop-index]')
+        .events('click')
+        .do(preventDefault)
+        .map(parseDataAttr('loopIndex'))
+        .filter(isFinite),
     move$:
       drag$,
     moveEnd$:

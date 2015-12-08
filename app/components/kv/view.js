@@ -3,8 +3,7 @@ import {
   table, tr, th, td,
 } from '@cycle/dom';
 
-import I from 'immutable';
-
+import {matchesLoop} from './model';
 import './view.styl';
 
 import {highestBit, formatBinary} from '../../lib/utils';
@@ -22,13 +21,29 @@ const renderKvValue = (val) => {
   }
 };
 
+const renderSingleLoop = ({color, top, right, bottom, left, xEdge, yEdge}) => {
+  return div('.kv-loop', {
+    style: {
+      top: `${top}%`,
+      right: `${right}%`,
+      bottom: `${bottom}%`,
+      left: `${left}%`,
+      'border-color': color,
+    },
+    className: [
+      xEdge ? `kv-loop-edge-${xEdge}` : null,
+      yEdge ? `kv-loop-edge-${yEdge}` : null,
+    ].join(' '),
+  });
+};
+
 // render a percentually positioned loop of a given color
 // rowCount: the number of rows of the kv leaf grid
 // colCount: the number of columns
 // xa: 0-based index of the column the loop starts
 // ya: 0-based index of the row the loop starts
 // xb, yb: indices of the rows/columns where the loop ends
-const renderVKLoop = ({color, rowCount, colCount, x, y}) => {
+const renderLoop = ({color, rowCount, colCount, x, y}) => {
   const width = x.to - x.from + 1;
   const height = y.to - y.from + 1;
 
@@ -43,45 +58,44 @@ const renderVKLoop = ({color, rowCount, colCount, x, y}) => {
 
   if (x.wrap) {
     return [
-      renderVKLoop({color, rowCount, colCount, x: {
+      renderLoop({color, rowCount, colCount, x: {
         from: 0,
         to: x.from,
+        edge: 'left',
       }, y}),
-      renderVKLoop({color, rowCount, colCount, x: {
+      renderLoop({color, rowCount, colCount, x: {
         from: colCount - x.to,
         to: colCount - 1,
+        edge: 'right',
       }, y}),
     ];
   } else if (y.wrap) {
     return [
-      renderVKLoop({color, rowCount, colCount, y: {
+      renderLoop({color, rowCount, colCount, y: {
         from: 0,
         to: y.from,
+        edge: 'top',
       }, x}),
-      renderVKLoop({color, rowCount, colCount, y: {
+      renderLoop({color, rowCount, colCount, y: {
         from: rowCount - y.to,
         to: rowCount - 1,
+        edge: 'bottom',
       }, x}),
     ];
   } else {
-    return div('.kv-loop', {
-      style: {
-        top: `${top}%`,
-        right: `${right}%`,
-        bottom: `${bottom}%`,
-        left: `${left}%`,
-        'border-color': color,
-      },
+    return renderSingleLoop({
+      color,
+      top, right, bottom, left,
+      xEdge: x.edge,
+      yEdge: y.edge,
     });
   }
 };
 
-const matchesLoop = (offset, include, exclude) =>
-  (include & offset) === include &&
-  (exclude & offset) === 0
-;
+const calcLoopRange = (dontcare, cols, loop) => {
+  const include = loop.get('include');
+  const exclude = loop.get('exclude');
 
-const calcLoopRange = (dontcare, cols, include, exclude) => {
   const fields = cols.map((col) =>
     matchesLoop(col & ~dontcare,
       include & ~dontcare,
@@ -100,7 +114,7 @@ const calcLoopRange = (dontcare, cols, include, exclude) => {
 
 // Render the collection of loops for a kv leaf grid
 // rows, cols: number of rows and columns
-const renderKVLoops = (loops, scope, rows, cols) => {
+const renderLoops = (loops, rows, cols) => {
   const rowCount = rows.length;
   const colCount = cols.length;
 
@@ -116,13 +130,11 @@ const renderKVLoops = (loops, scope, rows, cols) => {
 
   return div('.kv-loops-container' + padding,
     loops.map((loop) =>
-      renderVKLoop({
+      renderLoop({
         color: loop.get('color'),
         rowCount, colCount,
-        x: calcLoopRange(scopeMask & rowMask, cols,
-          loop.get('include'), loop.get('exclude')),
-        y: calcLoopRange(scopeMask & colMask, rows,
-          loop.get('include'), loop.get('exclude')),
+        x: calcLoopRange(scopeMask & rowMask, cols, loop),
+        y: calcLoopRange(scopeMask & colMask, rows, loop),
       })
     ).toArray()
   );
@@ -212,8 +224,8 @@ const renderTableRowEnd = (rowIndex, {right}) =>
 const renderTableCell = (kv, column) => {
   const pattern = formatBinary(column.scope, kv.get('variables').size);
   const scope = kv.get('data').get(column.scope);
-  const include = kv.get('loop').get('include');
-  const exclude = kv.get('loop').get('exclude');
+  const include = kv.get('currentLoop').get('include');
+  const exclude = kv.get('currentLoop').get('exclude');
   const active = matchesLoop(column.scope, include, exclude);
   const error = active && (scope === false);
 
@@ -270,7 +282,7 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
 
   return div('.kv-container', [
     layout.treeHeight === 0 &&
-    renderKVLoops(kv.get('loops'), 0, rows, cols) || null,
+    renderLoops(kv.get('loops'), rows, cols) || null,
 
     table('.kv-table', {
       attributes: {'data-kv-height': layout.treeHeight},
@@ -316,9 +328,14 @@ const renderToolbar = (state) =>
   ])
 ;
 
-const renderLoop = (state, loop) =>
+const renderLoopButton = (state, loop, index) =>
   li([
-    button('.well', {style: {'background-color': loop.get('color')}}, "2"),
+    button('.well', {
+      style: {'background-color': loop.get('color')},
+      attributes: {
+        'data-loop-index': index,
+      },
+    }, "X"),
     button('.well-delete', 'Delete'),
   ])
 ;
@@ -327,15 +344,17 @@ const renderLoopList = (state) =>
   div('#loopTarget.loop-list', [
     span('.toolbar-title', 'Loops:'),
     ul('.inline-list', [
-      state.kv.get('loops').map((loop) => renderLoop(state, loop)).toArray(),
-      li(button('.well.well-add', 'Add Loop')),
+      state.kv.get('loops').map((loop, i) =>
+        renderLoopButton(state, loop, i)
+      ).toArray(),
+      //li(button('.well.well-add', 'Add Loop')),
     ]),
   ])
 ;
 
 const renderDebug = (state) => {
-  const include = state.kv.get('loop').get('include');
-  const exclude = state.kv.get('loop').get('exclude');
+  const include = state.kv.get('currentLoop').get('include');
+  const exclude = state.kv.get('currentLoop').get('exclude');
   const size = state.kv.get('variables').size;
 
   return div('#debug', (include ^ exclude) && [
@@ -366,8 +385,10 @@ const render = (state) =>
     h1('KV Diagram'),
     div('.explaination', [
       p('Change the amount of input variables.'),
-      p('Click on the table cells to toggle the value.'),
-      p('The loops are just a dummy layout test.'),
+      p('Click on the table cells to cycle the value.' +
+        '(hold alt key for reversed cycle direction)'),
+      p('Drag between two cells while holding shift to create a loop.'),
+      p('Click on a loop icon to remove the loop.'),
     ]),
     renderToolbar(state),
     renderLoopList(state),

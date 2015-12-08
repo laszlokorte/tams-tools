@@ -122,3 +122,8 @@ export const preventDefault = (evt) =>
 export const parseDataAttr = (attrName) => (evt) =>
   parseInt(evt.target.dataset[attrName], 10)
 ;
+
+export const log = (...args) => {
+  console.log(...args);
+  return args[0];
+};

@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import {memoize, arrayOfSize, fillBits} from '../../lib/utils';
+import {memoize, arrayOfSize, fillBits, log} from '../../lib/utils';
 import {buildLayout} from './kvlayout';
 
 // Generate a variable name from a given index
@@ -43,17 +43,11 @@ const newKV = (size, base) => {
     data: array,
     loops: [
     ],
-    loop: {
-      include: fillBits(length),
-      exclude: fillBits(length),
-    },
   };
 };
 
-// Set the active loop of the given kv
-// If start and end are not given the loop will be cleared
-const loop = (size, start, end) => {
-  const all = fillBits(size + 1);
+const makeLoop = (size, start, end) => {
+  const all = fillBits(size);
   if (typeof start === 'undefined') {
     return I.Map({
       include: all,
@@ -67,6 +61,11 @@ const loop = (size, start, end) => {
   }
 };
 
+export const matchesLoop = (offset, include, exclude) =>
+  (include & offset) === include &&
+  (exclude & offset) === 0
+;
+
 // add one input variable to the given kv
 const addInput = (kv) => {
   const oldSize = kv.get('variables').size;
@@ -78,7 +77,8 @@ const addInput = (kv) => {
       (old) => old.push(generateVariableName(old.size)))
     .update('data',
       (old) => old.concat(old))
-    .set('loop', loop(oldSize + 1));
+    .set('currentLoop', makeLoop(oldSize + 1))
+    .update('loops', (loops) => loops.clear());
 };
 
 // remove one input variable from the given kv
@@ -88,11 +88,57 @@ const removeInput = (kv) => {
     return kv;
   }
   return kv
-  .update('variables',
-    (old) => old.pop())
-  .update('data',
-    (old) => old.setSize(old.size / 2))
-  .set('loop', loop(oldSize - 1));
+    .update('variables',
+      (old) => old.pop())
+    .update('data',
+      (old) => old.setSize(old.size / 2))
+    .set('currentLoop', makeLoop(oldSize - 1))
+    .update('loops', (loops) => loops.clear());
+};
+
+const removeLoop = (kv, loopIndex) => {
+  return kv.update('loops',(loop) =>
+    loop.delete(loopIndex)
+  );
+};
+
+const isLoopNotEmpty = (loop, variableCount) => {
+  const all = fillBits(variableCount);
+  const include = loop.get('include');
+  const exclude = loop.get('exclude');
+
+  return (include & exclude) === 0 && include <= all;
+};
+
+const removeFieldFromLoop = (loop, bit) => {
+  const include = loop.get('include');
+  const exclude = loop.get('exclude');
+
+  // loop does not contain the field anyway
+  if (!matchesLoop(bit, include, exclude)) {
+    return loop;
+  }
+
+  // the bits by which are not constrained by the loop
+  const unused = ~include & ~exclude;
+  // bits which could be be added to the loop's positive constraints
+  const includableBit = ~bit & unused;
+  // bits which could be be added to the loop's negative constraints
+  const excludableBit = bit & unused;
+
+  // extract only the lowest bit
+  const lowestIncludableBit = includableBit & -includableBit;
+  const lowestExcludableBit = excludableBit & -excludableBit;
+
+  // check which of the bit's is less significant but not zero
+  const changeExclude = lowestExcludableBit &&
+    lowestExcludableBit < lowestIncludableBit;
+
+  return loop.update('exclude', (val) =>
+    changeExclude ? lowestExcludableBit | val : val
+  ).update('include', (val) =>
+    !changeExclude ? lowestIncludableBit | val : val
+  );
 };
 
 // cycle the given bit [... -> true -> false -> null -> ...]
@@ -102,7 +148,27 @@ const cycleBit = (kv, bit, reverse) => {
   const newValueB = (oldValue === true) ? null : oldValue === false;
   const newValue = reverse ? newValueA : newValueB;
 
-  return kv.setIn(['data', bit], newValue);
+  return kv
+    .setIn(['data', bit], newValue)
+    .update('loops', (loops) => {
+      if (newValue === false) {
+        return loops
+          .map((loop) => removeFieldFromLoop(loop, bit))
+          .filter((loop) => isLoopNotEmpty(loop, kv.get('variables').size));
+      } else {
+        return loops;
+      }
+    });
+};
+
+const isCurrentLoopAllowed = (state) => {
+  const loop = state.get('currentLoop');
+  const include = loop.get('include');
+  const exclude = loop.get('exclude');
+
+  return state.get('data').reduce((prev, val, index) =>
+    prev && (!matchesLoop(index, include, exclude) || val !== false)
+  , true);
 };
 
 const init = () =>
@@ -125,34 +191,49 @@ const modifiers = (actions) => {
       return cycleBit(state, offset, reverse);
     }),
     actions.move$.map(({startOffset, targetOffset}) => (state) => {
-      return state.set('loop',
-        loop(state.get('variables').size,
+      return state.set('currentLoop',
+        makeLoop(state.get('variables').size,
           startOffset, targetOffset)
       );
     }),
+    actions.removeLoop$.map((loopIndex) => (state) => {
+      return removeLoop(state, loopIndex);
+    }),
     actions.moveEnd$.map(() => (state) => {
-      const newLoop = state.get('loop');
+      const newLoop = state.get('currentLoop');
 
       return state.update('loops', (loops) => {
-        if (newLoop.include & newLoop.exclude) {
-          return loops;
-        } else {
+        if (isLoopNotEmpty(newLoop, state.get('variables').size) &&
+            isCurrentLoopAllowed(state)) {
           return loops.push(newLoop.set('color', generateColor(loops.size)));
+        } else {
+          return loops;
         }
-      }).set('loop',
-        loop(state.get('variables').size)
+      }).set('currentLoop',
+        makeLoop(state.get('variables').size)
       );
     })
   );
 };
 
-const fromJson = I.fromJS.bind(I);
+const fromJson = (json) => I.Map({
+  variables: I.List(json.variables),
+  data: I.List(json.data),
+  loops: I.List(json.loops.map((loop) =>
+    I.Map({
+      color: loop.color,
+      include: loop.include,
+      exclude: loop.exclude,
+    })
+  )),
+  currentLoop: makeLoop(json.variables.length),
+});
 
 export default (initial$, actions) =>
   O.merge(
     initial$.startWith(init())
     .map(fromJson)
-    .do(console.log.bind(console))
+    .do(log)
     .map((kv) => () => kv),
     modifiers(actions)
   ).scan(applyModification, null)
