@@ -50,8 +50,8 @@ const makeLoop = (size, start, end) => {
   const all = fillBits(size);
   if (typeof start === 'undefined') {
     return I.Map({
-      include: all,
-      exclude: all,
+      include: -1,
+      exclude: -1,
     });
   } else {
     return I.Map({
@@ -66,6 +66,22 @@ export const matchesLoop = (offset, include, exclude) =>
   (exclude & offset) === 0
 ;
 
+const isLoopNotEmpty = (loop, variableCount) => {
+  const all = fillBits(variableCount);
+  const include = loop.get('include');
+  const exclude = loop.get('exclude');
+
+  return (include & exclude) === 0 && include <= all;
+};
+
+const resizeLoop = (loop, size) => {
+  const mask = fillBits(size);
+
+  return loop
+    .update('include', (val) => val & mask)
+    .update('exclude', (val) => val & mask);
+};
+
 // add one input variable to the given kv
 const addInput = (kv) => {
   const oldSize = kv.get('variables').size;
@@ -77,13 +93,13 @@ const addInput = (kv) => {
       (old) => old.push(generateVariableName(old.size)))
     .update('data',
       (old) => old.concat(old))
-    .set('currentLoop', makeLoop(oldSize + 1))
-    .update('loops', (loops) => loops.clear());
+    .set('currentLoop', makeLoop(oldSize + 1));
 };
 
 // remove one input variable from the given kv
 const removeInput = (kv) => {
   const oldSize = kv.get('variables').size;
+  const newSize = oldSize - 1;
   if (oldSize < 1) {
     return kv;
   }
@@ -92,22 +108,18 @@ const removeInput = (kv) => {
       (old) => old.pop())
     .update('data',
       (old) => old.setSize(old.size / 2))
-    .set('currentLoop', makeLoop(oldSize - 1))
-    .update('loops', (loops) => loops.clear());
+    .set('currentLoop', makeLoop(newSize))
+    .update('loops', (loops) =>
+      loops
+      .filter((loop) => isLoopNotEmpty(loop, newSize))
+      .map((loop) => resizeLoop(loop, newSize))
+    );
 };
 
 const removeLoop = (kv, loopIndex) => {
   return kv.update('loops',(loop) =>
     loop.delete(loopIndex)
   );
-};
-
-const isLoopNotEmpty = (loop, variableCount) => {
-  const all = fillBits(variableCount);
-  const include = loop.get('include');
-  const exclude = loop.get('exclude');
-
-  return (include & exclude) === 0 && include <= all;
 };
 
 const removeFieldFromLoop = (loop, bit) => {
