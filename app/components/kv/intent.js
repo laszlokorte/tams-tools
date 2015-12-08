@@ -1,19 +1,21 @@
 import {Observable as O} from 'rx';
 
+import {preventDefault, parseDataAttr} from '../../lib/utils';
+
 export default (DOM) => {
   const mouseUp$ = O.fromEvent(document, 'mouseup')
-    .do((evt) => evt.preventDefault());
+    .do(preventDefault);
   const mouseEnter$ = DOM.select('.kv-cell-atom[data-kv-offset]')
     .events('mouseenter')
-    .do((evt) => evt.preventDefault())
-    .map((evt) => parseInt(evt.target.dataset.kvOffset, 10))
-    .filter((offset) => !isNaN(offset));
+    .do(preventDefault)
+    .map(parseDataAttr('kvOffset'))
+    .filter(isFinite);
   const drag$ = DOM.select('.kv-cell-atom[data-kv-offset]')
     .events('mousedown')
-    .do((evt) => evt.preventDefault())
+    .do(preventDefault)
     .filter((evt) => evt.shiftKey)
-    .map((evt) => parseInt(evt.target.dataset.kvOffset, 10))
-    .filter((offset) => !isNaN(offset))
+    .map(parseDataAttr('kvOffset'))
+    .filter(isFinite)
     .flatMap((startOffset) =>
       O.just({
         startOffset: startOffset,

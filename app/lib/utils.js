@@ -116,3 +116,14 @@ export const arrayOfSize = (size) =>
 export const fillBits = (length) =>
   Math.pow(2, length) - 1
 ;
+
+// prevent the default browser behaviour for the given event
+export const preventDefault = (evt) =>
+  evt.preventDefault()
+;
+
+// get function which parses the attribute of given name
+// from a given event's target as integer
+export const parseDataAttr = (attrName) => (evt) =>
+  parseInt(evt.target.dataset[attrName], 10)
+;
