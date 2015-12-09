@@ -21,6 +21,10 @@ const generateColor = (index) =>
   colorPalette[index % colorPalette.length]
 ;
 
+const generateOutputName = (index) =>
+  'O' + (index + 1)
+;
+
 // create a new kv diagram with given size
 // size: number of inputs
 const newKV = (size, base) => {
@@ -40,6 +44,7 @@ const newKV = (size, base) => {
 
   return {
     variables: labels,
+    outputs: ["O1"],
     data: array,
     loops: [
     ],
@@ -114,6 +119,30 @@ const removeInput = (kv) => {
       .filter((loop) => isLoopNotEmpty(loop, newSize))
       .map((loop) => resizeLoop(loop, newSize))
     );
+};
+
+const addOutput = (state) => {
+  return state.update('outputs', (outputs) =>
+    outputs.push(generateOutputName(outputs.size)))
+  .set('currentOutput', state.get('outputs').size);
+};
+
+const removeOutput = (state, index) => {
+  return state.update('outputs', (outputs) => {
+    const newOutputs = outputs.remove(index);
+
+    if (newOutputs.size === 0) {
+      return newOutputs.push(generateOutputName(0));
+    } else {
+      return newOutputs;
+    }
+  }).update('currentOutput', (val) => {
+    return val < index ? val : Math.max(0, val - 1);
+  });
+};
+
+const selectOutput = (state, index) => {
+  return state.set('currentOutput', index);
 };
 
 const removeLoop = (kv, loopIndex) => {
@@ -224,6 +253,15 @@ const modifiers = (actions) => {
       }).set('currentLoop',
         makeLoop(state.get('variables').size)
       );
+    }),
+    actions.addOutput$.map(() => (state) => {
+      return addOutput(state);
+    }),
+    actions.removeOutput$.map((index) => (state) => {
+      return removeOutput(state, index);
+    }),
+    actions.selectOutput$.map((index) => (state) => {
+      return selectOutput(state, index);
     })
   );
 };
@@ -238,7 +276,9 @@ const fromJson = (json) => I.Map({
       exclude: loop.exclude,
     })
   )),
+  outputs: I.List(json.outputs),
   currentLoop: makeLoop(json.variables.length),
+  currentOutput: 0,
 });
 
 export default (initial$, actions) =>
@@ -250,7 +290,7 @@ export default (initial$, actions) =>
       .map((kv) => () => kv),
       modifiers(actions)
     ).scan(applyModification, null),
-    actions.help$.startWith(true), (kv, help) => ({
+    actions.help$.startWith(false), (kv, help) => ({
       kv,
       help: help,
       layout: memLayout(kv.get('variables').size),

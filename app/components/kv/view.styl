@@ -140,7 +140,6 @@ canvas, svg
   justify-content center
   background-color #333
   color #fff
-  margin-bottom 2em
 
 .toolbar-title
   display inline-block
@@ -237,6 +236,54 @@ canvas, svg
 .well-delete:active
   background-color rgba(0,0,0,1)
   color #999
+
+.output-list
+  margin-bottom 2em
+  display flex
+  align-items center top
+  justify-content center
+  background-color #eee
+  color #555
+  .toolbar-title
+    padding 0.6em 0
+  .inline-list
+    margin 0.4em
+
+.pill
+  cursor pointer
+  display inline-block
+  border-radius 10em
+  border none
+  padding 0
+  background-color #ddd
+  color #333
+  font-size .7em
+  line-height 2.3
+  vertical-align middle
+  padding 0em 1em
+  outline none
+  position relative
+
+  &.state-active
+    cursor default
+    background-color #ccc
+    font-weight bold
+
+  .pill-delete
+    border none
+    background-color #aaa
+    border-radius 5em
+    width 1.7em
+    height 1.7em
+    margin-right -0.65em
+    margin-left 1em
+    text-align center
+    color #fff
+    display inline-block
+    outline none
+
+    &:active
+      background-color #bbb
 
 .debug-panel
   height 1em

@@ -353,6 +353,34 @@ const renderLoopList = (state) =>
   ])
 ;
 
+const renderOutputList = (state) =>
+  div('.output-list', [
+    span('.toolbar-title', 'Outputs:'),
+    ul('.inline-list', [
+      state.kv.get('outputs').map((output, i, all) =>
+        li(
+          span('.pill' +
+            (i === state.kv.get('currentOutput') ? '.state-active' : ''), {
+              attributes: {
+                'data-kv-output': i,
+              },
+            }, [
+              output,
+              all.count() > 1 && button('.pill-delete', {attributes: {
+                'data-kv-remove-output': i,
+              }}, 'X') || null,
+            ]
+          )
+        )
+      ).toArray(),
+      state.kv.get('outputs').size < 4 && li(
+        button('.pill', {attributes: {'data-kv-add-output': true}},'+')
+      ) || null,
+      //li(button('.well.well-add', 'Add Loop')),
+    ]),
+  ])
+;
+
 const renderDebug = (state) => {
   const include = state.kv.get('currentLoop').get('include');
   const exclude = state.kv.get('currentLoop').get('exclude');
@@ -399,8 +427,8 @@ const renderHelp = (state) => [
     ]),
     p(
       button('.button-big', {attributes: {'data-help': false}},'Close')
-    )
-  ])
+    ),
+  ]),
 ];
 
 const render = (state) =>
@@ -408,6 +436,7 @@ const render = (state) =>
     renderHelp(state),
     renderToolbar(state),
     renderLoopList(state),
+    renderOutputList(state),
     renderDebug(state),
     renderTableContainer(state),
   ]);

@@ -66,6 +66,28 @@ export default (DOM) => {
     moveEnd$:
       mouseUp$
         .withLatestFrom(drag$, (up, move) => move),
+    addOutput$:
+      DOM
+        .select('[data-kv-add-output]')
+        .events('click')
+        .do(preventDefault)
+        .map(() => true),
+    removeOutput$:
+      DOM
+        .select('[data-kv-remove-output]')
+        .events('click')
+        .do(preventDefault)
+        .do((e) => e.stopPropagation())
+        .map(parseDataAttr('kvRemoveOutput'))
+        .filter(isFinite),
+    selectOutput$:
+      DOM
+        .select('[data-kv-output]')
+        .events('click')
+        .do(preventDefault)
+        .do((e) => e.stopPropagation())
+        .map(parseDataAttr('kvOutput'))
+        .filter(isFinite),
     help$:
       DOM
         .select('[data-help]')
