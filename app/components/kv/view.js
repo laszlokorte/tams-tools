@@ -222,13 +222,16 @@ const renderTableRowEnd = (rowIndex, {right}) =>
   ) || null
 ;
 
-const renderTableCell = (kv, column) => {
+const renderTableCell = (kv, output, column) => {
   const pattern = formatBinary(column.scope, kv.get('variables').size);
-  const scope = kv.get('data').get(column.scope);
+  const value = kv.get('outputs')
+    .get(kv.get('currentOutput'))
+    .get('values')
+    .get(column.scope);
   const include = kv.get('currentLoop').get('include');
   const exclude = kv.get('currentLoop').get('exclude');
   const active = matchesLoop(column.scope, include, exclude);
-  const error = active && (scope === false);
+  const error = active && (value === false);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
@@ -239,10 +242,11 @@ const renderTableCell = (kv, column) => {
       attributes: {
         'data-kv-offset': column.scope,
         'data-kv-pattern': pattern,
-        'data-kv-value': scope,
+        'data-kv-value': value,
+        'data-kv-output': output,
       },
     },
-    renderValue(scope)
+    renderValue(value)
   );
 };
 
@@ -267,7 +271,7 @@ const tableLables = ({rows, cols, offset, variables}) => ({
 
 // generate a HTML Table from the given KV layout, kv data.
 // offset is just needed for recursive calls
-const renderTable = (layout, kv, offset = kv.get('variables').size) => {
+const renderTable = (layout, kv, output, offset = kv.get('variables').size) => {
   const cols = layout.columns;
   const rows = layout.rows;
   const rowCount = rows.length;
@@ -283,7 +287,10 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
 
   return div('.kv-container', [
     layout.treeHeight === 0 &&
-    renderLoops(kv.get('loops'), rows, cols) || null,
+    renderLoops(
+      kv.get('loops').filter(
+        (loop) => loop.get('output') === output
+      ), rows, cols) || null,
 
     table('.kv-table', {
       attributes: {'data-kv-height': layout.treeHeight},
@@ -295,10 +302,10 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
           row.map((column) => {
             if (column.children) {
               return td('.kv-table-cell-body.kv-cell-container', [
-                renderTable(column.children, kv, labelOffset + 1),
+                renderTable(column.children, kv, output, labelOffset + 1),
               ]);
             } else {
-              return renderTableCell(kv, column);
+              return renderTableCell(kv, output, column);
             }
           }),
           renderTableRowEnd(rowIndex, labels),
@@ -365,7 +372,7 @@ const renderOutputList = (state) =>
                 'data-kv-output': i,
               },
             }, [
-              output,
+              output.get('name'),
               all.count() > 1 && button('.pill-delete', {attributes: {
                 'data-kv-remove-output': i,
               }}, 'X') || null,
@@ -398,7 +405,7 @@ const renderDebug = (state) => {
 };
 
 const renderBody = (state) =>
-  renderTable(state.layout, state.kv)
+  renderTable(state.layout, state.kv, state.kv.get('currentOutput'))
 ;
 
 const renderTableContainer = (state) =>
