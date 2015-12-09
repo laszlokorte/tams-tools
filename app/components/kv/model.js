@@ -157,7 +157,10 @@ const removeOutput = (state, index) => {
   }).update('currentOutput', (val) => {
     return val < index ? val : Math.max(0, val - 1);
   }).update('loops', (loops) =>
-    loops.filter((loop) => loop.get('output') !== index)
+    loops
+      .filter((loop) => loop.get('output') !== index)
+      .map((loop) => loop.update('output',
+        (val) => val < index ? val : Math.max(0, val - 1)))
   );
 };
 
