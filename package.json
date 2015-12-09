@@ -48,6 +48,7 @@
     "@cycle/isolate": "^1.1.1",
     "@cycle/storage": "^2.0.3",
     "immutable": "^3.7.5",
+    "nib": "^1.1.0",
     "rx": "^4.0.0",
     "virtual-dom": "^2.1.1"
   },

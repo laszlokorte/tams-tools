@@ -4,6 +4,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import jeet from 'jeet';
 import rupture from 'rupture';
+import nib from 'nib';
 
 let name = 'Cycle!';
 
@@ -55,7 +56,7 @@ module.exports = {
   },
 
   stylus: {
-    use: [jeet(), rupture()],
+    use: [jeet(), rupture(), nib()],
   },
 
   plugins: [
