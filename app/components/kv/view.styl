@@ -251,18 +251,16 @@ canvas, svg
 
 .pill
   cursor pointer
-  display inline-block
-  border-radius 10em
+  display block
   border none
-  padding 0
+  height: 2.4em
   background-color #ddd
   color #333
-  font-size .7em
-  line-height 2.3
-  vertical-align middle
-  padding 0em 1em
+  font-size 8pt
+  line-height 20pt
+  padding 0 1em
   outline none
-  position relative
+  border-radius 10em
 
   &.state-active
     cursor default
@@ -270,20 +268,46 @@ canvas, svg
     font-weight bold
 
   .pill-delete
+    border-radius 10em
+    display block
     border none
     background-color #aaa
-    border-radius 5em
-    width 1.7em
-    height 1.7em
-    margin-right -0.65em
-    margin-left 1em
+    text-indent -999px
+    direction ltr
+    height 16pt
+    width 16pt
+    margin 1.5pt 0
+    padding 0
+    margin-right -6.5pt
+    margin-left 8pt
+    font-size 1pt
+    font-weight bold
     text-align center
     color #fff
     display inline-block
     outline none
+    line-height 5pt
+    vertical-align top
+    overflow hidden
+    text-transform lowercase
+    position relative
 
+    &:hover
+      background-color #E33A39
+      color #fff
     &:active
-      background-color #bbb
+      background-color #c30A19
+
+    &::after
+      text-indent 0
+      font-size 12pt
+      margin-top -6pt
+      line-height 12pt
+      content: '×'
+      absolute top 50% left 0
+      width 100%
+      height 100%
+      vertical-align middle
 
 .debug-panel
   height 1em
