@@ -224,11 +224,14 @@ const renderTableRowEnd = (rowIndex, {right}) =>
 
 const renderTableCell = (kv, column) => {
   const pattern = formatBinary(column.scope, kv.get('variables').size);
-  const scope = kv.get('data').get(column.scope);
+  const value = kv.get('outputs')
+    .get(kv.get('currentOutput'))
+    .get('values')
+    .get(column.scope);
   const include = kv.get('currentLoop').get('include');
   const exclude = kv.get('currentLoop').get('exclude');
   const active = matchesLoop(column.scope, include, exclude);
-  const error = active && (scope === false);
+  const error = active && (value === false);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
@@ -239,10 +242,10 @@ const renderTableCell = (kv, column) => {
       attributes: {
         'data-kv-offset': column.scope,
         'data-kv-pattern': pattern,
-        'data-kv-value': scope,
+        'data-kv-value': value,
       },
     },
-    renderValue(scope)
+    renderValue(value)
   );
 };
 
@@ -281,9 +284,14 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
     variables: kv.get('variables'),
   });
 
+  const currentOutput = kv.get('currentOutput');
+
   return div('.kv-container', [
     layout.treeHeight === 0 &&
-    renderLoops(kv.get('loops'), rows, cols) || null,
+    renderLoops(
+      kv.get('loops').filter(
+        (loop) => loop.get('output') === currentOutput
+      ), rows, cols) || null,
 
     table('.kv-table', {
       attributes: {'data-kv-height': layout.treeHeight},
@@ -365,7 +373,7 @@ const renderOutputList = (state) =>
                 'data-kv-output': i,
               },
             }, [
-              output,
+              output.get('name'),
               all.count() > 1 && button('.pill-delete', {attributes: {
                 'data-kv-remove-output': i,
               }}, 'X') || null,

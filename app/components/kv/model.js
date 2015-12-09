@@ -25,15 +25,16 @@ const generateOutputName = (index) =>
   'O' + (index + 1)
 ;
 
+const nullArray = (size) =>
+  arrayOfSize(Math.pow(2, size))
+    .map(() => null)
+;
+
 // create a new kv diagram with given size
 // size: number of inputs
-const newKV = (size, base) => {
-  const length = Math.pow(2, size);
-  const array = arrayOfSize(length)
+const newKV = (size) => {
+  const array = nullArray(size)
     .map((_,i) => {
-      if (base && base.data.size > i) {
-        return base.data[i];
-      }
       return i % 2 === 0;
     });
 
@@ -44,24 +45,30 @@ const newKV = (size, base) => {
 
   return {
     variables: labels,
-    outputs: ["O1"],
-    data: array,
+    outputs: [
+      {
+        name: "O1",
+        values: array,
+      },
+    ],
     loops: [
     ],
   };
 };
 
-const makeLoop = (size, start, end) => {
+const makeLoop = (size, output = 0, start, end) => {
   const all = fillBits(size);
   if (typeof start === 'undefined') {
     return I.Map({
       include: -1,
       exclude: -1,
+      output,
     });
   } else {
     return I.Map({
       include: start & end,
       exclude: all & ~(start | end),
+      output,
     });
   }
 };
@@ -96,8 +103,10 @@ const addInput = (kv) => {
   return kv
     .update('variables',
       (old) => old.push(generateVariableName(old.size)))
-    .update('data',
-      (old) => old.concat(old))
+    .update('outputs',
+      (outputs) => outputs.map(
+      (output) => output.update('values',
+        (old) => old.concat(old))))
     .set('currentLoop', makeLoop(oldSize + 1));
 };
 
@@ -111,8 +120,10 @@ const removeInput = (kv) => {
   return kv
     .update('variables',
       (old) => old.pop())
-    .update('data',
-      (old) => old.setSize(old.size / 2))
+    .update('outputs',
+      (outputs) => outputs.map(
+        (output) => output.update('values',
+        (old) => old.setSize(old.size / 2))))
     .set('currentLoop', makeLoop(newSize))
     .update('loops', (loops) =>
       loops
@@ -121,9 +132,16 @@ const removeInput = (kv) => {
     );
 };
 
+const buildOutput = (index, size) =>
+  I.Map({
+    name: generateOutputName(index),
+    values: I.List(nullArray(size)),
+  })
+;
+
 const addOutput = (state) => {
   return state.update('outputs', (outputs) =>
-    outputs.push(generateOutputName(outputs.size)))
+    outputs.push(buildOutput(outputs.size, state.get('variables').size)))
   .set('currentOutput', state.get('outputs').size);
 };
 
@@ -132,13 +150,15 @@ const removeOutput = (state, index) => {
     const newOutputs = outputs.remove(index);
 
     if (newOutputs.size === 0) {
-      return newOutputs.push(generateOutputName(0));
+      return newOutputs.push(buildOutput(0, state.get('variables').size));
     } else {
       return newOutputs;
     }
   }).update('currentOutput', (val) => {
     return val < index ? val : Math.max(0, val - 1);
-  });
+  }).update('loops', (loops) =>
+    loops.filter((loop) => loop.get('output') !== index)
+  );
 };
 
 const selectOutput = (state, index) => {
@@ -151,9 +171,14 @@ const removeLoop = (kv, loopIndex) => {
   );
 };
 
-const removeFieldFromLoop = (loop, bit) => {
+const removeFieldFromLoop = (loop, output, bit) => {
   const include = loop.get('include');
   const exclude = loop.get('exclude');
+
+  // loop does not belong to that output anyway
+  if (loop.get('output') !== output) {
+    return loop;
+  }
 
   // loop does not contain the field anyway
   if (!matchesLoop(bit, include, exclude)) {
@@ -184,22 +209,25 @@ const removeFieldFromLoop = (loop, bit) => {
 
 // cycle the given bit [... -> true -> false -> null -> ...]
 const cycleBit = (kv, bit, reverse) => {
-  const oldValue = kv.get('data').get(bit);
+  const oldValue = kv.get('outputs')
+    .get(kv.get('currentOutput'))
+    .get('values').get(bit);
   const newValueA = (oldValue === false) ? null : !oldValue;
   const newValueB = (oldValue === true) ? null : oldValue === false;
   const newValue = reverse ? newValueA : newValueB;
 
-  return kv
-    .setIn(['data', bit], newValue)
-    .update('loops', (loops) => {
-      if (newValue === false) {
-        return loops
-          .map((loop) => removeFieldFromLoop(loop, bit))
-          .filter((loop) => isLoopNotEmpty(loop, kv.get('variables').size));
-      } else {
-        return loops;
-      }
-    });
+  const newKv = kv.setIn(
+    ['outputs', kv.get('currentOutput'), 'values', bit], newValue);
+
+  if (newValue === false) {
+    return newKv.update('loops', (loops) =>
+      loops
+        .map((loop) => removeFieldFromLoop(loop, kv.get('currentOutput'), bit))
+        .filter((loop) => isLoopNotEmpty(loop, kv.get('variables').size))
+    );
+  } else {
+    return newKv;
+  }
 };
 
 const isCurrentLoopAllowed = (state) => {
@@ -207,9 +235,12 @@ const isCurrentLoopAllowed = (state) => {
   const include = loop.get('include');
   const exclude = loop.get('exclude');
 
-  return state.get('data').reduce((prev, val, index) =>
-    prev && (!matchesLoop(index, include, exclude) || val !== false)
-  , true);
+  return state.get('outputs')
+    .get(state.get('currentOutput'))
+    .get('values')
+    .reduce((prev, val, index) =>
+      prev && (!matchesLoop(index, include, exclude) || val !== false)
+    , true);
 };
 
 const init = () =>
@@ -233,7 +264,7 @@ const modifiers = (actions) => {
     }),
     actions.move$.map(({startOffset, targetOffset}) => (state) => {
       return state.set('currentLoop',
-        makeLoop(state.get('variables').size,
+        makeLoop(state.get('variables').size, 0,
           startOffset, targetOffset)
       );
     }),
@@ -246,7 +277,11 @@ const modifiers = (actions) => {
       return state.update('loops', (loops) => {
         if (isLoopNotEmpty(newLoop, state.get('variables').size) &&
             isCurrentLoopAllowed(state)) {
-          return loops.push(newLoop.set('color', generateColor(loops.size)));
+          return loops.push(
+            newLoop
+              .set('color', generateColor(loops.size))
+              .set('output', state.get('currentOutput'))
+          );
         } else {
           return loops;
         }
@@ -268,7 +303,12 @@ const modifiers = (actions) => {
 
 const fromJson = (json) => I.Map({
   variables: I.List(json.variables),
-  data: I.List(json.data),
+  outputs: I.List(json.outputs.map((output) =>
+    I.Map({
+      name: output.name,
+      values: I.List(output.values),
+    })
+  )),
   loops: I.List(json.loops.map((loop) =>
     I.Map({
       color: loop.color,
@@ -276,7 +316,6 @@ const fromJson = (json) => I.Map({
       exclude: loop.exclude,
     })
   )),
-  outputs: I.List(json.outputs),
   currentLoop: makeLoop(json.variables.length),
   currentOutput: 0,
 });
