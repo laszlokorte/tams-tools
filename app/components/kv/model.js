@@ -208,21 +208,21 @@ const removeFieldFromLoop = (loop, output, bit) => {
 };
 
 // cycle the given bit [... -> true -> false -> null -> ...]
-const cycleBit = (kv, bit, reverse) => {
+const cycleValue = (kv, output, offset, reverse) => {
   const oldValue = kv.get('outputs')
-    .get(kv.get('currentOutput'))
-    .get('values').get(bit);
+    .get(output)
+    .get('values').get(offset);
   const newValueA = (oldValue === false) ? null : !oldValue;
   const newValueB = (oldValue === true) ? null : oldValue === false;
   const newValue = reverse ? newValueA : newValueB;
 
   const newKv = kv.setIn(
-    ['outputs', kv.get('currentOutput'), 'values', bit], newValue);
+    ['outputs', output, 'values', offset], newValue);
 
   if (newValue === false) {
     return newKv.update('loops', (loops) =>
       loops
-        .map((loop) => removeFieldFromLoop(loop, kv.get('currentOutput'), bit))
+        .map((loop) => removeFieldFromLoop(loop, output, offset))
         .filter((loop) => isLoopNotEmpty(loop, kv.get('variables').size))
     );
   } else {
@@ -230,13 +230,13 @@ const cycleBit = (kv, bit, reverse) => {
   }
 };
 
-const isCurrentLoopAllowed = (state) => {
-  const loop = state.get('currentLoop');
+const isLoopValid = (state, loop) => {
+  const output = loop.get('output');
   const include = loop.get('include');
   const exclude = loop.get('exclude');
 
   return state.get('outputs')
-    .get(state.get('currentOutput'))
+    .get(output)
     .get('values')
     .reduce((prev, val, index) =>
       prev && (!matchesLoop(index, include, exclude) || val !== false)
@@ -259,28 +259,28 @@ const modifiers = (actions) => {
     actions.removeInput$.map(() => (state) => {
       return removeInput(state);
     }),
-    actions.cycleValue$.map(({offset, reverse}) => (state) => {
-      return cycleBit(state, offset, reverse);
+    actions.cycleValue$.map(({output, offset, reverse}) => (state) => {
+      return cycleValue(state, output, offset, reverse);
     }),
-    actions.move$.map(({startOffset, targetOffset}) => (state) => {
+    actions.tryLoop$.map(({output, startOffset, targetOffset}) => (state) => {
       return state.set('currentLoop',
-        makeLoop(state.get('variables').size, 0,
+        makeLoop(state.get('variables').size, output,
           startOffset, targetOffset)
       );
     }),
     actions.removeLoop$.map((loopIndex) => (state) => {
       return removeLoop(state, loopIndex);
     }),
-    actions.moveEnd$.map(() => (state) => {
-      const newLoop = state.get('currentLoop');
+    actions.addLoop$.map(({output, startOffset, targetOffset}) => (state) => {
+      const newLoop = makeLoop(state.get('variables').size, output,
+          startOffset, targetOffset);
 
       return state.update('loops', (loops) => {
         if (isLoopNotEmpty(newLoop, state.get('variables').size) &&
-            isCurrentLoopAllowed(state)) {
+            isLoopValid(state, newLoop)) {
           return loops.push(
             newLoop
               .set('color', generateColor(loops.size))
-              .set('output', state.get('currentOutput'))
           );
         } else {
           return loops;

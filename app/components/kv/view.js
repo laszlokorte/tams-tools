@@ -222,7 +222,7 @@ const renderTableRowEnd = (rowIndex, {right}) =>
   ) || null
 ;
 
-const renderTableCell = (kv, column) => {
+const renderTableCell = (kv, output, column) => {
   const pattern = formatBinary(column.scope, kv.get('variables').size);
   const value = kv.get('outputs')
     .get(kv.get('currentOutput'))
@@ -243,6 +243,7 @@ const renderTableCell = (kv, column) => {
         'data-kv-offset': column.scope,
         'data-kv-pattern': pattern,
         'data-kv-value': value,
+        'data-kv-output': output,
       },
     },
     renderValue(value)
@@ -270,7 +271,7 @@ const tableLables = ({rows, cols, offset, variables}) => ({
 
 // generate a HTML Table from the given KV layout, kv data.
 // offset is just needed for recursive calls
-const renderTable = (layout, kv, offset = kv.get('variables').size) => {
+const renderTable = (layout, kv, output, offset = kv.get('variables').size) => {
   const cols = layout.columns;
   const rows = layout.rows;
   const rowCount = rows.length;
@@ -284,13 +285,11 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
     variables: kv.get('variables'),
   });
 
-  const currentOutput = kv.get('currentOutput');
-
   return div('.kv-container', [
     layout.treeHeight === 0 &&
     renderLoops(
       kv.get('loops').filter(
-        (loop) => loop.get('output') === currentOutput
+        (loop) => loop.get('output') === output
       ), rows, cols) || null,
 
     table('.kv-table', {
@@ -303,10 +302,10 @@ const renderTable = (layout, kv, offset = kv.get('variables').size) => {
           row.map((column) => {
             if (column.children) {
               return td('.kv-table-cell-body.kv-cell-container', [
-                renderTable(column.children, kv, labelOffset + 1),
+                renderTable(column.children, kv, output, labelOffset + 1),
               ]);
             } else {
-              return renderTableCell(kv, column);
+              return renderTableCell(kv, output, column);
             }
           }),
           renderTableRowEnd(rowIndex, labels),
@@ -406,7 +405,7 @@ const renderDebug = (state) => {
 };
 
 const renderBody = (state) =>
-  renderTable(state.layout, state.kv)
+  renderTable(state.layout, state.kv, state.kv.get('currentOutput'))
 ;
 
 const renderTableContainer = (state) =>

@@ -12,27 +12,36 @@ export default (DOM) => {
     .do(preventDefault)
     .map(parseDataAttr('kvOffset'))
     .filter(isFinite);
-  const drag$ = DOM
+  const mousedown$ = DOM
     .select('.kv-cell-atom[data-kv-offset]')
     .events('mousedown')
     .do(preventDefault)
     .filter((evt) => evt.shiftKey)
-    .map(parseDataAttr('kvOffset'))
-    .filter(isFinite)
-    .flatMap((startOffset) =>
+    .map((evt) => ({
+      offset: parseInt(evt.target.dataset.kvOffset, 10),
+      output: parseInt(evt.target.dataset.kvOutput, 10),
+    }))
+    .filter(({offset}) => !isNaN(offset));
+  const drag$ = mousedown$
+    .flatMap(({offset, output}) =>
       O.just({
-        startOffset: startOffset,
-        targetOffset: startOffset,
+        output: output,
+        startOffset: offset,
+        targetOffset: offset,
       }).concat(
         mouseEnter$
         .distinctUntilChanged()
         .map((targetOffset) => ({
-          startOffset,
+          output,
+          startOffset: offset,
           targetOffset,
         })
       )
       ).takeUntil(mouseUp$)
     );
+
+  const dragEnd$ = drag$
+    .sample(mouseUp$);
 
   return {
     addInput$:
@@ -52,6 +61,7 @@ export default (DOM) => {
         .filter((evt) => !evt.shiftKey)
         .map((evt) => ({
           reverse: evt.altKey,
+          output: parseInt(evt.target.dataset.kvOutput, 10),
           offset: parseInt(evt.target.dataset.kvOffset, 10),
         })),
     removeLoop$:
@@ -61,11 +71,10 @@ export default (DOM) => {
         .do(preventDefault)
         .map(parseDataAttr('loopIndex'))
         .filter(isFinite),
-    move$:
+    tryLoop$:
       drag$,
-    moveEnd$:
-      mouseUp$
-        .withLatestFrom(drag$, (up, move) => move),
+    addLoop$:
+      dragEnd$,
     addOutput$:
       DOM
         .select('[data-kv-add-output]')
