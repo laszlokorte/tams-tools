@@ -293,6 +293,7 @@ const renderTable = (layout, kv, output, offset = kv.get('variables').size) => {
       ), rows, cols) || null,
 
     table('.kv-table', {
+      className: 'kv-mode-' + kv.get('mode'),
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
       renderTableHead(colCount, labels),

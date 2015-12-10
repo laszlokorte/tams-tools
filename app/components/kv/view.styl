@@ -457,11 +457,17 @@ canvas, svg
 .kv-cell-atom:active
   background-color #c0c0c0
 
-.kv-cell-atom:not([data-kv-value='true'])
-  color grey
+.kv-mode-dnf
+  .kv-cell-atom:not([data-kv-value='true'])
+    color grey
+  .kv-cell-atom[data-kv-value='false']
+    font-weight normal
 
-.kv-cell-atom[data-kv-value='false']
-  font-weight normal
+.kv-mode-knf
+  .kv-cell-atom:not([data-kv-value='false'])
+    color grey
+  .kv-cell-atom[data-kv-value='true']
+    font-weight normal
 
 .kv-cell-atom::before
   content attr(data-kv-offset)
