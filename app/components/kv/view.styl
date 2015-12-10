@@ -145,6 +145,43 @@ canvas, svg
   display inline-block
   padding 1.6em 1em
 
+.toggle-button
+  font-family inherit
+  color white
+  line-height 1
+  vertical-align bottom
+  border 0
+  font-size 1em
+  display inline-block
+  margin 0.8em 0
+  padding 0 1em 0.7em
+  background-color #2a2a2a
+  text-align center
+  position relative
+  cursor pointer
+  -webkit-appearance none
+  outline none
+
+  &:active
+    background-color #202020
+
+  .toggle-button-state
+    display none
+    pointer-events none
+    &.state-active
+      display block
+
+  &::after
+    content 'Mode'
+    color #666
+    text-align center
+    font-size 0.6em
+    position absolute
+    bottom 0.7em
+    left 0
+    right 0
+
+
 .well
   display block
   padding 0

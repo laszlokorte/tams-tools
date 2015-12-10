@@ -4,7 +4,7 @@ import {
   strong, br,
 } from '@cycle/dom';
 
-import {matchesLoop} from './model';
+import {matchesLoop, isValidLoopValue} from './model';
 import './view.styl';
 
 import {highestBit, formatBinary} from '../../lib/utils';
@@ -231,7 +231,7 @@ const renderTableCell = (kv, output, column) => {
   const include = kv.get('currentLoop').get('include');
   const exclude = kv.get('currentLoop').get('exclude');
   const active = matchesLoop(column.scope, include, exclude);
-  const error = active && (value === false);
+  const error = active && !isValidLoopValue(kv.get('mode'), value);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
@@ -348,8 +348,23 @@ const renderLoopButton = (state, loop, index) =>
   ])
 ;
 
+const renderModeButton = (state) => {
+  const mode = state.kv.get('mode');
+  return button('.toggle-button', {attributes: {
+    'data-kv-mode': (mode === 'dnf' ? 'knf' : 'dnf'),
+  }},[
+    span('.toggle-button-state', {
+      className: (mode === 'dnf' ? 'state-active' : null),
+    }, 'DNF'),
+    span('.toggle-button-state', {
+      className: (mode === 'knf' ? 'state-active' : null),
+    }, 'KNF'),
+  ]);
+};
+
 const renderLoopList = (state) =>
   div('.loop-list', [
+    renderModeButton(state),
     span('.toolbar-title', 'Loops:'),
     ul('.inline-list', [
       state.kv.get('loops').map((loop, i) =>

@@ -97,6 +97,12 @@ export default (DOM) => {
         .do((e) => e.stopPropagation())
         .map(parseDataAttr('kvOutput'))
         .filter(isFinite),
+    switchMode$:
+      DOM
+        .select('[data-kv-mode]')
+        .events('click')
+        .do(preventDefault)
+        .map((evt) => evt.target.dataset.kvMode),
     help$:
       DOM
         .select('[data-help]')

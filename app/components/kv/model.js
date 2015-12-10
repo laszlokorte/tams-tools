@@ -4,6 +4,9 @@ import I from 'immutable';
 import {memoize, arrayOfSize, fillBits, log} from '../../lib/utils';
 import {buildLayout} from './kvlayout';
 
+const MODE_DNF = 'dnf';
+const MODE_KNF = 'knf';
+
 // Generate a variable name from a given index
 const generateVariableName = (index) => {
   return String.fromCharCode(65 + index);
@@ -44,6 +47,7 @@ const newKV = (size) => {
     });
 
   return {
+    mode: MODE_DNF,
     variables: labels,
     outputs: [
       {
@@ -168,6 +172,17 @@ const selectOutput = (state, index) => {
   return state.set('currentOutput', index);
 };
 
+const switchMode = (state, mode) => {
+  if ((mode !== MODE_DNF && mode !== MODE_KNF) ||
+      mode === state.get('mode')) {
+    return state;
+  }
+
+  return state
+    .set('mode', mode)
+    .set('loops', I.List());
+};
+
 const removeLoop = (kv, loopIndex) => {
   return kv.update('loops',(loop) =>
     loop.delete(loopIndex)
@@ -210,6 +225,12 @@ const removeFieldFromLoop = (loop, output, bit) => {
   );
 };
 
+export const isValidLoopValue = (mode, value) => {
+  const notAllowedValue = (mode === MODE_KNF);
+
+  return value !== notAllowedValue;
+};
+
 // cycle the given bit [... -> true -> false -> null -> ...]
 const cycleValue = (kv, output, offset, reverse) => {
   const oldValue = kv.get('outputs')
@@ -222,7 +243,7 @@ const cycleValue = (kv, output, offset, reverse) => {
   const newKv = kv.setIn(
     ['outputs', output, 'values', offset], newValue);
 
-  if (newValue === false) {
+  if (!isValidLoopValue(kv.get('mode'), newValue)) {
     return newKv.update('loops', (loops) =>
       loops
         .map((loop) => removeFieldFromLoop(loop, output, offset))
@@ -237,12 +258,15 @@ const isLoopValid = (state, loop) => {
   const output = loop.get('output');
   const include = loop.get('include');
   const exclude = loop.get('exclude');
+  const mode = state.get('mode');
 
   return state.get('outputs')
     .get(output)
     .get('values')
     .reduce((prev, val, index) =>
-      prev && (!matchesLoop(index, include, exclude) || val !== false)
+      prev &&
+      (!matchesLoop(index, include, exclude) ||
+      isValidLoopValue(mode, val))
     , true);
 };
 
@@ -300,11 +324,15 @@ const modifiers = (actions) => {
     }),
     actions.selectOutput$.map((index) => (state) => {
       return selectOutput(state, index);
+    }),
+    actions.switchMode$.map((mode) => (state) => {
+      return switchMode(state, mode);
     })
   );
 };
 
 const fromJson = (json) => I.Map({
+  mode: json.mode,
   variables: I.List(json.variables),
   outputs: I.List(json.outputs.map((output) =>
     I.Map({
