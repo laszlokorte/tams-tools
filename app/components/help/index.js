@@ -1,5 +1,3 @@
-import {Observable as O} from 'rx';
-
 import model from './model';
 import view from './view';
 import intent from './intent';
@@ -9,7 +7,7 @@ import {pluck} from '../../lib/utils';
 export default (responses) => {
   const {
     DOM,
-    props$
+    props$,
   } = responses;
 
   const visible$ = props$
@@ -22,5 +20,6 @@ export default (responses) => {
 
   return {
     DOM: vtree$,
+    visible$: state$.map(pluck('visible')),
   };
 };
