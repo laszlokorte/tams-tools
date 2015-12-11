@@ -2,8 +2,8 @@ import {Observable as O} from 'rx';
 
 import {preventDefault} from '../../lib/utils';
 
-const svgEventPosition = (evt) => {
-  const svg = evt.target.ownerSVGElement || evt.target;
+const svgEventPosition = (evt, svg_) => {
+  const svg = svg_ || evt.target.ownerSVGElement || evt.target;
   const pt = svg.createSVGPoint();
   pt.x = evt.clientX;
   pt.y = evt.clientY;
@@ -21,12 +21,15 @@ export default (DOM) => {
     .select('.graphics-root')
     .events('mousedown')
     .do(preventDefault)
-    .map(svgEventPosition);
+    .map((evt) => ({
+      start: svgEventPosition(evt),
+      svg: evt.target.ownerSVGElement || evt.target,
+    }));
 
   const drag$ = mousedown$
-    .flatMap((start) =>
+    .flatMap(({start, svg}) =>
       mouseMove$
-      .map(svgEventPosition)
+      .map((evt) => svgEventPosition(evt, svg))
       .distinctUntilChanged()
       .map((target) => ({
         x: target.x - start.x,
