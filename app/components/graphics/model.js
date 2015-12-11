@@ -6,13 +6,22 @@ export default (size$, cameraPosition$, cameraZoom$, actions) =>
     cameraPosition$,
     cameraZoom$,
     (isize, iposition, izoom) =>
-      actions.zoom$.scan(
-        (prev, zoom) => prev * zoom.factor, izoom
-      ).startWith(izoom).map(
-        (zoom) => ({
+      O.combineLatest(
+        actions.zoom$.scan(
+          (prev, zoom) => ({
+            x: prev.x + (zoom.pivot.x - prev.x) * (1 - 1 / zoom.factor),
+            y: prev.y + (zoom.pivot.y - prev.y) * (1 - 1 / zoom.factor),
+          }), iposition
+        ).startWith(iposition),
+
+        actions.zoom$.scan(
+          (prev, zoom) => prev * zoom.factor, izoom
+        ).startWith(izoom),
+
+        (position, zoom) => ({
           zoom,
           size: isize,
-          position: iposition,
+          position,
         })
       )
   ).switch()

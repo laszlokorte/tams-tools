@@ -12,7 +12,7 @@ const viewbox = (width, height, x, y, zoom) =>
 const renderBackground = (width, height, x, y, zoom) =>
   svg('rect', {
     attributes: {
-      x: y - width / zoom / 2,
+      x: x - width / zoom / 2,
       y: y - height / zoom / 2,
       width: width / zoom,
       height: height / zoom,
