@@ -465,10 +465,12 @@ const render = (state) =>
     renderTableContainer(state),
   ]);
 
-export default (state$, helpBox$, spinner$) =>
+export default (state$, helpBox$, spinner$, modeSwitch$, canvas$) =>
   O.just(div([
     helpBox$,
     spinner$,
+    modeSwitch$,
+    canvas$,
     state$.map(render),
   ]))
 ;
