@@ -1,3 +1,5 @@
+import {Observable as O} from 'rx';
+
 import {preventDefault} from '../../lib/utils';
 
 const svgEventPosition = (evt) => {
@@ -9,6 +11,30 @@ const svgEventPosition = (evt) => {
 };
 
 export default (DOM) => {
+  const mouseUp$ = O
+    .fromEvent(document, 'mouseup')
+    .do(preventDefault);
+  const mouseMove$ = O
+    .fromEvent(document, 'mousemove')
+    .do(preventDefault);
+  const mousedown$ = DOM
+    .select('.graphics-root')
+    .events('mousedown')
+    .do(preventDefault)
+    .map(svgEventPosition);
+
+  const drag$ = mousedown$
+    .flatMap((start) =>
+      mouseMove$
+      .map(svgEventPosition)
+      .distinctUntilChanged()
+      .map((target) => ({
+        x: target.x - start.x,
+        y: target.y - start.y,
+      })
+      ).takeUntil(mouseUp$)
+    );
+
   return {
     zoom$:
       DOM
@@ -25,5 +51,6 @@ export default (DOM) => {
             pivot,
           };
         }),
+    pan$: drag$,
   };
 };
