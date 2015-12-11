@@ -131,3 +131,7 @@ export const log = (...args) => {
   console.log(...args);
   return args[0];
 };
+
+export const pluck = (key) =>
+  (obj) => obj[key]
+;

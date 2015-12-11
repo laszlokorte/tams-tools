@@ -1,3 +1,5 @@
+import {Observable as O} from 'rx';
+
 import {
   h1, div, p, button ,span, ul, li,
   table, tr, th, td,
@@ -456,7 +458,6 @@ const renderHelp = (state) => [
 
 const render = (state) =>
   div([
-    renderHelp(state),
     renderToolbar(state),
     renderLoopList(state),
     renderOutputList(state),
@@ -464,6 +465,9 @@ const render = (state) =>
     renderTableContainer(state),
   ]);
 
-export default (state$) =>
-  state$.map(render)
+export default (state$, helpBox$) =>
+  O.just(div([
+    helpBox$,
+    state$.map(render)
+  ]))
 ;
