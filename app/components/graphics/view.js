@@ -32,19 +32,19 @@ const renderCircle = (x, y, radius) =>
   })
 ;
 
-const render = ({size, camera}) =>
+const render = ({width, height, camera}) =>
   div('.graphics-container', [
     svg('svg', {
       attributes: {
-        width: size.width,
-        height: size.height,
+        width: width,
+        height: height,
         class: 'graphics-root',
         viewBox:
-          viewbox(size.width, size.height,
+          viewbox(width, height,
             camera),
       },
     }, [
-      renderBackground(size.width, size.height,
+      renderBackground(width, height,
             camera),
       renderCircle(0,0, 20),
     ]),

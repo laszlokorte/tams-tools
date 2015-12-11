@@ -2,7 +2,7 @@ import {Observable as O} from 'rx';
 
 import {clamp} from '../../lib/utils';
 
-const clampPositionDecorator = (min, max) => (modifierFn) =>
+const clampPosition = (modifierFn, min, max) =>
   (cam) => {
     const {x,y,zoom} = modifierFn(cam);
     return {
@@ -31,25 +31,29 @@ const panModifier = (delta) => ({x, y, zoom}) => ({
   y: y - delta.y,
 });
 
-export default (size$, cameraPosition$, cameraZoom$, actions) =>
+export default (props$, camera$, bounds$, actions) =>
   O.combineLatest(
-    size$,
-    cameraPosition$,
-    cameraZoom$,
-    (initSize, initPosition, initZoom) =>
-      O.merge(
-        actions.zoom$.map(zoomModifier(0.3, 3)),
-        actions.pan$.map(panModifier)
+    props$,
+    camera$,
+    (props, initCamera) =>
+      O.combineLatest(
+        O.merge(
+          actions.zoom$.map(zoomModifier(0.2, 5)),
+          actions.pan$.map(panModifier)
+        ),
+        bounds$,
+        (mod, bounds) =>
+          clampPosition(mod, bounds.min, bounds.max)
       )
-      .map(clampPositionDecorator(-500, 500))
       .startWith({
-        zoom: initZoom,
-        x: initPosition.x,
-        y: initPosition.y,
+        zoom: initCamera.zoom,
+        x: initCamera.x,
+        y: initCamera.y,
       })
       .scan((cam, modFn) => modFn(cam))
       .map((cam) => ({
-        size: initSize,
+        width: props.width,
+        height: props.height,
         camera: cam,
       }))
   ).switch()

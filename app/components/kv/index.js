@@ -42,10 +42,11 @@ export default (responses) => {
   const canvas = isolate(Graphics, 'myCanvas')({
     DOM,
     props$: O.just({
-      size: {width: 1200, height: 600},
-      cameraPosition: {x: 0, y: 0},
-      cameraZoom: 1,
+      width: 1200,
+      height: 600,
     }),
+    camera$: O.just({x: 0, y: 0, zoom: 1}),
+    bounds$: O.just({min: -500, max: 500}),
   });
 
   const state$ = model(O.empty(), intent(DOM));
