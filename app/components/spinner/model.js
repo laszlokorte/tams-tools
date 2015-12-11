@@ -1,8 +1,6 @@
 import {Observable as O} from 'rx';
 
-const clamp = (value, min, max) =>
-  Math.min(Math.max(value, min), max)
-;
+import {clamp} from '../../lib/utils';
 
 export default (value$, min$, max$, actions) =>
   O.combineLatest(

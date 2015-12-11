@@ -2,20 +2,20 @@ import {div, svg} from '@cycle/dom';
 
 import './view.styl';
 
-const viewbox = (width, height, x, y, zoom) =>
-  `${x - width / 2 / zoom}
-   ${y - height / 2 / zoom}
-   ${width / zoom}
-   ${height / zoom}`
+const viewbox = (width, height, camera) =>
+  `${camera.x - width / 2 / camera.zoom}
+   ${camera.y - height / 2 / camera.zoom}
+   ${width / camera.zoom}
+   ${height / camera.zoom}`
 ;
 
-const renderBackground = (width, height, x, y, zoom) =>
+const renderBackground = (width, height, camera) =>
   svg('rect', {
     attributes: {
-      x: x - width / zoom / 2,
-      y: y - height / zoom / 2,
-      width: width / zoom,
-      height: height / zoom,
+      x: camera.x - width / camera.zoom / 2,
+      y: camera.y - height / camera.zoom / 2,
+      width: width / camera.zoom,
+      height: height / camera.zoom,
       class: 'graphics-background',
     }
   })
@@ -27,12 +27,12 @@ const renderCircle = (x, y, radius) =>
       cx: x,
       cy: y,
       r: radius,
-      fill: 'red',
+      class: 'graphics-debug'
     },
   })
 ;
 
-const render = ({size, position, zoom}) =>
+const render = ({size, camera}) =>
   div('.graphics-container', [
     svg('svg', {
       attributes: {
@@ -41,11 +41,11 @@ const render = ({size, position, zoom}) =>
         class: 'graphics-root',
         viewBox:
           viewbox(size.width, size.height,
-            position.x, position.y, zoom),
+            camera),
       },
     }, [
       renderBackground(size.width, size.height,
-            position.x, position.y, zoom),
+            camera),
       renderCircle(0,0, 20),
     ]),
   ])

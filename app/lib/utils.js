@@ -135,3 +135,7 @@ export const log = (...args) => {
 export const pluck = (key) =>
   (obj) => obj[key]
 ;
+
+export const clamp = (value, min, max) =>
+  Math.min(Math.max(value, min), max)
+;

@@ -1,13 +1,34 @@
 import {Observable as O} from 'rx';
 
-const zoomModifier = (zoom) => (pos) => ({
-  x: pos.x + (zoom.pivot.x - pos.x) * (1 - 1 / zoom.factor),
-  y: pos.y + (zoom.pivot.y - pos.y) * (1 - 1 / zoom.factor),
-});
+import {clamp} from '../../lib/utils';
 
-const panModifier = (delta) => (pos) => ({
-  x: pos.x - delta.x,
-  y: pos.y - delta.y,
+const clampPositionDecorator = (min, max) => (modifierFn) =>
+  (cam) => {
+    const {x,y,zoom} = modifierFn(cam);
+    return {
+      zoom,
+      x: clamp(x, min, max),
+      y: clamp(y, min, max),
+    };
+  }
+;
+
+const zoomModifier = (min, max) => ({factor, pivot}) => ({x, y, zoom}) => {
+  const newZoom = clamp(zoom * factor, min, max);
+  const realFactor = newZoom / zoom;
+  const panFactor = (1 - 1 / realFactor);
+
+  return {
+    zoom: newZoom,
+    x: x + (pivot.x - x) * panFactor,
+    y: y + (pivot.y - y) * panFactor,
+  };
+};
+
+const panModifier = (delta) => ({x, y, zoom}) => ({
+  zoom,
+  x: x - delta.x,
+  y: y - delta.y,
 });
 
 export default (size$, cameraPosition$, cameraZoom$, actions) =>
@@ -15,23 +36,21 @@ export default (size$, cameraPosition$, cameraZoom$, actions) =>
     size$,
     cameraPosition$,
     cameraZoom$,
-    (isize, iposition, izoom) =>
-      O.combineLatest(
-        O.merge(
-          actions.zoom$.map(zoomModifier),
-          actions.pan$.map(panModifier)
-        ).scan((pos, modfn) => modfn(pos), iposition)
-        .startWith(iposition),
-
-        actions.zoom$.scan(
-          (prev, zoom) => prev * zoom.factor, izoom
-        ).startWith(izoom),
-
-        (position, zoom) => ({
-          zoom,
-          size: isize,
-          position,
-        })
+    (initSize, initPosition, initZoom) =>
+      O.merge(
+        actions.zoom$.map(zoomModifier(0.3, 3)),
+        actions.pan$.map(panModifier)
       )
+      .map(clampPositionDecorator(-500, 500))
+      .startWith({
+        zoom: initZoom,
+        x: initPosition.x,
+        y: initPosition.y,
+      })
+      .scan((cam, modFn) => modFn(cam))
+      .map((cam) => ({
+        size: initSize,
+        camera: cam,
+      }))
   ).switch()
 ;
