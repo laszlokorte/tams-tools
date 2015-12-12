@@ -55,6 +55,7 @@ export default ({props$, camera$, bounds$, content$}, actions) =>
         width: props.width,
         height: props.height,
         camera: cam,
+        content$,
       }))
   ).switch()
 ;

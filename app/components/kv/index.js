@@ -1,5 +1,6 @@
 import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
+import {svg} from '@cycle/dom';
 
 import HelpBox from '../help';
 import Spinner from '../spinner';
@@ -47,6 +48,8 @@ export default (responses) => {
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: O.just({min: -500, max: 500}),
+    content$: O.just(svg('circle',
+      {attributes: {cx: 50, cy: 50, r: 20, fill: 'magenta'}})),
   });
 
   const state$ = model(O.empty(), intent(DOM));

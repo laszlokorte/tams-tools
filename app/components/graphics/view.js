@@ -1,4 +1,5 @@
-import {div, svg} from '@cycle/dom';
+import {div} from '@cycle/dom';
+import svg from '../../lib/monkeypatches/svg';
 
 import './view.styl';
 
@@ -27,12 +28,12 @@ const renderCircle = (x, y, radius) =>
       cx: x,
       cy: y,
       r: radius,
-      class: 'graphics-debug'
+      class: 'graphics-debug',
     },
   })
 ;
 
-const render = ({width, height, camera}) =>
+const render = ({width, height, camera, content$}) =>
   div('.graphics-container', [
     svg('svg', {
       attributes: {
@@ -47,6 +48,8 @@ const render = ({width, height, camera}) =>
       renderBackground(width, height,
             camera),
       renderCircle(0,0, 20),
+      svg('g', {attributes: {class: 'graphics-content'}},
+        content$),
     ]),
   ])
 ;
