@@ -1,9 +1,8 @@
 import {Observable as O} from 'rx';
 
 import {
-  h1, div, p, button ,span, ul, li,
+  div, button ,span, ul, li,
   table, tr, th, td,
-  strong, br,
 } from '@cycle/dom';
 
 import {matchesLoop, isValidLoopValue} from './model';
@@ -434,28 +433,6 @@ const renderTableContainer = (state) =>
   ])
 ;
 
-const renderHelp = (state) => [
-  button('.button-help', {attributes: {'data-help': true}},'Help'),
-  div('.explaination' + (!state.help ? '.state-hidden' : ''), [
-    h1('KV Diagram'),
-    ul('.help-list',[
-      li([strong('Change Size:'), br(),
-        'You can change the amount of inputs.',
-        'This will change the KV-diagrams\'s dimensions.']),
-      li([strong('Change Values:'), br(),
-        'Click on the table cells to cycle the value.',
-        br(), '(hold ALT key for reversed cycle direction)']),
-      li([strong('Create loops:'), br(),
-        'Drag between two cells while holding SHIFT to create a loop.']),
-      li([strong('Remove loops:'), br(),
-        'Click on a loop icon to delete the loop.']),
-    ]),
-    p(
-      button('.button-big', {attributes: {'data-help': false}},'Close')
-    ),
-  ]),
-];
-
 const render = (state) =>
   div([
     renderToolbar(state),
@@ -465,10 +442,10 @@ const render = (state) =>
     renderTableContainer(state),
   ]);
 
-export default (state$, helpBox$, spinner$, modeSwitch$, canvas$) =>
+export default (state$, {helpBox$, inputSpinner$, modeSwitch$, canvas$}) =>
   O.just(div([
     helpBox$,
-    spinner$,
+    inputSpinner$,
     modeSwitch$,
     canvas$,
     state$.map(render),

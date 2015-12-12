@@ -31,7 +31,7 @@ const panModifier = (delta) => ({x, y, zoom}) => ({
   y: y - delta.y,
 });
 
-export default (props$, camera$, bounds$, actions) =>
+export default ({props$, camera$, bounds$, content$}, actions) =>
   O.combineLatest(
     props$,
     camera$,

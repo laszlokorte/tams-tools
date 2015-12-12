@@ -35,7 +35,7 @@ export default (responses) => {
   const modeSwitch = isolate(Switch, 'modeSwitch')({
     DOM,
     props$: O.just({
-      enabled: false
+      enabled: false,
     }),
   });
 
@@ -51,11 +51,12 @@ export default (responses) => {
 
   const state$ = model(O.empty(), intent(DOM));
   const vtree$ = view(
-    state$,
-    helpBox.DOM,
-    inputSpinner.DOM,
-    modeSwitch.DOM,
-    canvas.DOM
+    state$, {
+      helpBox$: helpBox.DOM,
+      inputSpinner$: inputSpinner.DOM,
+      modeSwitch$: modeSwitch.DOM,
+      canvas$: canvas.DOM,
+    }
   );
 
   return {

@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import {memoize, arrayOfSize, fillBits, log} from '../../lib/utils';
+import {memoize, arrayOfSize, fillBits} from '../../lib/utils';
 import {buildLayout} from './kvlayout';
 
 const MODE_DNF = 'dnf';
@@ -356,7 +356,6 @@ export default (initial$, actions) =>
     O.merge(
       initial$.startWith(init())
       .map(fromJson)
-      .do(log)
       .map((kv) => () => kv),
       modifiers(actions)
     ).scan(applyModification, null),

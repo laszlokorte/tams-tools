@@ -17,7 +17,7 @@ const renderBackground = (width, height, camera) =>
       width: width / camera.zoom,
       height: height / camera.zoom,
       class: 'graphics-background',
-    }
+    },
   })
 ;
 
