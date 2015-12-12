@@ -45,17 +45,6 @@ const renderOrigin = () =>
   })
 ;
 
-const renderCircle = (x, y, radius) =>
-  svg('circle', {
-    attributes: {
-      cx: x,
-      cy: y,
-      r: radius,
-      class: 'graphics-debug',
-    },
-  })
-;
-
 const render = ({width, height, camera, bounds, content$}) =>
   div('.graphics-container', [
     svg('svg', {

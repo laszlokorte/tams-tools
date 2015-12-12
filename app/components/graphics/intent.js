@@ -30,7 +30,10 @@ export default (DOM) => {
     .flatMap(({start, svg}) =>
       mouseMove$
       .map((evt) => svgEventPosition(evt, svg))
-      .distinctUntilChanged()
+      .distinctUntilChanged(
+        (v) => v,
+        (a, b) => a.x === b.x && a.y === b.y
+      )
       .map((target) => ({
         x: target.x - start.x,
         y: target.y - start.y,

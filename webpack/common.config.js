@@ -6,15 +6,29 @@ import jeet from 'jeet';
 import rupture from 'rupture';
 import nib from 'nib';
 
-let name = 'Cycle!';
+const vendorModules = /(node_modules|bower_components)/;
 
-let vendorModules = /(node_modules|bower_components)/;
+const htmlMinifyOptions = process.env.NODE_ENV === 'production' ? {
+  removeComments: true,
+  removeCommentsFromCDATA: true,
+  collapseWhitespace: true,
+  conservativeCollapse: false,
+  collapseBooleanAttributes: true,
+  removeAttributeQuotes: true,
+  removeRedundantAttributes: true,
+  preventAttributesEscaping: true,
+  useShortDoctype: true,
+  removeEmptyAttributes: true,
+  removeScriptTypeAttributes: true,
+  removeStyleLinkTypeAttributes: true,
+} : false;
 
 //export default
 module.exports = {
   target: "web",
   entry: {
     app: "./app/index.js",
+    experiment: "./app/experiment.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -34,6 +48,10 @@ module.exports = {
       //   test: /\.(json)$/,
       //   loader: "file?name=[path][name].[ext]&context=./app/static",
       // },
+      {
+        test: /\.(png|jpg|svg|ttf|eot|woff|woff2)$/,
+        loader: 'file?name=[path][name].[ext]'
+      },
       {
         test: /\.js$/,
         exclude: vendorModules,
@@ -63,24 +81,20 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin(
       'vendor', 'vendor-[hash].js', Infinity
     ),
-    new ExtractTextPlugin('app.css', {allChunks: true}),
+    new ExtractTextPlugin('[name]-[contenthash].css', {allChunks: true}),
     new HtmlWebpackPlugin({
-      title: name,
-      minify: process.env.NODE_ENV === 'production' ? {
-        removeComments: true,
-        removeCommentsFromCDATA: true,
-        collapseWhitespace: true,
-        conservativeCollapse: false,
-        collapseBooleanAttributes: true,
-        removeAttributeQuotes: true,
-        removeRedundantAttributes: true,
-        preventAttributesEscaping: true,
-        useShortDoctype: true,
-        removeEmptyAttributes: true,
-        removeScriptTypeAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-      } : false,
+      title: 'KV Editor',
+      minify: htmlMinifyOptions,
+      chunks: ['app', 'vendor'],
       template: './app/index.html',
+      favicon: './app/favicon.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Experiment',
+      minify: htmlMinifyOptions,
+      chunks: ['experiment', 'vendor'],
+      template: './app/index.html',
+      filename: 'experiment.html',
       favicon: './app/favicon.ico',
     }),
     new CopyWebpackPlugin([

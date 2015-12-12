@@ -8,12 +8,11 @@ export default (responses) => {
   const {
     DOM,
     props$,
+    content$,
   } = responses;
 
   const visible$ = props$
     .map(pluck('visible'));
-
-  const content$ = props$.map(pluck('content'));
 
   const state$ = model(visible$, content$, intent(DOM));
   const vtree$ = view(state$);

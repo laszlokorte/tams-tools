@@ -7,7 +7,7 @@
     display block
 
 .help-background
-  absolute top left
+  fixed top left
   width 100%
   height 100%
   background-color rgba(40,40,40,0.1)
@@ -21,12 +21,17 @@
   background-color #fff
   z-index 200
   box-shadow 0 1em 5em rgba(40,40,40,0.5)
+  margin-bottom 4em
 
 .help-box-close
   absolute top -2em right -2em
   width 4em
   height 4em
   background-color #333
+  background-image url('icons/close.svg')
+  background-size 50% 50%
+  background-position center
+  background-repeat no-repeat
   border-radius 50%
   border none
   color #fff
@@ -45,3 +50,10 @@
 
 .help-box-body
   padding 2em
+
+
+.help-item-titel
+  font-weight bold
+
+.help-item-body
+  margin 0.4em 0 1em

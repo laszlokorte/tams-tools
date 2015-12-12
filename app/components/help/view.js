@@ -2,7 +2,7 @@ import {div, button} from '@cycle/dom';
 
 import './view.styl';
 
-const render = ({visible, content}) =>
+const render = ({visible, content$}) =>
 div('.help-container', {
   className: visible ? 'state-visible' : 'state-hidden',
 }, [
@@ -11,9 +11,9 @@ div('.help-container', {
     button('.help-box-close', {
       attributes: {'data-help': false},
     }, 'Close'),
-    div('.help-box-body', [
-      content,
-    ]),
+    div('.help-box-body',
+      content$
+    ),
   ]),
 ]);
 

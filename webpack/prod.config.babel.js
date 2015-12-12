@@ -47,7 +47,7 @@ module.exports = merge(commonConfig, {
     new CompressionPlugin({
       asset: "{file}.gz",
       algorithm: "gzip",
-      regExp: new RegExp("\.(js|html|css|svg)$"),
+      regExp: new RegExp("\.(js|html|svg)$"),
       threshold: 10240,
       minRatio: 0.8,
     }),
