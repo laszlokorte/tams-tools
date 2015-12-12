@@ -51,10 +51,11 @@ export default ({props$, camera$, bounds$, content$}, actions) =>
         y: initCamera.y,
       })
       .scan((cam, modFn) => modFn(cam))
-      .map((cam) => ({
+      .combineLatest(bounds$, (cam, bounds) => ({
         width: props.width,
         height: props.height,
         camera: cam,
+        bounds,
         content$,
       }))
   ).switch()

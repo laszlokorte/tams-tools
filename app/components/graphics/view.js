@@ -22,6 +22,29 @@ const renderBackground = (width, height, camera) =>
   })
 ;
 
+const renderBounds = ({min, max}) =>
+  svg('rect', {
+    attributes: {
+      x: min,
+      y: min,
+      width: (max - min),
+      height: (max - min),
+      class: 'graphics-camera-bounds',
+    },
+  })
+;
+
+const renderOrigin = () =>
+  svg('circle', {
+    attributes: {
+      cx: 0,
+      cy: 0,
+      r: 5,
+      class: 'graphics-origin',
+    },
+  })
+;
+
 const renderCircle = (x, y, radius) =>
   svg('circle', {
     attributes: {
@@ -33,7 +56,7 @@ const renderCircle = (x, y, radius) =>
   })
 ;
 
-const render = ({width, height, camera, content$}) =>
+const render = ({width, height, camera, bounds, content$}) =>
   div('.graphics-container', [
     svg('svg', {
       attributes: {
@@ -47,7 +70,8 @@ const render = ({width, height, camera, content$}) =>
     }, [
       renderBackground(width, height,
             camera),
-      renderCircle(0,0, 20),
+      renderBounds(bounds),
+      renderOrigin(),
       svg('g', {attributes: {class: 'graphics-content'}},
         content$),
     ]),
