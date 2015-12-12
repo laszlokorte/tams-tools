@@ -8,6 +8,7 @@ import Switch from '../switch';
 import Graphics from '../graphics';
 
 import view from './view';
+import help from './help';
 
 export default (responses) => {
   const {
@@ -18,8 +19,8 @@ export default (responses) => {
     DOM,
     props$: O.just({
       visible: true,
-      content: 'Foobar',
     }),
+    content$: O.just(help()),
   });
 
   const inputSpinner = isolate(Spinner, 'inputSpinner')({
