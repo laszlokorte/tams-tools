@@ -56,19 +56,6 @@ module.exports = {
         test: /\.js$/,
         exclude: vendorModules,
         loader: "babel",
-        query: {
-          env: {
-            development: {
-              plugins: [
-                'typecheck',
-              ],
-            },
-          },
-          plugins: [
-            'syntax-flow',
-            'transform-flow-strip-types',
-          ],
-        },
       },
     ],
   },
