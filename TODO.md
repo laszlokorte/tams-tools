@@ -1,5 +1,8 @@
 # Todo
 
-* immutable data structures
-* adding/removing loops
-* multiple outputs
+* compose the ui of components
+* use sets instead of binary
+* Export PLA
+* Draw PLA
+* Edit existing loops
+* improve color and name generation
