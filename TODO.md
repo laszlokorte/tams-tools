@@ -6,3 +6,4 @@
 * Draw PLA
 * Edit existing loops
 * improve color and name generation
+* touch events
