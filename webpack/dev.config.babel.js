@@ -1,6 +1,6 @@
 import merge from 'webpack-merge';
 
-import commonConfig from './common.config.js';
+import commonConfig from './common.config.babel.js';
 
 //export default
 module.exports = merge(commonConfig, {

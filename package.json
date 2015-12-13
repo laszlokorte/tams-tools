@@ -7,7 +7,8 @@
     "compile": "env NODE_ENV=production webpack --config webpack/prod.config.babel.js --progress",
     "lint": "eslint .",
     "start": "webpack-dev-server --config webpack/dev.config.babel.js --progress --inline --hot --host 0.0.0.0",
-    "test": "npm run lint",
+    "starttest": "webpack --config webpack/test.config.babel.js",
+    "test": "testem",
     "clear": "rm -rf ./build"
   },
   "author": "Laszlo Korte <me@laszlokorte.de> (https://www.laszlokorte.de/)",
@@ -32,16 +33,14 @@
     "extract-text-webpack-plugin": "^0.9.1",
     "file-loader": "^0.8.4",
     "html-webpack-plugin": "^1.6.1",
-    "mocha": "^2.3.4",
-    "should": "^8.0.1",
     "style-loader": "^0.13.0",
     "stylus-loader": "^1.4.2",
+    "tape": "^4.2.2",
+    "testem": "^0.9.11",
+    "url-loader": "^0.5.7",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.14.0",
-    "webpack-merge": "^0.3.0",
-    "jeet": "^6.1.2",
-    "rupture": "^0.6.1",
-    "url-loader": "^0.5.7"
+    "webpack-merge": "^0.3.0"
   },
   "dependencies": {
     "@cycle/core": "^6.0.0-rc2",
@@ -50,6 +49,8 @@
     "@cycle/storage": "^2.0.3",
     "immutable": "^3.7.5",
     "nib": "^1.1.0",
+    "jeet": "^6.1.2",
+    "rupture": "^0.6.1",
     "rx": "^4.0.0",
     "virtual-dom": "^2.1.1"
   },

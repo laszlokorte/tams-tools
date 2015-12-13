@@ -5,7 +5,7 @@ import CompressionPlugin from 'compression-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CleanPlugin from 'clean-webpack-plugin';
 
-import commonConfig from './common.config.js';
+import commonConfig from './common.config.babel.js';
 
 //export default
 module.exports = merge(commonConfig, {
