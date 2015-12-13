@@ -2,26 +2,52 @@ import {Observable as O} from 'rx';
 
 import {preventDefault, parseDataAttr, pluckDataAttr} from '../../lib/utils';
 
+
+const touchTarget = (evt) =>
+  document.elementFromPoint(
+    evt.changedTouches[0].clientX,
+    evt.changedTouches[0].clientY
+  )
+;
 export default (DOM) => {
-  const mouseUp$ = O
-    .fromEvent(document, 'mouseup')
-    .do(preventDefault);
-  const mouseEnter$ = DOM
-    .select('.kv-cell-atom[data-kv-offset]')
-    .events('mouseenter')
-    .do(preventDefault)
-    .map(parseDataAttr('kvOffset'))
-    .filter(isFinite);
-  const mousedown$ = DOM
-    .select('.kv-cell-atom[data-kv-offset]')
-    .events('mousedown')
-    .do(preventDefault)
-    .filter((evt) => evt.shiftKey)
+  const mouseUp$ = O.merge(
+    O.fromEvent(document, 'touchend'),
+    O.fromEvent(document, 'mouseup')
+  );
+  const mouseEnter$ = O.merge(
+    DOM
+      .select('.kv-cell-atom[data-kv-offset]')
+      .events('mouseenter')
+      .map((evt) => ({
+        evt,
+        offset: parseInt(evt.target.dataset.kvOffset, 10),
+      }))
+    ,
+    DOM
+      .select('.kv-cell-atom[data-kv-offset]')
+      .events('touchmove')
+      .map((evt) => ({
+        evt,
+        offset: parseInt(touchTarget(evt).dataset.kvOffset, 10),
+      }))
+  );
+  const mousedown$ = O.merge(
+      DOM
+        .select('.kv-cell-atom[data-kv-offset]')
+        .events('touchstart'),
+      DOM
+        .select('.kv-cell-atom[data-kv-offset]')
+        .events('mousedown')
+        .filter((evt) => !!evt.shiftKey)
+    )
     .map((evt) => ({
+      evt,
       offset: parseInt(evt.target.dataset.kvOffset, 10),
       output: parseInt(evt.target.dataset.kvOutput, 10),
     }))
-    .filter(({offset}) => !isNaN(offset));
+    .do(({evt}) => evt.preventDefault())
+    .filter(({offset}) => !isNaN(offset))
+    ;
   const drag$ = mousedown$
     .flatMap(({offset, output}) =>
       O.just({
@@ -30,17 +56,21 @@ export default (DOM) => {
         targetOffset: offset,
       }).concat(
         mouseEnter$
+        .do(({evt}) => evt.preventDefault())
+        .filter(({offset: o}) => isFinite(o))
         .distinctUntilChanged(
-          (v) => v,
+          ({offset: o}) => o,
           (a, b) => a === b
         )
-        .map((targetOffset) => ({
+        .map(({offset: targetOffset}) => ({
           output,
           startOffset: offset,
           targetOffset,
         })
       )
-      ).takeUntil(mouseUp$)
+      ).takeUntil(
+        mouseUp$.do(preventDefault)
+      )
     );
 
   const dragEnd$ = drag$
