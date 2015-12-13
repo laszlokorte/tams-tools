@@ -5,31 +5,38 @@ import {preventDefault} from '../../lib/utils';
 const svgEventPosition = (evt, svg_) => {
   const svg = svg_ || evt.target.ownerSVGElement || evt.target;
   const pt = svg.createSVGPoint();
-  pt.x = evt.clientX;
-  pt.y = evt.clientY;
-  return pt.matrixTransform(svg.getScreenCTM().inverse());
+  pt.x = evt.pageX;
+  pt.y = evt.pageY;
+  const result = pt.matrixTransform(svg.getScreenCTM().inverse());
+  return result;
+};
+
+const hammerOptions = (manager, Hammer) => {
+  // Default pan recognizer.
+  manager.add(new Hammer.Pan());
+  // Default tap recognizer.
+  manager.get(`pan`).set({direction: Hammer.DIRECTION_ALL});
 };
 
 export default (DOM) => {
-  const mouseUp$ = O
-    .fromEvent(document, 'mouseup')
-    .do(preventDefault);
-  const mouseMove$ = O
-    .fromEvent(document, 'mousemove')
-    .do(preventDefault);
   const mousedown$ = DOM
     .select('.graphics-root')
-    .events('mousedown')
-    .do(preventDefault)
+    .events('panstart', hammerOptions)
     .map((evt) => ({
-      start: svgEventPosition(evt),
+      start: svgEventPosition(evt.srcEvent),
       svg: evt.target.ownerSVGElement || evt.target,
     }));
+  const mouseUp$ = DOM
+    .select('.graphics-root')
+    .events('panend');
+  const mouseMove$ = DOM
+    .select('.graphics-root')
+    .events('panmove');
 
   const drag$ = mousedown$
     .flatMap(({start, svg}) =>
       mouseMove$
-      .map((evt) => svgEventPosition(evt, svg))
+      .map((evt) => svgEventPosition(evt.srcEvent, svg))
       .distinctUntilChanged(
         (v) => v,
         (a, b) => a.x === b.x && a.y === b.y

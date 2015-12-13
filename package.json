@@ -44,9 +44,10 @@
     "@cycle/dom": "^8.0.0-rc4",
     "@cycle/isolate": "^1.1.1",
     "@cycle/storage": "^2.0.3",
+    "@cyclic/cycle-hammer-driver": "^0.1.1",
     "immutable": "^3.7.5",
-    "nib": "^1.1.0",
     "jeet": "^6.1.2",
+    "nib": "^1.1.0",
     "rupture": "^0.6.1",
     "rx": "^4.0.0",
     "virtual-dom": "^2.1.1"
