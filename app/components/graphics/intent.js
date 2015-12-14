@@ -80,7 +80,7 @@ export default (DOM) => {
     .map((evt) => {
       const pivot = svgEventPosition({
         x: evt.clientX,
-        y: evt.clientY
+        y: evt.clientY,
       },
       evt);
       const wheel = evt.deltaY / -40;
@@ -105,7 +105,7 @@ export default (DOM) => {
       .startWith({
         factor: startEvt.scale,
         prevFactor: startEvt.scale,
-        pivot: svgEventPosition(startEvt.center, startEvt.srcEvent)
+        pivot: svgEventPosition(startEvt.center, startEvt.srcEvent),
       })
       .scan(
         ({prevFactor}, {factor, pivot}) => ({
