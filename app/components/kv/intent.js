@@ -2,7 +2,6 @@ import {Observable as O} from 'rx';
 
 import {preventDefault, parseDataAttr, pluckDataAttr} from '../../lib/utils';
 
-
 const touchTarget = (evt) =>
   document.elementFromPoint(
     evt.changedTouches[0].clientX,
@@ -10,11 +9,11 @@ const touchTarget = (evt) =>
   )
 ;
 export default (DOM) => {
-  const mouseUp$ = O.merge(
+  const pointerUp$ = O.merge(
     O.fromEvent(document, 'touchend'),
     O.fromEvent(document, 'mouseup')
   );
-  const mouseEnter$ = O.merge(
+  const pointerEnter$ = O.merge(
     DOM
       .select('.kv-cell-atom[data-kv-offset]')
       .events('mouseenter')
@@ -31,7 +30,7 @@ export default (DOM) => {
         offset: parseInt(touchTarget(evt).dataset.kvOffset, 10),
       }))
   );
-  const mousedown$ = O.merge(
+  const pointerDown$ = O.merge(
       DOM
         .select('.kv-cell-atom[data-kv-offset]')
         .events('touchstart'),
@@ -48,16 +47,16 @@ export default (DOM) => {
     .do(({evt}) => evt.preventDefault())
     .filter(({offset}) => !isNaN(offset))
     ;
-  const drag$ = mousedown$
+  const drag$ = pointerDown$
     .flatMap(({offset, output}) =>
       O.just({
         output: output,
         startOffset: offset,
         targetOffset: offset,
       }).concat(
-        mouseEnter$
+        pointerEnter$
+        .filter(({offset: o}) => !isNaN(o))
         .do(({evt}) => evt.preventDefault())
-        .filter(({offset: o}) => isFinite(o))
         .distinctUntilChanged(
           ({offset: o}) => o,
           (a, b) => a === b
@@ -69,12 +68,12 @@ export default (DOM) => {
         })
       )
       ).takeUntil(
-        mouseUp$.do(preventDefault)
+        pointerUp$
       )
     );
 
   const dragEnd$ = drag$
-    .sample(mouseUp$);
+    .sample(pointerUp$);
 
   return {
     addInput$:
