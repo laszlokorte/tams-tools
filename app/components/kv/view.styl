@@ -417,13 +417,15 @@
 
 .kv-mode-dnf
   .kv-cell-atom:not([data-kv-value='true'])
-    color grey
+    &:not(.state-error)
+      color grey
   .kv-cell-atom[data-kv-value='false']
     font-weight normal
 
 .kv-mode-knf
   .kv-cell-atom:not([data-kv-value='false'])
-    color grey
+    &:not(.state-error)
+      color grey
   .kv-cell-atom[data-kv-value='true']
     font-weight normal
 
