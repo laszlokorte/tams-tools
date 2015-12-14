@@ -45,6 +45,58 @@ const renderOrigin = () =>
   })
 ;
 
+const renderGrid = ({min, max}) => [
+  svg('defs', [
+    svg('pattern', {
+      attributes: {
+        id: 'smallGrid',
+        width: '10',
+        height: '10',
+        patternUnits: 'userSpaceOnUse',
+      },
+    }, [
+      svg('path', {
+        attributes: {
+          d: 'M 10 0 L 0 0 0 10',
+          class: 'graphics-grid graphics-grid-small',
+        },
+      }),
+    ]),
+    svg('pattern', {
+      attributes: {
+        id: 'grid',
+        width: '100',
+        height: '100',
+        patternUnits: 'userSpaceOnUse',
+      },
+    }, [
+      svg('rect', {
+        attributes: {
+          width: '100',
+          height: '100',
+          fill: 'url(#smallGrid)',
+        },
+      }),
+      svg('path', {
+        attributes: {
+          d: 'M 100 0 L 0 0 0 100',
+          class: 'graphics-grid graphics-grid-large',
+        },
+      }),
+    ]),
+  ]),
+  svg('rect', {
+    attributes: {
+      x: min,
+      y: min,
+      width: (max - min),
+      height: (max - min),
+      class: 'graphics-grid-container',
+      fill: 'url(#grid)',
+    },
+  }),
+];
+
 const render = ({width, height, camera, bounds, content$}) =>
   div('.graphics-container', [
     svg('svg', {
@@ -60,6 +112,7 @@ const render = ({width, height, camera, bounds, content$}) =>
       renderBackground(width, height,
             camera),
       renderBounds(bounds),
+      renderGrid(bounds),
       renderOrigin(),
       svg('g', {attributes: {class: 'graphics-content'}},
         content$),
