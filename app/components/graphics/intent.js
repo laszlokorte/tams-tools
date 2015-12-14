@@ -110,17 +110,17 @@ export default (DOM) => {
         factor: moveEvt.scale,
         pivot: svgEventPosition(moveEvt.center, moveEvt),
       }))
-      .startWith({
-        factor: startEvt.scale,
-        prevFactor: startEvt.scale,
-        pivot: svgEventPosition(startEvt.center, startEvt),
-      })
       .scan(
         ({prevFactor}, {factor, pivot}) => ({
           factor: factor / prevFactor,
           prevFactor: factor,
           pivot,
-        })
+        }),
+        {
+          factor: startEvt.scale,
+          prevFactor: startEvt.scale,
+          pivot: svgEventPosition(startEvt.center, startEvt),
+        }
       )
       .takeUntil(pinchEnd$)
     )
