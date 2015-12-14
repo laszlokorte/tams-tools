@@ -19,13 +19,16 @@ const hammerEventPosition = (evt) =>
 ;
 
 const hammerPanOptions = (manager, Hammer) => {
-  manager.add(new Hammer.Pan({
+  const pan = new Hammer.Pan({
+    threshold: 0,
+    pointers: 1,
     direction: Hammer.DIRECTION_ALL,
-  }));
-};
+  });
+  manager.add(pan);
 
-const hammerPinchOptions = (manager, Hammer) => {
-  manager.add(new Hammer.Pinch());
+  const pinch = new Hammer.Pinch();
+  pinch.recognizeWith(manager.get('pan'));
+  manager.add(pinch);
 };
 
 export default (DOM) => {
@@ -33,17 +36,17 @@ export default (DOM) => {
 
   const panStart$ = rootElement
     .events('panstart', hammerPanOptions);
-  const panEnd$ = rootElement
-    .events('panend');
   const panMove$ = rootElement
     .events('panmove');
+  const panEnd$ = rootElement
+    .events('panend pancancel');
 
   const pinchStart$ = rootElement
-    .events('pinchstart', hammerPinchOptions);
+    .events('pinchstart');
   const pinchMove$ = rootElement
     .events('pinchmove');
   const pinchEnd$ = rootElement
-    .events('pinchend');
+    .events('pinchend pinchcancel');
 
   const wheel$ = rootElement
     .events('wheel')
@@ -51,28 +54,33 @@ export default (DOM) => {
 
   const pan$ = O.merge(
     panStart$
-    .map(hammerEventPosition)
+    .map((evt) => svgEventPosition({
+      x: evt.deltaX,
+      y: evt.deltaY,
+    }, evt.srcEvent))
     .flatMap((start) =>
       panMove$
-      .map(hammerEventPosition)
+      .map((evt) => svgEventPosition({
+        x: evt.deltaX,
+        y: evt.deltaY,
+      }, evt.srcEvent))
       .map((target) => ({
         x: target.x - start.x,
         y: target.y - start.y,
       }))
       .takeUntil(panEnd$)
     ),
-
     pinchStart$
+    .map(hammerEventPosition)
+    .flatMap((start) =>
+      pinchMove$
       .map(hammerEventPosition)
-      .flatMap((start) =>
-        pinchMove$
-        .map(hammerEventPosition)
-        .map((target) => ({
-          x: target.x - start.x,
-          y: target.y - start.y,
-        }))
-        .takeUntil(pinchEnd$)
-      )
+      .map((target) => ({
+        x: target.x - start.x,
+        y: target.y - start.y,
+      }))
+      .takeUntil(pinchEnd$)
+    )
   );
 
   const zoom$ = O.merge(
