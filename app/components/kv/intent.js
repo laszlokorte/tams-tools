@@ -25,10 +25,13 @@ export default (DOM) => {
     DOM
       .select('.kv-cell-atom[data-kv-offset]')
       .events('touchmove')
-      .map((evt) => ({
-        evt,
-        offset: parseInt(touchTarget(evt).dataset.kvOffset, 10),
-      }))
+      .map((evt) => {
+        const element = touchTarget(evt);
+        return {
+          evt,
+          offset: element && parseInt(element.dataset.kvOffset, 10) || NaN,
+        };
+      })
   );
   const pointerDown$ = O.merge(
       DOM
