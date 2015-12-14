@@ -15,7 +15,7 @@ const svgEventPosition = (() => {
 })();
 
 const hammerEventPosition = (evt) =>
-  svgEventPosition(evt.center, evt.srcEvent)
+  svgEventPosition(evt.center, evt)
 ;
 
 const hammerPanOptions = (manager, Hammer) => {
@@ -57,13 +57,13 @@ export default (DOM) => {
     .map((evt) => svgEventPosition({
       x: evt.deltaX,
       y: evt.deltaY,
-    }, evt.srcEvent))
+    }, evt))
     .flatMap((start) =>
       panMove$
       .map((evt) => svgEventPosition({
         x: evt.deltaX,
         y: evt.deltaY,
-      }, evt.srcEvent))
+      }, evt))
       .map((target) => ({
         x: target.x - start.x,
         y: target.y - start.y,
@@ -108,12 +108,12 @@ export default (DOM) => {
       .map((moveEvt) =>
       ({
         factor: moveEvt.scale,
-        pivot: svgEventPosition(moveEvt.center, moveEvt.srcEvent),
+        pivot: svgEventPosition(moveEvt.center, moveEvt),
       }))
       .startWith({
         factor: startEvt.scale,
         prevFactor: startEvt.scale,
-        pivot: svgEventPosition(startEvt.center, startEvt.srcEvent),
+        pivot: svgEventPosition(startEvt.center, startEvt),
       })
       .scan(
         ({prevFactor}, {factor, pivot}) => ({
