@@ -117,6 +117,10 @@ export const preventDefault = (evt) =>
   evt.preventDefault()
 ;
 
+export const stopPropagation = (evt) =>
+  evt.stopPropagation()
+;
+
 // get function which parses the attribute of given name
 // from a given event's target as integer
 export const parseDataAttr = (attrName) => (evt) =>

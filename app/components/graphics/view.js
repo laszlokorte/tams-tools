@@ -97,7 +97,7 @@ const renderGrid = ({min, max}) => [
   }),
 ];
 
-const render = ({width, height, camera, bounds, content$}) =>
+const render = ({width, height, camera, bounds, content}) =>
   div('.graphics-container', [
     svg('svg', {
       attributes: {
@@ -115,7 +115,7 @@ const render = ({width, height, camera, bounds, content$}) =>
       renderGrid(bounds),
       renderOrigin(),
       svg('g', {attributes: {class: 'graphics-content'}},
-        content$),
+        content),
     ]),
   ])
 ;

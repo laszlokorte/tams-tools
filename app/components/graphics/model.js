@@ -36,14 +36,16 @@ export default ({props$, camera$, bounds$, content$}, actions) =>
     props$,
     camera$,
     (props, initCamera) =>
-      O.combineLatest(
+      bounds$.flatMapLatest((bounds) =>
         O.merge(
           actions.zoom$.map(zoomModifier(0.2, 5)),
           actions.pan$.map(panModifier)
-        ),
-        bounds$,
-        (mod, bounds) =>
-          clampPosition(mod, bounds.min, bounds.max)
+        ).map((mod) => clampPosition(mod, bounds.min, bounds.max))
+        .startWith(({x, y, zoom}) => ({
+          zoom,
+          x: clamp(x, bounds.min, bounds.max),
+          y: clamp(y, bounds.min, bounds.max),
+        }))
       )
       .startWith({
         zoom: initCamera.zoom,
@@ -51,12 +53,12 @@ export default ({props$, camera$, bounds$, content$}, actions) =>
         y: initCamera.y,
       })
       .scan((cam, modFn) => modFn(cam))
-      .combineLatest(bounds$, (cam, bounds) => ({
+      .combineLatest(bounds$, content$, (cam, bounds, content) => ({
         width: props.width,
         height: props.height,
         camera: cam,
         bounds,
-        content$,
+        content,
       }))
   ).switch()
 ;

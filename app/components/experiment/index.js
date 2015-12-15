@@ -6,7 +6,7 @@ import ModalBox from '../modal';
 import Spinner from '../spinner';
 import Switch from '../switch';
 import RadioPanel from '../radiopanel';
-import Graphics from '../graphics';
+import PLA from '../pla';
 
 import view from './view';
 import help from './help';
@@ -66,16 +66,10 @@ export default (responses) => {
     value$: O.just('edit'),
   });
 
-  const canvas = isolate(Graphics, 'myCanvas')({
+  const canvas = isolate(PLA, 'myPLA')({
     DOM,
-    props$: O.just({
-      width: 1200,
-      height: 600,
-    }),
-    camera$: O.just({x: 0, y: 0, zoom: 1}),
-    bounds$: O.just({min: -500, max: 500}),
-    content$: O.just(svg('circle',
-      {attributes: {cx: 50, cy: 50, r: 20, fill: 'magenta'}})),
+    props$: O.just({}),
+    data$: O.just({}),
   });
 
   const state$ = O.just(null);
