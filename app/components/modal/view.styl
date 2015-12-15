@@ -1,12 +1,12 @@
 @import '../../styles/global'
 
-.help-container
+.modal-container
   display none
 
   &.state-visible
     display block
 
-.help-background
+.modal-background
   fixed top left
   width 100%
   height 100%
@@ -14,7 +14,7 @@
   pointer-events all
   z-index 100
 
-.help-box
+.modal-box
   absolute top 10% left 20%
   width 60%
   min-height 50%
@@ -23,7 +23,7 @@
   box-shadow 0 1em 5em rgba(40,40,40,0.5)
   margin-bottom 4em
 
-.help-box-close
+.modal-box-close
   absolute top -2em right -2em
   width 4em
   height 4em
@@ -41,6 +41,7 @@
   border 3px solid transparent
 
   outline none
+
   &:focus
     border-color #81CAC1
   &:active
@@ -48,12 +49,11 @@
   &:hover
     border-color #333
 
-.help-box-body
+.modal-box-body
   padding 2em
 
-
-.help-item-titel
+.modal-item-titel
   font-weight bold
 
-.help-item-body
+.modal-item-body
   margin 0.4em 0 1em

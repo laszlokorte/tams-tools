@@ -2,7 +2,7 @@ import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
 import {svg} from '@cycle/dom';
 
-import HelpBox from '../help';
+import ModalBox from '../modal';
 import Spinner from '../spinner';
 import Switch from '../switch';
 import RadioPanel from '../radiopanel';
@@ -16,7 +16,7 @@ export default (responses) => {
     DOM,
   } = responses;
 
-  const helpBox = isolate(HelpBox, 'helpBox')({
+  const helpBox = isolate(ModalBox, 'helpBox')({
     DOM,
     props$: O.just({
       visible: true,

@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
 
-import HelpBox from '../help';
+import ModalBox from '../modal';
 
 import model from './model';
 import view from './view';
@@ -13,7 +13,7 @@ export default (responses) => {
     DOM,
   } = responses;
 
-  const helpBox = isolate(HelpBox, 'helpBox')({
+  const helpBox = isolate(ModalBox, 'helpBox')({
     DOM,
     props$: O.just({
       visible: true,

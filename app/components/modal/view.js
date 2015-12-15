@@ -3,15 +3,15 @@ import {div, button} from '@cycle/dom';
 import './view.styl';
 
 const render = ({visible, content$}) =>
-div('.help-container', {
+div('.modal-container', {
   className: visible ? 'state-visible' : 'state-hidden',
 }, [
-  div('.help-background'),
-  div('.help-box', [
-    button('.help-box-close', {
-      attributes: {'data-help': false},
+  div('.modal-background'),
+  div('.modal-box', [
+    button('.modal-box-close', {
+      attributes: {'data-modal-close': true},
     }, 'Close'),
-    div('.help-box-body',
+    div('.modal-box-body',
       content$
     ),
   ]),
