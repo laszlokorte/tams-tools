@@ -31,14 +31,26 @@ export default (responses) => {
       max: 8,
       label: 'Inputs',
     }),
-    value$: O.just(0),
+    value$: O.just(1),
+  });
+
+  const outputSpinner = isolate(Spinner, 'outputSpinner')({
+    DOM,
+    props$: O.just({
+      min: 1,
+      max: 8,
+      label: 'Outputs',
+    }),
+    value$: O.just(1),
   });
 
   const modeSwitch = isolate(Switch, 'modeSwitch')({
     DOM,
     props$: O.just({
-      enabled: false,
+      onLabel: 'Yes',
+      offLabel: 'No',
     }),
+    enabled$: O.just(true),
   });
 
   const modePanel = isolate(RadioPanel, 'modePanel')({
@@ -71,6 +83,7 @@ export default (responses) => {
     state$, {
       helpBox$: helpBox.DOM,
       inputSpinner$: inputSpinner.DOM,
+      outputSpinner$: outputSpinner.DOM,
       modeSwitch$: modeSwitch.DOM,
       canvas$: canvas.DOM,
       modePanel$: modePanel.DOM,

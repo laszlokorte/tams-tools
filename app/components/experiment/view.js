@@ -3,12 +3,22 @@ import {
   div,
 } from '@cycle/dom';
 
-export default (state$, {helpBox$, inputSpinner$, modeSwitch$, canvas$, modePanel$}) =>
-  O.just(div([
+export default (state$, children) => {
+  const {
+    helpBox$,
+    inputSpinner$,
+    outputSpinner$,
+    modeSwitch$,
+    canvas$,
+    modePanel$,
+  } = children;
+
+  return O.just(div([
     helpBox$,
     inputSpinner$,
     modePanel$,
     modeSwitch$,
+    outputSpinner$,
     canvas$,
-  ]))
-;
+  ]));
+};

@@ -18,7 +18,7 @@ export default (value$, props$, actions) =>
         value,
         canDecrement: value > min,
         canIncrement: value < max,
-        label: label
+        label: label,
       })
     )
   ).switch()

@@ -8,11 +8,10 @@ export default (responses) => {
   const {
     DOM,
     props$,
+    enabled$,
   } = responses;
 
-  const enabled$ = props$.map(pluck('enabled')).startWith(false);
-
-  const state$ = model(enabled$, intent(DOM));
+  const state$ = model(props$, enabled$.startWith(false), intent(DOM));
   const vtree$ = view(state$);
 
   return {
