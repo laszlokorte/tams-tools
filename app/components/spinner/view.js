@@ -2,15 +2,22 @@ import {div, span, button} from '@cycle/dom';
 
 import './view.styl';
 
-const render = ({value}) =>
+const render = ({value, label, canIncrement, canDecrement}) =>
   div('.spinner-container', [
-    button('.spinner-decrement', {
-      attributes: {'data-decrement': true},
-    }),
+    div('.spinner-label', label),
+    button('.spinner-button.icon-minus', {
+      attributes: {
+        'data-decrement': true,
+      },
+      disabled: !canDecrement,
+    }, 'Decrement'),
     span('.spinner-value', `${value}`),
-    button('.spinner-increment', {
-      attributes: {'data-increment': true},
-    }),
+    button('.spinner-button.icon-plus', {
+      attributes: {
+        'data-increment': true,
+      },
+      disabled: !canIncrement,
+    }, 'Increment'),
   ])
 ;
 

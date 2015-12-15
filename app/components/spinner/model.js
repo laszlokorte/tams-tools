@@ -2,12 +2,11 @@ import {Observable as O} from 'rx';
 
 import {clamp} from '../../lib/utils';
 
-export default (value$, min$, max$, actions) =>
+export default (value$, props$, actions) =>
   O.combineLatest(
     value$,
-    min$,
-    max$,
-    (val, min, max) =>
+    props$,
+    (val, {min, max, label}) =>
       O.merge(
         actions.increment$.map(() => 1),
         actions.decrement$.map(() => -1)
@@ -17,8 +16,9 @@ export default (value$, min$, max$, actions) =>
       )
       .startWith(val).map((value) => ({
         value,
-        canIncrement: value < min,
-        canDecrement: value > max,
+        canDecrement: value > min,
+        canIncrement: value < max,
+        label: label
       })
     )
   ).switch()

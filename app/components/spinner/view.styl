@@ -1,0 +1,73 @@
+.spinner-container
+  overflow hidden
+  padding 2pt
+  display inline-block
+  font-size 0.8em
+  vertical-align top
+  margin 2pt
+  position relative
+
+.spinner-label
+  color #444
+  font-size 0.8em
+  position absolute
+  bottom 0
+  height 1.6em
+  line-height 1em
+  left 30pt
+  right 30pt
+  overflow hidden
+  text-overflow ellipsis
+  text-align center
+  pointer-events none
+
+.spinner-value
+  height 26pt
+  display inline-block
+  font-size 1.4em
+  border 2pt solid transparent
+  padding 0 8pt
+  line-height 20pt
+  text-align center
+  vertical-align top
+
+.spinner-button
+  width 22pt
+  height 22pt
+  border-radius 50%
+  overflow hidden
+  text-overflow ellipsis
+  font-size 1em
+  display inline-block
+  background-color #2a2a2a
+  color #aaa
+  cursor pointer
+  margin 4pt
+  border 1pt solid transparent
+  outline none
+  vertical-align bottom
+  text-align center
+  text-indent -999px
+  direction ltr
+  background-repeat no-repeat
+  background-size 0.8em
+  background-position 50% 50%
+
+  &:disabled
+    opacity 0.3
+  &:focus
+    border-color #32A7F7
+  &:hover
+    color #ccc
+  &:active
+    background-color #252525
+  &.state-active
+    color #fff
+    background-color #222
+
+
+.icon-minus
+  background-image url('../../assets/icons/minus.svg')
+
+.icon-plus
+  background-image url('../../assets/icons/plus.svg')

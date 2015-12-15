@@ -8,13 +8,14 @@ export default (responses) => {
   const {
     DOM,
     props$,
+    value$,
   } = responses;
 
-  const value$ = props$.map(pluck('value')).startWith(0);
-  const min$ = props$.map(pluck('min')).startWith(-Infinity);
-  const max$ = props$.map(pluck('max')).startWith(Infinity);
-
-  const state$ = model(value$, min$, max$, intent(DOM));
+  const state$ = model(
+    value$.startWith(0),
+    props$,
+    intent(DOM)
+  );
   const vtree$ = view(state$);
 
   return {

@@ -27,10 +27,11 @@ export default (responses) => {
   const inputSpinner = isolate(Spinner, 'inputSpinner')({
     DOM,
     props$: O.just({
-      value: 4,
       min: 0,
       max: 8,
+      label: 'Inputs',
     }),
+    value$: O.just(0),
   });
 
   const modeSwitch = isolate(Switch, 'modeSwitch')({
@@ -45,12 +46,12 @@ export default (responses) => {
     props$: O.just({
       label: 'Modes',
       options: [
-        {label: 'A', value: 'a'},
-        {label: 'B', value: 'b'},
-        {label: 'C', value: 'c'},
+        {label: 'Edit', value: 'edit'},
+        {label: 'KNF', value: 'knf'},
+        {label: 'DNF', value: 'dnf'},
       ],
     }),
-    value$: O.just('a'),
+    value$: O.just('edit'),
   });
 
   const canvas = isolate(Graphics, 'myCanvas')({
