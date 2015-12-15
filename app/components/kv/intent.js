@@ -29,7 +29,7 @@ export default (DOM) => {
         const element = touchTarget(evt);
         return {
           evt,
-          offset: element && parseInt(element.dataset.kvOffset, 10) || NaN,
+          offset: element ? parseInt("" + element.dataset.kvOffset, 10) : NaN,
         };
       })
   );
