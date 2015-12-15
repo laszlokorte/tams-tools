@@ -3,18 +3,18 @@ import {Observable as O} from 'rx';
 import {preventDefault} from '../../lib/utils';
 
 export default (DOM) => {
-  const button = DOM.select('[data-switch-state]');
+  const buttons = DOM.select('[data-radio-state]');
   const click$ = O.merge(
-    button.events('mousedown').do(preventDefault).ignoreElements(0),
-    button.events('click')
+    buttons.events('mousedown').do(preventDefault).ignoreElements(),
+    buttons.events('click')
   );
 
   return {
     change$:
-      click$
+        click$
         .do(preventDefault)
         .map((evt) =>
-          evt.target.dataset.switchState === 'true'
+          evt.target.dataset.radioState
         ),
   };
 };

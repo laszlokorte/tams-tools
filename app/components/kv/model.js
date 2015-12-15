@@ -14,18 +14,22 @@ const generateVariableName = (index) => {
 
 const colorPalette = [
   '#E91E63',
-  '#FF9800',
-  '#FF5252',
   '#9C27B0',
-  '#3E81bF',
+  '#3F51B5',
+  '#2196F3',
+  '#00BCD4',
+  '#009688',
+  '#4CAF50',
+  '#8BC34A',
+  '#CDDC39',
+  '#FFC107',
+  '#FF9800',
+  '#FF5722',
+  '#795548',
 ];
 
 const generateColor = (index) =>
   colorPalette[index % colorPalette.length]
-;
-
-const generateOutputName = (index) =>
-  'O' + (index + 1)
 ;
 
 const nullArray = (size) =>
@@ -138,7 +142,7 @@ const removeInput = (kv) => {
 
 const buildOutput = (index, size) =>
   I.Map({
-    name: generateOutputName(index),
+    name: 'O',
     values: I.List(nullArray(size)),
   })
 ;

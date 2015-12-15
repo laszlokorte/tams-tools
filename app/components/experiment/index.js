@@ -5,6 +5,7 @@ import {svg} from '@cycle/dom';
 import HelpBox from '../help';
 import Spinner from '../spinner';
 import Switch from '../switch';
+import RadioPanel from '../radiopanel';
 import Graphics from '../graphics';
 
 import view from './view';
@@ -39,6 +40,19 @@ export default (responses) => {
     }),
   });
 
+  const modePanel = isolate(RadioPanel, 'modePanel')({
+    DOM,
+    props$: O.just({
+      label: 'Modes',
+      options: [
+        {label: 'A', value: 'a'},
+        {label: 'B', value: 'b'},
+        {label: 'C', value: 'c'},
+      ],
+    }),
+    value$: O.just('a'),
+  });
+
   const canvas = isolate(Graphics, 'myCanvas')({
     DOM,
     props$: O.just({
@@ -58,6 +72,7 @@ export default (responses) => {
       inputSpinner$: inputSpinner.DOM,
       modeSwitch$: modeSwitch.DOM,
       canvas$: canvas.DOM,
+      modePanel$: modePanel.DOM,
     }
   );
 

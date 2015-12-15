@@ -1,13 +1,16 @@
-.switch-container
+.radio-container
   overflow hidden
   background-color #333333
   padding 2pt
   display inline-block
 
-.switch-button
-  width 4.5em
-  overflow hidden
-  text-overflow ellipsis
+.radio-container-label
+  display inline-block
+  font-size 1em
+  padding 0.5em 0.8em 0.5em 0.6em
+  color #ddd
+
+.radio-option
   font-size 1em
   padding 0.5em 1em
   display inline-block
@@ -25,6 +28,7 @@
     color #ccc
   &:active
     background-color #252525
+
   &.state-active
     color #fff
     background-color #222
