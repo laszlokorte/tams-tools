@@ -107,10 +107,10 @@ const render = ({width, height, camera, bounds, content$}) =>
         viewBox:
           viewbox(width, height,
             camera),
+        preserveAspectRatio: 'xMidYMid meet',
       },
     }, [
-      renderBackground(width, height,
-            camera),
+      renderBackground(width, height, camera),
       renderBounds(bounds),
       renderGrid(bounds),
       renderOrigin(),
