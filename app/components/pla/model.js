@@ -3,13 +3,18 @@ import {Observable as O} from 'rx';
 export default (props$, data$, actions) =>
   O.combineLatest(
     props$,
-    data$,
-    (props, data) =>
-      actions.click$
-      .startWith(true)
-      .scan((prev) => !prev)
-      .map((active) => ({
-        data,
+    (props) =>
+      O.combineLatest(
+        actions.click$
+        .startWith(true)
+        .scan((prev) => !prev),
+        actions.rotate$
+        .startWith(0)
+        .scan((prev) => (prev + 1) % 4),
+      data$, (active, rotation, data) => ({
+        data: {
+          rotation,
+        },
         active,
         bounds: active ? {
           min: -500,

@@ -7,11 +7,21 @@ const render = ({options, data, active}) =>
   svg('g',[
     svg('rect', {
       attributes: {
-        x: 100,
-        y: 100,
+        x: 200,
+        y: -150,
         width: 100,
         height: 100,
         class: 'test-rect' + (active ? ' state-active' : ''),
+      },
+    }),
+
+    svg('rect', {
+      attributes: {
+        x: 200,
+        y: -300,
+        width: 100,
+        height: 100,
+        class: 'rotate-rect',
       },
     }),
     clipPaths(),
