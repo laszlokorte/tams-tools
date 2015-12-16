@@ -50,6 +50,7 @@ export default (DOM) => {
 
   const wheel$ = rootElement
     .events('wheel')
+    .filter((evt) => !evt.altKey)
     .do(preventDefault);
 
   const pan$ = O.merge(
