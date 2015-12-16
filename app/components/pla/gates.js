@@ -59,25 +59,25 @@ const inputPorts = (count, type) =>
   ))
 ;
 
-const inputExtension = (indent, count) => {
-  const extraHeight = Math.ceil((count - 7) / 2) * 10;
-
+const inputExtension = (indent, count, bodyWidth) => {
+  const extraHeight = Math.ceil((count - (bodyWidth/10)) / 2) * 10;
+  const halfWidth = bodyWidth / 2;
   return extraHeight > 0 && [
     svg('line', {
       attributes: {
         x1: -55 + indent,
-        y1: -35,
+        y1: -halfWidth,
         x2: -55 + indent,
-        y2: -32 - extraHeight,
+        y2: -(halfWidth - 3) - extraHeight,
         class: 'gate-input-extension',
       },
     }),
     svg('line', {
       attributes: {
         x1: -55 + indent,
-        y1: 35,
+        y1: halfWidth,
         x2: -55 + indent,
-        y2: 32 + extraHeight,
+        y2: (halfWidth - 3) + extraHeight,
         class: 'gate-input-extension',
       },
     }),
@@ -166,7 +166,7 @@ const bufferBodyFeature = () =>
   })
 ;
 
-const composedGate = ({inputIndent, type, features}) => {
+const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
   return ({center: {x, y}, inputCount, rotation = Rotation.EAST}) => {
     const angle = 90 * (rotation - 1);
     const centerX = (x * 10);
@@ -178,7 +178,7 @@ const composedGate = ({inputIndent, type, features}) => {
       class: 'gate gate-type-' + type,
     }, [
       inputPorts(inputCount, type),
-      inputExtension(inputIndent, inputCount),
+      inputExtension(inputIndent, inputCount, bodyWidth),
       features.map((feat) => feat()),
     ]);
   };
@@ -208,6 +208,8 @@ export const clipPaths = () =>
     inputClipPath('or', 20, orMaskFeature()),
     inputClipPath('nand', 25),
     inputClipPath('and', 25),
+    inputClipPath('buffer', 50),
+    inputClipPath('negator', 50),
   ])
 ;
 
@@ -250,13 +252,15 @@ export const gates = {
 
   buffer: composedGate({
     type: 'buffer',
-    inputIndent: 35,
+    inputIndent: 50,
+    bodyWidth: 50,
     features: [outputFeature, bufferBodyFeature],
   }),
 
   negator: composedGate({
     type: 'negator',
-    inputIndent: 35,
+    inputIndent: 50,
+    bodyWidth: 50,
     features: [outputFeature, bufferBodyFeature, negatorFeature],
   }),
 };
