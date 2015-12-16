@@ -14,6 +14,7 @@ export default (props$, data$, actions) =>
       data$, (active, rotation, data) => ({
         data: {
           rotation,
+          inputs: data.inputs,
         },
         active,
         bounds: active ? {

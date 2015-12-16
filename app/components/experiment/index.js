@@ -28,7 +28,7 @@ export default (responses) => {
     DOM,
     props$: O.just({
       min: 0,
-      max: 8,
+      max: 15,
       label: 'Inputs',
     }),
     value$: O.just(1),
@@ -69,9 +69,10 @@ export default (responses) => {
   const canvas = isolate(PLA, 'myPLA')({
     DOM,
     props$: O.just({}),
-    data$: O.just({
+    data$: inputSpinner.value$.map((c) => ({
       rotation: 0,
-    }),
+      inputs: c,
+    }))
   });
 
   const state$ = O.just(null);
