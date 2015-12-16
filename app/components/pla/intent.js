@@ -15,7 +15,11 @@ export default (DOM) => {
     rect
       .events('mousedown')
       .do(preventDefault)
-      .do(stopPropagation)
+      .do(stopPropagation),
+    rect
+      .events('tap', (manager, Hammer) => {
+        manager.add(new Hammer.Tap());
+      })
   );
 
   const rotate$ = O.merge(
@@ -27,7 +31,11 @@ export default (DOM) => {
     rectRotate
       .events('mousedown')
       .do(preventDefault)
-      .do(stopPropagation)
+      .do(stopPropagation),
+    rectRotate
+      .events('tap', (manager, Hammer) => {
+        manager.add(new Hammer.Tap());
+      })
   );
 
   return {
