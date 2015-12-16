@@ -50,7 +50,7 @@ const inputPorts = (count, type) =>
     },
   }, inputOffsets(count).map((y) =>
     svg('line', {
-      x1: -55,
+      x1: -50,
       y1: -40 + 10 * y,
       x2: 0,
       y2: -40 + 10 * y,
@@ -65,19 +65,19 @@ const inputExtension = (indent, count) => {
   return extraHeight > 0 && [
     svg('line', {
       attributes: {
-        x1: -60 + indent,
+        x1: -55 + indent,
         y1: -35,
-        x2: -60 + indent,
-        y2: -35 - extraHeight,
+        x2: -55 + indent,
+        y2: -32 - extraHeight,
         class: 'gate-input-extension',
       },
     }),
     svg('line', {
       attributes: {
-        x1: -60 + indent,
+        x1: -55 + indent,
         y1: 35,
-        x2: -60 + indent,
-        y2: 35 + extraHeight,
+        x2: -55 + indent,
+        y2: 32 + extraHeight,
         class: 'gate-input-extension',
       },
     }),
@@ -90,7 +90,7 @@ const outputFeature = () =>
     attributes: {
       x1: 0,
       y1: 0,
-      x2: 55,
+      x2: 60,
       y2: 0,
       class: 'gate-port',
     },
@@ -100,9 +100,9 @@ const outputFeature = () =>
 const negatorFeature = () =>
   svg('circle', {
     attributes: {
-      cx: 35,
+      cx: 38,
       cy: 0,
-      r: 10,
+      r: 8,
       class: 'gate-body',
     },
   })
@@ -111,7 +111,7 @@ const negatorFeature = () =>
 const exclusionFeature = () =>
   svg('path', {
     attributes: {
-      d: `M-50,35
+      d: `M-45,35
       c0,0 17.5,-3 17.5,-35
       c0,-32.5 -17.5,-35 -17.5,-35`,
       class: 'gate-body-extra',
@@ -119,12 +119,12 @@ const exclusionFeature = () =>
   })
 ;
 
-const orMaskFeature = () =>
+const orMaskFeature = (offset = 0) =>
   svg('path', {
     attributes: {
-      d: `M-30,35
-      c-20,0 -13.5,-3 -13.5,-35
-      c-20,-32.5 -30,-35 37.5,-35`,
+      d: `M${-35 + offset},35
+      c0,0 17.5,-3 17.5,-35
+      c0,-32.5 -17.5,-35 -17.5,-35`,
       class: 'gate-body-extra',
     },
   })
@@ -133,7 +133,7 @@ const orMaskFeature = () =>
 const orBodyFeature = () =>
   svg('path', {
     attributes: {
-      d: `M-40,35c-0,0 17.5,-3 17.5,-35
+      d: `M-35,35c-0,0 17.5,-3 17.5,-35
       c0,-32.5 -17.5,-35 -17.5,-35
       c27.5,3 45,0 65,35
       c-15,32 -32.5,32.5 -65,35Z`,
@@ -145,9 +145,11 @@ const orBodyFeature = () =>
 const andBodyFeature = () =>
   svg('path', {
     attributes: {
-      d: `M-5,35l-30,0l0,-70l30.194,0
-      c16.366,0 29.806,15.68 29.806,35
-      c0,19.32 -13.44,35 -30,35Z`,
+      d: `M-30,35
+      l0,-70
+      l30,0
+      c15,0 30,15 30,35
+      c0,20 -15,35 -30,35Z`,
       class: 'gate-body',
     },
   })
@@ -156,10 +158,9 @@ const andBodyFeature = () =>
 const bufferBodyFeature = () =>
   svg('path', {
     attributes: {
-      d: `M-25,-35
-      l50,35
-      l-50,35
-      l0,-70Z`,
+      d: `M-5,-25
+      l35,25
+      l-35,25Z`,
       class: 'gate-body',
     },
   })
@@ -168,8 +169,8 @@ const bufferBodyFeature = () =>
 const composedGate = ({inputIndent, type, features}) => {
   return ({center: {x, y}, inputCount, rotation = Rotation.EAST}) => {
     const angle = 90 * (rotation - 1);
-    const centerX = (x * 110);
-    const centerY = (y * 110);
+    const centerX = (x * 10);
+    const centerY = (y * 10);
 
     return svg('g', {
       transform: 'translate(' + centerX + ' ' + centerY + ') ' +
@@ -191,7 +192,7 @@ const inputClipPath = (type, indent, extra) =>
       attributes: {
         x: -60,
         y: -200,
-        width: indent,
+        width: indent + 5,
         height: 400,
       },
     }),
@@ -201,8 +202,8 @@ const inputClipPath = (type, indent, extra) =>
 
 export const clipPaths = () =>
   svg('defs', [
-    inputClipPath('xnor', 10, exclusionFeature()),
-    inputClipPath('xor', 10, exclusionFeature()),
+    inputClipPath('xnor', 10, orMaskFeature(-10)),
+    inputClipPath('xor', 10, orMaskFeature(-10)),
     inputClipPath('nor', 20, orMaskFeature()),
     inputClipPath('or', 20, orMaskFeature()),
     inputClipPath('nand', 25),

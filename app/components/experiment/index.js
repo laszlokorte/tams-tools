@@ -69,7 +69,9 @@ export default (responses) => {
   const canvas = isolate(PLA, 'myPLA')({
     DOM,
     props$: O.just({}),
-    data$: O.just({}),
+    data$: O.just({
+      rotation: 0,
+    }),
   });
 
   const state$ = O.just(null);
