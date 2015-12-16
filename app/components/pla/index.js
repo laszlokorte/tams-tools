@@ -1,4 +1,5 @@
 import {Observable as O} from 'rx';
+import isolate from '@cycle/isolate';
 import {div} from '@cycle/dom';
 
 import {pluck} from '../../lib/utils';
@@ -15,10 +16,11 @@ export default (responses) => {
     data$,
   } = responses;
 
-  const state$ = model(props$, data$, intent(DOM));
+  const {isolateSource, isolateSink} = DOM;
+  const state$ = model(props$, data$, intent(isolateSource(isolateSource(DOM, 'mygraphics'), 'please')));
   const vtree$ = view(state$);
 
-  const stage = graphics({
+  const stage = isolate(graphics, 'mygraphics')({
     DOM,
     props$: O.just({
       width: 1200,
@@ -26,7 +28,7 @@ export default (responses) => {
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map(pluck('bounds')),
-    content$: vtree$,
+    content$: isolateSink(vtree$, 'please'),
   });
 
   return {

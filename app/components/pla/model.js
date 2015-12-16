@@ -14,7 +14,7 @@ export default (props$, data$, actions) =>
         bounds: active ? {
           min: -500,
           max: 500,
-        } : {min: -200, max: 200},
+        } : {min: -200, max: 500},
       }))
   ).switch()
 ;
