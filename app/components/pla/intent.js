@@ -8,30 +8,12 @@ export default (DOM) => {
 
   const click$ = O.merge(
     rect
-      .events('click')
-      .do(stopPropagation)
-      .do(preventDefault)
-      .ignoreElements(),
-    rect
-      .events('mousedown')
-      .do(preventDefault)
-      .do(stopPropagation),
-    rect
       .events('tap', (manager, Hammer) => {
         manager.add(new Hammer.Tap());
       })
   );
 
   const rotate$ = O.merge(
-    rectRotate
-      .events('click')
-      .do(stopPropagation)
-      .do(preventDefault)
-      .ignoreElements(),
-    rectRotate
-      .events('mousedown')
-      .do(preventDefault)
-      .do(stopPropagation),
     rectRotate
       .events('tap', (manager, Hammer) => {
         manager.add(new Hammer.Tap());
