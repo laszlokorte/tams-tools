@@ -1,7 +1,5 @@
 import {Observable as O} from 'rx';
 
-import {preventDefault, stopPropagation} from '../../lib/utils';
-
 export default (DOM) => {
   const rect = DOM.select('.test-rect');
   const rectRotate = DOM.select('.rotate-rect');

@@ -60,7 +60,9 @@ const inputPorts = (count, type) =>
 ;
 
 const inputExtension = (indent, count, bodyWidth) => {
-  const extraHeight = Math.ceil((count - (bodyWidth/10)) / 2) * 10;
+  const extraHeight = Math.ceil(
+    (count - (bodyWidth / 10)) / 2
+  ) * 10;
   const halfWidth = bodyWidth / 2;
   return extraHeight > 0 && [
     svg('line', {
