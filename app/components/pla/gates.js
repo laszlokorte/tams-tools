@@ -22,7 +22,7 @@ const inputOffsets = (count) => {
     }
   }
   if (count > 3) {
-    if (count !== 5) {
+    if (count < 5) {
       result.push(1);
       result.push(7);
     }
