@@ -36,7 +36,12 @@ export default ({props$, camera$, bounds$, content$}, actions) =>
     props$,
     camera$,
     (props, initCamera) =>
-      bounds$.flatMapLatest((bounds) =>
+      bounds$
+      .distinctUntilChanged(
+        (a) => a,
+        (a,b) => a.min === b.min && a.max === b.max
+      )
+      .flatMapLatest((bounds) =>
         O.merge(
           actions.zoom$.map(zoomModifier(0.2, 5)),
           actions.pan$.map(panModifier)
