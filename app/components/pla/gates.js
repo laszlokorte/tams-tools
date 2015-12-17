@@ -92,7 +92,7 @@ const outputFeature = () =>
     attributes: {
       x1: 0,
       y1: 0,
-      x2: 60,
+      x2: 50,
       y2: 0,
       class: 'gate-port',
     },
