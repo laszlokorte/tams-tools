@@ -29,6 +29,7 @@ module.exports = {
   entry: {
     app: "./app/index.js",
     experiment: "./app/experiment.js",
+    debug: "./app/debug.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -82,6 +83,14 @@ module.exports = {
       chunks: ['experiment', 'vendor'],
       template: './app/index.html',
       filename: 'experiment.html',
+      favicon: './app/favicon.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Debug',
+      minify: htmlMinifyOptions,
+      chunks: ['debug', 'vendor'],
+      template: './app/index.html',
+      filename: 'debug.html',
       favicon: './app/favicon.ico',
     }),
     new CopyWebpackPlugin([
