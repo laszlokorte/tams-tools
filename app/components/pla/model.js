@@ -18,12 +18,11 @@ export default (props$, data$, actions) =>
             inputs: 3,
           },
           active,
-          bounds: active ? {
-            min: -500,
-            max: 500,
-          } : {
-            min: layout.bounds.min * 10,
-            max: layout.bounds.max * 10,
+          bounds: {
+            minX: layout.bounds.minX * 10,
+            maxX: layout.bounds.maxX * 10,
+            minY: layout.bounds.minY * 10,
+            maxY: layout.bounds.maxY * 10,
           },
         };
       })

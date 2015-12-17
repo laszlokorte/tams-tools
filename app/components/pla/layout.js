@@ -2,6 +2,8 @@ import {Rotation} from './gates';
 
 const layoutInputs = (inputs, height) => {
   return {
+    height: 25,
+    width: 12 + 10 * inputs.length,
     gates: inputs.map((name, index) => ({
       type: 'negator',
       center: {x: -10 * index - 15, y: -height / 2 - 15},
@@ -13,7 +15,7 @@ const layoutInputs = (inputs, height) => {
         {
           type: 'vertical',
           from: {x: -10 * index - 19, y: -height / 2 - 23},
-          toY: Math.floor(height / 20) * 10,
+          toY: height / 2 - 5,
           input: 0,
           inputCount: 1,
           soderStart: true,
@@ -21,7 +23,7 @@ const layoutInputs = (inputs, height) => {
         {
           type: 'vertical',
           from: {x: -10 * index - 15, y: -height / 2 - 15 + 5},
-          toY: Math.floor(height / 20) * 10,
+          toY: height / 2 - 5,
           input: 0,
           inputCount: 1,
         },
@@ -50,6 +52,7 @@ const layoutOutputs = (pla, height, loopCount) => {
   ;
 
   return {
+    width: 12 + outputGateWidth * pla.outputs.length,
     gates: pla.outputs.map((name, index) => ({
       type: 'or',
       center: {
@@ -154,8 +157,10 @@ export default (pla) => {
       outputs.wires
     ),
     bounds: {
-      min: -loops.height,
-      max: loops.height,
-    }
+      minX: -inputs.width,
+      maxX: outputs.width,
+      minY: -loops.height / 2 - inputs.height,
+      maxY: loops.height / 2,
+    },
   };
 };

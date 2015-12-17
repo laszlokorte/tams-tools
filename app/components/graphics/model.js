@@ -2,13 +2,13 @@ import {Observable as O} from 'rx';
 
 import {clamp} from '../../lib/utils';
 
-const clampPosition = (modifierFn, min, max) =>
+const clampPosition = (modifierFn, {minX, minY, maxX, maxY}) =>
   (cam) => {
     const {x,y,zoom} = modifierFn(cam);
     return {
       zoom,
-      x: clamp(x, min, max),
-      y: clamp(y, min, max),
+      x: clamp(x, minX, maxX),
+      y: clamp(y, minY, maxY),
     };
   }
 ;
@@ -39,17 +39,18 @@ export default ({props$, camera$, bounds$, content$}, actions) =>
       bounds$
       .distinctUntilChanged(
         (a) => a,
-        (a,b) => a.min === b.min && a.max === b.max
+        (a,b) => a.minX === b.minX && a.maxX === b.maxX &&
+          a.minY === b.minY && a.maxY === b.maxY
       )
       .flatMapLatest((bounds) =>
         O.merge(
           actions.zoom$.map(zoomModifier(0.2, 5)),
           actions.pan$.map(panModifier)
-        ).map((mod) => clampPosition(mod, bounds.min, bounds.max))
+        ).map((mod) => clampPosition(mod, bounds))
         .startWith(({x, y, zoom}) => ({
           zoom,
-          x: clamp(x, bounds.min, bounds.max),
-          y: clamp(y, bounds.min, bounds.max),
+          x: clamp(x, bounds.minX, bounds.maxX),
+          y: clamp(y, bounds.minY, bounds.maxY),
         }))
       )
       .startWith({

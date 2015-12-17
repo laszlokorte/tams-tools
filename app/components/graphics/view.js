@@ -22,13 +22,13 @@ const renderBackground = (width, height, camera) =>
   })
 ;
 
-const renderBounds = ({min, max}) =>
+const renderBounds = ({minX, maxX, minY, maxY}) =>
   svg('rect', {
     attributes: {
-      x: min,
-      y: min,
-      width: (max - min),
-      height: (max - min),
+      x: minX,
+      y: minY,
+      width: (maxX - minX),
+      height: (maxY - minY),
       class: 'graphics-camera-bounds',
     },
   })
@@ -45,7 +45,7 @@ const renderOrigin = () =>
   })
 ;
 
-const renderGrid = ({min, max}) => [
+const renderGrid = ({minX, maxX, minY, maxY}) => [
   svg('defs', [
     svg('pattern', {
       attributes: {
@@ -87,10 +87,10 @@ const renderGrid = ({min, max}) => [
   ]),
   svg('rect', {
     attributes: {
-      x: min,
-      y: min,
-      width: (max - min),
-      height: (max - min),
+      x: minX,
+      y: minY,
+      width: (maxX - minX),
+      height: (maxY - minY),
       class: 'graphics-grid-container',
       fill: 'url(#grid)',
     },
