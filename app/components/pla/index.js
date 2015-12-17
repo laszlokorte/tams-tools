@@ -18,7 +18,7 @@ export default (responses) => {
 
   const {isolateSource, isolateSink} = DOM;
   const state$ = model(props$, data$, intent(
-    isolateSource(isolateSource(DOM, 'mygraphics'), 'please')
+    isolateSource(DOM, 'please')
   ));
   const vtree$ = view(state$);
 

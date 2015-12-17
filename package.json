@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@cycle/core": "^6.0.0-rc2",
-    "@cycle/dom": "^8.0.0-rc6",
+    "@cycle/dom": "^8.0.0-rc8",
     "@cycle/isolate": "^1.1.1",
     "@cycle/storage": "^2.0.3",
     "@cyclic/cycle-hammer-driver": "^0.1.1",
