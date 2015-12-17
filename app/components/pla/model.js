@@ -10,20 +10,22 @@ export default (props$, data$, actions) =>
         actions.click$
         .startWith(true)
         .scan((prev) => !prev),
-        actions.rotate$
-        .startWith(0)
-        .scan((prev) => (prev + 1) % 4),
-      data$, (active, rotation, data) => ({
-        data: {
-          circuit: layoutPLA(data),
-          rotation,
-          inputs: 3,
-        },
-        active,
-        bounds: active ? {
-          min: -500,
-          max: 500,
-        } : {min: -200, max: 500},
-      }))
+      data$, (active, data) => {
+        const layout = layoutPLA(data);
+        return {
+          data: {
+            circuit: layout,
+            inputs: 3,
+          },
+          active,
+          bounds: active ? {
+            min: -500,
+            max: 500,
+          } : {
+            min: layout.bounds.min * 10,
+            max: layout.bounds.max * 10,
+          },
+        };
+      })
   ).switch()
 ;
