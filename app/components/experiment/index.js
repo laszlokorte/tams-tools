@@ -7,6 +7,7 @@ import Spinner from '../spinner';
 import Switch from '../switch';
 import RadioPanel from '../radiopanel';
 import PLA from '../pla';
+import {example as plaExample} from '../pla/pla-format';
 
 import view from './view';
 import help from './help';
@@ -69,10 +70,7 @@ export default (responses) => {
   const canvas = isolate(PLA, 'myPLA')({
     DOM,
     props$: O.just({}),
-    data$: inputSpinner.value$.map((c) => ({
-      rotation: 0,
-      inputs: c,
-    }))
+    data$: O.just(plaExample),
   });
 
   const state$ = O.just(null);

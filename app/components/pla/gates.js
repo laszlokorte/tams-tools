@@ -42,21 +42,33 @@ const inputOffsets = (count) => {
   return result;
 };
 
-const inputPorts = (count, type) =>
+const soderPoint = (x,y) =>
+  svg('circle', {
+    attributes: {
+      cx: x,
+      cy: y,
+      r: 4,
+      class: 'wire-soder',
+    },
+  })
+;
+
+const inputPorts = (count, type, soder) =>
   svg('g', {
     attributes: {
       'clip-path': 'url(#' + type + 'ClipPath)',
       class: 'gate-input-collection',
     },
-  }, inputOffsets(count).map((y) =>
+  }, inputOffsets(count).map((y) => [
+    soder ? soderPoint(-50, -40 + 10 * y) : null,
     svg('line', {
       x1: -50,
       y1: -40 + 10 * y,
       x2: 0,
       y2: -40 + 10 * y,
       class: 'gate-port',
-    })
-  ))
+    }),
+  ]))
 ;
 
 const inputExtension = (indent, count, bodyWidth) => {
@@ -87,7 +99,8 @@ const inputExtension = (indent, count, bodyWidth) => {
 }
 ;
 
-const outputFeature = () =>
+const outputFeature = (soder) => [
+  soder ? soderPoint(50, 0) : null,
   svg('line', {
     attributes: {
       x1: 0,
@@ -96,7 +109,8 @@ const outputFeature = () =>
       y2: 0,
       class: 'gate-port',
     },
-  })
+  }),
+]
 ;
 
 const negatorFeature = () =>
@@ -169,7 +183,7 @@ const bufferBodyFeature = () =>
 ;
 
 const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
-  return ({center: {x, y}, inputCount, rotation = Rotation.EAST}) => {
+  return ({center: {x, y}, inputCount, rotation = Rotation.EAST, soderOutput = false, soderInput = false}) => {
     const angle = 90 * (rotation - 1);
     const centerX = (x * 10);
     const centerY = (y * 10);
@@ -179,7 +193,8 @@ const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
         'rotate(' + angle + ')',
       class: 'gate gate-type-' + type,
     }, [
-      inputPorts(inputCount, type),
+      outputFeature(soderOutput),
+      inputPorts(inputCount, type, soderInput),
       inputExtension(inputIndent, inputCount, bodyWidth),
       features.map((feat) => feat()),
     ]);
@@ -215,54 +230,93 @@ export const clipPaths = () =>
   ])
 ;
 
+export const wires = {
+  vertical: ({from, toY, input, inputCount, soderStart, soderEnd}) => {
+    const startX = -40 + 10 * (from.x + inputOffsets(inputCount)[input]);
+    const startY = 10 * from.y;
+    const endX = startX;
+    const endY = 10 * toY;
+
+    return [
+      soderStart && soderPoint(startX, startY),
+      soderEnd && soderPoint(endX, endY),
+      svg('line', {
+        x1: startX,
+        y1: startY,
+        x2: endX,
+        y2: endY,
+        class: 'wire wire-vertical',
+      }),
+    ];
+  },
+  horizontal: ({from, toX, input, inputCount, soderStart, soderEnd}) => {
+    const startX = 10 * from.x;
+    const startY = -40 + 10 * (from.y + inputOffsets(inputCount)[input]);
+    const endX = 10 * toX;
+    const endY = startY;
+
+    return [
+      soderStart && soderPoint(startX, startY),
+      soderEnd && soderPoint(endX, endY),
+      svg('line', {
+        x1: startX,
+        y1: startY,
+        x2: endX,
+        y2: startY,
+        class: 'wire wire-horizontal',
+      }),
+    ];
+  },
+};
+
 export const gates = {
   and: composedGate({
     type: 'and',
     inputIndent: 25,
-    features: [outputFeature, andBodyFeature],
+    features: [andBodyFeature],
   }),
 
   nand: composedGate({
     type: 'nand',
     inputIndent: 25,
-    features: [outputFeature, andBodyFeature, negatorFeature],
+    features: [andBodyFeature, negatorFeature],
   }),
 
   or: composedGate({
     type: 'or',
     inputIndent: 20,
-    features: [outputFeature, orBodyFeature],
+    features: [orBodyFeature],
   }),
 
   nor: composedGate({
     type: 'nor',
     inputIndent: 20,
-    features: [outputFeature, orBodyFeature, negatorFeature],
+    features: [orBodyFeature, negatorFeature],
   }),
 
   xor: composedGate({
     type: 'xor',
     inputIndent: 10,
-    features: [outputFeature, orBodyFeature, exclusionFeature],
+    features: [orBodyFeature, exclusionFeature],
   }),
 
   xnor: composedGate({
     type: 'xnor',
     inputIndent: 10,
-    features: [outputFeature, orBodyFeature, exclusionFeature, negatorFeature],
+    features: [orBodyFeature, exclusionFeature, negatorFeature],
   }),
 
   buffer: composedGate({
     type: 'buffer',
     inputIndent: 50,
     bodyWidth: 50,
-    features: [outputFeature, bufferBodyFeature],
+    features: [bufferBodyFeature],
   }),
 
   negator: composedGate({
     type: 'negator',
     inputIndent: 50,
     bodyWidth: 50,
-    features: [outputFeature, bufferBodyFeature, negatorFeature],
+    features: [bufferBodyFeature, negatorFeature],
   }),
 };

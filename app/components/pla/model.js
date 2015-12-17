@@ -1,5 +1,7 @@
 import {Observable as O} from 'rx';
 
+import layoutPLA from './layout';
+
 export default (props$, data$, actions) =>
   O.combineLatest(
     props$,
@@ -13,8 +15,9 @@ export default (props$, data$, actions) =>
         .scan((prev) => (prev + 1) % 4),
       data$, (active, rotation, data) => ({
         data: {
+          circuit: layoutPLA(data),
           rotation,
-          inputs: data.inputs,
+          inputs: 3,
         },
         active,
         bounds: active ? {
