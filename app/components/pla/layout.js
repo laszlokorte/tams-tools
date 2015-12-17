@@ -13,7 +13,7 @@ const layoutInputs = (inputs, height) => {
         {
           type: 'vertical',
           from: {x: -10 * index - 19, y: -height / 2 - 23},
-          toY: height / 2,
+          toY: Math.floor(height / 20) * 10,
           input: 0,
           inputCount: 1,
           soderStart: true,
@@ -21,7 +21,7 @@ const layoutInputs = (inputs, height) => {
         {
           type: 'vertical',
           from: {x: -10 * index - 15, y: -height / 2 - 15 + 5},
-          toY: height / 2,
+          toY: Math.floor(height / 20) * 10,
           input: 0,
           inputCount: 1,
         },
@@ -40,6 +40,7 @@ const layoutInputs = (inputs, height) => {
 
 const layoutOutputs = (pla, height, loopCount) => {
   const outputGateWidth = (2 + Math.max(7, loopCount));
+  const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const outputWireCount = pla.outputs.map(
     (_, index) => pla.loops
       .filter((loop) =>
@@ -68,7 +69,7 @@ const layoutOutputs = (pla, height, loopCount) => {
             .map(({loop, idx}, wireIndex, all) => [{
               type: 'vertical',
               from: {x: outputGateWidth * index + 15, y: -height / 2 - 15 + 5},
-              toY: -height / 2 + 10 * idx,
+              toY: -height / 2 + gateWidth * idx,
               input: wireIndex,
               inputCount: all.length,
               soderEnd: true,
@@ -103,7 +104,7 @@ const layoutLoops = (pla) => {
     height: height,
     gates: loopInputs.map((loop, index) => ({
       type: 'and',
-      center: {x: 0, y: -height / 2 + 10 * index},
+      center: {x: 0, y: -height / 2 + gateWidth * index},
       inputCount: loop.length,
       rotation: Rotation.EAST,
     })),
@@ -112,7 +113,7 @@ const layoutLoops = (pla) => {
         .map((loop, index) =>
         Array.prototype.concat.apply([], loop.map((inputOffset, idx) => ({
           type: 'horizontal',
-          from: {x: -15 - inputOffset, y: -height / 2 + 10 * index},
+          from: {x: -15 - inputOffset, y: -height / 2 + gateWidth * index},
           toX: -5,
           input: idx,
           inputCount: loop.length,
@@ -124,7 +125,7 @@ const layoutLoops = (pla) => {
             type: 'horizontal',
             from: {
               x: 5,
-              y: -height / 2 + 10 * index,
+              y: -height / 2 + gateWidth * index,
             },
             toX: 10 + pla.outputs.length * outputGateWidth,
             input: 0,
@@ -152,5 +153,9 @@ export default (pla) => {
       inputs.wires,
       outputs.wires
     ),
+    bounds: {
+      min: -loops.height,
+      max: loops.height,
+    }
   };
 };
