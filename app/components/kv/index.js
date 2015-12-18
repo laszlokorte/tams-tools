@@ -8,7 +8,11 @@ import view from './view';
 import intent from './intent';
 import help from './help';
 
+import {newDiagram, toJSON} from './diagram';
+
 export default (responses) => {
+  console.log(toJSON(newDiagram()));
+
   const {
     DOM,
   } = responses;

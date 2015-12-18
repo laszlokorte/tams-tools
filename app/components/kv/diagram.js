@@ -79,6 +79,22 @@ const kvDiagram = I.Record({
 /// Functions
 ///
 
+/// Get the name of the given mode.
+const modeName = (mode) =>
+  mode.name
+;
+
+/// Get the mode for the given name.
+const modeFromName = (name) => {
+  if (name === MODE_DNF.name) {
+    return MODE_DNF;
+  } else if (name === MODE_KNF.name) {
+    return MODE_KNF;
+  } else {
+    return _mode();
+  }
+};
+
 /// converts a cell into a scalar integer value.
 const cellToInt = (
   /*BitSet*/cell
@@ -396,10 +412,52 @@ export const getValue = (
 ;
 
 /// Get a new diagram
-export const newDiagram = () =>
+export const newDiagram = (
+  ) =>
   appendInput("C",
   appendInput("B",
   appendInput("A",
     kvDiagram()
   )))
+;
+
+export const fromJSON = (
+  /*object*/json
+  ) =>
+  kvDiagram({
+    inputs: I.fromJS(json.inputs, (i, input) => kvInput({
+      name: input
+    })),
+    outputs: I.fromJS(json.outputs, (i, output) => kvOutput({
+      name: output.name,
+      values: I.List(output.values),
+    })),
+    loops: I.fromJS(json.loops, (i, loop) => kvLoop({
+      color: loop.color,
+      cube: kvCube({
+        include: intToCell(loop.include),
+        exclude: intToCell(loop.exclude),
+      }),
+      outputs: I.Set(loop.outputs),
+      mode: modeFromName(loop.mode),
+    })),
+  })
+;
+
+export const toJSON = (
+  /*kvDiagram*/diagram
+  ) => ({
+    inputs: diagram.inputs.map((i) => i.name).toArray(),
+    outputs: diagram.outputs.map((o) => ({
+      name: o.name,
+      values: o.values.toArray(),
+    })).toArray(),
+    loops: diagram.loops.map((l) => ({
+      color: l.color,
+      include: cellToInt(l.cube.include),
+      exclude: cellToInt(l.cube.exclude),
+      outputs: l.outputs.toArray(),
+      mode: modeName(l.mode),
+    })).toArray(),
+  })
 ;
