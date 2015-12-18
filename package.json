@@ -46,7 +46,7 @@
     "@cycle/storage": "^2.0.3",
     "@cyclic/cycle-hammer-driver": "^0.1.1",
     "bitset.js": "^3.0.0",
-    "immutable": "^3.7.5",
+    "immutable": "^3.7.6",
     "jeet": "^6.1.2",
     "nib": "^1.1.0",
     "rupture": "^0.6.1",
