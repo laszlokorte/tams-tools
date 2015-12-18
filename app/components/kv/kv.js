@@ -270,6 +270,20 @@ export const popInput = (
   })
 ;
 
+export const renameInput = (
+  /*int*/inputIndex,
+  /*String*/name,
+  /*kvDiagram*/diagram
+  ) =>
+  kvDiagram({
+    inputs: diagram.inputs.update(inputIndex,
+      (input) => kvInput({name})
+    ),
+    outputs: diagram.outputs,
+    loops: diagram.loops,
+  })
+;
+
 export const appendOutput = (
   /*String*/name,
   /*kvDiagram*/diagram
@@ -298,6 +312,23 @@ export const removeOutput = (
         (o) => o >= outputIndex ? Math.max(0, o - 1) : o
       )
     ).toSet(),
+  })
+;
+
+export const renameOutput = (
+  /*int*/outputIndex,
+  /*String*/name,
+  /*kvDiagram*/diagram
+  ) =>
+  kvDiagram({
+    inputs: diagram.inputs,
+    outputs: diagram.outputs.update(outputIndex,
+      (output) => kvOutput({
+        name,
+        values: output.values,
+      })
+    ),
+    loops: diagram.loops,
   })
 ;
 
