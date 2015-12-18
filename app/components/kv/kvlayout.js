@@ -5,41 +5,41 @@ const layouts = [
   // Layout for 0 inputs (1 value)
   (s) => {
     return [
-      [s(0)],
+      [s('0')],
     ];
   },
 
   // Layout for 1 input (2 values)
   (s) => {
     return [
-      [s(0)],
-      [s(1)],
+      [s('0')],
+      [s('1')],
     ];
   },
 
   // Layout for 2 inputs (4 values)
   (s) => {
     return [
-      [s(0), s(2)],
-      [s(1), s(3)],
+      [s('00'), s('10')],
+      [s('01'), s('11')],
     ];
   },
 
   // Layout for 3 inputs (8 values)
   (s) => {
     return [
-      [s(0), s(2), s(6), s(4)],
-      [s(1), s(3), s(7), s(5)],
+      [s('000'), s('010'), s('110'), s('100')],
+      [s('001'), s('011'), s('111'), s('101')],
     ];
   },
 
   // Layout for 4 inputs (16 values)
   (s) => {
     return [
-      [s(0), s(2), s(6), s(4)],
-      [s(8), s(10), s(14), s(12)],
-      [s(9), s(11), s(15), s(13)],
-      [s(1), s(3), s(7), s(5)],
+      [s('0000'), s('0010'), s('0110'), s('0100')],
+      [s('1000'), s('1010'), s('1110'), s('1100')],
+      [s('1001'), s('1011'), s('1111'), s('1101')],
+      [s('0001'), s('0011'), s('0111'), s('0101')],
     ];
   },
 
@@ -93,15 +93,16 @@ export const buildLayout = (size, scope) => {
   };
 };
 
-subLayout = ({size, scope, stepSize}, i) => {
+subLayout = ({size, scope, stepSize}, iString) => {
+  const iInt = parseInt(iString, 2);
   if (size === 0) {
     return {
-      scope: scope + i,
+      scope: scope + iInt,
     };
   } else {
     return {
-      scope: scope + i,
-      children: buildLayout(size, scope + i * stepSize),
+      scope: scope + iInt,
+      children: buildLayout(size, scope + iInt * stepSize),
     };
   }
 };
