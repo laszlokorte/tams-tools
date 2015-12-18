@@ -47,7 +47,7 @@ const kvInput = I.Record({
 /// values where n is the number of inputs.
 const kvOutput = I.Record({
   name: "O1",
-  values: I.List(),
+  values: I.List.of(VALUE_X),
 }, 'output');
 
 /// A loop is a multi dimensional range that
@@ -71,7 +71,7 @@ const kvLoop = I.Record({
 /// and a set of all the loops
 const kvDiagram = I.Record({
   inputs: I.List(),
-  outputs: I.List(kvOutput()),
+  outputs: I.List.of(kvOutput()),
   loops: I.Set(),
 }, 'kv');
 
@@ -234,6 +234,7 @@ const excludeFromLoop = (
   }
 };
 
+/// Add an input with the given name to the given diagram
 export const appendInput = (
   /*String*/name,
   /*kvDiagram*/diagram
@@ -244,13 +245,14 @@ export const appendInput = (
     })),
     outputs: diagram.outputs.map(
       (output) => output.set('values',
-        output.values.concat(output.values)
+        output.get('values')
       )
     ),
     loops: diagram.loops,
   })
 ;
 
+/// Remove one input from the given diagram.
 export const popInput = (
   /*kvDiagram*/diagram
   ) =>
@@ -270,6 +272,7 @@ export const popInput = (
   })
 ;
 
+/// Rename the input at the given index.
 export const renameInput = (
   /*int*/inputIndex,
   /*String*/name,
@@ -284,6 +287,7 @@ export const renameInput = (
   })
 ;
 
+/// Add an output with the given name to the given diagram.
 export const appendOutput = (
   /*String*/name,
   /*kvDiagram*/diagram
@@ -298,6 +302,7 @@ export const appendOutput = (
   })
 ;
 
+/// Remove the output at the given index from the given diagram.
 export const removeOutput = (
   /*int*/outputIndex,
   /*kvDiagram*/diagram
@@ -315,6 +320,7 @@ export const removeOutput = (
   })
 ;
 
+/// Rename the output at the given index to the given name.
 export const renameOutput = (
   /*int*/outputIndex,
   /*String*/name,
@@ -332,6 +338,7 @@ export const renameOutput = (
   })
 ;
 
+/// Add the given loop to the given diagram.
 export const appendLoop = (
   /*kvLoop*/loop,
   /*kvDiagram*/diagram
@@ -346,6 +353,7 @@ export const appendLoop = (
   })
 ;
 
+/// Remove the loop at the given index from the diagram.
 export const removeLoop = (
   /*int*/loopIndex,
   /*kvDiagram*/diagram
@@ -357,6 +365,7 @@ export const removeLoop = (
   })
 ;
 
+/// Set the given cell to the given value for the given output.
 export const setValue = (
   /*int*/outputIndex,
   /*BitSet*/cell,
@@ -377,10 +386,20 @@ export const setValue = (
   })
 ;
 
+/// Get the value for the given output of the given diagram.
 export const getValue = (
   /*int*/outputIndex,
   /*BitSet*/cell,
   /*kvDiagram*/diagram
   ) =>
   diagram.outputs.get(outputIndex).values.get(cellToInt(cell))
+;
+
+/// Get a new diagram
+export const newDiagram = () =>
+  appendInput("C",
+  appendInput("B",
+  appendInput("A",
+    kvDiagram()
+  )))
 ;
