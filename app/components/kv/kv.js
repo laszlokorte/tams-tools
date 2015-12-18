@@ -22,9 +22,9 @@ const _mode = I.Record({
 }, '_mode');
 
 /// The DNF mode allows the loop to include 1s
-const MODE_DNF = _mode({name: 'dnf', includes: VALUE_1});
+export const MODE_DNF = _mode({name: 'dnf', includes: VALUE_1});
 /// the KNF mode allows the loop to include 0s
-const MODE_KNF = _mode({name: 'knf', includes: VALUE_0});
+export const MODE_KNF = _mode({name: 'knf', includes: VALUE_0});
 
 /// a cube is the the n dimensional range a loop spans
 /// For loop to be not empty the include
@@ -80,52 +80,76 @@ const kvDiagram = I.Record({
 ///
 
 /// converts a cell into a scalar integer value.
-const cellToInt = (/*BitSet*/cell) =>
+const cellToInt = (
+  /*BitSet*/cell
+  ) =>
   parseInt(cell.toString(2), 2)
 ;
 
 /// converts a scalar integer value into a BitSet.
-const intToCell = (/*int*/int) =>
+const intToCell = (
+  /*int*/int
+  ) =>
   BitSet(int)
 ;
 
 /// check if the the given value is allowed
 /// to be contained inside a cube for the given mode.
-const isValidValueForMode = (/*mixed*/value, /*_mode*/mode) =>
+const isValidValueForMode = (
+  /*mixed*/value,
+  /*_mode*/mode
+  ) =>
   value === null || value === mode.includes
 ;
 
 /// check if the given cell is inside the given cube.
-const insideCube = (/*BitSet*/cell, /*kvCube*/cube) =>
+export const insideCube = (
+  /*BitSet*/cell,
+  /*kvCube*/cube
+  ) =>
   cube.include.and(cell).equals(cube.include) &&
   cube.exclude.and(cell).isEmpty()
 ;
 
 /// check if the given cell is inside the given loop.
-const insideLoop = (/*BitSet*/cell, /*kvLoop*/loop) =>
+export const insideLoop = (
+  /*BitSet*/cell,
+  /*kvLoop*/loop
+  ) =>
   insideCube(cell, loop.cube)
 ;
 
 /// check if the given cube is empty.
-const isEmptyCube = (/*kvCube*/cube) =>
+const isEmptyCube = (
+  /*kvCube*/cube
+  ) =>
   !cube.include.and(cube.exclude).isEmpty()
 ;
 
 /// check if the given loop is empty.
-const isEmptyLoop = (/*kvLoop*/loop) =>
+const isEmptyLoop = (
+  /*kvLoop*/loop
+  ) =>
   loop.outputs.isEmpty() ||
   isEmptyCube(loop.cube)
 ;
 
 /// check if the the given given loop blongs to the output
 /// of the given index.
-const loopBelongsToOutput = (/*kvLoop*/loop, /*int*/outputIndex) =>
+export const loopBelongsToOutput = (
+  /*kvLoop*/loop,
+  /*int*/outputIndex
+  ) =>
   loop.outputs.contains(outputIndex)
 ;
 
 /// check if the given cube is valid for the given values
 /// and the given mode.
-const isValidCubeForValuesInMode = (/*kvCube*/cube, /*I.List*/values, /*_mode*/mode) =>
+const isValidCubeForValuesInMode = (
+  /*kvCube*/cube,
+  /*I.List*/values,
+  /*_mode*/mode
+  ) =>
   values.reduce((value, index) =>
     !insideCube(intToCell(index)) ||
     isValidValueForMode(value, mode)
@@ -133,7 +157,10 @@ const isValidCubeForValuesInMode = (/*kvCube*/cube, /*I.List*/values, /*_mode*/m
 ;
 
 /// Adjust given cube for a new amount of inputs.
-const resizeCube = (/*int*/inputCount, /*kvCube*/cube) => {
+const resizeCube = (
+  /*int*/inputCount,
+  /*kvCube*/cube
+  ) => {
   const mask = BitSet().setRange(0, inputCount, 1);
   return kvCube({
     include: mask.and(kvCube),
@@ -142,12 +169,18 @@ const resizeCube = (/*int*/inputCount, /*kvCube*/cube) => {
 };
 
 /// Adjust the given loop for a new amount of inputs.
-const resizeLoop = (/*int*/inputCount, /*kvLoop*/loop) =>
+const resizeLoop = (
+  /*int*/inputCount,
+  /*kvLoop*/loop
+  ) =>
   loop.update('cube', (cube) => resizeCube(inputCount, cube))
 ;
 
 /// Adjust the given cube to not contain the given cell anymore.
-const excludeFromCube = (/*BitSet*/cell, /*kvCube*/cube) => {
+const excludeFromCube = (
+  /*BitSet*/cell,
+  /*kvCube*/cube
+  ) => {
   const include = cube.include;
   const exclude = cube.exclude;
 
@@ -177,7 +210,11 @@ const excludeFromCube = (/*BitSet*/cell, /*kvCube*/cube) => {
 };
 
 /// Exclude the given cell for the given outputIndex from the given loop.
-const excludeFromLoop = (/*int*/outputIndex, /*BitSet*/cell, /*kvLoop*/loop) => {
+const excludeFromLoop = (
+  /*int*/outputIndex,
+  /*BitSet*/cell,
+  /*kvLoop*/loop
+  ) => {
   const newCube = excludeFromCube(cell, loop);
 
   if (isEmptyCube(newCube) && loop.outputs.count() > 1) {
@@ -197,7 +234,10 @@ const excludeFromLoop = (/*int*/outputIndex, /*BitSet*/cell, /*kvLoop*/loop) => 
   }
 };
 
-const appendInput = (/*String*/name, /*kvDiagram*/diagram) =>
+export const appendInput = (
+  /*String*/name,
+  /*kvDiagram*/diagram
+  ) =>
   kvDiagram({
     inputs: diagram.inputs.push(kvInput({
       name,
@@ -211,7 +251,9 @@ const appendInput = (/*String*/name, /*kvDiagram*/diagram) =>
   })
 ;
 
-const popInput = (/*kvDiagram*/diagram) =>
+export const popInput = (
+  /*kvDiagram*/diagram
+  ) =>
   kvDiagram({
     inputs: diagram.inputs.pop(),
     outputs: diagram.outputs.map(
@@ -224,22 +266,28 @@ const popInput = (/*kvDiagram*/diagram) =>
         resizeLoop(diagram.inputs.count - 1, loop)
       )
       .filter((loop) => !isEmptyLoop(loop))
-      .toSet()
+      .toSet(),
   })
 ;
 
-const appendOutput = (/*String*/name, /*kvDiagram*/diagram) =>
+export const appendOutput = (
+  /*String*/name,
+  /*kvDiagram*/diagram
+  ) =>
   kvDiagram({
     inputs: diagram.inputs,
     outputs: diagram.outputs.push(kvOutput({
       name,
-      values: _stride(diagram.inputs.count, VALUE_X)
+      values: _stride(diagram.inputs.count, VALUE_X),
     })),
     loops: diagram.loops,
   })
 ;
 
-const removeOutput = (/*int*/outputIndex, /*kvDiagram*/diagram) =>
+export const removeOutput = (
+  /*int*/outputIndex,
+  /*kvDiagram*/diagram
+  ) =>
   kvDiagram({
     inputs: diagram.inputs,
     outputs: diagram.outputs.remove(outputIndex),
@@ -253,7 +301,10 @@ const removeOutput = (/*int*/outputIndex, /*kvDiagram*/diagram) =>
   })
 ;
 
-const appendLoop = (/*kvLoop*/loop, /*kvDiagram*/diagram) =>
+export const appendLoop = (
+  /*kvLoop*/loop,
+  /*kvDiagram*/diagram
+  ) =>
   kvDiagram({
     inputs: diagram.inputs,
     outputs: diagram.outputs,
@@ -264,7 +315,10 @@ const appendLoop = (/*kvLoop*/loop, /*kvDiagram*/diagram) =>
   })
 ;
 
-const removeLoop = (/*int*/loopIndex, diagram) =>
+export const removeLoop = (
+  /*int*/loopIndex,
+  /*kvDiagram*/diagram
+  ) =>
   kvDiagram({
     inputs: diagram.inputs,
     outputs: diagram.outputs,
@@ -272,7 +326,12 @@ const removeLoop = (/*int*/loopIndex, diagram) =>
   })
 ;
 
-const setValue = (/*int*/outputIndex, /*BitSet*/cell, /*mixed*/value, /*kvDiagram*/diagram) =>
+export const setValue = (
+  /*int*/outputIndex,
+  /*BitSet*/cell,
+  /*mixed*/value,
+  /*kvDiagram*/diagram
+  ) =>
   kvDiagram({
     inputs: diagram.inputs,
     outputs: diagram.update(outputIndex, (output) =>
@@ -285,4 +344,12 @@ const setValue = (/*int*/outputIndex, /*BitSet*/cell, /*mixed*/value, /*kvDiagra
         loop : excludeFromLoop(outputIndex, cell, loop)
     ),
   })
+;
+
+export const getValue = (
+  /*int*/outputIndex,
+  /*BitSet*/cell,
+  /*kvDiagram*/diagram
+  ) =>
+  diagram.outputs.get(outputIndex).values.get(cellToInt(cell))
 ;
