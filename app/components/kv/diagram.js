@@ -421,12 +421,13 @@ export const newDiagram = (
   )))
 ;
 
+/// Deserialize a diagram from the given json.
 export const fromJSON = (
   /*object*/json
   ) =>
   kvDiagram({
     inputs: I.fromJS(json.inputs, (i, input) => kvInput({
-      name: input
+      name: input,
     })),
     outputs: I.fromJS(json.outputs, (i, output) => kvOutput({
       name: output.name,
@@ -444,6 +445,7 @@ export const fromJSON = (
   })
 ;
 
+/// Serialize the given diagram into json.
 export const toJSON = (
   /*kvDiagram*/diagram
   ) => ({
