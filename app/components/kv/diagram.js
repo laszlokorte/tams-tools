@@ -18,7 +18,7 @@ const VALUE_X = null;
 /// the mode is either KNF or DNF
 const _mode = I.Record({
   name: 'none',
-  allowedValue: null,
+  includes: null,
 }, '_mode');
 
 /// The DNF mode allows the loop to include 1s
@@ -47,7 +47,7 @@ const kvInput = I.Record({
 /// values where n is the number of inputs.
 const kvOutput = I.Record({
   name: "O1",
-  values: I.List.of(VALUE_X),
+  values: I.List.of(VALUE_1),
 }, 'output');
 
 /// A loop is a multi dimensional range that
@@ -102,6 +102,13 @@ const cellToInt = (
   parseInt(cell.toString(2), 2)
 ;
 
+/// converts a cell into an array value.
+const cellToArray = (
+  /*BitSet*/cell
+  ) =>
+  cell.toString(2).split("")
+;
+
 /// converts a scalar integer value into a BitSet.
 const intToCell = (
   /*int*/int
@@ -118,6 +125,15 @@ const isValidValueForMode = (
   value === null || value === mode.includes
 ;
 
+/// check if the the given given loop blongs to the output
+/// of the given index.
+export const loopBelongsToOutput = (
+  /*kvLoop*/loop,
+  /*int*/outputIndex
+  ) =>
+  loop.outputs.contains(outputIndex)
+;
+
 /// check if the given cell is inside the given cube.
 export const insideCube = (
   /*BitSet*/cell,
@@ -129,9 +145,11 @@ export const insideCube = (
 
 /// check if the given cell is inside the given loop.
 export const insideLoop = (
+  /*int*/outputIndex,
   /*BitSet*/cell,
   /*kvLoop*/loop
   ) =>
+  loopBelongsToOutput(loop, outputIndex) &&
   insideCube(cell, loop.cube)
 ;
 
@@ -150,21 +168,12 @@ const isEmptyLoop = (
   isEmptyCube(loop.cube)
 ;
 
-/// check if the the given given loop blongs to the output
-/// of the given index.
-export const loopBelongsToOutput = (
-  /*kvLoop*/loop,
-  /*int*/outputIndex
-  ) =>
-  loop.outputs.contains(outputIndex)
-;
-
 /// check if the given cube is valid for the given values
 /// and the given mode.
 const isValidCubeForValuesInMode = (
   /*kvCube*/cube,
   /*I.List*/values,
-  /*_mode*/mode
+  /*_mode*/mode = MODE_DNF
   ) =>
   values.reduce((value, index) =>
     !insideCube(intToCell(index)) ||
@@ -179,7 +188,7 @@ const resizeCube = (
   ) => {
   const mask = BitSet().setRange(0, inputCount, 1);
   return kvCube({
-    include: mask.and(kvCube),
+    include: mask.and(cube.include),
     exclude: mask.and(cube.exclude),
   });
 };
@@ -261,9 +270,9 @@ export const appendInput = (
     })),
     outputs: diagram.outputs.map(
       (output) => output.set('values',
-        output.get('values')
+        output.values.concat(output.values)
       )
-    ),
+    ).toList(),
     loops: diagram.loops,
   })
 ;
@@ -281,7 +290,7 @@ export const popInput = (
     ),
     loops: diagram.loops
       .map((loop) =>
-        resizeLoop(diagram.inputs.count - 1, loop)
+        resizeLoop(diagram.inputs.count() - 1, loop)
       )
       .filter((loop) => !isEmptyLoop(loop))
       .toSet(),
@@ -312,7 +321,7 @@ export const appendOutput = (
     inputs: diagram.inputs,
     outputs: diagram.outputs.push(kvOutput({
       name,
-      values: _stride(diagram.inputs.count, VALUE_X),
+      values: _stride(diagram.inputs.count(), VALUE_X),
     })),
     loops: diagram.loops,
   })
@@ -363,7 +372,7 @@ export const appendLoop = (
     inputs: diagram.inputs,
     outputs: diagram.outputs,
     loops: diagram.loops
-      .add(resizeLoop(diagram.inputs.count, loop))
+      .add(resizeLoop(diagram.inputs.count(), loop))
       .filter((l) => !isEmptyLoop(l))
       .toSet(),
   })
@@ -414,11 +423,21 @@ export const getValue = (
 /// Get a new diagram
 export const newDiagram = (
   ) =>
+  appendLoop(
+    kvLoop({
+      color: 'green',
+      cube: kvCube({
+        include: BitSet("000"),
+        exclude: BitSet("000"),
+      }),
+      outputs: I.Set.of(0),
+      mode: MODE_DNF,
+    }),
   appendInput("C",
   appendInput("B",
   appendInput("A",
     kvDiagram()
-  )))
+  ))))
 ;
 
 /// Deserialize a diagram from the given json.
@@ -461,5 +480,63 @@ export const toJSON = (
       outputs: l.outputs.toArray(),
       mode: modeName(l.mode),
     })).toArray(),
+  })
+;
+
+/// Extract PLA terms of the given diagram for the given mode.
+const toPLATerms = (
+  /*kvDiagram*/diagram,
+  /*_mode*/mode = MODE_DNF
+  ) =>
+  diagram.outputs.reduce(
+    (prev, output, outputIndex) =>
+      prev.concat(
+        output.values
+        .map((value, index) => ({value, index}))
+        .filter(({value}) => mode.includes === value)
+        .map(({index}) => intToCell(index))
+        .filter((cell) =>
+          diagram.loops.filter(
+            (loop) => loop.mode === mode
+          ).filter(
+            (loop) => insideLoop(outputIndex, cell, loop)
+          ).isEmpty()
+        )
+        .map((cell) =>
+            diagram.inputs.map((i, iIndex) => cell.get(iIndex))
+          .concat(
+            diagram.outputs.map((_, oIndex) => oIndex === outputIndex ? 1 : 0)
+          ).toArray()
+        )
+      ),
+    I.List()).concat(
+      diagram.loops.map(
+        (loop) =>
+          diagram.inputs.map((_, iIndex) => {
+            if (loop.cube.include.get(iIndex) === 1) {
+              return 1;
+            } else if (loop.cube.exclude.get(iIndex) === 1) {
+              return 0;
+            } else {
+              return null;
+            }
+          }).concat(
+            diagram.outputs.map(
+              (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? 1 : 0
+            )
+          ).toArray()
+      )
+    ).toArray()
+;
+
+/// Convert the given diagram to PLA format
+/// using the given mode.
+export const toPLA = (
+  /*kvDiagram*/diagram,
+  /*_mode*/mode = MODE_DNF
+  ) => ({
+    inputs: diagram.inputs.map((i) => i.name).toArray(),
+    outputs: diagram.outputs.map((o) => o.name).toArray(),
+    loops: toPLATerms(diagram, mode),
   })
 ;
