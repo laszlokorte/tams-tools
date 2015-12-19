@@ -1,5 +1,4 @@
-import {div} from '@cycle/dom';
-import svg from '../../lib/monkeypatches/svg';
+import {div, svg} from '@cycle/dom';
 
 import './view.styl';
 
