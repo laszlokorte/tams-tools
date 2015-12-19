@@ -1,15 +1,15 @@
 import {zip} from '../../lib/utils';
 
-// The layouts for different kv sizes
+/// The layouts for different KV diagram sizes
 const layouts = [
-  // Layout for 0 inputs (1 value)
+  /// Layout for 0 inputs (1 value)
   (s) => {
     return [
       [s('0')],
     ];
   },
 
-  // Layout for 1 input (2 values)
+  /// Layout for 1 input (2 values)
   (s) => {
     return [
       [s('0')],
@@ -17,7 +17,7 @@ const layouts = [
     ];
   },
 
-  // Layout for 2 inputs (4 values)
+  /// Layout for 2 inputs (4 values)
   (s) => {
     return [
       [s('00'), s('10')],
@@ -25,7 +25,7 @@ const layouts = [
     ];
   },
 
-  // Layout for 3 inputs (8 values)
+  /// Layout for 3 inputs (8 values)
   (s) => {
     return [
       [s('000'), s('010'), s('110'), s('100')],
@@ -33,7 +33,7 @@ const layouts = [
     ];
   },
 
-  // Layout for 4 inputs (16 values)
+  /// Layout for 4 inputs (16 values)
   (s) => {
     return [
       [s('0000'), s('0010'), s('0110'), s('0100')],
@@ -43,23 +43,23 @@ const layouts = [
     ];
   },
 
-  // Layouts for more than 4 inputs will automatically
-  // composed by nesting the base layouts recursively
-  // for example a layout for a kv with 6 inputs (64 values)
-  // will be composed by nesting the twotimes the layout for 4 values
-  // into the layout for for two values.
+  /// Layouts for more than 4 inputs will automatically
+  /// composed by nesting the base layouts recursively
+  /// for example a layout for a kv with 6 inputs (64 values)
+  /// will be composed by nesting the twotimes the layout for 4 values
+  /// into the layout for for two values.
 
-  // The nth element (0-based) in this array has to be a function with
-  // calls the callback it's given once with each value from
-  // (including) 0 to (excluding) 2^n
+  /// The nth element (0-based) in this array has to be a function with
+  /// calls the callback it's given once with each value from
+  /// (including) 0 to (excluding) 2^n
 ];
 
-// generates a nested layout
-// defined later
+/// generates a nested layout
+/// defined later
 let subLayout;
 
-// generates a KV layout for the given size
-// scope is just needed for recursive calls
+/// generates a KV layout for the given size
+/// scope is just needed for recursive calls
 export const buildLayout = (size, scope) => {
   const _scope = scope || 0;
   const maxLayoutSize = layouts.length - 1;
