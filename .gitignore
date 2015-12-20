@@ -8,6 +8,9 @@ webpack-stats.json
 node_modules/
 npm-debug.log
 
+# vagrant stuff
+.vagrant
+
 # Editor Stuff
 *.sublime-project
 *.sublime-workspace
