@@ -58,7 +58,7 @@ const kvOutput = I.Record({
 /// - a cube that represents the range
 /// - a set of output indices to which the loop applies
 /// - the mode
-export const kvLoop = I.Record({
+const kvLoop = I.Record({
   color: '#555',
   cube: kvCube(),
   outputs: I.Set(),
@@ -305,7 +305,7 @@ export const renameInput = (
   ) =>
   kvDiagram({
     inputs: diagram.inputs.update(inputIndex,
-      () => kvInput({name})
+      (input) => kvInput({name})
     ),
     outputs: diagram.outputs,
     loops: diagram.loops,
@@ -418,23 +418,6 @@ export const getValue = (
   /*kvDiagram*/diagram
   ) =>
   diagram.outputs.get(outputIndex).values.get(cellToInt(cell))
-;
-
-/// Get a new empty loop
-export const newLoop = (
-  ) => kvLoop({
-    color: '#000',
-    cube: kvCube(),
-    outputs: I.Set(),
-    mode: null,
-  })
-;
-
-/// Deserialize a loop from given json.
-export const loopFromJson = (
-  json
-  ) => json === null ? null :
-  kvDiagram(json)
 ;
 
 /// Get a new diagram
