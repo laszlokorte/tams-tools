@@ -1,4 +1,5 @@
-import {zip} from '../../lib/utils';
+import BitSet from 'bitset.js';
+import {zip} from '../../../lib/utils';
 
 /// The layouts for different KV diagram sizes
 const layouts = [
@@ -84,10 +85,10 @@ export const buildLayout = (size, scope) => {
         row.map((col) => col.scope)
       )
       .reduce((prev, cols) =>
-        zip(prev, cols, (u,v) => u & v)
+        zip(prev, cols, (u,v) => u.and(v))
       ),
     rows: rows.map((cols) =>
-      cols.reduce((p,v) => p & v.scope, -1)
+      cols.reduce((p,v) => p.and(v.scope), BitSet().set(0, cols.length - 1, 1))
     ),
     grid: rows,
   };
@@ -97,11 +98,11 @@ subLayout = ({size, scope, stepSize}, iString) => {
   const iInt = parseInt(iString, 2);
   if (size === 0) {
     return {
-      scope: scope + iInt,
+      scope: BitSet(scope + iInt),
     };
   } else {
     return {
-      scope: scope + iInt,
+      scope: BitSet(scope + iInt),
       children: buildLayout(size, scope + iInt * stepSize),
     };
   }

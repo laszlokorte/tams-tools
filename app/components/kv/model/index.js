@@ -4,11 +4,11 @@ import I from 'immutable';
 import * as diagram from './diagram';
 import {buildLayout} from './layout';
 
-import {memoize} from '../../lib/utils';
+import {memoize} from '../../../lib/utils';
 
 const kvState = I.Record({
   currentMode: 'edit',
-  currentLoop: diagram.newLoop(),
+  currentCube: diagram.newLoop(),
   diagram: diagram.newDiagram(),
 }, 'state');
 
@@ -35,7 +35,7 @@ const applyModification = (prev, modfn) => modfn(prev);
 const addInput = (state) =>
   kvState({
     currentMode: state.currentMode,
-    currentLoop: state.currentLoop,
+    currentCube: state.currentCube,
     diagram: diagram.appendInput(
       "New Input",
       state.diagram
@@ -46,7 +46,7 @@ const addInput = (state) =>
 const removeInput = (state) =>
   kvState({
     currentMode: state.currentMode,
-    currentLoop: state.currentLoop,
+    currentCube: state.currentCube,
     diagram: diagram.popInput(
       state.diagram
     ),
@@ -57,10 +57,10 @@ const nextValue = (
   /*mixed*/currentValue,
   /*boolean*/reverse
   ) => {
-  const prevValue = (currentValue === false) ? null : !currentValue;
-  const nextValue = (currentValue === true) ? null : currentValue === false;
+  const prev = (currentValue === false) ? null : !currentValue;
+  const next = (currentValue === true) ? null : currentValue === false;
 
-  return reverse ? prevValue : nextValue;
+  return reverse ? prev : next;
 };
 
 const cycleValue = (
@@ -71,7 +71,7 @@ const cycleValue = (
   ) =>
   kvState({
     currentMode: state.currentMode,
-    currentLoop: state.currentLoop,
+    currentCube: state.currentCube,
     diagram: diagram.setValue(
       outputIndex,
       cell,
@@ -85,33 +85,63 @@ const cycleValue = (
 ;
 
 const tryLoop = (state) =>
-
+  kvState({
+    currentMode: state.currentMode,
+    currentCube: state.currentCube,
+    diagram: state.diagram,
+  })
 ;
 
-const removeLoop = (state) =>
-
+const removeLoop = (state, loopIndex) =>
+  kvState({
+    currentMode: state.currentMode,
+    currentCube: state.currentCube,
+    diagram: diagram.removeLoop(loopIndex, state.diagram),
+  })
 ;
 
-const addLoop = (state) =>
-
+const addLoop = (state, output, start, end) =>
+  kvState({
+    currentMode: state.currentMode,
+    currentCube: state.currentCube,
+    diagram: diagram.appendLoop(diagram.kvLoop({
+      color: 'green',
+      cube: diagram.newCubeFromTo(start, end),
+      outputs: I.Set.of(output),
+      mode: diagram.modeFromName(state.currentMode),
+    }), state.diagram),
+  })
 ;
 
 const addOutput = (state) =>
-
+  kvState({
+    currentMode: state.currentMode,
+    currentCube: state.currentCube,
+    diagram: diagram.appendOutput(
+      "New Output",
+      state.diagram
+    ),
+  })
 ;
 
-const removeOutput = (state) =>
-
+const removeOutput = (state, outputIndex) =>
+  kvState({
+    currentMode: state.currentMode,
+    currentCube: state.currentCube,
+    diagram: diagram.removeOutput(
+      outputIndex,
+      state.diagram
+    ),
+  })
 ;
 
-const selectOutput = (state) =>
-
+const switchMode = (state, mode) =>
+  kvState({
+    currentMode: mode,
+    currentCube: state.currentCube,
+    diagram: state.diagram,
+  })
 ;
-
-const switchMode = (state) =>
-
-;
-
 
 const modifiers = (actions) => {
   return O.merge(
@@ -131,16 +161,13 @@ const modifiers = (actions) => {
       return removeLoop(state, loopIndex);
     }),
     actions.addLoop$.map(({output, startOffset, targetOffset}) => (state) => {
-      return addLoop(state, output, startOffset, targetOffset);;
+      return addLoop(state, output, startOffset, targetOffset);
     }),
     actions.addOutput$.map(() => (state) => {
       return addOutput(state);
     }),
     actions.removeOutput$.map((index) => (state) => {
       return removeOutput(state, index);
-    }),
-    actions.selectOutput$.map((index) => (state) => {
-      return selectOutput(state, index);
     }),
     actions.switchMode$.map((mode) => (state) => {
       return switchMode(state, mode);
@@ -153,7 +180,7 @@ const initialState = kvState();
 const stateFromJson = (json) =>
   kvState({
     currentMode: String(json.mode),
-    currentLoop: diagram.loopFromJson(json.loop),
+    currentCube: diagram.cubeFromJson(json.cube),
     diagram: diagram.fromJSON(json),
   })
 ;
@@ -168,6 +195,6 @@ export default (initial$, actions) =>
     ).scan(applyModification, null)
     .map((state) => ({
       state: state,
-      layout: layout(state.diagram.inputs.count()),
+      layout: layout(state.diagram.inputs.size),
     }))
 ;

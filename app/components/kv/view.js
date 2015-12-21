@@ -5,10 +5,8 @@ import {
   table, tr, th, td,
 } from '@cycle/dom';
 
-import {matchesLoop, isValidLoopValue} from './model';
+import {insideLoop, isValidValueForMode, loopBelongsToOutput} from './model/diagram';
 import './view.styl';
-
-import {highestBit, formatBinary} from '../../lib/utils';
 
 // convert a cell's value into a string
 const renderValue = (val) => {
@@ -95,13 +93,13 @@ const renderLoop = ({color, rowCount, colCount, x, y}) => {
 };
 
 const calcLoopRange = (dontcare, cols, loop) => {
-  const include = loop.get('include');
-  const exclude = loop.get('exclude');
+  const include = loop.include;
+  const exclude = loop.exclude;
 
   const fields = cols.map((col) =>
-    matchesLoop(col & ~dontcare,
-      include & ~dontcare,
-      exclude & ~dontcare)
+    insideLoop(col & ~dontcare,
+      include.and(~dontcare),
+      exclude.and(~dontcare))
   );
 
   const start = fields.findIndex((v) => v);
@@ -126,33 +124,36 @@ const renderLoops = (loops, rows, cols) => {
     (colCount > 3 ? '.kv-loop-padding-bottom' : '') +
     (rowCount > 1 ? '.kv-loop-padding-left' : '');
 
-  const colMask = cols.reduce((a,b) => a | b);
-  const rowMask = rows.reduce((a,b) => a | b);
-  const scopeMask = colMask ^ rowMask;
+  const colMask = cols.reduce((a,b) => a.or(b));
+  const rowMask = rows.reduce((a,b) => a.or(b));
+  const scopeMask = colMask.xor(rowMask);
 
   return div('.kv-loops-container' + padding,
     loops.map((loop) =>
       renderLoop({
-        color: loop.get('color'),
+        color: loop.color,
         rowCount, colCount,
-        x: calcLoopRange(scopeMask & rowMask, cols, loop),
-        y: calcLoopRange(scopeMask & colMask, rows, loop),
+        x: calcLoopRange(scopeMask.and(rowMask), cols, loop),
+        y: calcLoopRange(scopeMask.and(colMask), rows, loop),
       })
     ).toArray()
   );
 };
 
-const _labelFor = ({variables, offset}, rowsOrColumns, {include, exclude}) =>
-  rowsOrColumns.length > include &&
-  rowsOrColumns.length > exclude &&
-  variables.get(
-    offset +
-    highestBit(
-      ~rowsOrColumns[exclude] &
-      rowsOrColumns[include]
-    )
-  ) || null
-;
+const _labelFor = ({inputs, offset}, rowsOrColumns, {include, exclude}) => {
+  if (rowsOrColumns.length > include &&
+    rowsOrColumns.length > exclude
+    ) {
+    const inputIndex = offset + highestBit(
+        ~rowsOrColumns[exclude] &
+        rowsOrColumns[include]
+      );
+    return inputIndex > 0 && inputIndex < inputs.length ?
+      inputIndex : null;
+  } else {
+    return null;
+  }
+};
 
 const renderTableHead = (colCount, {top, left, right, bottom}) =>
   top !== null &&
@@ -223,16 +224,16 @@ const renderTableRowEnd = (rowIndex, {right}) =>
   ) || null
 ;
 
-const renderTableCell = (kv, output, column) => {
-  const pattern = formatBinary(column.scope, kv.get('variables').size);
-  const value = kv.get('outputs')
-    .get(kv.get('currentOutput'))
-    .get('values')
-    .get(column.scope);
-  const include = kv.get('currentLoop').get('include');
-  const exclude = kv.get('currentLoop').get('exclude');
-  const active = matchesLoop(column.scope, include, exclude);
-  const error = active && !isValidLoopValue(kv.get('mode'), value);
+const renderTableCell = (diagram, output, cell) => {
+  const pattern = cell.getRange(0, diagram.inputs.size - 1).toString(2);
+  const value = diagram.outputs
+    .get(output)
+    .values
+    .get(cell);
+  const include = null && diagram.currentCube.include;
+  const exclude = null && diagram.currentCube.exclude;
+  const active = false && insideLoop(cell, include, exclude);
+  const error = false; //&& active && !isValidLoopValue(diagram.get('mode'), value);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
@@ -241,7 +242,7 @@ const renderTableCell = (kv, output, column) => {
         (error ? 'state-error' : null),
       ].join(' '),
       attributes: {
-        'data-kv-offset': column.scope,
+        'data-kv-offset': cell,
         'data-kv-pattern': pattern,
         'data-kv-value': value,
         'data-kv-output': output,
@@ -251,20 +252,20 @@ const renderTableCell = (kv, output, column) => {
   );
 };
 
-const tableLables = ({rows, cols, offset, variables}) => ({
-  top: _labelFor({variables, offset}, cols, {
+const tableLables = ({rows, cols, offset, inputs}) => ({
+  top: _labelFor({inputs, offset}, cols, {
     include: 1,
     exclude: 0,
   }),
-  bottom: _labelFor({variables, offset}, cols, {
+  bottom: _labelFor({inputs, offset}, cols, {
     include: 2,
     exclude: 1,
   }),
-  left: _labelFor({variables, offset}, rows, {
+  left: _labelFor({inputs, offset}, rows, {
     include: rows.length / 2,
     exclude: rows.length / 2 - 1,
   }),
-  right: _labelFor({variables, offset}, rows, {
+  right: _labelFor({inputs, offset}, rows, {
     include: 1,
     exclude: 3,
   }),
@@ -272,7 +273,7 @@ const tableLables = ({rows, cols, offset, variables}) => ({
 
 // generate a HTML Table from the given KV layout, kv data.
 // offset is just needed for recursive calls
-const renderTable = (layout, kv, output, offset = kv.get('variables').size) => {
+const renderTable = (layout, diagram, mode, output, offset = diagram.inputs.size) => {
   const cols = layout.columns;
   const rows = layout.rows;
   const rowCount = rows.length;
@@ -283,31 +284,31 @@ const renderTable = (layout, kv, output, offset = kv.get('variables').size) => {
     rows,
     cols,
     offset: labelOffset,
-    variables: kv.get('variables'),
+    inputs: diagram.inputs,
   });
 
   return div('.kv-container', [
     layout.treeHeight === 0 &&
-    renderLoops(
-      kv.get('loops').filter(
-        (loop) => loop.get('output') === output
+    null && renderLoops(
+      diagram.loops.filter(
+        (loop) => loopBelongsToOutput(loop, output)
       ), rows, cols) || null,
 
     table('.kv-table', {
-      className: 'kv-mode-' + kv.get('mode'),
+      className: 'kv-mode-' + mode,
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
       renderTableHead(colCount, labels),
       layout.grid.map((row, rowIndex) =>
         tr('.kv-table-row-body', [
           renderTableRowStart(rowIndex, rowCount, labels),
-          row.map((column) => {
-            if (column.children) {
+          row.map((cell) => {
+            if (cell.children) {
               return td('.kv-table-cell-body.kv-cell-container', [
-                renderTable(column.children, kv, output, labelOffset + 1),
+                renderTable(cell.children, diagram, mode, output, labelOffset + 1),
               ]);
             } else {
-              return renderTableCell(kv, output, column);
+              return renderTableCell(diagram, output, cell.scope);
             }
           }),
           renderTableRowEnd(rowIndex, labels),
@@ -323,16 +324,16 @@ const renderToolbar = (state) =>
     button('.numberButton',
       {
         attributes: {'data-kv-counter': 'decrement'},
-        disabled: state.kv.get('variables').size <= 0,
+        disabled: state.diagram.inputs.size <= 0,
       },
       '-'),
     span('.input-count',
       {attributes: {'data-label': 'Inputs'}},
-      state.kv.get('variables').size),
+      state.diagram.inputs.size),
     button('.numberButton',
       {
         attributes: {'data-kv-counter': 'increment'},
-        disabled: state.kv.get('variables').size >= 8,
+        disabled: state.diagram.inputs.size >= 8,
       },
       '+'),
   ])
@@ -341,7 +342,7 @@ const renderToolbar = (state) =>
 const renderLoopButton = (state, loop, index) =>
   li([
     button('.well', {
-      style: {'background-color': loop.get('color')},
+      style: {'background-color': loop.color},
       attributes: {
         'data-loop-index': index,
       },
@@ -351,7 +352,7 @@ const renderLoopButton = (state, loop, index) =>
 ;
 
 const renderModeButton = (state) => {
-  const mode = state.kv.get('mode');
+  const mode = state.mode;
   return button('.toggle-button', {attributes: {
     'data-kv-mode': (mode === 'dnf' ? 'knf' : 'dnf'),
   }},[
@@ -369,7 +370,7 @@ const renderLoopList = (state) =>
     renderModeButton(state),
     span('.toolbar-title', 'Loops:'),
     ul('.inline-list', [
-      state.kv.get('loops').map((loop, i) =>
+      state.diagram.loops.map((loop, i) =>
         renderLoopButton(state, loop, i)
       ).toArray(),
       //li(button('.well.well-add', 'Add Loop')),
@@ -381,23 +382,23 @@ const renderOutputList = (state) =>
   div('.output-list', [
     span('.toolbar-title', 'Outputs:'),
     ul('.inline-list', [
-      state.kv.get('outputs').map((output, i, all) =>
+      state.diagram.outputs.map((output, i, all) =>
         li(
           span('.pill' +
-            (i === state.kv.get('currentOutput') ? '.state-active' : ''), {
+            (i === state.currentOutput ? '.state-active' : ''), {
               attributes: {
                 'data-kv-output': i,
               },
             }, [
-              output.get('name'),
-              all.count() > 1 && button('.pill-delete', {attributes: {
+              output.name,
+              all.size > 1 && button('.pill-delete', {attributes: {
                 'data-kv-remove-output': i,
               }}, 'X') || null,
             ]
           )
         )
       ).toArray(),
-      state.kv.get('outputs').size < 4 && li(
+      state.diagram.outputs.size < 4 && li(
         button('.pill', {attributes: {'data-kv-add-output': true}},'+')
       ) || null,
       //li(button('.well.well-add', 'Add Loop')),
@@ -406,9 +407,9 @@ const renderOutputList = (state) =>
 ;
 
 const renderDebug = (state) => {
-  const include = state.kv.get('currentLoop').get('include');
-  const exclude = state.kv.get('currentLoop').get('exclude');
-  const size = state.kv.get('variables').size;
+  const include = state.currentCube.include;
+  const exclude = state.currentCube.exclude;
+  const size = state.diagram.inputs.size;
 
   return div('.debug-panel', (include ^ exclude) && [
     'include: ',
@@ -421,25 +422,25 @@ const renderDebug = (state) => {
   ] || null);
 };
 
-const renderBody = (state) =>
-  renderTable(state.layout, state.kv, state.kv.get('currentOutput'))
+const renderBody = (layout, state) =>
+  renderTable(layout, state.diagram, state.mode, state.currentOutput || 0)
 ;
 
-const renderTableContainer = (state) =>
+const renderTableContainer = (layout, state) =>
   div('.scroller', [
     div('.scoller-inner', [
-      renderBody(state),
+      renderBody(layout, state),
     ]),
   ])
 ;
 
-const render = (state) =>
+const render = ({state, layout}) =>
   div([
     renderToolbar(state),
     renderLoopList(state),
     renderOutputList(state),
     renderDebug(state),
-    renderTableContainer(state),
+    renderTableContainer(layout, state),
   ]);
 
 export default (state$, {helpBox$}) =>

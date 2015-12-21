@@ -30,7 +30,7 @@ export const MODE_KNF = _mode({name: 'knf', includes: VALUE_0});
 /// For loop to be not empty the include
 /// and exclude bitsets must not intersect.
 /// Each bit in the BitSet represents a kv input.
-const kvCube = I.Record({
+export const kvCube = I.Record({
   include: BitSet(1),
   exclude: BitSet(1),
 }, 'cube');
@@ -72,7 +72,7 @@ export const kvLoop = I.Record({
 const kvDiagram = I.Record({
   inputs: I.List(),
   outputs: I.List.of(kvOutput()),
-  loops: I.Set(),
+  loops: I.OrderedSet(),
 }, 'kv');
 
 ///
@@ -242,7 +242,7 @@ const excludeFromLoop = (
   ) => {
   const newCube = excludeFromCube(cell, loop);
 
-  if (isEmptyCube(newCube) && loop.outputs.count() > 1) {
+  if (isEmptyCube(newCube) && loop.outputs.size > 1) {
     return kvLoop({
       color: loop.color,
       cube: loop.cube,
@@ -290,10 +290,10 @@ export const popInput = (
     ),
     loops: diagram.loops
       .map((loop) =>
-        resizeLoop(diagram.inputs.count() - 1, loop)
+        resizeLoop(diagram.inputs.size - 1, loop)
       )
       .filter((loop) => !isEmptyLoop(loop))
-      .toSet(),
+      .toOrderedSet(),
   })
 ;
 
@@ -321,7 +321,7 @@ export const appendOutput = (
     inputs: diagram.inputs,
     outputs: diagram.outputs.push(kvOutput({
       name,
-      values: _stride(diagram.inputs.count(), VALUE_X),
+      values: _stride(diagram.inputs.size, VALUE_X),
     })),
     loops: diagram.loops,
   })
@@ -336,12 +336,18 @@ export const removeOutput = (
     inputs: diagram.inputs,
     outputs: diagram.outputs.remove(outputIndex),
     loops: diagram.loops.map(
-      (loop) => loop.outputs.filter(
-        (o) => o !== outputIndex
-      ).map(
-        (o) => o >= outputIndex ? Math.max(0, o - 1) : o
-      )
-    ).toSet(),
+      (loop) => kvLoop({
+        color: loop.color,
+        cube: loop.cube,
+        mode: loop.mode,
+        outputs: loop.outputs
+          .filter(
+            (o) => o !== outputIndex
+          ).map(
+            (o) => o >= outputIndex ? Math.max(0, o - 1) : o
+          ).toSet(),
+      })
+    ),
   })
 ;
 
@@ -372,9 +378,9 @@ export const appendLoop = (
     inputs: diagram.inputs,
     outputs: diagram.outputs,
     loops: diagram.loops
-      .add(resizeLoop(diagram.inputs.count(), loop))
+      .push(resizeLoop(diagram.inputs.size, loop))
       .filter((l) => !isEmptyLoop(l))
-      .toSet(),
+      .toOrderedSet(),
   })
 ;
 
@@ -407,7 +413,7 @@ export const setValue = (
     loops: diagram.loops.map((loop) =>
       isValidValueForMode(value, loop.mode) ?
         loop : excludeFromLoop(outputIndex, cell, loop)
-    ),
+    ).toSet(),
   })
 ;
 
@@ -420,6 +426,15 @@ export const getValue = (
   diagram.outputs.get(outputIndex).values.get(cellToInt(cell))
 ;
 
+export const newCubeFromTo = (
+  start,
+  end
+  ) => kvCube({
+    include: start.and(end),
+    exclude: start.or(end).not(),
+  })
+;
+
 /// Get a new empty loop
 export const newLoop = (
   ) => kvLoop({
@@ -430,11 +445,11 @@ export const newLoop = (
   })
 ;
 
-/// Deserialize a loop from given json.
-export const loopFromJson = (
+/// Deserialize a cube from given json.
+export const cubeFromJson = (
   json
   ) => json === null ? null :
-  kvDiagram(json)
+  kvCube(json)
 ;
 
 /// Get a new diagram
