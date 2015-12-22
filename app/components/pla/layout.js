@@ -6,7 +6,7 @@ const layoutInputs = (inputs, height) => {
     width: 12 + 10 * inputs.length,
     gates: inputs.map((name, index) => ({
       type: 'negator',
-      center: {x: -10 * index - 15, y: -height / 2 - 15},
+      center: {x: -10 * index - 15, y: -Math.ceil(height / 2) - 15},
       inputCount: 1,
       rotation: Rotation.SOUTH,
     })),
@@ -14,22 +14,22 @@ const layoutInputs = (inputs, height) => {
       inputs.map((name, index) => [
         {
           type: 'vertical',
-          from: {x: -10 * index - 19, y: -height / 2 - 23},
-          toY: height / 2 - 5,
+          from: {x: -10 * index - 19, y: -Math.ceil(height / 2) - 23},
+          toY: Math.ceil(height / 2) - 5,
           input: 0,
           inputCount: 1,
           soderStart: true,
         },
         {
           type: 'vertical',
-          from: {x: -10 * index - 15, y: -height / 2 - 15 + 5},
-          toY: height / 2 - 5,
+          from: {x: -10 * index - 15, y: -Math.ceil(height / 2) - 15 + 5},
+          toY: Math.ceil(height / 2) - 5,
           input: 0,
           inputCount: 1,
         },
         {
           type: 'horizontal',
-          from: {x: -10 * index - 19, y: -height / 2 - 15 - 5},
+          from: {x: -10 * index - 19, y: -Math.ceil(height / 2) - 15 - 5},
           toX: -10 * index - 15,
           input: 0,
           inputCount: 1,
@@ -57,7 +57,7 @@ const layoutOutputs = (pla, height, loopCount) => {
       type: 'or',
       center: {
         x: outputGateWidth * index + 15,
-        y: -height / 2 - 15,
+        y: -Math.ceil(height / 2) - 15,
       },
       inputCount: outputWireCount[index],
       rotation: Rotation.NORTH,
@@ -71,8 +71,8 @@ const layoutOutputs = (pla, height, loopCount) => {
             .filter(({loop}) => loop[index + pla.inputs.length] === 1)
             .map(({loop, idx}, wireIndex, all) => [{
               type: 'vertical',
-              from: {x: outputGateWidth * index + 15, y: -height / 2 - 15 + 5},
-              toY: -height / 2 + gateWidth * idx,
+              from: {x: outputGateWidth * index + 15, y: -Math.ceil(height / 2) - 15 + 5},
+              toY: -Math.ceil(height / 2) + gateWidth * idx,
               input: wireIndex,
               inputCount: all.length,
               soderEnd: true,
@@ -107,7 +107,7 @@ const layoutLoops = (pla) => {
     height: height,
     gates: loopInputs.map((loop, index) => ({
       type: 'and',
-      center: {x: 0, y: -height / 2 + gateWidth * index},
+      center: {x: 0, y: -Math.ceil(height / 2) + gateWidth * index},
       inputCount: loop.length,
       rotation: Rotation.EAST,
     })),
@@ -116,7 +116,7 @@ const layoutLoops = (pla) => {
         .map((loop, index) =>
         Array.prototype.concat.apply([], loop.map((inputOffset, idx) => ({
           type: 'horizontal',
-          from: {x: -15 - inputOffset, y: -height / 2 + gateWidth * index},
+          from: {x: -15 - inputOffset, y: -Math.ceil(height / 2) + gateWidth * index},
           toX: -5,
           input: idx,
           inputCount: loop.length,
@@ -128,7 +128,7 @@ const layoutLoops = (pla) => {
             type: 'horizontal',
             from: {
               x: 5,
-              y: -height / 2 + gateWidth * index,
+              y: -Math.ceil(height / 2) + gateWidth * index,
             },
             toX: 10 + pla.outputs.length * outputGateWidth,
             input: 0,
