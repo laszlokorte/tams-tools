@@ -10,8 +10,8 @@ const _stride = (length, value) =>
 ///
 
 /// A output value can either be 1, 0 or X(dont care);
-const VALUE_1 = 1;
-const VALUE_0 = 0;
+const VALUE_1 = true;
+const VALUE_0 = false;
 const VALUE_X = null;
 
 /// internal representation of the loop mode
