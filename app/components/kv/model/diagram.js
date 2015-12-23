@@ -378,7 +378,7 @@ export const appendLoop = (
     inputs: diagram.inputs,
     outputs: diagram.outputs,
     loops: diagram.loops
-      .push(resizeLoop(diagram.inputs.size, loop))
+      .add(resizeLoop(diagram.inputs.size, loop))
       .filter((l) => !isEmptyLoop(l))
       .toOrderedSet(),
   })
