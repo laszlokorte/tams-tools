@@ -151,17 +151,17 @@ const modifiers = (actions) => {
     actions.removeInput$.map(() => (state) => {
       return removeInput(state);
     }),
-    actions.cycleValue$.map(({output, offset, reverse}) => (state) => {
-      return cycleValue(state, output, offset, reverse);
+    actions.cycleValue$.map(({output, cell, reverse}) => (state) => {
+      return cycleValue(state, output, cell, reverse);
     }),
-    actions.tryLoop$.map(({output, startOffset, targetOffset}) => (state) => {
-      return tryLoop(state, output, startOffset, targetOffset);
+    actions.tryLoop$.map(({output, startCell, targetCell}) => (state) => {
+      return tryLoop(state, output, startCell, targetCell);
     }),
     actions.removeLoop$.map((loopIndex) => (state) => {
       return removeLoop(state, loopIndex);
     }),
-    actions.addLoop$.map(({output, startOffset, targetOffset}) => (state) => {
-      return addLoop(state, output, startOffset, targetOffset);
+    actions.addLoop$.map(({output, startCell, targetCell}) => (state) => {
+      return addLoop(state, output, startCell, targetCell);
     }),
     actions.addOutput$.map(() => (state) => {
       return addOutput(state);

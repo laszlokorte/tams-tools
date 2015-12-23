@@ -240,7 +240,7 @@ const renderTableCell = (diagram, output, cell) => {
         (error ? 'state-error' : null),
       ].join(' '),
       attributes: {
-        'data-kv-offset': cell.toString(10),
+        'data-kv-cell': cell.toString(10),
         'data-kv-pattern': pattern,
         'data-kv-value': value,
         'data-kv-output': output,

@@ -1,4 +1,5 @@
 import {Observable as O} from 'rx';
+import BitSet from 'bitset.js'
 
 import {preventDefault, parseDataAttr, pluckDataAttr} from '../../lib/utils';
 
@@ -15,59 +16,59 @@ export default (DOM) => {
   );
   const pointerEnter$ = O.merge(
     DOM
-      .select('.kv-cell-atom[data-kv-offset]')
+      .select('.kv-cell-atom[data-kv-cell]')
       .events('mouseenter')
       .map((evt) => ({
         evt,
-        offset: parseInt(evt.target.dataset.kvOffset, 10),
+        cell: BitSet(evt.target.dataset.kvCell),
       }))
     ,
     DOM
-      .select('.kv-cell-atom[data-kv-offset]')
+      .select('.kv-cell-atom[data-kv-cell]')
       .events('touchmove')
       .map((evt) => {
         const element = touchTarget(evt);
         return {
           evt,
-          offset: element ? parseInt("" + element.dataset.kvOffset, 10) : NaN,
+          cell: element ? BitSet(element.dataset.kvCell) : null,
         };
       })
   );
   const pointerDown$ = O.merge(
       DOM
-        .select('.kv-cell-atom[data-kv-offset]')
+        .select('.kv-cell-atom[data-kv-cell]')
         .events('touchstart'),
       DOM
-        .select('.kv-cell-atom[data-kv-offset]')
+        .select('.kv-cell-atom[data-kv-cell]')
         .events('mousedown')
         .filter((evt) => !!evt.shiftKey)
     )
     .map((evt) => ({
       evt,
-      offset: parseInt(evt.target.dataset.kvOffset, 10),
+      cell: BitSet(evt.target.dataset.kvCell),
       output: parseInt(evt.target.dataset.kvOutput, 10),
     }))
     .do(({evt}) => evt.preventDefault())
-    .filter(({offset}) => !isNaN(offset))
+    .filter(({cell}) => cell !== null)
     ;
   const drag$ = pointerDown$
-    .flatMap(({offset, output}) =>
+    .flatMap(({cell, output}) =>
       O.just({
         output: output,
-        startOffset: offset,
-        targetOffset: offset,
+        startCell: cell,
+        targetCell: cell,
       }).concat(
         pointerEnter$
-        .filter(({offset: o}) => !isNaN(o))
+        .filter(({cell: o}) => !isNaN(o))
         .do(({evt}) => evt.preventDefault())
         .distinctUntilChanged(
-          ({offset: o}) => o,
+          ({cell: o}) => o,
           (a, b) => a === b
         )
-        .map(({offset: targetOffset}) => ({
+        .map(({cell: targetCell}) => ({
           output,
-          startOffset: offset,
-          targetOffset,
+          startCell: cell,
+          targetCell,
         })
       )
       ).takeUntil(
@@ -91,13 +92,13 @@ export default (DOM) => {
         .map(() => true),
     cycleValue$:
       DOM
-        .select('.kv-cell-atom[data-kv-offset]')
+        .select('.kv-cell-atom[data-kv-cell]')
         .events('click')
         .filter((evt) => !evt.shiftKey)
         .map((evt) => ({
           reverse: evt.altKey,
           output: parseInt(evt.target.dataset.kvOutput, 10),
-          offset: parseInt(evt.target.dataset.kvOffset, 10),
+          cell: BitSet(evt.target.dataset.kvCell, 10),
         })),
     removeLoop$:
       DOM

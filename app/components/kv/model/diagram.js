@@ -285,7 +285,7 @@ export const popInput = (
     inputs: diagram.inputs.pop(),
     outputs: diagram.outputs.map(
       (output) => output.set('values',
-        output.values.setSize(output.values / 2)
+        output.values.setSize(output.values.size / 2)
       )
     ),
     loops: diagram.loops
@@ -403,9 +403,10 @@ export const setValue = (
   /*mixed*/value,
   /*kvDiagram*/diagram
   ) =>
+  console.log("xxx", cell) ||
   kvDiagram({
     inputs: diagram.inputs,
-    outputs: diagram.update(outputIndex, (output) =>
+    outputs: diagram.outputs.update(outputIndex, (output) =>
       output.update('values', (values) =>
         values.set(cellToInt(cell), value)
       )
