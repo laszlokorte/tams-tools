@@ -231,7 +231,6 @@ const renderTableCell = (diagram, output, cell) => {
   const active = false && insideLoop(cell, include, exclude);
   const error = false;
   //&& active && !isValidLoopValue(diagram.get('mode'), value);
-  console.log(value);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
@@ -240,7 +239,7 @@ const renderTableCell = (diagram, output, cell) => {
         (error ? 'state-error' : null),
       ].join(' '),
       attributes: {
-        'data-kv-cell': cell.toString(10),
+        'data-kv-cell': cell.toString(2),
         'data-kv-pattern': pattern,
         'data-kv-value': value,
         'data-kv-output': output,

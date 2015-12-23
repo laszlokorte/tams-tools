@@ -98,7 +98,7 @@ export default (DOM) => {
         .map((evt) => ({
           reverse: evt.altKey,
           output: parseInt(evt.target.dataset.kvOutput, 10),
-          cell: BitSet(evt.target.dataset.kvCell, 10),
+          cell: BitSet(evt.target.dataset.kvCell),
         })),
     removeLoop$:
       DOM

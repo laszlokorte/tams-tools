@@ -176,7 +176,7 @@ const isValidCubeForValuesInMode = (
   /*_mode*/mode = MODE_DNF
   ) =>
   values.reduce((value, index) =>
-    !insideCube(intToCell(index)) ||
+    !insideCube(intToCell(index), cube) ||
     isValidValueForMode(value, mode)
   , true)
 ;
@@ -240,7 +240,7 @@ const excludeFromLoop = (
   /*BitSet*/cell,
   /*kvLoop*/loop
   ) => {
-  const newCube = excludeFromCube(cell, loop);
+  const newCube = excludeFromCube(cell, loop.cube);
 
   if (isEmptyCube(newCube) && loop.outputs.size > 1) {
     return kvLoop({
@@ -403,7 +403,6 @@ export const setValue = (
   /*mixed*/value,
   /*kvDiagram*/diagram
   ) =>
-  console.log("xxx", cell) ||
   kvDiagram({
     inputs: diagram.inputs,
     outputs: diagram.outputs.update(outputIndex, (output) =>
