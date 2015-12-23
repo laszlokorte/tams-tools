@@ -144,12 +144,8 @@ const _labelFor = ({inputs, offset}, rowsOrColumns, {include, exclude}) => {
   if (rowsOrColumns.length > include &&
     rowsOrColumns.length > exclude
     ) {
-    const inputIndex = offset + highestBit(
-        ~rowsOrColumns[exclude] &
-        rowsOrColumns[include]
-      );
-    return inputIndex > 0 && inputIndex < inputs.length ?
-      inputIndex : null;
+    const intersect = rowsOrColumns[exclude].not().and(rowsOrColumns[include]);
+    return inputs.get(offset + 1 + intersect.msb()).name;
   } else {
     return null;
   }
@@ -225,15 +221,17 @@ const renderTableRowEnd = (rowIndex, {right}) =>
 ;
 
 const renderTableCell = (diagram, output, cell) => {
-  const pattern = cell.getRange(0, diagram.inputs.size - 1).toString(2);
+  const pattern = cell.getRange(0, diagram.inputs.size).toString(2);
   const value = diagram.outputs
     .get(output)
     .values
-    .get(cell);
+    .get(parseInt(cell, 2));
   const include = null && diagram.currentCube.include;
   const exclude = null && diagram.currentCube.exclude;
   const active = false && insideLoop(cell, include, exclude);
-  const error = false; //&& active && !isValidLoopValue(diagram.get('mode'), value);
+  const error = false;
+  //&& active && !isValidLoopValue(diagram.get('mode'), value);
+  console.log(value);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
@@ -242,7 +240,7 @@ const renderTableCell = (diagram, output, cell) => {
         (error ? 'state-error' : null),
       ].join(' '),
       attributes: {
-        'data-kv-offset': cell,
+        'data-kv-offset': cell.toString(10),
         'data-kv-pattern': pattern,
         'data-kv-value': value,
         'data-kv-output': output,
@@ -262,8 +260,8 @@ const tableLables = ({rows, cols, offset, inputs}) => ({
     exclude: 1,
   }),
   left: _labelFor({inputs, offset}, rows, {
-    include: rows.length / 2,
-    exclude: rows.length / 2 - 1,
+    include: Math.ceil(rows.length / 2),
+    exclude: Math.ceil(rows.length / 2 - 1),
   }),
   right: _labelFor({inputs, offset}, rows, {
     include: 1,
@@ -288,11 +286,11 @@ const renderTable = (layout, diagram, mode, output, offset = diagram.inputs.size
   });
 
   return div('.kv-container', [
-    layout.treeHeight === 0 &&
-    null && renderLoops(
-      diagram.loops.filter(
-        (loop) => loopBelongsToOutput(loop, output)
-      ), rows, cols) || null,
+    // layout.treeHeight === 0 &&
+    // null && renderLoops(
+    //   diagram.loops.filter(
+    //     (loop) => loopBelongsToOutput(loop, output)
+    //   ), rows, cols) || null,
 
     table('.kv-table', {
       className: 'kv-mode-' + mode,
