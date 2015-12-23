@@ -88,7 +88,7 @@ export const buildLayout = (size, scope) => {
         zip(prev, cols, (u,v) => u.and(v))
       ),
     rows: rows.map((cols) =>
-      cols.reduce((p,v) => p.and(v.scope), BitSet().set(0, cols.length - 1, 1))
+      cols.reduce((p,v) => p.and(v.scope), BitSet().setRange(0, cols.length - 1, 1))
     ),
     grid: rows,
   };
