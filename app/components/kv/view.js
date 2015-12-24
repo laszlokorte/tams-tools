@@ -349,7 +349,7 @@ const renderLoopButton = (state, loop, index) =>
 ;
 
 const renderModeButton = (state) => {
-  const mode = state.mode;
+  const mode = state.currentMode;
   return button('.toggle-button', {attributes: {
     'data-kv-mode': (mode === 'dnf' ? 'knf' : 'dnf'),
   }},[
@@ -420,7 +420,12 @@ const renderDebug = (state) => {
 };
 
 const renderBody = (layout, state) =>
-  renderTable(layout, state.diagram, state.mode, state.currentOutput || 0)
+  renderTable(
+    layout,
+    state.diagram,
+    state.currentMode,
+    state.currentOutput
+  )
 ;
 
 const renderTableContainer = (layout, state) =>

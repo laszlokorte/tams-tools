@@ -2,7 +2,7 @@ import I from 'immutable';
 import BitSet from 'bitset.js';
 
 const _stride = (length, value) =>
-  I.List(Array({length: length}).map(() => value))
+  I.List(Array.apply(Array, {length: length}).map(() => value))
 ;
 
 ///
@@ -72,7 +72,7 @@ export const kvLoop = I.Record({
 const kvDiagram = I.Record({
   inputs: I.List(),
   outputs: I.List.of(kvOutput()),
-  loops: I.OrderedSet(),
+  loops: I.List(),
 }, 'kv');
 
 ///
@@ -85,7 +85,7 @@ const modeName = (mode) =>
 ;
 
 /// Get the mode for the given name.
-const modeFromName = (name) => {
+export const modeFromName = (name) => {
   if (name === MODE_DNF.name) {
     return MODE_DNF;
   } else if (name === MODE_KNF.name) {
@@ -293,7 +293,7 @@ export const popInput = (
         resizeLoop(diagram.inputs.size - 1, loop)
       )
       .filter((loop) => !isEmptyLoop(loop))
-      .toOrderedSet(),
+      .toList(),
   })
 ;
 
@@ -321,7 +321,7 @@ export const appendOutput = (
     inputs: diagram.inputs,
     outputs: diagram.outputs.push(kvOutput({
       name,
-      values: _stride(diagram.inputs.size, VALUE_X),
+      values: _stride(Math.pow(2, diagram.inputs.size), VALUE_X),
     })),
     loops: diagram.loops,
   })
@@ -347,7 +347,7 @@ export const removeOutput = (
             (o) => o >= outputIndex ? Math.max(0, o - 1) : o
           ).toSet(),
       })
-    ),
+    ).toList(),
   })
 ;
 
@@ -378,9 +378,9 @@ export const appendLoop = (
     inputs: diagram.inputs,
     outputs: diagram.outputs,
     loops: diagram.loops
-      .add(resizeLoop(diagram.inputs.size, loop))
+      .push(resizeLoop(diagram.inputs.size, loop))
       .filter((l) => !isEmptyLoop(l))
-      .toOrderedSet(),
+      .toList(),
   })
 ;
 
@@ -413,7 +413,7 @@ export const setValue = (
     loops: diagram.loops.map((loop) =>
       isValidValueForMode(value, loop.mode) ?
         loop : excludeFromLoop(outputIndex, cell, loop)
-    ).toSet(),
+    ).toList(),
   })
 ;
 
@@ -479,11 +479,11 @@ export const fromJSON = (
   kvDiagram({
     inputs: I.fromJS(json.inputs, (i, input) => kvInput({
       name: input,
-    })),
+    })).toList(),
     outputs: I.fromJS(json.outputs, (i, output) => kvOutput({
       name: output.name,
       values: I.List(output.values),
-    })),
+    })).toList(),
     loops: I.fromJS(json.loops, (i, loop) => kvLoop({
       color: loop.color,
       cube: kvCube({
@@ -492,7 +492,7 @@ export const fromJSON = (
       }),
       outputs: I.Set(loop.outputs),
       mode: modeFromName(loop.mode),
-    })),
+    })).toList(),
   })
 ;
 

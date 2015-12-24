@@ -4,11 +4,13 @@ import I from 'immutable';
 import * as diagram from './diagram';
 import {buildLayout} from './layout';
 
-import {memoize} from '../../../lib/utils';
+import {memoize, clamp} from '../../../lib/utils';
 
 const kvState = I.Record({
-  currentMode: 'edit',
+  currentEditMode: 'edit',
+  currentMode: 'dnf',
   currentCube: diagram.newLoop(),
+  currentOutput: 0,
   diagram: diagram.newDiagram(),
 }, 'state');
 
@@ -34,8 +36,10 @@ const applyModification = (prev, modfn) => modfn(prev);
 
 const addInput = (state) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: diagram.appendInput(
       "New Input",
       state.diagram
@@ -45,8 +49,10 @@ const addInput = (state) =>
 
 const removeInput = (state) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: diagram.popInput(
       state.diagram
     ),
@@ -70,8 +76,10 @@ const cycleValue = (
   /*boolean*/reverse
   ) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: diagram.setValue(
       outputIndex,
       cell,
@@ -86,24 +94,30 @@ const cycleValue = (
 
 const tryLoop = (state) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: state.diagram,
   })
 ;
 
 const removeLoop = (state, loopIndex) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: diagram.removeLoop(loopIndex, state.diagram),
   })
 ;
 
 const addLoop = (state, output, start, end) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: diagram.appendLoop(diagram.kvLoop({
       color: 'green',
       cube: diagram.newCubeFromTo(start, end),
@@ -115,8 +129,10 @@ const addLoop = (state, output, start, end) =>
 
 const addOutput = (state) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: diagram.appendOutput(
       "New Output",
       state.diagram
@@ -126,8 +142,12 @@ const addOutput = (state) =>
 
 const removeOutput = (state, outputIndex) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
+    currentOutput: Math.max(0,
+      state.currentOutput >= outputIndex ?
+      state.currentOutput - 1 : state.currentOutput),
     diagram: diagram.removeOutput(
       outputIndex,
       state.diagram
@@ -135,10 +155,22 @@ const removeOutput = (state, outputIndex) =>
   })
 ;
 
+const selectOutput = (state, outputIndex) =>
+  kvState({
+    currentEditMode: state.currentEditMode,
+    currentMode: state.currentMode,
+    currentCube: state.currentCube,
+    currentOutput: clamp(outputIndex, 0, state.diagram.outputs.size - 1),
+    diagram: state.diagram,
+  })
+;
+
 const switchMode = (state, mode) =>
   kvState({
+    currentEditMode: state.currentEditMode,
     currentMode: mode,
     currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
     diagram: state.diagram,
   })
 ;
@@ -169,6 +201,9 @@ const modifiers = (actions) => {
     actions.removeOutput$.map((index) => (state) => {
       return removeOutput(state, index);
     }),
+    actions.selectOutput$.map((index) => (state) => {
+      return selectOutput(state, index);
+    }),
     actions.switchMode$.map((mode) => (state) => {
       return switchMode(state, mode);
     })
@@ -179,8 +214,10 @@ const initialState = kvState();
 
 const stateFromJson = (json) =>
   kvState({
+    currentEditMode: json.currentEditMode,
     currentMode: String(json.mode),
     currentCube: diagram.cubeFromJson(json.cube),
+    currentOutput: json.currentOutput,
     diagram: diagram.fromJSON(json),
   })
 ;
