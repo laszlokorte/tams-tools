@@ -5,7 +5,11 @@ import {
   table, tr, th, td,
 } from '@cycle/dom';
 
-import {insideLoop, isValidValueForMode, loopBelongsToOutput} from './model/diagram';
+import {
+  insideLoop, isValidValueForMode,
+  loopBelongsToOutput,
+} from './model/diagram';
+
 import './view.styl';
 
 // convert a cell's value into a string
@@ -270,7 +274,13 @@ const tableLables = ({rows, cols, offset, inputs}) => ({
 
 // generate a HTML Table from the given KV layout, kv data.
 // offset is just needed for recursive calls
-const renderTable = (layout, diagram, mode, output, offset = diagram.inputs.size) => {
+const renderTable = (
+  layout,
+  diagram,
+  mode,
+  output,
+  offset = diagram.inputs.size
+  ) => {
   const cols = layout.columns;
   const rows = layout.rows;
   const rowCount = rows.length;
@@ -302,7 +312,8 @@ const renderTable = (layout, diagram, mode, output, offset = diagram.inputs.size
           row.map((cell) => {
             if (cell.children) {
               return td('.kv-table-cell-body.kv-cell-container', [
-                renderTable(cell.children, diagram, mode, output, labelOffset + 1),
+                renderTable(cell.children, diagram,
+                  mode, output, labelOffset + 1),
               ]);
             } else {
               return renderTableCell(diagram, output, cell.scope);
@@ -403,22 +414,6 @@ const renderOutputList = (state) =>
   ])
 ;
 
-const renderDebug = (state) => {
-  const include = state.currentCube.include;
-  const exclude = state.currentCube.exclude;
-  const size = state.diagram.inputs.size;
-
-  return div('.debug-panel', (include ^ exclude) && [
-    'include: ',
-    formatBinary(include,
-      size),
-    ' - ',
-    'exclude: ',
-    formatBinary(exclude,
-      size),
-  ] || null);
-};
-
 const renderBody = (layout, state) =>
   renderTable(
     layout,
@@ -441,7 +436,6 @@ const render = ({state, layout}) =>
     renderToolbar(state),
     renderLoopList(state),
     renderOutputList(state),
-    renderDebug(state),
     renderTableContainer(layout, state),
   ]);
 
