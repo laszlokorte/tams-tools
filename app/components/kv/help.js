@@ -1,8 +1,8 @@
 import {div, h1, dl, dt, dd} from '@cycle/dom';
 
 const helpItem = (title, body) => [
-  dt('.help-item-titel', title),
-  dd('.help-item-body', body),
+  dt('.modal-item-titel', title),
+  dd('.modal-item-body', body),
 ];
 
 export default () => div([
