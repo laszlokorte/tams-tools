@@ -6,6 +6,8 @@ A tool to generate and edit KV Diagrams.
 
 First you need to make sure you have installed `node`(v5.1.0) and `npm`(3.5.0) on your system.
 
+`node` can be downloaded at https://nodejs.org/en/ `npm` is included.
+
 Then just run:
 
 ```shell
@@ -25,7 +27,7 @@ Now you can open `http://localhost:3000` in your browser
 To build a release version just run
 
 ```shell
-$ npm compile
+$ npm run compile
 ```
 
-The output will be saved into the `./build` folder
+The output will be saved into the `./build` folder.
