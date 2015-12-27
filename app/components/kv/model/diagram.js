@@ -173,29 +173,35 @@ export const insideLoop = (
 
 /// check if the given cube is empty.
 const isEmptyCube = (
-  /*kvCube*/cube
+  /*kvCube*/cube,
+  /*int*/inputCount
   ) =>
-  !cube.include.and(cube.exclude).isEmpty()
+  !cube.include.and(cube.exclude).isEmpty() ||
+  !cube.include.and(BitSet().setRange(0, inputCount - 1, 1).not()).isEmpty()
 ;
 
 /// check if the given loop is empty.
 const isEmptyLoop = (
-  /*kvLoop*/loop
+  /*kvLoop*/loop,
+  /*int*/inputCount
   ) =>
   loop.outputs.isEmpty() ||
-  isEmptyCube(loop.cube)
+  isEmptyCube(loop.cube, inputCount)
 ;
 
 /// check if the given cube is valid for the given values
 /// and the given mode.
-const isValidCubeForValuesInMode = (
+export const isValidCubeForValuesInMode = (
   /*kvCube*/cube,
   /*I.List*/values,
   /*_mode*/mode = MODE_DNF
   ) =>
-  values.reduce((value, index) =>
-    !insideCube(intToCell(index), cube) ||
-    isValidValueForMode(value, mode)
+  values.reduce((prev, value, index) =>
+    prev &&
+    (
+      !insideCube(intToCell(index), cube) ||
+      isValidValueForMode(value, mode)
+    )
   , true)
 ;
 
@@ -232,23 +238,23 @@ const excludeFromCube = (
   }
 
   // the bits by which are not constrained by the loop
-  const unused = include.or(exclude).flip();
+  const unused = include.or(exclude).not();
   // bits which could be be added to the loop's positive constraints
-  const includableBit = cell.flip().and(unused);
+  const includableBit = cell.not().and(unused);
   // bits which could be be added to the loop's negative constraints
   const excludableBit = cell.and(unused);
 
   // extract only the lowest bit
-  const highestIncludableBit = BitSet(includableBit.msb());
-  const highestExcludableBit = BitSet(excludableBit.msb());
+  const lowestIncludableBit = includableBit.lsb();
+  const lowestExcludableBit = excludableBit.lsb();
 
   // check which of the bit's is less significant but not zero
-  const changeExclude = highestExcludableBit.isEmpty() ||
-    highestIncludableBit.msb() >= highestExcludableBit.msb();
+  const changeExclude = !excludableBit.isEmpty() &&
+    lowestExcludableBit <= lowestIncludableBit;
 
   return kvCube({
-    include: changeExclude ? highestExcludableBit.or(include) : include,
-    exclude: !changeExclude ? highestIncludableBit.or(exclude) : exclude,
+    exclude: changeExclude ? exclude.set(lowestExcludableBit, 1) : exclude,
+    include: !changeExclude ? include.set(lowestIncludableBit, 1) : include,
   });
 };
 
@@ -256,11 +262,12 @@ const excludeFromCube = (
 const excludeFromLoop = (
   /*int*/outputIndex,
   /*BitSet*/cell,
-  /*kvLoop*/loop
+  /*kvLoop*/loop,
+  /*int*/inputCount
   ) => {
   const newCube = excludeFromCube(cell, loop.cube);
 
-  if (isEmptyCube(newCube) && loop.outputs.size > 1) {
+  if (isEmptyCube(newCube, inputCount) && loop.outputs.size > 1) {
     return kvLoop({
       color: loop.color,
       cube: loop.cube,
@@ -310,7 +317,7 @@ export const popInput = (
       .map((loop) =>
         resizeLoop(diagram.inputs.size - 1, loop)
       )
-      .filter((loop) => !isEmptyLoop(loop))
+      .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size - 1))
       .toList(),
   })
 ;
@@ -397,7 +404,7 @@ export const appendLoop = (
     outputs: diagram.outputs,
     loops: diagram.loops
       .push(resizeLoop(diagram.inputs.size, loop))
-      .filter((l) => !isEmptyLoop(l))
+      .filter((l) => !isEmptyLoop(l, diagram.inputs.size))
       .toList(),
   })
 ;
@@ -430,8 +437,10 @@ export const setValue = (
     ),
     loops: diagram.loops.map((loop) =>
       isValidValueForMode(value, loop.mode) ?
-        loop : excludeFromLoop(outputIndex, cell, loop)
-    ).toList(),
+        loop : excludeFromLoop(outputIndex, cell, loop, diagram.inputs.size)
+    )
+    .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size))
+    .toList(),
   })
 ;
 
@@ -445,11 +454,12 @@ export const getValue = (
 ;
 
 export const newCubeFromTo = (
-  start,
-  end
+  /*BitSet*/start,
+  /*BitSet*/end,
+  /*int*/inputCount
   ) => kvCube({
-    include: start.and(end),
-    exclude: start.or(end).not(),
+    include: start.and(end).getRange(0, inputCount - 1),
+    exclude: start.or(end).not().getRange(0, inputCount - 1),
   })
 ;
 
@@ -475,7 +485,7 @@ export const newDiagram = (
   ) =>
   appendLoop(
     kvLoop({
-      color: 'green',
+      color: 'crimson',
       cube: kvCube({
         include: BitSet("000"),
         exclude: BitSet("000"),

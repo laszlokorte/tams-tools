@@ -30,6 +30,18 @@ const colorPalette = [
   '#795548',
 ];
 
+const generateInputName = (i) =>
+  String.fromCharCode(65 + i)
+;
+
+const generateOutputName = (i) =>
+  "O" + (i + 1)
+;
+
+const generateLoopColor = (i) =>
+  colorPalette[i % colorPalette.length]
+;
+
 const layout = memoize(buildLayout);
 
 const applyModification = (prev, modfn) => modfn(prev);
@@ -41,7 +53,7 @@ const addInput = (state) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: diagram.appendInput(
-      "New Input",
+      generateInputName(state.diagram.inputs.size),
       state.diagram
     ),
   })
@@ -96,7 +108,9 @@ const tryLoop = (state, startCell, targetCell) =>
   kvState({
     currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
-    currentCube: diagram.newCubeFromTo(startCell, targetCell),
+    currentCube: diagram.newCubeFromTo(
+      startCell, targetCell, state.diagram.inputs.size
+    ),
     currentOutput: state.currentOutput,
     diagram: state.diagram,
   })
@@ -122,20 +136,26 @@ const removeLoop = (state, loopIndex) =>
   })
 ;
 
-const addLoop = (state, output, start, end) =>
-  kvState({
+const addLoop = (state, output, start, end) => {
+  const newCube = diagram.newCubeFromTo(start, end, state.diagram.inputs.size);
+  const values = state.diagram.outputs.get(output).values;
+  if (!diagram.isValidCubeForValuesInMode(newCube, values, state.currentMode)) {
+    return state;
+  }
+
+  return kvState({
     currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: diagram.appendLoop(diagram.kvLoop({
-      color: 'green',
-      cube: diagram.newCubeFromTo(start, end),
+      color: generateLoopColor(state.diagram.loops.size),
+      cube: newCube,
       outputs: I.Set.of(output),
-      mode: diagram.modeFromName(state.currentMode),
+      mode: state.currentMode,
     }), state.diagram),
-  })
-;
+  });
+};
 
 const addOutput = (state) =>
   kvState({
@@ -144,7 +164,7 @@ const addOutput = (state) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: diagram.appendOutput(
-      "New Output",
+      generateOutputName(state.diagram.outputs.size),
       state.diagram
     ),
   })
