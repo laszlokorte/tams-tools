@@ -562,20 +562,25 @@ const toPLATerms = (
             (loop) => insideLoop(outputIndex, cell, loop)
           ).isEmpty()
         )
-        .map((cell) =>
-            diagram.inputs.map((i, iIndex) => cell.get(iIndex))
-          .concat(
-            diagram.outputs.map((_, oIndex) => oIndex === outputIndex ? 1 : 0)
-          ).toArray()
-        )
-      ),
+        .map((cell) => ({
+          in:
+            diagram.inputs
+            .map((i, iIndex) => cell.get(iIndex))
+            .toArray(),
+          out:
+            diagram.outputs
+            .map((_, oIndex) => oIndex === outputIndex ? 1 : 0)
+            .toArray(),
+        })
+      )
+    ),
     I.List()).concat(
       diagram.loops
         .filter(
           (loop) => loop.mode === mode
         ).map(
-        (loop) =>
-          diagram.inputs.map((_, iIndex) => {
+        (loop) => ({
+          in: diagram.inputs.map((_, iIndex) => {
             if (loop.cube.include.get(iIndex) === 1) {
               return 1;
             } else if (loop.cube.exclude.get(iIndex) === 1) {
@@ -583,11 +588,11 @@ const toPLATerms = (
             } else {
               return null;
             }
-          }).concat(
-            diagram.outputs.map(
-              (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? 1 : 0
-            )
-          ).toArray()
+          }).toArray(),
+          out: diagram.outputs.map(
+            (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? 1 : 0
+          ).toArray(),
+        })
       )
     ).toArray()
 ;

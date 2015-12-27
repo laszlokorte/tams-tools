@@ -49,7 +49,7 @@ const layoutOutputs = (pla, height, loopCount) => {
   const outputWireCount = pla.outputs.map(
     (_, index) => pla.loops
       .filter((loop) =>
-        loop[index + pla.inputs.length] === 1
+        loop.out[index] === 1
       ).length
     )
   ;
@@ -71,7 +71,7 @@ const layoutOutputs = (pla, height, loopCount) => {
         Array.prototype.concat.apply([],
           pla.loops
             .map((loop, idx) => ({idx, loop}))
-            .filter(({loop}) => loop[index + pla.inputs.length] === 1)
+            .filter(({loop}) => loop.out[index] === 1)
             .map(({loop, idx}, wireIndex, all) => [{
               type: 'vertical',
               from: {x: outputGateWidth * index + 15, y: -halfHeight - 15 + 5},
@@ -95,7 +95,7 @@ const layoutLoops = (pla) => {
 
   const loopInputs = pla.loops.map((loop) =>
     Array.prototype.concat.apply([],
-      loop.slice(0, pla.inputs.length)
+      loop.in
       .map((cell, idx) => {
         if (cell === 1) {
           return [2 * idx * 5 + 4];
