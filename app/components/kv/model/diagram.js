@@ -607,6 +607,7 @@ export const toPLA = (
   /*kvDiagram*/diagram,
   /*_mode*/mode = MODE_DNF
   ) => ({
+    mode: mode.name,
     inputs: diagram.inputs.map((i) => i.name).toArray(),
     outputs: diagram.outputs.map((o) => o.name).toArray(),
     loops: toPLATerms(diagram, mode),

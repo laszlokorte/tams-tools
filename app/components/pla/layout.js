@@ -57,7 +57,7 @@ const layoutOutputs = (pla, height, loopCount) => {
   return {
     width: 12 + outputGateWidth * pla.outputs.length,
     gates: pla.outputs.map((name, index) => ({
-      type: 'or',
+      type: pla.mode === 'dnf' ? 'or' : 'and',
       center: {
         x: outputGateWidth * index + 15,
         y: -halfHeight - 15,
@@ -110,7 +110,7 @@ const layoutLoops = (pla) => {
   return {
     height: height,
     gates: loopInputs.map((loop, index) => ({
-      type: 'and',
+      type: pla.mode === 'dnf' ? 'and' : 'or',
       center: {x: 0, y: -halfHeight + gateWidth * index},
       inputCount: loop.length,
       rotation: Rotation.EAST,
