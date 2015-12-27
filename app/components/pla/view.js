@@ -12,6 +12,14 @@ const render = ({options, data, active}) =>
     data.circuit.wires.map(({type, from, toX, toY, input, inputCount, soderStart, soderEnd}) =>
       wires[type]({from, toX, toY, input, inputCount, soderStart, soderEnd})
     ),
+    data.circuit.labels.map(({text, align, anchor}) =>
+      svg('text', {
+        x: anchor.x * 10,
+        y: anchor.y * 10,
+        'text-anchor': align,
+        'alignment-baseline': 'middle',
+      }, text)
+    ),
   ])
 ;
 

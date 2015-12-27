@@ -6,6 +6,11 @@ const layoutInputs = (inputs, height) => {
   return {
     height: 25,
     width: 12 + 10 * inputs.length,
+    labels: inputs.map((name, index) => ({
+      text: name,
+      anchor: {x: -10 * index - 18, y: -halfHeight - 23},
+      align: 'start',
+    })),
     gates: inputs.map((name, index) => ({
       type: 'negator',
       center: {x: -10 * index - 15, y: -halfHeight - 15},
@@ -56,6 +61,14 @@ const layoutOutputs = (pla, height, loopCount) => {
 
   return {
     width: 12 + outputGateWidth * pla.outputs.length,
+    labels: pla.outputs.map((name, index) => ({
+      text: name,
+      anchor: {
+        x: outputGateWidth * index + 15,
+        y: -halfHeight - 22,
+      },
+      align: 'middle',
+    })),
     gates: pla.outputs.map((name, index) => ({
       type: pla.mode === 'dnf' ? 'or' : 'and',
       center: {
@@ -109,6 +122,7 @@ const layoutLoops = (pla) => {
 
   return {
     height: height,
+    labels: [],
     gates: loopInputs.map((loop, index) => ({
       type: pla.mode === 'dnf' ? 'and' : 'or',
       center: {x: 0, y: -halfHeight + gateWidth * index},
@@ -161,6 +175,11 @@ export default (pla) => {
       loops.wires,
       inputs.wires,
       outputs.wires
+    ),
+    labels: Array.prototype.concat.call(
+      loops.labels,
+      inputs.labels,
+      outputs.labels
     ),
     bounds: {
       minX: -inputs.width,
