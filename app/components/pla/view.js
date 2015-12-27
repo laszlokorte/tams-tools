@@ -6,8 +6,8 @@ import './view.styl';
 const render = ({options, data, active}) =>
   svg('g',[
     clipPaths(),
-    data.circuit.gates.map(({type, center, rotation, inputCount, soderInput, soderOutput, color}) =>
-      gates[type]({center, rotation, inputCount, soderInput, soderOutput, color})
+    data.circuit.gates.map(({type, center, rotation, inputCount, soderInput, soderOutput, color, highlight}) =>
+      gates[type]({center, rotation, inputCount, soderInput, soderOutput, color, highlight})
     ),
     data.circuit.wires.map(({type, from, toX, toY, input, inputCount, soderStart, soderEnd}) =>
       wires[type]({from, toX, toY, input, inputCount, soderStart, soderEnd})

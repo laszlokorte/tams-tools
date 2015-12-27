@@ -115,6 +115,7 @@ const layoutLoops = (pla) => {
       inputCount: loop.length,
       rotation: Rotation.EAST,
       color: pla.loops[index].color,
+      highlight: pla.loops[index].highlight,
     })),
     wires: Array.prototype.concat.apply([],
       loopInputs

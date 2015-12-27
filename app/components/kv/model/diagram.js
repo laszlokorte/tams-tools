@@ -549,7 +549,8 @@ export const toJSON = (
 /// Extract PLA terms of the given diagram for the given mode.
 const toPLATerms = (
   /*kvDiagram*/diagram,
-  /*_mode*/mode = MODE_DNF
+  /*_mode*/mode = MODE_DNF,
+  /*kvCube*/highlightCube
   ) =>
   diagram.outputs.reduce(
     (prev, output, outputIndex) =>
@@ -574,6 +575,7 @@ const toPLATerms = (
             diagram.outputs
             .map((_, oIndex) => oIndex === outputIndex ? 1 : 0)
             .toArray(),
+          highlight: highlightCube && insideCube(cell, highlightCube),
         })
       )
     ),
@@ -605,11 +607,12 @@ const toPLATerms = (
 /// using the given mode.
 export const toPLA = (
   /*kvDiagram*/diagram,
-  /*_mode*/mode = MODE_DNF
+  /*_mode*/mode = MODE_DNF,
+  /*kvCube*/highlightCube
   ) => ({
     mode: mode.name,
     inputs: diagram.inputs.map((i) => i.name).toArray(),
     outputs: diagram.outputs.map((o) => o.name).toArray(),
-    loops: toPLATerms(diagram, mode),
+    loops: toPLATerms(diagram, mode, highlightCube),
   })
 ;

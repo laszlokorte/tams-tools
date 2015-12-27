@@ -30,7 +30,7 @@ export default (responses) => {
   );
 
   const plaData$ = state$.map(({state}) =>
-    toPLA(state.diagram, state.currentMode)
+    toPLA(state.diagram, state.currentMode, state.currentCube)
   );
 
   return {

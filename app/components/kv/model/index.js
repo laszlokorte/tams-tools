@@ -30,16 +30,44 @@ const colorPalette = [
   '#795548',
 ];
 
+const generateUnique = (set, generator, i = set.size) => {
+  const newName = generator(i);
+
+  if (set.contains(newName)) {
+    return generateUnique(set, generator, i + 1);
+  } else {
+    return newName;
+  }
+};
+
 const generateInputName = (i) =>
-  String.fromCharCode(65 + i)
+  String.fromCharCode(65 + i % 25) + (
+    i > 25 ? (i / 25 + 1).toString() : ''
+  )
 ;
 
 const generateOutputName = (i) =>
   "O" + (i + 1)
 ;
 
+const toRGBA = (hex) => {
+  const channels = hex
+    .match(/#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})/i)
+    .slice(1)
+    .map((val) => parseInt(val, 16));
+  const color = `rgba(${channels[0]}, ${channels[1]}, ${channels[2]}, ${channels[3]/255})`;
+
+  console.log(color);
+
+  return color;
+};
+
 const generateLoopColor = (i) =>
-  colorPalette[i % colorPalette.length]
+  toRGBA(
+    colorPalette[i % colorPalette.length] + (
+      (255 - 100 * Math.floor(i / colorPalette.length)).toString(16)
+    )
+  )
 ;
 
 const layout = memoize(buildLayout);
@@ -53,7 +81,11 @@ const addInput = (state) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: diagram.appendInput(
-      generateInputName(state.diagram.inputs.size),
+      generateUnique(
+        state.diagram.inputs
+        .map((input) => input.name)
+        .toSet()
+      , generateInputName),
       state.diagram
     ),
   })
@@ -156,7 +188,12 @@ const addLoop = (state, outputIndex, start, end) => {
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: diagram.appendLoop(diagram.kvLoop({
-      color: generateLoopColor(state.diagram.loops.size),
+      color: generateUnique(
+        state.diagram.loops
+        .filter((loop) => loop.mode === state.currentMode)
+        .map((loop) => loop.color)
+        .toSet()
+      , generateLoopColor),
       cube: newCube,
       outputs: outputs,
       mode: state.currentMode,
@@ -166,7 +203,11 @@ const addLoop = (state, outputIndex, start, end) => {
 
 const addOutput = (state) => {
   const newDiagram = diagram.appendOutput(
-    generateOutputName(state.diagram.outputs.size),
+    generateUnique(
+      state.diagram.outputs
+      .map((output) => output.name)
+      .toSet()
+    , generateOutputName),
     state.diagram
   );
 

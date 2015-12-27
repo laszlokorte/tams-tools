@@ -184,7 +184,7 @@ const bufferBodyFeature = () =>
 ;
 
 const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
-  return ({center: {x, y}, inputCount, rotation = Rotation.EAST, soderOutput = false, soderInput = false, color}) => {
+  return ({center: {x, y}, inputCount, rotation = Rotation.EAST, soderOutput = false, soderInput = false, color, highlight}) => {
     const angle = 90 * (rotation - 1);
     const centerX = (x * 10);
     const centerY = (y * 10);
@@ -192,7 +192,8 @@ const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
     return svg('g', {
       transform: 'translate(' + centerX + ' ' + centerY + ') ' +
         'rotate(' + angle + ')',
-      class: 'gate gate-type-' + type,
+      class: 'gate gate-type-' + type +
+        (highlight ? ' state-highlight' : ''),
     }, [
       outputFeature(soderOutput),
       inputPorts(inputCount, type, soderInput),
