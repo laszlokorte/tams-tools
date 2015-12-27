@@ -32,12 +32,12 @@
     "html-webpack-plugin": "^1.6.1",
     "style-loader": "^0.13.0",
     "stylus-loader": "^1.4.2",
-    "tape": "^4.3.0",
+    "tape": "^4.4.0",
     "testem": "^0.9.11",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.14.0",
-    "webpack-merge": "^0.4.0"
+    "webpack-merge": "^0.5.1"
   },
   "dependencies": {
     "@cycle/core": "^6.0.0",
