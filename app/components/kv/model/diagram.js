@@ -593,6 +593,7 @@ const toPLATerms = (
           out: diagram.outputs.map(
             (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? 1 : 0
           ).toArray(),
+          color: loop.color,
         })
       )
     ).toArray()

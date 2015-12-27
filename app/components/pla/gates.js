@@ -158,7 +158,7 @@ const orBodyFeature = () =>
   })
 ;
 
-const andBodyFeature = () =>
+const andBodyFeature = (color) =>
   svg('path', {
     attributes: {
       d: `M-30,35
@@ -167,6 +167,7 @@ const andBodyFeature = () =>
       c15,0 30,15 30,35
       c0,20 -15,35 -30,35Z`,
       class: 'gate-body',
+      stroke: color,
     },
   })
 ;
@@ -183,7 +184,7 @@ const bufferBodyFeature = () =>
 ;
 
 const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
-  return ({center: {x, y}, inputCount, rotation = Rotation.EAST, soderOutput = false, soderInput = false}) => {
+  return ({center: {x, y}, inputCount, rotation = Rotation.EAST, soderOutput = false, soderInput = false, color}) => {
     const angle = 90 * (rotation - 1);
     const centerX = (x * 10);
     const centerY = (y * 10);
@@ -196,7 +197,7 @@ const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
       outputFeature(soderOutput),
       inputPorts(inputCount, type, soderInput),
       inputExtension(inputIndent, inputCount, bodyWidth),
-      features.map((feat) => feat()),
+      features.map((feat) => feat(color)),
     ]);
   };
 };
