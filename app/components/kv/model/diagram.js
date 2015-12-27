@@ -372,7 +372,9 @@ export const removeOutput = (
             (o) => o >= outputIndex ? Math.max(0, o - 1) : o
           ).toSet(),
       })
-    ).toList(),
+    )
+    .filter((l) => !isEmptyLoop(l, diagram.inputs.size))
+    .toList(),
   })
 ;
 
