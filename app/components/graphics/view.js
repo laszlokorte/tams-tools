@@ -112,7 +112,6 @@ const render = ({width, height, camera, bounds, content}) =>
       renderBackground(width, height, camera),
       renderBounds(bounds),
       renderGrid(bounds),
-      renderOrigin(),
       svg('g', {attributes: {class: 'graphics-content'}},
         content),
     ]),
