@@ -190,7 +190,6 @@ const addLoop = (state, outputIndex, start, end) => {
     diagram: diagram.appendLoop(diagram.kvLoop({
       color: generateUnique(
         state.diagram.loops
-        .filter((loop) => loop.mode === state.currentMode)
         .map((loop) => loop.color)
         .toSet()
       , generateLoopColor),
