@@ -376,9 +376,10 @@ const renderLoopList = (state) =>
     span('.toolbar-title', 'Loops:'),
     ul('.inline-list', [
       state.diagram.loops
-      .filter((loop) => loop.mode === state.currentMode)
-      .map((loop, i) =>
-        renderLoopButton(state, loop, i)
+      .map((loop, index) => ({loop, index}))
+      .filter(({loop}) => loop.mode === state.currentMode)
+      .map(({loop, index}) =>
+        renderLoopButton(state, loop, index)
       ).toArray(),
       //li(button('.well.well-add', 'Add Loop')),
     ]),
