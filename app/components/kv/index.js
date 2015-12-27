@@ -7,6 +7,7 @@ import model from './model';
 import view from './view';
 import intent from './intent';
 import help from './help';
+import {toPLA} from './model/diagram';
 
 export default (responses) => {
   const {
@@ -21,14 +22,19 @@ export default (responses) => {
     content$: O.just(help()),
   });
 
-  const state$ = model(O.empty(), intent(DOM));
+  const state$ = model(O.empty(), intent(DOM)).shareReplay(1);
   const vtree$ = view(
     state$, {
       helpBox$: helpBox.DOM,
     }
   );
 
+  const plaData$ = state$.map(({state}) =>
+    toPLA(state.diagram, state.currentMode)
+  );
+
   return {
     DOM: vtree$,
+    plaData$,
   };
 };

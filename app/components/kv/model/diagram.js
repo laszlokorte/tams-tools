@@ -570,7 +570,10 @@ const toPLATerms = (
         )
       ),
     I.List()).concat(
-      diagram.loops.map(
+      diagram.loops
+        .filter(
+          (loop) => loop.mode === mode
+        ).map(
         (loop) =>
           diagram.inputs.map((_, iIndex) => {
             if (loop.cube.include.get(iIndex) === 1) {

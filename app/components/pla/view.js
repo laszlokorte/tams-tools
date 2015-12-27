@@ -5,15 +5,6 @@ import './view.styl';
 
 const render = ({options, data, active}) =>
   svg('g',[
-    svg('rect', {
-      attributes: {
-        x: -50,
-        y: -400,
-        width: 60,
-        height: 60,
-        class: 'test-rect' + (active ? ' state-active' : ''),
-      },
-    }),
     clipPaths(),
     data.circuit.gates.map(({type, center, rotation, inputCount, soderInput, soderOutput}) =>
       gates[type]({center, rotation, inputCount, soderInput, soderOutput})
