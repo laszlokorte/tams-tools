@@ -113,24 +113,26 @@ const outputFeature = (soder) => [
 ]
 ;
 
-const negatorFeature = () =>
+const negatorFeature = (color) =>
   svg('circle', {
     attributes: {
       cx: 38,
       cy: 0,
       r: 8,
       class: 'gate-body',
+      stroke: color,
     },
   })
 ;
 
-const exclusionFeature = () =>
+const exclusionFeature = (color) =>
   svg('path', {
     attributes: {
       d: `M-45,35
       c0,0 17.5,-3 17.5,-35
       c0,-32.5 -17.5,-35 -17.5,-35`,
       class: 'gate-body-extra',
+      stroke: color,
     },
   })
 ;
@@ -146,7 +148,7 @@ const orMaskFeature = (offset = 0) =>
   })
 ;
 
-const orBodyFeature = () =>
+const orBodyFeature = (color) =>
   svg('path', {
     attributes: {
       d: `M-35,35c-0,0 17.5,-3 17.5,-35
@@ -154,6 +156,7 @@ const orBodyFeature = () =>
       c27.5,3 45,0 65,35
       c-15,32 -32.5,32.5 -65,35Z`,
       class: 'gate-body',
+      stroke: color,
     },
   })
 ;
@@ -172,13 +175,14 @@ const andBodyFeature = (color) =>
   })
 ;
 
-const bufferBodyFeature = () =>
+const bufferBodyFeature = (color) =>
   svg('path', {
     attributes: {
       d: `M-5,-25
       l35,25
       l-35,25Z`,
       class: 'gate-body',
+      stroke: color,
     },
   })
 ;
