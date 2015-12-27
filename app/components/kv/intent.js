@@ -59,10 +59,9 @@ export default (DOM) => {
         targetCell: cell,
       }).concat(
         pointerEnter$
-        .filter(({cell: o}) => !isNaN(o))
         .do(({evt}) => evt.preventDefault())
         .distinctUntilChanged(
-          ({cell: o}) => o,
+          ({cell: c}) => c,
           (a, b) => a === b
         )
         .map(({cell: targetCell}) => ({
