@@ -114,7 +114,7 @@ const calcCubeRange = (dontcare, cols, cube) => {
 
 // Render the collection of loops for a kv leaf grid
 // rows, cols: number of rows and columns
-const renderLoops = (loops, rows, cols) => {
+const renderLoops = (loops, mode, rows, cols) => {
   const rowCount = rows.length;
   const colCount = cols.length;
 
@@ -129,7 +129,9 @@ const renderLoops = (loops, rows, cols) => {
   const scopeMask = colMask.xor(rowMask);
 
   return div('.kv-loops-container' + padding,
-    loops.map((loop) =>
+    loops
+    .filter((loop) => loop.mode === mode)
+    .map((loop) =>
       renderLoop({
         color: loop.color,
         rowCount, colCount,
@@ -294,7 +296,7 @@ const renderTable = (
     renderLoops(
       diagram.loops.filter(
         (loop) => loopBelongsToOutput(loop, output)
-      ), rows, cols) || null,
+      ), mode, rows, cols) || null,
 
     table('.kv-table', {
       className: 'kv-mode-' + mode.name,
@@ -373,7 +375,9 @@ const renderLoopList = (state) =>
     renderModeButton(state),
     span('.toolbar-title', 'Loops:'),
     ul('.inline-list', [
-      state.diagram.loops.map((loop, i) =>
+      state.diagram.loops
+      .filter((loop) => loop.mode === state.currentMode)
+      .map((loop, i) =>
         renderLoopButton(state, loop, i)
       ).toArray(),
       //li(button('.well.well-add', 'Add Loop')),
