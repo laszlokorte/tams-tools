@@ -6,7 +6,8 @@ import {
 } from '@cycle/dom';
 
 import {
-  insideLoop, isValidValueForMode,
+  insideCubeMasked,
+  insideCube, isValidValueForMode,
   loopBelongsToOutput,
 } from './model/diagram';
 
@@ -96,14 +97,9 @@ const renderLoop = ({color, rowCount, colCount, x, y}) => {
   }
 };
 
-const calcLoopRange = (dontcare, cols, loop) => {
-  const include = loop.include;
-  const exclude = loop.exclude;
-
+const calcCubeRange = (dontcare, cols, cube) => {
   const fields = cols.map((col) =>
-    insideLoop(col & ~dontcare,
-      include.and(~dontcare),
-      exclude.and(~dontcare))
+    insideCubeMasked(col, cube, dontcare.not())
   );
 
   const start = fields.findIndex((v) => v);
@@ -137,8 +133,8 @@ const renderLoops = (loops, rows, cols) => {
       renderLoop({
         color: loop.color,
         rowCount, colCount,
-        x: calcLoopRange(scopeMask.and(rowMask), cols, loop),
-        y: calcLoopRange(scopeMask.and(colMask), rows, loop),
+        x: calcCubeRange(scopeMask.and(rowMask), cols, loop.cube),
+        y: calcCubeRange(scopeMask.and(colMask), rows, loop.cube),
       })
     ).toArray()
   );
@@ -224,17 +220,15 @@ const renderTableRowEnd = (rowIndex, {right}) =>
   ) || null
 ;
 
-const renderTableCell = (diagram, output, cell) => {
+const renderTableCell = (diagram, output, mode, cell, currentCube) => {
   const pattern = cell.getRange(0, diagram.inputs.size).toString(2);
   const value = diagram.outputs
     .get(output)
     .values
-    .get(parseInt(cell, 2));
-  const include = null && diagram.currentCube.include;
-  const exclude = null && diagram.currentCube.exclude;
-  const active = false && insideLoop(cell, include, exclude);
-  const error = false;
-  //&& active && !isValidLoopValue(diagram.get('mode'), value);
+    .get(parseInt(pattern, 2));
+
+  const active = insideCube(cell, currentCube);
+  const error = active && !isValidValueForMode(value, mode);
 
   return td('.kv-table-cell-body.kv-cell-atom',
     {
@@ -279,6 +273,7 @@ const renderTable = (
   diagram,
   mode,
   output,
+  currentCube,
   offset = diagram.inputs.size
   ) => {
   const cols = layout.columns;
@@ -295,14 +290,14 @@ const renderTable = (
   });
 
   return div('.kv-container', [
-    // layout.treeHeight === 0 &&
-    // null && renderLoops(
-    //   diagram.loops.filter(
-    //     (loop) => loopBelongsToOutput(loop, output)
-    //   ), rows, cols) || null,
+    layout.treeHeight === 0 &&
+    renderLoops(
+      diagram.loops.filter(
+        (loop) => loopBelongsToOutput(loop, output)
+      ), rows, cols) || null,
 
     table('.kv-table', {
-      className: 'kv-mode-' + mode,
+      className: 'kv-mode-' + mode.name,
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
       renderTableHead(colCount, labels),
@@ -313,10 +308,10 @@ const renderTable = (
             if (cell.children) {
               return td('.kv-table-cell-body.kv-cell-container', [
                 renderTable(cell.children, diagram,
-                  mode, output, labelOffset + 1),
+                  mode, output, currentCube, labelOffset + 1),
               ]);
             } else {
-              return renderTableCell(diagram, output, cell.scope);
+              return renderTableCell(diagram, output, mode, cell.scope, currentCube);
             }
           }),
           renderTableRowEnd(rowIndex, labels),
@@ -360,7 +355,7 @@ const renderLoopButton = (state, loop, index) =>
 ;
 
 const renderModeButton = (state) => {
-  const mode = state.currentMode;
+  const mode = state.currentMode.name;
   return button('.toggle-button', {attributes: {
     'data-kv-mode': (mode === 'dnf' ? 'knf' : 'dnf'),
   }},[
@@ -419,7 +414,8 @@ const renderBody = (layout, state) =>
     layout,
     state.diagram,
     state.currentMode,
-    state.currentOutput
+    state.currentOutput,
+    state.currentCube
   )
 ;
 

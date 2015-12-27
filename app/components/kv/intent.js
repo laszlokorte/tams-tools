@@ -109,6 +109,8 @@ export default (DOM) => {
         .filter(isFinite),
     tryLoop$:
       drag$,
+    stopTryLoop$:
+      dragEnd$.map(() => true),
     addLoop$:
       dragEnd$,
     addOutput$:

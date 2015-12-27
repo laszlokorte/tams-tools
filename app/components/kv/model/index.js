@@ -8,8 +8,8 @@ import {memoize, clamp} from '../../../lib/utils';
 
 const kvState = I.Record({
   currentEditMode: 'edit',
-  currentMode: 'dnf',
-  currentCube: diagram.newLoop(),
+  currentMode: diagram.modeFromName('dnf'),
+  currentCube: diagram.kvCube(),
   currentOutput: 0,
   diagram: diagram.newDiagram(),
 }, 'state');
@@ -92,11 +92,21 @@ const cycleValue = (
   })
 ;
 
-const tryLoop = (state) =>
+const tryLoop = (state, startCell, targetCell) =>
   kvState({
     currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
-    currentCube: state.currentCube,
+    currentCube: diagram.newCubeFromTo(startCell, targetCell),
+    currentOutput: state.currentOutput,
+    diagram: state.diagram,
+  })
+;
+
+const stopTryLoop = (state) =>
+  kvState({
+    currentEditMode: state.currentEditMode,
+    currentMode: state.currentMode,
+    currentCube: diagram.kvCube(),
     currentOutput: state.currentOutput,
     diagram: state.diagram,
   })
@@ -168,7 +178,7 @@ const selectOutput = (state, outputIndex) =>
 const switchMode = (state, mode) =>
   kvState({
     currentEditMode: state.currentEditMode,
-    currentMode: mode,
+    currentMode: diagram.modeFromName(mode),
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: state.diagram,
@@ -186,8 +196,11 @@ const modifiers = (actions) => {
     actions.cycleValue$.map(({output, cell, reverse}) => (state) => {
       return cycleValue(state, output, cell, reverse);
     }),
-    actions.tryLoop$.map(({output, startCell, targetCell}) => (state) => {
-      return tryLoop(state, output, startCell, targetCell);
+    actions.tryLoop$.map(({startCell, targetCell}) => (state) => {
+      return tryLoop(state, startCell, targetCell);
+    }),
+    actions.stopTryLoop$.map(() => (state) => {
+      return stopTryLoop(state);
     }),
     actions.removeLoop$.map((loopIndex) => (state) => {
       return removeLoop(state, loopIndex);
@@ -215,7 +228,7 @@ const initialState = kvState();
 const stateFromJson = (json) =>
   kvState({
     currentEditMode: json.currentEditMode,
-    currentMode: String(json.mode),
+    currentMode: diagram.modeFromName(String(json.mode)),
     currentCube: diagram.cubeFromJson(json.cube),
     currentOutput: json.currentOutput,
     diagram: diagram.fromJSON(json),

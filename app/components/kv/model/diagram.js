@@ -118,7 +118,7 @@ const intToCell = (
 
 /// check if the the given value is allowed
 /// to be contained inside a cube for the given mode.
-const isValidValueForMode = (
+export const isValidValueForMode = (
   /*mixed*/value,
   /*_mode*/mode
   ) =>
@@ -141,6 +141,24 @@ export const insideCube = (
   ) =>
   cube.include.and(cell).equals(cube.include) &&
   cube.exclude.and(cell).isEmpty()
+;
+
+/// check if the given cell is inside the given cube
+/// But take into account only the bits
+/// which are set in the mask.
+/// If the cell's 3rd bit is set and the cube's
+/// 3rd exclude bit is set, the cell would be not inside
+/// the cube. But if the mask's 3rd bit is not set
+/// the cell is considered to be inside the cube anyway.
+export const insideCubeMasked = (
+  /*BitSet*/cell,
+  /*kvCube*/cube,
+  /*BitSet*/mask
+  ) =>
+    mask.and(cube.include.and(cell))
+      .equals(mask.and(cube.include)) &&
+    mask.and(cube.exclude.and(cell))
+      .isEmpty()
 ;
 
 /// check if the given cell is inside the given loop.
