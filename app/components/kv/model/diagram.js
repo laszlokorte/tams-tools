@@ -436,6 +436,7 @@ export const setValue = (
       )
     ),
     loops: diagram.loops.map((loop) =>
+      !loopBelongsToOutput(loop, outputIndex) ||
       isValidValueForMode(value, loop.mode) ?
         loop : excludeFromLoop(outputIndex, cell, loop, diagram.inputs.size)
     )
