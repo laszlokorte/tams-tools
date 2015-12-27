@@ -6,4 +6,5 @@ module.exports = [
   "immutable",
   "rx",
   "virtual-dom",
+  "bitset.js",
 ];
