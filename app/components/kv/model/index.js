@@ -136,12 +136,19 @@ const removeLoop = (state, loopIndex) =>
   })
 ;
 
-const addLoop = (state, output, start, end) => {
+const addLoop = (state, outputIndex, start, end) => {
   const newCube = diagram.newCubeFromTo(start, end, state.diagram.inputs.size);
-  const values = state.diagram.outputs.get(output).values;
+  const values = state.diagram.outputs.get(outputIndex).values;
   if (!diagram.isValidCubeForValuesInMode(newCube, values, state.currentMode)) {
     return state;
   }
+
+  const outputs = state.diagram.outputs
+    .map((output, index) => ({output, index}))
+    .filter(({output}) =>
+      diagram.isValidCubeForValuesInMode(newCube,
+        output.values, state.currentMode)
+    ).map(({index}) => index).toSet();
 
   return kvState({
     currentEditMode: state.currentEditMode,
@@ -151,7 +158,7 @@ const addLoop = (state, output, start, end) => {
     diagram: diagram.appendLoop(diagram.kvLoop({
       color: generateLoopColor(state.diagram.loops.size),
       cube: newCube,
-      outputs: I.Set.of(output),
+      outputs: outputs,
       mode: state.currentMode,
     }), state.diagram),
   });
