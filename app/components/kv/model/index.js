@@ -157,18 +157,20 @@ const addLoop = (state, output, start, end) => {
   });
 };
 
-const addOutput = (state) =>
-  kvState({
+const addOutput = (state) => {
+  const newDiagram = diagram.appendOutput(
+    generateOutputName(state.diagram.outputs.size),
+    state.diagram
+  );
+
+  return kvState({
     currentEditMode: state.currentEditMode,
     currentMode: state.currentMode,
     currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: diagram.appendOutput(
-      generateOutputName(state.diagram.outputs.size),
-      state.diagram
-    ),
-  })
-;
+    currentOutput: newDiagram.outputs.size - 1,
+    diagram: newDiagram,
+  });
+};
 
 const removeOutput = (state, outputIndex) =>
   kvState({
