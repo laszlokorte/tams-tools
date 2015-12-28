@@ -62,8 +62,6 @@ const toRGBA = (hex) => {
     ${channels[2]},
     ${channels[3] / 255})`;
 
-  console.log(color);
-
   return color;
 };
 
