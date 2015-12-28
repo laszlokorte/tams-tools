@@ -487,21 +487,11 @@ export const cubeFromJson = (
 /// Get a new diagram
 export const newDiagram = (
   ) =>
-  appendLoop(
-    kvLoop({
-      color: 'crimson',
-      cube: kvCube({
-        include: BitSet("000"),
-        exclude: BitSet("000"),
-      }),
-      outputs: I.Set.of(0),
-      mode: MODE_DNF,
-    }),
   appendInput("C",
   appendInput("B",
   appendInput("A",
     kvDiagram()
-  ))))
+  )))
 ;
 
 /// Deserialize a diagram from the given json.
