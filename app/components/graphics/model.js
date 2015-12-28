@@ -31,8 +31,25 @@ const panModifier = (delta) => ({x, y, zoom}) => ({
   y: y - delta.y,
 });
 
-export default ({props$, camera$, bounds$, content$}, actions) =>
-  O.combineLatest(
+const ContentThunk = function thunkConstructor(node, key) {
+  this.node = node;
+  this.key = key;
+};
+ContentThunk.prototype.type = "Thunk";
+ContentThunk.prototype.render = function thunkRender(previous) {
+  if (!previous || previous.key !== this.key) {
+    return this.node;
+  } else {
+    return previous.vnode;
+  }
+};
+
+export default ({props$, camera$, bounds$, content$}, actions) => {
+  const contentThunk$ = content$.map((content, index) => {
+    return new ContentThunk(content, index % 2);
+  });
+
+  return O.combineLatest(
     props$,
     camera$,
     (props, initCamera) =>
@@ -59,12 +76,12 @@ export default ({props$, camera$, bounds$, content$}, actions) =>
         y: initCamera.y,
       })
       .scan((cam, modFn) => modFn(cam))
-      .combineLatest(bounds$, content$, (cam, bounds, content) => ({
+      .combineLatest(bounds$, contentThunk$, (cam, bounds, content) => ({
         width: props.width,
         height: props.height,
         camera: cam,
         bounds,
         content,
       }))
-  ).switch()
-;
+  ).switch();
+};

@@ -83,12 +83,14 @@ export default (DOM) => {
       DOM
         .select('[data-kv-counter="increment"]')
         .events('click')
-        .map(() => true),
+        .map(() => true)
+        .share(),
     removeInput$:
       DOM
         .select('[data-kv-counter="decrement"]')
         .events('click')
-        .map(() => true),
+        .map(() => true)
+        .share(),
     cycleValue$:
       DOM
         .select('.kv-cell-atom[data-kv-cell]')
@@ -98,26 +100,32 @@ export default (DOM) => {
           reverse: evt.altKey,
           output: parseInt(evt.target.dataset.kvOutput, 10),
           cell: BitSet(evt.target.dataset.kvCell),
-        })),
+        }))
+        .share(),
     removeLoop$:
       DOM
         .select('[data-loop-index]')
         .events('click')
         .do(preventDefault)
         .map(parseDataAttr('loopIndex'))
-        .filter(isFinite),
+        .filter(isFinite)
+        .share(),
     tryLoop$:
-      drag$,
+      drag$
+      .share(),
     stopTryLoop$:
-      dragEnd$.map(() => true),
+      dragEnd$
+      .map(() => true)
+      .share(),
     addLoop$:
-      dragEnd$,
+      dragEnd$.share(),
     addOutput$:
       DOM
         .select('[data-kv-add-output]')
         .events('click')
         .do(preventDefault)
-        .map(() => true),
+        .map(() => true)
+        .share(),
     removeOutput$:
       DOM
         .select('[data-kv-remove-output]')
@@ -125,7 +133,8 @@ export default (DOM) => {
         .do(preventDefault)
         .do((e) => e.stopPropagation())
         .map(parseDataAttr('kvRemoveOutput'))
-        .filter(isFinite),
+        .filter(isFinite)
+        .share(),
     selectOutput$:
       DOM
         .select('[data-kv-output]')
@@ -133,19 +142,22 @@ export default (DOM) => {
         .do(preventDefault)
         .do((e) => e.stopPropagation())
         .map(parseDataAttr('kvOutput'))
-        .filter(isFinite),
+        .filter(isFinite)
+        .share(),
     switchMode$:
       DOM
         .select('[data-kv-mode]')
         .events('click')
         .do(preventDefault)
-        .map((evt) => evt.target.dataset.kvMode),
+        .map((evt) => evt.target.dataset.kvMode)
+        .share(),
     help$:
       DOM
         .select('[data-help]')
         .events('click')
         .do(preventDefault)
         .map(pluckDataAttr('help'))
-        .map((val) => val === 'true'),
+        .map((val) => val === 'true')
+        .share(),
   };
 };

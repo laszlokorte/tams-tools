@@ -2,16 +2,16 @@ import {Observable as O} from 'rx';
 
 import layoutPLA from './layout';
 
-export default (props$, data$, actions) =>
-  O.combineLatest(
+export default (props$, data$, actions) => {
+  const layout$ = data$.map(layoutPLA).shareReplay(1);
+  return O.combineLatest(
     props$,
     () =>
       O.combineLatest(
         actions.click$
         .startWith(true)
         .scan((prev) => !prev),
-      data$, (active, data) => {
-        const layout = layoutPLA(data);
+      layout$, (active, layout) => {
         return {
           data: {
             circuit: layout,
@@ -26,5 +26,5 @@ export default (props$, data$, actions) =>
           },
         };
       })
-  ).switch()
-;
+  ).switch();
+};

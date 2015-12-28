@@ -189,6 +189,7 @@ const bufferBodyFeature = (color) =>
 
 const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
   return ({
+    key,
     center: {x, y},
     inputCount,
     rotation = Rotation.EAST,
@@ -202,6 +203,7 @@ const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
     const centerY = (y * 10);
 
     return svg('g', {
+      key: 'gate-' + key,
       transform: 'translate(' + centerX + ' ' + centerY + ') ' +
         'rotate(' + angle + ')',
       class: 'gate gate-type-' + type +
@@ -245,13 +247,15 @@ export const clipPaths = () =>
 ;
 
 export const wires = {
-  vertical: ({from, toY, input, inputCount, soderStart, soderEnd}) => {
+  vertical: ({key, from, toY, input, inputCount, soderStart, soderEnd}) => {
     const startX = -40 + 10 * (from.x + inputOffsets(inputCount)[input]);
     const startY = 10 * from.y;
     const endX = startX;
     const endY = 10 * toY;
 
-    return [
+    return svg('g', {
+      key: 'wire-vertical-' + key,
+    }, [
       soderStart && soderPoint(startX, startY),
       soderEnd && soderPoint(endX, endY),
       svg('line', {
@@ -261,15 +265,17 @@ export const wires = {
         y2: endY,
         class: 'wire wire-vertical',
       }),
-    ];
+    ]);
   },
-  horizontal: ({from, toX, input, inputCount, soderStart, soderEnd}) => {
+  horizontal: ({key, from, toX, input, inputCount, soderStart, soderEnd}) => {
     const startX = 10 * from.x;
     const startY = -40 + 10 * (from.y + inputOffsets(inputCount)[input]);
     const endX = 10 * toX;
     const endY = startY;
 
-    return [
+    return svg('g', {
+      key: 'wire-horizontal-' + key,
+    }, [
       soderStart && soderPoint(startX, startY),
       soderEnd && soderPoint(endX, endY),
       svg('line', {
@@ -279,7 +285,7 @@ export const wires = {
         y2: startY,
         class: 'wire wire-horizontal',
       }),
-    ];
+    ]);
   },
 };
 

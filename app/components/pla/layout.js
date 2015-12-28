@@ -168,6 +168,8 @@ export default (pla) => {
   const inputs = layoutInputs(pla.inputs, loops.height);
   const outputs = layoutOutputs(pla, loops.height, pla.loops.length);
 
+  console.log("pla-layout");
+
   return {
     gates: Array.prototype.concat.call(
       loops.gates,

@@ -11,8 +11,9 @@ const render = ({data}) =>
       center, rotation, inputCount,
       soderInput,soderOutput, color,
       highlight,
-    }) =>
+    }, key) =>
       gates[type]({
+        key,
         center, rotation, inputCount,
         soderInput, soderOutput, color,
         highlight,
@@ -22,14 +23,16 @@ const render = ({data}) =>
       type,
       from, toX, toY, input, inputCount,
       soderStart, soderEnd,
-    }) =>
+    }, key) =>
       wires[type]({
+        key,
         from, toX, toY, input, inputCount,
         soderStart, soderEnd,
       })
     ),
     data.circuit.labels.map(({text, align, anchor}) =>
       svg('text', {
+        key: 'label-' + text,
         x: anchor.x * 10,
         y: anchor.y * 10,
         'text-anchor': align,
