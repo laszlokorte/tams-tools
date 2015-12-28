@@ -60,11 +60,11 @@ const layoutOutputs = (pla, height, loopCount) => {
   ;
 
   return {
-    width: 12 + outputGateWidth * pla.outputs.length,
+    width: 17 + outputGateWidth * pla.outputs.length,
     labels: pla.outputs.map((name, index) => ({
       text: name,
       anchor: {
-        x: outputGateWidth * index + 15,
+        x: outputGateWidth * (index + 0.5) + 15,
         y: -halfHeight - 22,
       },
       align: 'middle',
@@ -72,7 +72,7 @@ const layoutOutputs = (pla, height, loopCount) => {
     gates: pla.outputs.map((name, index) => ({
       type: pla.mode === 'dnf' ? 'or' : 'and',
       center: {
-        x: outputGateWidth * index + 15,
+        x: outputGateWidth * (index + 0.5) + 15,
         y: -halfHeight - 15,
       },
       inputCount: outputWireCount[index],
@@ -87,7 +87,10 @@ const layoutOutputs = (pla, height, loopCount) => {
             .filter(({loop}) => loop.out[index] === 1)
             .map(({loop, idx}, wireIndex, all) => [{
               type: 'vertical',
-              from: {x: outputGateWidth * index + 15, y: -halfHeight - 15 + 5},
+              from: {
+                x: outputGateWidth * (index + 0.5) + 15,
+                y: -halfHeight - 15 + 5
+              },
               toY: -halfHeight + gateWidth * idx,
               input: wireIndex,
               inputCount: all.length,
@@ -150,7 +153,7 @@ const layoutLoops = (pla) => {
               x: 5,
               y: -halfHeight + gateWidth * index,
             },
-            toX: 10 + pla.outputs.length * outputGateWidth,
+            toX: 15 + (pla.outputs.length) * outputGateWidth,
             input: 0,
             inputCount: 1,
           },
