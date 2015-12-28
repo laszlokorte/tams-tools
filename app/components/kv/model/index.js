@@ -55,7 +55,12 @@ const toRGBA = (hex) => {
     .match(/#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})/i)
     .slice(1)
     .map((val) => parseInt(val, 16));
-  const color = `rgba(${channels[0]}, ${channels[1]}, ${channels[2]}, ${channels[3]/255})`;
+
+  const color = `rgba(
+    ${channels[0]},
+    ${channels[1]},
+    ${channels[2]},
+    ${channels[3] / 255})`;
 
   console.log(color);
 

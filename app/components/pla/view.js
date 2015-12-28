@@ -1,16 +1,32 @@
 import {svg} from '@cycle/dom';
 
-import {gates, wires, Rotation, clipPaths} from './gates';
+import {gates, wires, clipPaths} from './gates';
 import './view.styl';
 
-const render = ({options, data, active}) =>
+const render = ({data}) =>
   svg('g',[
     clipPaths(),
-    data.circuit.gates.map(({type, center, rotation, inputCount, soderInput, soderOutput, color, highlight}) =>
-      gates[type]({center, rotation, inputCount, soderInput, soderOutput, color, highlight})
+    data.circuit.gates.map(({
+      type,
+      center, rotation, inputCount,
+      soderInput,soderOutput, color,
+      highlight,
+    }) =>
+      gates[type]({
+        center, rotation, inputCount,
+        soderInput, soderOutput, color,
+        highlight,
+      })
     ),
-    data.circuit.wires.map(({type, from, toX, toY, input, inputCount, soderStart, soderEnd}) =>
-      wires[type]({from, toX, toY, input, inputCount, soderStart, soderEnd})
+    data.circuit.wires.map(({
+      type,
+      from, toX, toY, input, inputCount,
+      soderStart, soderEnd,
+    }) =>
+      wires[type]({
+        from, toX, toY, input, inputCount,
+        soderStart, soderEnd,
+      })
     ),
     data.circuit.labels.map(({text, align, anchor}) =>
       svg('text', {

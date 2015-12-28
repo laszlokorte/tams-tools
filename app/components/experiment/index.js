@@ -1,6 +1,5 @@
 import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
-import {svg} from '@cycle/dom';
 
 import ModalBox from '../modal';
 import Spinner from '../spinner';

@@ -276,6 +276,7 @@ const renderTable = (
   mode,
   output,
   currentCube,
+  showLabels = true,
   offset = diagram.inputs.size
   ) => {
   const cols = layout.columns;
@@ -302,24 +303,24 @@ const renderTable = (
       className: 'kv-mode-' + mode.name,
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
-      renderTableHead(colCount, labels),
+      showLabels ? renderTableHead(colCount, labels) : null,
       layout.grid.map((row, rowIndex) =>
         tr('.kv-table-row-body', [
-          renderTableRowStart(rowIndex, rowCount, labels),
+          showLabels ? renderTableRowStart(rowIndex, rowCount, labels) : null,
           row.map((cell) => {
             if (cell.children) {
               return td('.kv-table-cell-body.kv-cell-container', [
                 renderTable(cell.children, diagram,
-                  mode, output, currentCube, labelOffset + 1),
+                  mode, output, currentCube, showLabels, labelOffset + 1),
               ]);
             } else {
               return renderTableCell(diagram, output, mode, cell.scope, currentCube);
             }
           }),
-          renderTableRowEnd(rowIndex, labels),
+          showLabels ? renderTableRowEnd(rowIndex, labels) : null,
         ])
       ),
-      renderTableFoot(colCount, labels),
+      showLabels ? renderTableFoot(colCount, labels) : null,
     ]),
   ]);
 };
@@ -406,10 +407,29 @@ const renderOutputList = (state) =>
           )
         )
       ).toArray(),
-      state.diagram.outputs.size < 4 && li(
+      state.diagram.outputs.size < 7 && li(
         button('.pill', {attributes: {'data-kv-add-output': true}},'+')
       ) || null,
       //li(button('.well.well-add', 'Add Loop')),
+    ]),
+  ])
+;
+
+const renderOutputThumbnails = (layout, state) =>
+  div('.output-thumbnails', [
+    ul('.inline-list', [
+      state.diagram.outputs.map((output, i, all) =>
+        li(
+          renderTable(
+            layout,
+            state.diagram,
+            state.currentMode,
+            i,
+            state.currentCube,
+            false
+          )
+        )
+      ).toArray(),
     ]),
   ])
 ;
@@ -420,7 +440,8 @@ const renderBody = (layout, state) =>
     state.diagram,
     state.currentMode,
     state.currentOutput,
-    state.currentCube
+    state.currentCube,
+    true
   )
 ;
 
@@ -437,6 +458,7 @@ const render = ({state, layout}) =>
     renderToolbar(state),
     renderLoopList(state),
     renderOutputList(state),
+    renderOutputThumbnails(layout, state),
     renderTableContainer(layout, state),
   ]);
 

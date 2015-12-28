@@ -188,7 +188,15 @@ const bufferBodyFeature = (color) =>
 ;
 
 const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
-  return ({center: {x, y}, inputCount, rotation = Rotation.EAST, soderOutput = false, soderInput = false, color, highlight}) => {
+  return ({
+    center: {x, y},
+    inputCount,
+    rotation = Rotation.EAST,
+    soderOutput = false,
+    soderInput = false,
+    color,
+    highlight,
+  }) => {
     const angle = 90 * (rotation - 1);
     const centerX = (x * 10);
     const centerY = (y * 10);

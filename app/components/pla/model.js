@@ -5,7 +5,7 @@ import layoutPLA from './layout';
 export default (props$, data$, actions) =>
   O.combineLatest(
     props$,
-    (props) =>
+    () =>
       O.combineLatest(
         actions.click$
         .startWith(true)

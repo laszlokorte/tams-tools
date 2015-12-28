@@ -96,21 +96,14 @@ export const modeFromName = (name) => {
 };
 
 /// converts a cell into a scalar integer value.
-const cellToInt = (
+export const cellToInt = (
   /*BitSet*/cell
   ) =>
   parseInt(cell.toString(2), 2)
 ;
 
-/// converts a cell into an array value.
-const cellToArray = (
-  /*BitSet*/cell
-  ) =>
-  cell.toString(2).split("")
-;
-
 /// converts a scalar integer value into a BitSet.
-const intToCell = (
+export const intToCell = (
   /*int*/int
   ) =>
   BitSet(int)

@@ -1,4 +1,4 @@
-@import '../../styles/global'
+@import '../../../styles/global'
 
 .numberButton
   vertical-align middle
@@ -244,6 +244,25 @@
   .inline-list
     margin 0.4em
 
+
+.output-thumbnails
+  margin-bottom 2em
+  display flex
+  align-items center top
+  justify-content center
+  background-color #eee
+  color #555
+  .toolbar-title
+    padding 0.6em 0
+  .inline-list
+    margin 0.4em
+
+  .output-thumbnails-item
+    overflow hidden
+    background-color #F9F9F9
+    padding 2px
+    margin 0 5px
+
 .pill
   cursor pointer
   display block
@@ -343,242 +362,4 @@
   font-size 0.65em
   opacity 0.7
 
-.kv-container
-  float left
-  position relative
-
-.kv-loops-container
-  position absolute
-  left -4px
-  right -4px
-  top -4px
-  bottom -4px
-  margin 5px
-  text-align center
-  vertical-align middle
-  font-size 2em
-  font-weight 600
-  color rgba(200,0,55,0.4)
-  z-index 1
-  pointer-events none
-  line-height 150px
-
-.kv-loop
-  position absolute
-  border 6px solid grey
-  border-radius 15px
-  margin 3px
-
-.kv-loop-edge-top
-  border-top-left-radius 0
-  border-top-right-radius 0
-  border-top-style dotted
-  border-top-width 3px
-
-
-.kv-loop-edge-bottom
-  border-bottom-left-radius 0
-  border-bottom-right-radius 0
-  border-bottom-style dotted
-  border-bottom-width 3px
-
-.kv-loop-edge-left
-  border-top-left-radius 0
-  border-bottom-left-radius 0
-  border-left-style dotted
-  border-left-width 3px
-
-.kv-loop-edge-right
-  border-top-right-radius 0
-  border-bottom-right-radius 0
-  border-right-style dotted
-  border-right-width 3px
-
-.kv-table
-  table-layout fixed
-  border-spacing 5px
-  border-collapse separate
-
-.kv-cell-atom
-  font-family 'Open Sans', sans-serif
-  vertical-align middle
-  text-align center
-  background-color lightgrey
-  cursor default
-  position relative
-  font-size 1.4em
-  font-weight 600
-
-
-// .kv-cell-atom:hover
-//   background-color #c9c9c9
-
-.kv-cell-atom:active
-  background-color #c0c0c0
-
-.kv-mode-dnf
-  .kv-cell-atom:not([data-kv-value='true'])
-    &:not(.state-error)
-      color grey
-  .kv-cell-atom[data-kv-value='false']
-    font-weight normal
-
-.kv-mode-knf
-  .kv-cell-atom:not([data-kv-value='false'])
-    &:not(.state-error)
-      color grey
-  .kv-cell-atom[data-kv-value='true']
-    font-weight normal
-
-.kv-cell-atom::before
-  content attr(data-kv-offset)
-  position absolute
-  right 5%
-  top 5%
-  color rgba(255,255,255,0.8)
-  font-size 0.5em
-  z-index 0
-  border-radius 2px
-  pointer-events none
-
-// .kv-cell-atom:hover::before
-//   content attr(data-kv-pattern)
-//   color #999
-//   background-color rgba(200,200,200,1)
-//   opacity 1
-//   z-index 1
-//   font-family monospace
-
-.kv-cell-atom.state-active:not(.state-error)
-  background-color #aaa
-
-.kv-cell-atom.state-error
-  color #fff
-  background-color #E23135
-
-[data-kv-height='0']
-  .kv-cell-atom
-    min-width 70px
-    min-height 70px
-    width 70px
-    height 70px
-
-[data-kv-height='1']
-  .kv-cell-atom
-    min-width 50px
-    min-height 50px
-    width 50px
-    height 50px
-
-[data-kv-height='2']
-  .kv-cell-atom
-    min-width 45px
-    min-height 45px
-    width 45px
-    height 45px
-
-.kv-table-cell-title
-  font-family 'Open Sans', sans-serif
-  vertical-align middle
-  text-align center
-
-.kv-table-cell-title.kv-cell-neg
-  visibility hidden
-  overflow hidden
-  text-overflow clip
-  font-size 0
-
-.kv-table-cell-title
-  border-color gray
-  border-style solid
-  border-width 0
-  padding 0
-  margin 0
-
-.kv-row-top > .kv-table-cell-title
-  height 30px
-  min-height 30px
-  max-height 30px
-  border-bottom-width 4px
-
-.kv-row-bottom > .kv-table-cell-title
-  height 30px
-  border-top-width 4px
-
-.kv-col-right
-  width 30px
-  min-width 30px
-  max-width 30px
-  border-left-width 4px
-
-.kv-col-left
-  width 30px
-  min-width 30px
-  max-width 30px
-  border-right-width 4px
-
-.kv-cell-container
-  padding 0
-
-.kv-loop-padding-top
-  margin-top 41px
-
-.kv-loop-padding-bottom
-  margin-bottom 41px
-
-.kv-loop-padding-left
-  margin-left 41px
-
-.kv-loop-padding-right
-  margin-right 41px
-
-[data-kv-height='1']
-  .kv-row-top > .kv-table-cell-title,
-  .kv-row-bottom > .kv-table-cell-title
-    height 25px
-    min-height 25px
-
-  .kv-col-right,
-  .kv-col-left
-    width 25px
-    min-width 25px
-
-  .kv-loop
-    border-width 5px
-    margin 1px
-
-  .kv-loop-edge-top
-    border-top-width 3px
-
-  .kv-loop-edge-bottom
-    border-bottom-width 3px
-
-  .kv-loop-edge-left
-    border-left-width 3px
-
-  .kv-loop-edge-right
-    border-right-width 3px
-
-  .kv-loops-container
-    position absolute
-    left 5px
-    right 5px
-    top 5px
-    bottom 5px
-    margin 4px
-
-  .kv-table
-    border-spacing 3px
-
-  .kv-loop-padding-top
-    margin-top 25px
-
-  .kv-loop-padding-bottom
-    margin-bottom 25px
-
-  .kv-loop-padding-left
-    margin-left 25px
-
-  .kv-loop-padding-right
-    margin-right 25px
 

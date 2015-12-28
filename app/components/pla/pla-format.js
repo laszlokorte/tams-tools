@@ -1,14 +1,14 @@
-const text =
-`.i 4
-.innames a b c d
-.o 2
-.outnames x y
-.p11
-0000 10
-0001 10
-0010 11
-.e
-`;
+// const text =
+// `.i 4
+// .innames a b c d
+// .o 2
+// .outnames x y
+// .p11
+// 0000 10
+// 0001 10
+// 0010 11
+// .e
+// `;
 
 const x = null;
 
