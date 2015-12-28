@@ -341,7 +341,7 @@ export const appendOutput = (
     inputs: diagram.inputs,
     outputs: diagram.outputs.push(kvOutput({
       name,
-      values: _stride(Math.pow(2, diagram.inputs.size), VALUE_X),
+      values: _stride(Math.pow(2, diagram.inputs.size), VALUE_0),
     })),
     loops: diagram.loops,
   })
