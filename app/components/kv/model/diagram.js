@@ -10,9 +10,9 @@ const _stride = (length, value) =>
 ///
 
 /// A output value can either be 1, 0 or X(dont care);
-const VALUE_1 = true;
-const VALUE_0 = false;
-const VALUE_X = null;
+export const VALUE_1 = true;
+export const VALUE_0 = false;
+export const VALUE_X = null;
 
 /// internal representation of the loop mode
 /// the mode is either KNF or DNF
