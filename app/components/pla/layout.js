@@ -89,7 +89,7 @@ const layoutOutputs = (pla, height, loopCount) => {
               type: 'vertical',
               from: {
                 x: outputGateWidth * (index + 0.5) + 15,
-                y: -halfHeight - 15 + 5
+                y: -halfHeight - 15 + 5,
               },
               toY: -halfHeight + gateWidth * idx,
               input: wireIndex,
