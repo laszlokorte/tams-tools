@@ -29,9 +29,9 @@ export default (responses) => {
     }
   );
 
-  const plaData$ = state$.map(({state}) =>
+  const plaData$ = state$.delay(0).debounce(10).map(({state}) =>
     toPLA(state.diagram, state.currentMode, state.currentCube)
-  );
+  ).share();
 
   return {
     DOM: vtree$,

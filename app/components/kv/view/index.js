@@ -72,39 +72,16 @@ const renderLoopList = (state) =>
   ])
 ;
 
-const renderOutputList = (state) =>
-  div('.output-list', [
-    span('.toolbar-title', 'Outputs:'),
-    ul('.inline-list', [
-      state.diagram.outputs.map((output, i, all) =>
-        li(
-          span('.pill' +
-            (i === state.currentOutput ? '.state-active' : ''), {
-              attributes: {
-                'data-kv-output': i,
-              },
-            }, [
-              output.name,
-              all.size > 1 && button('.pill-delete', {attributes: {
-                'data-kv-remove-output': i,
-              }}, 'X') || null,
-            ]
-          )
-        )
-      ).toArray(),
-      state.diagram.outputs.size < 7 && li(
-        button('.pill', {attributes: {'data-kv-add-output': true}},'+')
-      ) || null,
-      //li(button('.well.well-add', 'Add Loop')),
-    ]),
-  ])
-;
-
-const renderOutputThumbnails = (layout, state) =>
+const renderOutputThumbnails = (layout, state, canAdd, canRemove) =>
   div('.output-thumbnails', [
     ul('.inline-list', [
       state.diagram.outputs.map((output, i) =>
-        li('.output-thumbnails-item',
+        li('.output-thumbnails-item' +
+        (i === state.currentOutput ? '.state-active' : ''), {
+          attributes: {
+            'data-kv-output': i,
+          },
+        }, [
           renderTable({
             layout: layout,
             diagram: state.diagram,
@@ -112,9 +89,22 @@ const renderOutputThumbnails = (layout, state) =>
             output: i,
             currentCube: state.currentCube,
             compact: true,
-          })
-        )
+          }),
+          span('.output-thumbnails-label', output.name),
+          canRemove ? span('.output-thumbnails-delete-button', {
+            attributes: {
+              'data-kv-remove-output': i,
+            },
+            title: 'Remove Output',
+          }, 'Remove') : null,
+        ])
       ).toArray(),
+      canAdd && li('.output-thumbnails-item',
+        button('.output-thumbnails-add-button', {
+          attributes: {'data-kv-add-output': true},
+          title: 'Add Output',
+        },'Add Output')
+      ) || null,
     ]),
   ])
 ;
@@ -142,8 +132,10 @@ const render = ({state, layout}) =>
   div([
     renderToolbar(state),
     renderLoopList(state),
-    renderOutputList(state),
-    renderOutputThumbnails(layout, state),
+    renderOutputThumbnails(layout, state,
+      state.diagram.outputs.size < 7,
+      state.diagram.outputs.size > 1
+    ),
     renderTableContainer(layout, state),
   ]);
 

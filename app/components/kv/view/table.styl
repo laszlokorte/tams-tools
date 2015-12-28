@@ -100,6 +100,12 @@
     min-height 50px
     width 50px
     height 50px
+    &.style-compact
+      min-width 5px
+      min-height 5px
+      width 5px
+      height 5px
+      font-size 1pt
 
 [data-kv-height='2']
   .kv-cell-atom
@@ -166,6 +172,8 @@
     border-spacing 3px
     &.style-compact
       border-spacing 0
+      [data-kv-height='0']
+        border-spacing 1px
 
 [data-kv-height='0']
   &.kv-table
