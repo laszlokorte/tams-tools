@@ -108,7 +108,10 @@ const renderTableRowEnd = (rowIndex, {right}) =>
   ) || null
 ;
 
-const renderTableCell = ({diagram, output, mode, cell, currentCube, className}) => {
+const renderTableCell = ({
+  diagram, output, mode, cell,
+  currentCube, className,
+}) => {
   const value = diagram.outputs
     .get(output)
     .values
@@ -207,7 +210,7 @@ export const renderTable = ({
                 diagram, output, mode,
                 cell: cell.scope,
                 currentCube,
-                className: styleClass
+                className: styleClass,
               });
             }
           }),
