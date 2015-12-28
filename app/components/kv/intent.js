@@ -30,7 +30,8 @@ export default (DOM) => {
         const element = touchTarget(evt);
         return {
           evt,
-          cell: element ? BitSet(element.dataset.kvCell) : null,
+          cell: element && element.dataset.hasOwnProperty('kvCell') ?
+            BitSet(element.dataset.kvCell) : null,
         };
       })
   );
@@ -59,6 +60,7 @@ export default (DOM) => {
         targetCell: cell,
       }).concat(
         pointerEnter$
+        .filter(({cell: c}) => c !== null)
         .do(({evt}) => evt.preventDefault())
         .distinctUntilChanged(
           ({cell: c}) => c,
