@@ -113,9 +113,13 @@ const layoutLoops = (pla) => {
     Array.prototype.concat.apply([],
       loop.in
       .map((cell, idx) => {
-        if (cell === 1) {
+        if (cell === 1 && pla.mode === 'dnf') {
           return [2 * idx * 5 + 4];
-        } else if (cell === 0) {
+        } else if (cell === 0 && pla.mode === 'dnf') {
+          return [2 * idx * 5];
+        } if (cell === 0 && pla.mode === 'knf') {
+          return [2 * idx * 5 + 4];
+        } else if (cell === 1 && pla.mode === 'knf') {
           return [2 * idx * 5];
         } else {
           return [];
@@ -167,8 +171,6 @@ export default (pla) => {
   const loops = layoutLoops(pla);
   const inputs = layoutInputs(pla.inputs, loops.height);
   const outputs = layoutOutputs(pla, loops.height, pla.loops.length);
-
-  console.log("pla-layout");
 
   return {
     gates: Array.prototype.concat.call(
