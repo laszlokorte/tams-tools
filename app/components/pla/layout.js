@@ -1,12 +1,19 @@
 import {Rotation} from './gates';
 
 const layoutInputs = (inputs, height) => {
+  const halfHeight = Math.ceil(height / 2);
+
   return {
     height: 25,
     width: 12 + 10 * inputs.length,
+    labels: inputs.map((name, index) => ({
+      text: name,
+      anchor: {x: -10 * index - 18, y: -halfHeight - 23},
+      align: 'start',
+    })),
     gates: inputs.map((name, index) => ({
       type: 'negator',
-      center: {x: -10 * index - 15, y: -Math.ceil(height / 2) - 15},
+      center: {x: -10 * index - 15, y: -halfHeight - 15},
       inputCount: 1,
       rotation: Rotation.SOUTH,
     })),
@@ -14,22 +21,22 @@ const layoutInputs = (inputs, height) => {
       inputs.map((name, index) => [
         {
           type: 'vertical',
-          from: {x: -10 * index - 19, y: -Math.ceil(height / 2) - 23},
-          toY: Math.ceil(height / 2) - 5,
+          from: {x: -10 * index - 19, y: -halfHeight - 23},
+          toY: halfHeight - 5,
           input: 0,
           inputCount: 1,
           soderStart: true,
         },
         {
           type: 'vertical',
-          from: {x: -10 * index - 15, y: -Math.ceil(height / 2) - 15 + 5},
-          toY: Math.ceil(height / 2) - 5,
+          from: {x: -10 * index - 15, y: -halfHeight - 15 + 5},
+          toY: halfHeight - 5,
           input: 0,
           inputCount: 1,
         },
         {
           type: 'horizontal',
-          from: {x: -10 * index - 19, y: -Math.ceil(height / 2) - 15 - 5},
+          from: {x: -10 * index - 19, y: -halfHeight - 15 - 5},
           toX: -10 * index - 15,
           input: 0,
           inputCount: 1,
@@ -41,23 +48,32 @@ const layoutInputs = (inputs, height) => {
 };
 
 const layoutOutputs = (pla, height, loopCount) => {
+  const halfHeight = Math.ceil(height / 2);
   const outputGateWidth = (2 + Math.max(7, loopCount));
   const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const outputWireCount = pla.outputs.map(
     (_, index) => pla.loops
       .filter((loop) =>
-        loop[index + pla.inputs.length] === 1
+        loop.out[index] === 1
       ).length
     )
   ;
 
   return {
-    width: 12 + outputGateWidth * pla.outputs.length,
+    width: 17 + outputGateWidth * pla.outputs.length,
+    labels: pla.outputs.map((name, index) => ({
+      text: name,
+      anchor: {
+        x: outputGateWidth * (index + 0.5) + 15,
+        y: -halfHeight - 22,
+      },
+      align: 'middle',
+    })),
     gates: pla.outputs.map((name, index) => ({
-      type: 'or',
+      type: pla.mode === 'dnf' ? 'or' : 'and',
       center: {
-        x: outputGateWidth * index + 15,
-        y: -Math.ceil(height / 2) - 15,
+        x: outputGateWidth * (index + 0.5) + 15,
+        y: -halfHeight - 15,
       },
       inputCount: outputWireCount[index],
       rotation: Rotation.NORTH,
@@ -68,11 +84,14 @@ const layoutOutputs = (pla, height, loopCount) => {
         Array.prototype.concat.apply([],
           pla.loops
             .map((loop, idx) => ({idx, loop}))
-            .filter(({loop}) => loop[index + pla.inputs.length] === 1)
+            .filter(({loop}) => loop.out[index] === 1)
             .map(({loop, idx}, wireIndex, all) => [{
               type: 'vertical',
-              from: {x: outputGateWidth * index + 15, y: -Math.ceil(height / 2) - 15 + 5},
-              toY: -Math.ceil(height / 2) + gateWidth * idx,
+              from: {
+                x: outputGateWidth * (index + 0.5) + 15,
+                y: -halfHeight - 15 + 5,
+              },
+              toY: -halfHeight + gateWidth * idx,
               input: wireIndex,
               inputCount: all.length,
               soderEnd: true,
@@ -88,10 +107,11 @@ const layoutLoops = (pla) => {
   const outputGateWidth = (2 + Math.max(7, pla.loops.length));
   const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const height = pla.loops.length * gateWidth;
+  const halfHeight = Math.ceil(height / 2);
 
   const loopInputs = pla.loops.map((loop) =>
     Array.prototype.concat.apply([],
-      loop.slice(0, pla.inputs.length)
+      loop.in
       .map((cell, idx) => {
         if (cell === 1) {
           return [2 * idx * 5 + 4];
@@ -105,18 +125,21 @@ const layoutLoops = (pla) => {
 
   return {
     height: height,
+    labels: [],
     gates: loopInputs.map((loop, index) => ({
-      type: 'and',
-      center: {x: 0, y: -Math.ceil(height / 2) + gateWidth * index},
+      type: pla.mode === 'dnf' ? 'and' : 'or',
+      center: {x: 0, y: -halfHeight + gateWidth * index},
       inputCount: loop.length,
       rotation: Rotation.EAST,
+      color: pla.loops[index].color,
+      highlight: pla.loops[index].highlight,
     })),
     wires: Array.prototype.concat.apply([],
       loopInputs
         .map((loop, index) =>
         Array.prototype.concat.apply([], loop.map((inputOffset, idx) => ({
           type: 'horizontal',
-          from: {x: -15 - inputOffset, y: -Math.ceil(height / 2) + gateWidth * index},
+          from: {x: -15 - inputOffset, y: -halfHeight + gateWidth * index},
           toX: -5,
           input: idx,
           inputCount: loop.length,
@@ -128,9 +151,9 @@ const layoutLoops = (pla) => {
             type: 'horizontal',
             from: {
               x: 5,
-              y: -Math.ceil(height / 2) + gateWidth * index,
+              y: -halfHeight + gateWidth * index,
             },
-            toX: 10 + pla.outputs.length * outputGateWidth,
+            toX: 15 + (pla.outputs.length) * outputGateWidth,
             input: 0,
             inputCount: 1,
           },
@@ -145,6 +168,8 @@ export default (pla) => {
   const inputs = layoutInputs(pla.inputs, loops.height);
   const outputs = layoutOutputs(pla, loops.height, pla.loops.length);
 
+  console.log("pla-layout");
+
   return {
     gates: Array.prototype.concat.call(
       loops.gates,
@@ -155,6 +180,11 @@ export default (pla) => {
       loops.wires,
       inputs.wires,
       outputs.wires
+    ),
+    labels: Array.prototype.concat.call(
+      loops.labels,
+      inputs.labels,
+      outputs.labels
     ),
     bounds: {
       minX: -inputs.width,

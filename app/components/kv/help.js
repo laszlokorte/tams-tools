@@ -1,12 +1,12 @@
 import {div, h1, dl, dt, dd} from '@cycle/dom';
 
 const helpItem = (title, body) => [
-  dt('.help-item-titel', title),
-  dd('.help-item-body', body),
+  dt('.modal-item-titel', title),
+  dd('.modal-item-body', body),
 ];
 
 export default () => div([
-  h1('Karnaugh-Veitch-Diagram Editor'),
+  h1('.modal-box-title', 'Karnaugh-Veitch-Diagram Editor'),
   dl([
     helpItem('Change Size:', [
       'You can change the amount of inputs.',

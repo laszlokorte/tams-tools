@@ -1,8 +1,8 @@
 import I from 'immutable';
-import BitSet from 'bitset.js';
+import BitSet from '../../../lib/monkeypatches/bitset.js';
 
 const _stride = (length, value) =>
-  I.List(Array({length: length}).map(() => value))
+  I.List(Array.apply(Array, {length: length}).map(() => value))
 ;
 
 ///
@@ -10,9 +10,9 @@ const _stride = (length, value) =>
 ///
 
 /// A output value can either be 1, 0 or X(dont care);
-const VALUE_1 = 1;
-const VALUE_0 = 0;
-const VALUE_X = null;
+export const VALUE_1 = true;
+export const VALUE_0 = false;
+export const VALUE_X = null;
 
 /// internal representation of the loop mode
 /// the mode is either KNF or DNF
@@ -30,7 +30,7 @@ export const MODE_KNF = _mode({name: 'knf', includes: VALUE_0});
 /// For loop to be not empty the include
 /// and exclude bitsets must not intersect.
 /// Each bit in the BitSet represents a kv input.
-const kvCube = I.Record({
+export const kvCube = I.Record({
   include: BitSet(1),
   exclude: BitSet(1),
 }, 'cube');
@@ -58,7 +58,7 @@ const kvOutput = I.Record({
 /// - a cube that represents the range
 /// - a set of output indices to which the loop applies
 /// - the mode
-const kvLoop = I.Record({
+export const kvLoop = I.Record({
   color: '#555',
   cube: kvCube(),
   outputs: I.Set(),
@@ -72,7 +72,7 @@ const kvLoop = I.Record({
 const kvDiagram = I.Record({
   inputs: I.List(),
   outputs: I.List.of(kvOutput()),
-  loops: I.Set(),
+  loops: I.List(),
 }, 'kv');
 
 ///
@@ -85,7 +85,7 @@ const modeName = (mode) =>
 ;
 
 /// Get the mode for the given name.
-const modeFromName = (name) => {
+export const modeFromName = (name) => {
   if (name === MODE_DNF.name) {
     return MODE_DNF;
   } else if (name === MODE_KNF.name) {
@@ -96,21 +96,14 @@ const modeFromName = (name) => {
 };
 
 /// converts a cell into a scalar integer value.
-const cellToInt = (
+export const cellToInt = (
   /*BitSet*/cell
   ) =>
   parseInt(cell.toString(2), 2)
 ;
 
-/// converts a cell into an array value.
-const cellToArray = (
-  /*BitSet*/cell
-  ) =>
-  cell.toString(2).split("")
-;
-
 /// converts a scalar integer value into a BitSet.
-const intToCell = (
+export const intToCell = (
   /*int*/int
   ) =>
   BitSet(int)
@@ -118,7 +111,7 @@ const intToCell = (
 
 /// check if the the given value is allowed
 /// to be contained inside a cube for the given mode.
-const isValidValueForMode = (
+export const isValidValueForMode = (
   /*mixed*/value,
   /*_mode*/mode
   ) =>
@@ -143,6 +136,24 @@ export const insideCube = (
   cube.exclude.and(cell).isEmpty()
 ;
 
+/// check if the given cell is inside the given cube
+/// But take into account only the bits
+/// which are set in the mask.
+/// If the cell's 3rd bit is set and the cube's
+/// 3rd exclude bit is set, the cell would be not inside
+/// the cube. But if the mask's 3rd bit is not set
+/// the cell is considered to be inside the cube anyway.
+export const insideCubeMasked = (
+  /*BitSet*/cell,
+  /*kvCube*/cube,
+  /*BitSet*/mask
+  ) =>
+    mask.and(cube.include.and(cell))
+      .equals(mask.and(cube.include)) &&
+    mask.and(cube.exclude.and(cell))
+      .isEmpty()
+;
+
 /// check if the given cell is inside the given loop.
 export const insideLoop = (
   /*int*/outputIndex,
@@ -155,29 +166,37 @@ export const insideLoop = (
 
 /// check if the given cube is empty.
 const isEmptyCube = (
-  /*kvCube*/cube
+  /*kvCube*/cube,
+  /*int*/inputCount
   ) =>
-  !cube.include.and(cube.exclude).isEmpty()
+  !cube.include.and(cube.exclude).isEmpty() ||
+  !cube.include.and(inputCount === 0 ?
+    cube.include : BitSet().setRange(0, inputCount - 1, 1).not()
+  ).isEmpty()
 ;
 
 /// check if the given loop is empty.
 const isEmptyLoop = (
-  /*kvLoop*/loop
+  /*kvLoop*/loop,
+  /*int*/inputCount
   ) =>
   loop.outputs.isEmpty() ||
-  isEmptyCube(loop.cube)
+  isEmptyCube(loop.cube, inputCount)
 ;
 
 /// check if the given cube is valid for the given values
 /// and the given mode.
-const isValidCubeForValuesInMode = (
+export const isValidCubeForValuesInMode = (
   /*kvCube*/cube,
   /*I.List*/values,
   /*_mode*/mode = MODE_DNF
   ) =>
-  values.reduce((value, index) =>
-    !insideCube(intToCell(index)) ||
-    isValidValueForMode(value, mode)
+  values.reduce((prev, value, index) =>
+    prev &&
+    (
+      !insideCube(intToCell(index), cube) ||
+      isValidValueForMode(value, mode)
+    )
   , true)
 ;
 
@@ -214,23 +233,23 @@ const excludeFromCube = (
   }
 
   // the bits by which are not constrained by the loop
-  const unused = include.or(exclude).flip();
+  const unused = include.or(exclude).not();
   // bits which could be be added to the loop's positive constraints
-  const includableBit = cell.flip().and(unused);
+  const includableBit = cell.not().and(unused);
   // bits which could be be added to the loop's negative constraints
   const excludableBit = cell.and(unused);
 
   // extract only the lowest bit
-  const highestIncludableBit = BitSet(includableBit.msb());
-  const highestExcludableBit = BitSet(excludableBit.msb());
+  const lowestIncludableBit = includableBit.lsb();
+  const lowestExcludableBit = excludableBit.lsb();
 
   // check which of the bit's is less significant but not zero
-  const changeExclude = highestExcludableBit.isEmpty() ||
-    highestIncludableBit.msb() >= highestExcludableBit.msb();
+  const changeExclude = !excludableBit.isEmpty() &&
+    lowestExcludableBit <= lowestIncludableBit;
 
   return kvCube({
-    include: changeExclude ? highestExcludableBit.or(include) : include,
-    exclude: !changeExclude ? highestIncludableBit.or(exclude) : exclude,
+    exclude: changeExclude ? exclude.set(lowestExcludableBit, 1) : exclude,
+    include: !changeExclude ? include.set(lowestIncludableBit, 1) : include,
   });
 };
 
@@ -238,11 +257,12 @@ const excludeFromCube = (
 const excludeFromLoop = (
   /*int*/outputIndex,
   /*BitSet*/cell,
-  /*kvLoop*/loop
+  /*kvLoop*/loop,
+  /*int*/inputCount
   ) => {
-  const newCube = excludeFromCube(cell, loop);
+  const newCube = excludeFromCube(cell, loop.cube);
 
-  if (isEmptyCube(newCube) && loop.outputs.count() > 1) {
+  if (isEmptyCube(newCube, inputCount) && loop.outputs.size > 1) {
     return kvLoop({
       color: loop.color,
       cube: loop.cube,
@@ -285,15 +305,15 @@ export const popInput = (
     inputs: diagram.inputs.pop(),
     outputs: diagram.outputs.map(
       (output) => output.set('values',
-        output.values.setSize(output.values / 2)
+        output.values.setSize(output.values.size / 2)
       )
     ),
     loops: diagram.loops
       .map((loop) =>
-        resizeLoop(diagram.inputs.count() - 1, loop)
+        resizeLoop(diagram.inputs.size - 1, loop)
       )
-      .filter((loop) => !isEmptyLoop(loop))
-      .toSet(),
+      .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size - 1))
+      .toList(),
   })
 ;
 
@@ -305,7 +325,7 @@ export const renameInput = (
   ) =>
   kvDiagram({
     inputs: diagram.inputs.update(inputIndex,
-      (input) => kvInput({name})
+      () => kvInput({name})
     ),
     outputs: diagram.outputs,
     loops: diagram.loops,
@@ -321,7 +341,7 @@ export const appendOutput = (
     inputs: diagram.inputs,
     outputs: diagram.outputs.push(kvOutput({
       name,
-      values: _stride(diagram.inputs.count(), VALUE_X),
+      values: _stride(Math.pow(2, diagram.inputs.size), VALUE_0),
     })),
     loops: diagram.loops,
   })
@@ -336,12 +356,20 @@ export const removeOutput = (
     inputs: diagram.inputs,
     outputs: diagram.outputs.remove(outputIndex),
     loops: diagram.loops.map(
-      (loop) => loop.outputs.filter(
-        (o) => o !== outputIndex
-      ).map(
-        (o) => o >= outputIndex ? Math.max(0, o - 1) : o
-      )
-    ).toSet(),
+      (loop) => kvLoop({
+        color: loop.color,
+        cube: loop.cube,
+        mode: loop.mode,
+        outputs: loop.outputs
+          .filter(
+            (o) => o !== outputIndex
+          ).map(
+            (o) => o >= outputIndex ? Math.max(0, o - 1) : o
+          ).toSet(),
+      })
+    )
+    .filter((l) => !isEmptyLoop(l, diagram.inputs.size))
+    .toList(),
   })
 ;
 
@@ -372,9 +400,9 @@ export const appendLoop = (
     inputs: diagram.inputs,
     outputs: diagram.outputs,
     loops: diagram.loops
-      .add(resizeLoop(diagram.inputs.count(), loop))
-      .filter((l) => !isEmptyLoop(l))
-      .toSet(),
+      .push(resizeLoop(diagram.inputs.size, loop))
+      .filter((l) => !isEmptyLoop(l, diagram.inputs.size))
+      .toList(),
   })
 ;
 
@@ -399,15 +427,18 @@ export const setValue = (
   ) =>
   kvDiagram({
     inputs: diagram.inputs,
-    outputs: diagram.update(outputIndex, (output) =>
+    outputs: diagram.outputs.update(outputIndex, (output) =>
       output.update('values', (values) =>
         values.set(cellToInt(cell), value)
       )
     ),
     loops: diagram.loops.map((loop) =>
+      !loopBelongsToOutput(loop, outputIndex) ||
       isValidValueForMode(value, loop.mode) ?
-        loop : excludeFromLoop(outputIndex, cell, loop)
-    ),
+        loop : excludeFromLoop(outputIndex, cell, loop, diagram.inputs.size)
+    )
+    .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size))
+    .toList(),
   })
 ;
 
@@ -420,24 +451,47 @@ export const getValue = (
   diagram.outputs.get(outputIndex).values.get(cellToInt(cell))
 ;
 
+export const newCubeFromTo = (
+  /*BitSet*/start,
+  /*BitSet*/end,
+  /*int*/inputCount
+  ) =>
+  inputCount > 0 ?
+  kvCube({
+    include: start.and(end).getRange(0, inputCount - 1),
+    exclude: start.or(end).not().getRange(0, inputCount - 1),
+  }) :
+  kvCube({
+    include: BitSet(),
+    exclude: BitSet(),
+  })
+;
+
+/// Get a new empty loop
+export const newLoop = (
+  ) => kvLoop({
+    color: '#000',
+    cube: kvCube(),
+    outputs: I.Set(),
+    mode: null,
+  })
+;
+
+/// Deserialize a cube from given json.
+export const cubeFromJson = (
+  json
+  ) => json === null ? null :
+  kvCube(json)
+;
+
 /// Get a new diagram
 export const newDiagram = (
   ) =>
-  appendLoop(
-    kvLoop({
-      color: 'green',
-      cube: kvCube({
-        include: BitSet("000"),
-        exclude: BitSet("000"),
-      }),
-      outputs: I.Set.of(0),
-      mode: MODE_DNF,
-    }),
   appendInput("C",
   appendInput("B",
   appendInput("A",
     kvDiagram()
-  ))))
+  )))
 ;
 
 /// Deserialize a diagram from the given json.
@@ -447,11 +501,11 @@ export const fromJSON = (
   kvDiagram({
     inputs: I.fromJS(json.inputs, (i, input) => kvInput({
       name: input,
-    })),
+    })).toList(),
     outputs: I.fromJS(json.outputs, (i, output) => kvOutput({
       name: output.name,
       values: I.List(output.values),
-    })),
+    })).toList(),
     loops: I.fromJS(json.loops, (i, loop) => kvLoop({
       color: loop.color,
       cube: kvCube({
@@ -460,7 +514,7 @@ export const fromJSON = (
       }),
       outputs: I.Set(loop.outputs),
       mode: modeFromName(loop.mode),
-    })),
+    })).toList(),
   })
 ;
 
@@ -486,7 +540,8 @@ export const toJSON = (
 /// Extract PLA terms of the given diagram for the given mode.
 const toPLATerms = (
   /*kvDiagram*/diagram,
-  /*_mode*/mode = MODE_DNF
+  /*_mode*/mode = MODE_DNF,
+  /*kvCube*/highlightCube
   ) =>
   diagram.outputs.reduce(
     (prev, output, outputIndex) =>
@@ -502,17 +557,26 @@ const toPLATerms = (
             (loop) => insideLoop(outputIndex, cell, loop)
           ).isEmpty()
         )
-        .map((cell) =>
-            diagram.inputs.map((i, iIndex) => cell.get(iIndex))
-          .concat(
-            diagram.outputs.map((_, oIndex) => oIndex === outputIndex ? 1 : 0)
-          ).toArray()
-        )
-      ),
+        .map((cell) => ({
+          in:
+            diagram.inputs
+            .map((i, iIndex) => cell.get(iIndex))
+            .toArray(),
+          out:
+            diagram.outputs
+            .map((_, oIndex) => oIndex === outputIndex ? 1 : 0)
+            .toArray(),
+          highlight: highlightCube && insideCube(cell, highlightCube),
+        })
+      )
+    ),
     I.List()).concat(
-      diagram.loops.map(
-        (loop) =>
-          diagram.inputs.map((_, iIndex) => {
+      diagram.loops
+        .filter(
+          (loop) => loop.mode === mode
+        ).map(
+        (loop) => ({
+          in: diagram.inputs.map((_, iIndex) => {
             if (loop.cube.include.get(iIndex) === 1) {
               return 1;
             } else if (loop.cube.exclude.get(iIndex) === 1) {
@@ -520,11 +584,12 @@ const toPLATerms = (
             } else {
               return null;
             }
-          }).concat(
-            diagram.outputs.map(
-              (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? 1 : 0
-            )
-          ).toArray()
+          }).toArray(),
+          out: diagram.outputs.map(
+            (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? 1 : 0
+          ).toArray(),
+          color: loop.color,
+        })
       )
     ).toArray()
 ;
@@ -533,10 +598,12 @@ const toPLATerms = (
 /// using the given mode.
 export const toPLA = (
   /*kvDiagram*/diagram,
-  /*_mode*/mode = MODE_DNF
+  /*_mode*/mode = MODE_DNF,
+  /*kvCube*/highlightCube
   ) => ({
+    mode: mode.name,
     inputs: diagram.inputs.map((i) => i.name).toArray(),
     outputs: diagram.outputs.map((o) => o.name).toArray(),
-    loops: toPLATerms(diagram, mode),
+    loops: toPLATerms(diagram, mode, highlightCube),
   })
 ;

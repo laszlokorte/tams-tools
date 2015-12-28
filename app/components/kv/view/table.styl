@@ -1,0 +1,181 @@
+@import './loops'
+
+.kv-container
+  float left
+  position relative
+
+.kv-table
+  table-layout fixed
+  border-spacing 5px
+  border-collapse separate
+
+  &.style-compact
+    pointer-events none
+    border-spacing 2px
+
+.kv-cell-atom
+  font-family 'Open Sans', sans-serif
+  vertical-align middle
+  text-align center
+  background-color lightgrey
+  cursor default
+  position relative
+  font-size 1.4em
+  font-weight 600
+
+  &.style-compact
+    text-indent -999px
+    white-space nowrap
+    overflow hidden
+    background-color #c9c9c9
+
+.kv-cell-atom:hover
+  background-color #c9c9c9
+
+.kv-cell-atom:active
+  background-color #c0c0c0
+
+.kv-mode-dnf
+  .kv-cell-atom:not([data-kv-value='true'])
+    &:not(.state-error)
+      color gray
+  .kv-cell-atom[data-kv-value='false']
+    font-weight normal
+    &.style-compact:not(.state-error)
+      background-color #e9e9e9
+
+.kv-mode-knf
+  .kv-cell-atom:not([data-kv-value='false'])
+    &:not(.state-error)
+      color gray
+  .kv-cell-atom[data-kv-value='true']
+    font-weight normal
+    &.style-compact:not(.state-error)
+      background-color #e9e9e9
+
+.kv-cell-atom::before
+  content attr(data-kv-index)
+  position absolute
+  right 5%
+  top 5%
+  color rgba(255,255,255,0.8)
+  font-size 0.5em
+  z-index 0
+  border-radius 2px
+  pointer-events none
+
+.kv-cell-atom:hover::before
+  content attr(data-kv-cell)
+  color #999
+  background-color rgba(200,200,200,1)
+  opacity 1
+  z-index 1
+  font-family monospace
+
+.kv-cell-atom.state-active:not(.state-error)
+  background-color #aaa
+
+.kv-cell-atom.state-error
+  color #fff
+  background-color #E23135
+  &.style-compact
+    background-color #FF9999
+
+[data-kv-height='0']
+  .kv-cell-atom
+    min-width 70px
+    min-height 70px
+    width 70px
+    height 70px
+    &.style-compact
+      min-width 10px
+      min-height 10px
+      width 10px
+      height 10px
+      font-size 1pt
+
+[data-kv-height='1']
+  .kv-cell-atom
+    min-width 50px
+    min-height 50px
+    width 50px
+    height 50px
+    &.style-compact
+      min-width 5px
+      min-height 5px
+      width 5px
+      height 5px
+      font-size 1pt
+
+[data-kv-height='2']
+  .kv-cell-atom
+    min-width 45px
+    min-height 45px
+    width 45px
+    height 45px
+
+.kv-table-cell-title
+  font-family 'Open Sans', sans-serif
+  vertical-align middle
+  text-align center
+
+.kv-table-cell-title.kv-cell-neg
+  visibility hidden
+  overflow hidden
+  text-overflow clip
+  font-size 0
+
+.kv-table-cell-title
+  border-color gray
+  border-style solid
+  border-width 0
+  padding 0
+  margin 0
+
+.kv-row-top > .kv-table-cell-title
+  height 30px
+  min-height 30px
+  max-height 30px
+  border-bottom-width 4px
+
+.kv-row-bottom > .kv-table-cell-title
+  height 30px
+  border-top-width 4px
+
+.kv-col-right
+  width 30px
+  min-width 30px
+  max-width 30px
+  border-left-width 4px
+
+.kv-col-left
+  width 30px
+  min-width 30px
+  max-width 30px
+  border-right-width 4px
+
+.kv-cell-container
+  padding 0
+
+[data-kv-height='1']
+  .kv-row-top > .kv-table-cell-title,
+  .kv-row-bottom > .kv-table-cell-title
+    height 25px
+    min-height 25px
+
+  .kv-col-right,
+  .kv-col-left
+    width 25px
+    min-width 25px
+
+  &.kv-table
+    border-spacing 3px
+    &.style-compact
+      border-spacing 0
+      [data-kv-height='0']
+        border-spacing 1px
+
+[data-kv-height='0']
+  &.kv-table
+    &.style-compact
+      border-spacing 2px

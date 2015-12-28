@@ -33,17 +33,6 @@ const renderBounds = ({minX, maxX, minY, maxY}) =>
   })
 ;
 
-const renderOrigin = () =>
-  svg('circle', {
-    attributes: {
-      cx: 0,
-      cy: 0,
-      r: 5,
-      class: 'graphics-origin',
-    },
-  })
-;
-
 const renderGrid = ({minX, maxX, minY, maxY}) => [
   svg('defs', [
     svg('pattern', {
@@ -112,7 +101,6 @@ const render = ({width, height, camera, bounds, content}) =>
       renderBackground(width, height, camera),
       renderBounds(bounds),
       renderGrid(bounds),
-      renderOrigin(),
       svg('g', {attributes: {class: 'graphics-content'}},
         content),
     ]),

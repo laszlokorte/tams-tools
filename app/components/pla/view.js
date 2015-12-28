@@ -1,43 +1,44 @@
 import {svg} from '@cycle/dom';
 
-import {gates, wires, Rotation, clipPaths} from './gates';
+import {gates, wires, clipPaths} from './gates';
 import './view.styl';
 
-const render = ({options, data, active}) =>
+const render = ({data}) =>
   svg('g',[
-    svg('rect', {
-      attributes: {
-        x: -50,
-        y: -400,
-        width: 60,
-        height: 60,
-        class: 'test-rect' + (active ? ' state-active' : ''),
-      },
-    }),
     clipPaths(),
-    data.circuit.gates.map(({type, center, rotation, inputCount, soderInput, soderOutput}) =>
-      gates[type]({center, rotation, inputCount, soderInput, soderOutput})
+    data.circuit.gates.map(({
+      type,
+      center, rotation, inputCount,
+      soderInput,soderOutput, color,
+      highlight,
+    }, key) =>
+      gates[type]({
+        key,
+        center, rotation, inputCount,
+        soderInput, soderOutput, color,
+        highlight,
+      })
     ),
-    data.circuit.wires.map(({type, from, toX, toY, input, inputCount, soderStart, soderEnd}) =>
-      wires[type]({from, toX, toY, input, inputCount, soderStart, soderEnd})
+    data.circuit.wires.map(({
+      type,
+      from, toX, toY, input, inputCount,
+      soderStart, soderEnd,
+    }, key) =>
+      wires[type]({
+        key,
+        from, toX, toY, input, inputCount,
+        soderStart, soderEnd,
+      })
     ),
-    // gates.xnor({center: {x: -20, y: -30}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
-    // gates.nand({center: {x: -20, y: -15}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
-    // gates.nor({center: {x: -20, y: 0}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
-    // gates.negator({center: {x: -20, y: 15}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
-
-    // gates.xor({center: {x: 0, y: -30}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
-    // gates.and({center: {x: 0, y: -15}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
-    // gates.or({center: {x: 0, y: 0}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
-    // gates.buffer({center: {x: 0, y: 15}, inputCount: data.inputs,
-    //   rotation: data.rotation}),
+    data.circuit.labels.map(({text, align, anchor}) =>
+      svg('text', {
+        key: 'label-' + text,
+        x: anchor.x * 10,
+        y: anchor.y * 10,
+        'text-anchor': align,
+        'alignment-baseline': 'middle',
+      }, text)
+    ),
   ])
 ;
 

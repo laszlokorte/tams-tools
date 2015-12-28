@@ -51,7 +51,8 @@ export default (DOM) => {
   const wheel$ = rootElement
     .events('wheel')
     .filter((evt) => !evt.altKey)
-    .do(preventDefault);
+    .do(preventDefault)
+    .share();
 
   const pan$ = O.merge(
     panStart$
@@ -82,7 +83,7 @@ export default (DOM) => {
       }))
       .takeUntil(pinchEnd$)
     )
-  );
+  ).share();
 
   const zoom$ = O.merge(
     wheel$
@@ -102,7 +103,7 @@ export default (DOM) => {
         factor,
         pivot,
       };
-    }),
+    }).share(),
     pinchStart$
     .flatMap((startEvt) =>
       pinchMove$
@@ -125,7 +126,7 @@ export default (DOM) => {
       )
       .takeUntil(pinchEnd$)
     )
-  );
+  ).share();
 
   return {
     zoom$,

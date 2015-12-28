@@ -20,7 +20,7 @@ export default (responses) => {
   const state$ = model(props$, data$, intent(
     isolateSource(DOM, 'please')
   ));
-  const vtree$ = view(state$);
+  const vtree$ = view(state$).shareReplay(1);
 
   const stage = isolate(graphics, 'mygraphics')({
     DOM,
