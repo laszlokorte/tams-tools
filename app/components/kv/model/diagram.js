@@ -170,7 +170,9 @@ const isEmptyCube = (
   /*int*/inputCount
   ) =>
   !cube.include.and(cube.exclude).isEmpty() ||
-  !cube.include.and(BitSet().setRange(0, inputCount - 1, 1).not()).isEmpty()
+  !cube.include.and(inputCount === 0 ?
+    cube.include : BitSet().setRange(0, inputCount - 1, 1).not()
+  ).isEmpty()
 ;
 
 /// check if the given loop is empty.
@@ -453,9 +455,15 @@ export const newCubeFromTo = (
   /*BitSet*/start,
   /*BitSet*/end,
   /*int*/inputCount
-  ) => kvCube({
+  ) =>
+  inputCount > 0 ?
+  kvCube({
     include: start.and(end).getRange(0, inputCount - 1),
     exclude: start.or(end).not().getRange(0, inputCount - 1),
+  }) :
+  kvCube({
+    include: BitSet(),
+    exclude: BitSet(),
   })
 ;
 
