@@ -4,7 +4,7 @@ import I from 'immutable';
 import * as diagram from './diagram';
 import {buildLayout} from './layout';
 
-import {memoize, clamp} from '../../../lib/utils';
+import {memoize, clamp, padLeft} from '../../../lib/utils';
 
 const kvState = I.Record({
   currentEditMode: 'edit',
@@ -50,25 +50,27 @@ const generateOutputName = (i) =>
   "O" + (i + 1)
 ;
 
-const toRGBA = (hex) => {
+const inlineAlphaChannel = (hex) => {
   const channels = hex
     .match(/#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})/i)
     .slice(1)
     .map((val) => parseInt(val, 16));
 
-  const color = `rgba(
-    ${channels[0]},
-    ${channels[1]},
-    ${channels[2]},
-    ${channels[3] / 255})`;
+  const multiplier = channels[3] / 255;
+
+  const color = '#' +
+    padLeft(Math.round(channels[0] * multiplier).toString(16), 2, 0) +
+    padLeft(Math.round(channels[1] * multiplier).toString(16), 2, 0) +
+    padLeft(Math.round(channels[2] * multiplier).toString(16), 2, 0)
+  ;
 
   return color;
 };
 
 const generateLoopColor = (i) =>
-  toRGBA(
+  inlineAlphaChannel(
     colorPalette[i % colorPalette.length] + (
-      (255 - 100 * Math.floor(i / colorPalette.length)).toString(16)
+      (255 - (101 * Math.floor(i / colorPalette.length)) % 251).toString(16)
     )
   )
 ;
