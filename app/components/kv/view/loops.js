@@ -13,7 +13,7 @@ const renderSingleLoop = ({color, top, right, bottom, left, xEdge, yEdge}) => {
       right: `${right}%`,
       bottom: `${bottom}%`,
       left: `${left}%`,
-      'border-color': color,
+      borderColor: color,
     },
     className: [
       xEdge ? `kv-loop-edge-${xEdge}` : null,
