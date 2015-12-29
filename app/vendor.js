@@ -1,4 +1,5 @@
 module.exports = [
+  "babel-polyfill",
   "@cycle/core",
   "@cycle/dom",
   "@cycle/isolate",
