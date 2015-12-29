@@ -33,7 +33,9 @@ const renderToolbar = (state) =>
 const renderLoopButton = (state, loop, index) =>
   li([
     button('.well', {
-      style: {'background-color': loop.color},
+      style: {
+        backgroundColor: loop.color,
+      },
       attributes: {
         'data-loop-index': index,
       },
