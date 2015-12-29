@@ -71,7 +71,7 @@ module.exports = {
     ),
     new ExtractTextPlugin('[name]-[contenthash].css', {allChunks: true}),
     new HtmlWebpackPlugin({
-      title: 'KV Editor',
+      title: 'KV Diagram Editor',
       minify: htmlMinifyOptions,
       chunks: ['app', 'vendor'],
       template: './app/index.html',
