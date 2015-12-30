@@ -37,7 +37,7 @@ const inputOffsets = (count) => {
     result.push(4 + i);
   }
 
-  result.sort();
+  result.sort((a,b) => a - b);
 
   return result;
 };
