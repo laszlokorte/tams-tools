@@ -155,11 +155,10 @@ export default (DOM) => {
         .share(),
     help$:
       DOM
-        .select('[data-help]')
+        .select('.help-button')
         .events('click')
         .do(preventDefault)
-        .map(pluckDataAttr('help'))
-        .map((val) => val === 'true')
+        .map(() => true)
         .share(),
   };
 };

@@ -14,15 +14,16 @@ export default (responses) => {
     DOM,
   } = responses;
 
+  const actions = intent(DOM);
   const helpBox = isolate(ModalBox, 'helpBox')({
     DOM,
-    props$: O.just({
-      visible: true,
-    }),
+    props$: actions.help$
+      .startWith(true)
+      .map((visible) => ({visible})),
     content$: O.just(help()),
   });
 
-  const state$ = model(O.empty(), intent(DOM)).shareReplay(1);
+  const state$ = model(O.empty(), actions).shareReplay(1);
   const vtree$ = view(
     state$, {
       helpBox$: helpBox.DOM,

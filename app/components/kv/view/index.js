@@ -27,6 +27,7 @@ const renderToolbar = (state) =>
         disabled: state.diagram.inputs.size >= 8,
       },
       '+'),
+    button('.help-button','Help'),
   ])
 ;
 
