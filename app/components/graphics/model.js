@@ -66,21 +66,24 @@ export default ({props$, camera$, bounds$, content$}, actions) => {
     return new ContentThunk(content, index % 2);
   });
 
+  const distinctBounds$ = bounds$
+    .distinctUntilChanged(
+      (a) => a,
+      (a,b) => a.minX === b.minX && a.maxX === b.maxX &&
+        a.minY === b.minY && a.maxY === b.maxY
+    );
+
   return O.combineLatest(
     props$,
     camera$,
     (props, initCamera) =>
-      bounds$
-      .distinctUntilChanged(
-        (a) => a,
-        (a,b) => a.minX === b.minX && a.maxX === b.maxX &&
-          a.minY === b.minY && a.maxY === b.maxY
-      )
+      distinctBounds$
       .flatMapLatest((bounds) =>
         O.merge(
           actions.zoom$.map(zoomModifier(0.2, 5)),
           actions.pan$.map(panModifier),
-          bounds$.map(autoCenterModifier(props))
+          distinctBounds$
+          .map(autoCenterModifier(props))
         ).map((mod) => clampPosition(mod, bounds))
         .startWith(({x, y, zoom}) => ({
           zoom,

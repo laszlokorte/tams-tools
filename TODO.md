@@ -1,9 +1,8 @@
 # Todo
 
-* compose the ui of components
-* use sets instead of binary
-* Export PLA
-* Draw PLA
-* Edit existing loops
-* improve color and name generation
-* touch events
+* Draw loop while creating
+* KNF / DNF Toggle
+* Edit Toggle
+* Help Button
+* Import/Export
+* Examples

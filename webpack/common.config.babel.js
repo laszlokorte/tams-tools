@@ -57,6 +57,9 @@ module.exports = {
         test: /\.js$/,
         exclude: vendorModules,
         loader: "babel",
+        query: {
+          plugins: ['transform-function-bind'],
+        },
       },
     ],
   },
