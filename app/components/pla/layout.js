@@ -78,22 +78,20 @@ const layoutOutputs = (pla, height, loopCount) => {
     })),
     wires: Array.prototype.concat.apply([],
       pla.outputs.map((_, index) =>
-        Array.prototype.concat.apply([],
-          pla.loops
-            .map((loop, idx) => ({idx, loop}))
-            .filter(({loop}) => loop.out[index] === 1)
-            .map(({loop, idx}, wireIndex, all) => [{
-              type: 'vertical',
-              from: {
-                x: outputGateWidth * (index + 0.5) + 15,
-                y: -15 + 5,
-              },
-              toY: gateWidth * idx,
-              input: wireIndex,
-              inputCount: all.length,
-              soderEnd: true,
-            }]
-            )
+        pla.loops
+          .map((loop, idx) => ({idx, loop}))
+          .filter(({loop}) => loop.out[index] === 1)
+          .map(({loop, idx}, wireIndex, all) => ({
+            type: 'vertical',
+            from: {
+              x: outputGateWidth * (index + 0.5) + 15,
+              y: -15 + 5,
+            },
+            toY: gateWidth * idx,
+            input: wireIndex,
+            inputCount: all.length,
+            soderEnd: true,
+          })
         )
       )
     ),
@@ -137,14 +135,14 @@ const layoutLoops = (pla) => {
     wires: Array.prototype.concat.apply([],
       loopInputs
         .map((loop, index) =>
-        Array.prototype.concat.apply([], loop.map((inputOffset, idx) => ({
-          type: 'horizontal',
-          from: {x: -15 - inputOffset, y: gateWidth * index},
-          toX: -5,
-          input: idx,
-          inputCount: loop.length,
-          soderStart: true,
-        }))
+          loop.map((inputOffset, idx) => ({
+            type: 'horizontal',
+            from: {x: -15 - inputOffset, y: gateWidth * index},
+            toX: -5,
+            input: idx,
+            inputCount: loop.length,
+            soderStart: true,
+          })
       )).concat(
         pla.loops.map((name, index) => [
           {
