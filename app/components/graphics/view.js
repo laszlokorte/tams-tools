@@ -95,7 +95,7 @@ const render = ({width, height, camera, bounds, content}) =>
         viewBox:
           viewbox(width, height,
             camera),
-        preserveAspectRatio: 'xMidYMid meet',
+        preserveAspectRatio: 'xMidYMin meet',
       },
     }, [
       renderBackground(width, height, camera),

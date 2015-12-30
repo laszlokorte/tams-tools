@@ -31,6 +31,24 @@ const panModifier = (delta) => ({x, y, zoom}) => ({
   y: y - delta.y,
 });
 
+const autoCenterModifier = ({
+  width, height, pivotX = 0.5, pivotY = 0,
+}) => ({minX, minY, maxX, maxY}) => {
+  const centerX = (maxX + minX) / 2;
+  const centerY = (maxY + minY) / 2;
+  const contentWidth = maxX - minX;
+  const contentHeight = maxY - minY;
+  const xRatio = (width - 20) / contentWidth;
+  const yRatio = (height - 20) / contentHeight;
+  const zoom = xRatio;
+
+  return () => ({
+    x: centerX + (pivotX - 0.5) * contentWidth,
+    y: centerY + (pivotY - 0.5) * contentHeight + height / 2 / zoom,
+    zoom,
+  });
+};
+
 const ContentThunk = function thunkConstructor(node, key) {
   this.node = node;
   this.key = key;
@@ -62,7 +80,8 @@ export default ({props$, camera$, bounds$, content$}, actions) => {
       .flatMapLatest((bounds) =>
         O.merge(
           actions.zoom$.map(zoomModifier(0.2, 5)),
-          actions.pan$.map(panModifier)
+          actions.pan$.map(panModifier),
+          bounds$.map(autoCenterModifier(props))
         ).map((mod) => clampPosition(mod, bounds))
         .startWith(({x, y, zoom}) => ({
           zoom,
