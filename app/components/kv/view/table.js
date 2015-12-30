@@ -33,7 +33,7 @@ const _labelFor = ({inputs, offset}, rowsOrColumns, {include, exclude}) => {
     rowsOrColumns.length > exclude
     ) {
     const intersect = rowsOrColumns[exclude].not().and(rowsOrColumns[include]);
-    return inputs.get(offset + 1 + intersect.msb()).name;
+    return inputs.get(offset + intersect.msb()).name;
   } else {
     return null;
   }
@@ -165,13 +165,13 @@ export const renderTable = ({
   output,
   currentCube,
   compact = false,
-  offset = diagram.inputs.size,
+  labelOffset: offset = diagram.inputs.size,
   }) => {
   const cols = layout.columns;
   const rows = layout.rows;
   const rowCount = rows.length;
   const colCount = cols.length;
-  const labelOffset = offset - layout.count - 1;
+  const labelOffset = offset - layout.count;
 
   const labels = tableLables({
     rows,
@@ -203,7 +203,7 @@ export const renderTable = ({
                 renderTable({
                   layout: cell.children,
                   diagram, mode, output, currentCube, compact,
-                  labelOffset: labelOffset + 1}),
+                  labelOffset}),
               ]);
             } else {
               return renderTableCell({
