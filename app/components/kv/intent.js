@@ -20,7 +20,7 @@ export default (DOM) => {
       .events('mouseenter')
       .map((evt) => ({
         evt,
-        cell: BitSet(evt.target.dataset.kvCell),
+        cell: BitSet(evt.currentTarget.dataset.kvCell),
       }))
     ,
     DOM
@@ -46,8 +46,8 @@ export default (DOM) => {
     )
     .map((evt) => ({
       evt,
-      cell: BitSet(evt.target.dataset.kvCell),
-      output: parseInt(evt.target.dataset.kvOutput, 10),
+      cell: BitSet(evt.currentTarget.dataset.kvCell),
+      output: parseInt(evt.currentTarget.dataset.kvOutput, 10),
     }))
     .do(({evt}) => evt.preventDefault())
     .filter(({cell}) => cell !== null)
@@ -100,8 +100,8 @@ export default (DOM) => {
         .filter((evt) => !evt.shiftKey)
         .map((evt) => ({
           reverse: evt.altKey,
-          output: parseInt(evt.target.dataset.kvOutput, 10),
-          cell: BitSet(evt.target.dataset.kvCell),
+          output: parseInt(evt.currentTarget.dataset.kvOutput, 10),
+          cell: BitSet(evt.currentTarget.dataset.kvCell),
         }))
         .share(),
     removeLoop$:
@@ -151,7 +151,7 @@ export default (DOM) => {
         .select('[data-kv-mode]')
         .events('click')
         .do(preventDefault)
-        .map((evt) => evt.target.dataset.kvMode)
+        .map((evt) => evt.currentTarget.dataset.kvMode)
         .share(),
     help$:
       DOM

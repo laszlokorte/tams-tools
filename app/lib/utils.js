@@ -124,11 +124,11 @@ export const stopPropagation = (evt) =>
 // get function which parses the attribute of given name
 // from a given event's target as integer
 export const parseDataAttr = (attrName) => (evt) =>
-  parseInt(evt.target.dataset[attrName], 10)
+  parseInt(evt.currentTarget.dataset[attrName], 10)
 ;
 
 export const pluckDataAttr = (attrName) => (evt) =>
-  evt.target.dataset[attrName]
+  evt.currentTarget.dataset[attrName]
 ;
 
 export const log = (...args) => {

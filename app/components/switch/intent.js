@@ -14,7 +14,7 @@ export default (DOM) => {
       click$
         .do(preventDefault)
         .map((evt) =>
-          evt.target.dataset.switchState === 'true'
+          evt.currentTarget.dataset.switchState === 'true'
         ),
   };
 };

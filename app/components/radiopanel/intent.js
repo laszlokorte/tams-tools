@@ -14,7 +14,7 @@ export default (DOM) => {
         click$
         .do(preventDefault)
         .map((evt) =>
-          evt.target.dataset.radioState
+          evt.currentTarget.dataset.radioState
         ),
   };
 };
