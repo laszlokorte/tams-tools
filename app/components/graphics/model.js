@@ -39,7 +39,6 @@ const autoCenterModifier = ({
   const contentWidth = maxX - minX;
   const contentHeight = maxY - minY;
   const xRatio = (width - 20) / contentWidth;
-  const yRatio = (height - 20) / contentHeight;
   const zoom = xRatio;
 
   return () => ({
