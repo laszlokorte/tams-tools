@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 import BitSet from '../../lib/monkeypatches/bitset.js';
 
-import {preventDefault, parseDataAttr, pluckDataAttr} from '../../lib/utils';
+import {preventDefault, parseDataAttr} from '../../lib/utils';
 
 const touchTarget = (evt) =>
   document.elementFromPoint(
