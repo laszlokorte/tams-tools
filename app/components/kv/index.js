@@ -12,15 +12,17 @@ import {toPLA} from './model/diagram';
 export default (responses) => {
   const {
     DOM,
+    keydown,
   } = responses;
 
-  const actions = intent(DOM);
+  const actions = intent(DOM, keydown);
   const helpBox = isolate(ModalBox, 'helpBox')({
     DOM,
     props$: actions.help$
       .startWith(true)
       .map((visible) => ({visible})),
     content$: O.just(help()),
+    keydown,
   });
 
   const state$ = model(O.empty(), actions).shareReplay(1);
@@ -37,5 +39,6 @@ export default (responses) => {
   return {
     DOM: vtree$,
     plaData$,
+    preventDefault: actions.preventDefault,
   };
 };

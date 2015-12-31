@@ -9,16 +9,19 @@ export default (responses) => {
     DOM,
     props$,
     content$,
+    keydown,
   } = responses;
 
   const visible$ = props$
     .map(pluck('visible'));
 
-  const state$ = model(visible$, content$, intent(DOM));
+  const actions = intent(DOM, keydown);
+  const state$ = model(visible$, content$, actions);
   const vtree$ = view(state$);
 
   return {
     DOM: vtree$,
     visible$: state$.map(pluck('visible')),
+    preventDefault: actions.preventDefault,
   };
 };

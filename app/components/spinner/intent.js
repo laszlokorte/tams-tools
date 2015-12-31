@@ -1,19 +1,11 @@
 import {Observable as O} from 'rx';
 
-import {preventDefault} from '../../lib/utils';
-
 export default (DOM) => {
   const incButton = DOM.select('[data-increment]');
   const decButton = DOM.select('[data-decrement]');
 
-  const incClick$ = O.merge(
-    incButton.events('mousedown').do(preventDefault).ignoreElements(),
-    incButton.events('click').do(preventDefault)
-  );
-  const decClick$ = O.merge(
-    decButton.events('mousedown').do(preventDefault).ignoreElements(),
-    decButton.events('click').do(preventDefault)
-  );
+  const incClick$ = incButton.events('click');
+  const decClick$ = decButton.events('click');
 
   return {
     increment$:
@@ -22,5 +14,11 @@ export default (DOM) => {
     decrement$:
       decClick$
       .map(() => true),
+    preventDefault: O.merge(
+      incClick$,
+      decClick$,
+      decButton.events('mousedown'),
+      incButton.events('mousedown')
+    ).share(),
   };
 };

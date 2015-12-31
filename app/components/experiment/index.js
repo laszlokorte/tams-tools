@@ -14,6 +14,7 @@ import help from './help';
 export default (responses) => {
   const {
     DOM,
+    keydown,
   } = responses;
 
   const helpBox = isolate(ModalBox, 'helpBox')({
@@ -22,6 +23,7 @@ export default (responses) => {
       visible: true,
     }),
     content$: O.just(help()),
+    keydown,
   });
 
   const inputSpinner = isolate(Spinner, 'inputSpinner')({
@@ -86,5 +88,13 @@ export default (responses) => {
 
   return {
     DOM: vtree$,
+    preventDefault: O.merge(
+      helpBox.preventDefault,
+      inputSpinner.preventDefault,
+      outputSpinner.preventDefault,
+      modeSwitch.preventDefault,
+      canvas.preventDefault,
+      modePanel.preventDefault
+    ),
   };
 };

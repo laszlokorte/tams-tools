@@ -1,7 +1,9 @@
 import {Observable as O} from 'rx';
-import BitSet from '../../lib/monkeypatches/bitset.js';
+import BitSet from '../../../lib/monkeypatches/bitset.js';
 
-import {preventDefault, parseDataAttr} from '../../lib/utils';
+import {parseDataAttr} from '../../../lib/utils';
+
+import {helpAction} from './help';
 
 const touchTarget = (evt) =>
   document.elementFromPoint(
@@ -9,33 +11,39 @@ const touchTarget = (evt) =>
     evt.changedTouches[0].clientY
   )
 ;
-export default (DOM) => {
-  const pointerUp$ = O.merge(
-    O.fromEvent(document, 'touchend'),
-    O.fromEvent(document, 'mouseup')
-  );
+export default (DOM, keydown) => {
+  const cancel$ = keydown
+    .filter((evt) => evt.keyCode === 27)
+  ;
+
+  const touchEnd$ = O.fromEvent(document, 'touchend');
+  const mouseUp$ = O.fromEvent(document, 'mouseup');
+
+  const mouseEnterEvent$ = DOM
+    .select('.kv-cell-atom[data-kv-cell]')
+    .events('mouseenter');
+
+  const touchMoveEvent$ = DOM
+    .select('.kv-cell-atom[data-kv-cell]')
+    .events('touchmove');
+
   const pointerEnter$ = O.merge(
-    DOM
-      .select('.kv-cell-atom[data-kv-cell]')
-      .events('mouseenter')
+    mouseEnterEvent$
       .map((evt) => ({
-        evt,
         cell: BitSet(evt.currentTarget.dataset.kvCell),
       }))
     ,
-    DOM
-      .select('.kv-cell-atom[data-kv-cell]')
-      .events('touchmove')
+    touchMoveEvent$
       .map((evt) => {
         const element = touchTarget(evt);
         return {
-          evt,
           cell: element && element.dataset.hasOwnProperty('kvCell') ?
             BitSet(element.dataset.kvCell) : null,
         };
       })
   );
-  const pointerDown$ = O.merge(
+
+  const pointerDownEvent$ = O.merge(
       DOM
         .select('.kv-cell-atom[data-kv-cell]')
         .events('touchstart'),
@@ -43,17 +51,23 @@ export default (DOM) => {
         .select('.kv-cell-atom[data-kv-cell]')
         .events('mousedown')
         .filter((evt) => !!evt.shiftKey)
-    )
+    );
+
+  const pointerDown$ = pointerDownEvent$
     .map((evt) => ({
-      evt,
       cell: BitSet(evt.currentTarget.dataset.kvCell),
       output: parseInt(evt.currentTarget.dataset.kvOutput, 10),
     }))
-    .do(({evt}) => evt.preventDefault())
     .filter(({cell}) => cell !== null)
     ;
+
+  const pointerUp$ = O.merge(
+    touchEnd$,
+    mouseUp$
+  );
+
   const drag$ = pointerDown$
-    .flatMap(({cell, output}) =>
+    .map(({cell, output}) =>
       O.just({
         output: output,
         startCell: cell,
@@ -61,10 +75,9 @@ export default (DOM) => {
       }).concat(
         pointerEnter$
         .filter(({cell: c}) => c !== null)
-        .do(({evt}) => evt.preventDefault())
         .distinctUntilChanged(
           ({cell: c}) => c,
-          (a, b) => a === b
+          (a, b) => a.equals(b)
         )
         .map(({cell: targetCell}) => ({
           output,
@@ -73,12 +86,42 @@ export default (DOM) => {
         })
       )
       ).takeUntil(
+        cancel$
+      ).takeUntil(
         pointerUp$
       )
-    );
+    )
+    .switch();
 
   const dragEnd$ = drag$
-    .sample(pointerUp$);
+    .sample(
+      O.merge(
+        pointerDown$.map(() => pointerUp$),
+        cancel$.map(() => O.empty())
+      ).switch()
+    );
+
+  const help = helpAction({DOM});
+
+  const removeLoopEvent$ = DOM
+    .select('[data-loop-index]')
+    .events('click');
+
+  const addOutputEvent$ = DOM
+    .select('[data-kv-add-output]')
+    .events('click');
+
+  const removeOutputEvent$ = DOM
+    .select('[data-kv-remove-output]')
+    .events('click');
+
+  const selectOutputEvent$ = DOM
+    .select('[data-kv-output]')
+    .events('click');
+
+  const switchModeEvent$ = DOM
+    .select('[data-kv-mode]')
+    .events('click');
 
   return {
     addInput$:
@@ -105,60 +148,49 @@ export default (DOM) => {
         }))
         .share(),
     removeLoop$:
-      DOM
-        .select('[data-loop-index]')
-        .events('click')
-        .do(preventDefault)
+      removeLoopEvent$
         .map(parseDataAttr('loopIndex'))
         .filter(isFinite)
         .share(),
     tryLoop$:
       drag$
-      .share(),
+        .share(),
     stopTryLoop$:
-      dragEnd$
-      .map(() => true)
-      .share(),
+      O.merge(dragEnd$, cancel$)
+        .map(() => true)
+        .share(),
     addLoop$:
       dragEnd$.share(),
     addOutput$:
-      DOM
-        .select('[data-kv-add-output]')
-        .events('click')
-        .do(preventDefault)
+      addOutputEvent$
         .map(() => true)
         .share(),
     removeOutput$:
-      DOM
-        .select('[data-kv-remove-output]')
-        .events('click')
-        .do(preventDefault)
-        .do((e) => e.stopPropagation())
+      removeOutputEvent$
         .map(parseDataAttr('kvRemoveOutput'))
         .filter(isFinite)
         .share(),
     selectOutput$:
-      DOM
-        .select('[data-kv-output]')
-        .events('click')
-        .do(preventDefault)
-        .do((e) => e.stopPropagation())
+      selectOutputEvent$
         .map(parseDataAttr('kvOutput'))
         .filter(isFinite)
         .share(),
     switchMode$:
-      DOM
-        .select('[data-kv-mode]')
-        .events('click')
-        .do(preventDefault)
+      switchModeEvent$
         .map((evt) => evt.currentTarget.dataset.kvMode)
         .share(),
-    help$:
-      DOM
-        .select('.help-button')
-        .events('click')
-        .do(preventDefault)
-        .map(() => true)
-        .share(),
+    help$: help.action$,
+
+    preventDefault: O.merge(
+      help.preventDefault,
+      mouseEnterEvent$,
+      touchMoveEvent$,
+      pointerDownEvent$,
+      removeLoopEvent$,
+      addOutputEvent$,
+      removeOutputEvent$,
+      selectOutputEvent$,
+      switchModeEvent$
+    ).share(),
   };
 };

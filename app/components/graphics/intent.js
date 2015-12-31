@@ -1,7 +1,5 @@
 import {Observable as O} from 'rx';
 
-import {preventDefault} from '../../lib/utils';
-
 const svgEventPosition = (() => {
   let oldPoint = null;
   return ({x,y}, evt) => {
@@ -51,7 +49,6 @@ export default (DOM) => {
   const wheel$ = rootElement
     .events('wheel')
     .filter((evt) => !evt.altKey)
-    .do(preventDefault)
     .share();
 
   const pan$ = O.merge(
@@ -131,5 +128,6 @@ export default (DOM) => {
   return {
     zoom$,
     pan$,
+    preventDefault: wheel$,
   };
 };

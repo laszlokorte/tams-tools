@@ -11,11 +11,13 @@ export default (responses) => {
     enabled$,
   } = responses;
 
-  const state$ = model(props$, enabled$.startWith(false), intent(DOM));
+  const actions = intent(DOM);
+  const state$ = model(props$, enabled$.startWith(false), actions);
   const vtree$ = view(state$);
 
   return {
     DOM: vtree$,
     enabled$: state$.map(pluck('enabled')),
+    preventDefault: actions.preventDefault,
   };
 };

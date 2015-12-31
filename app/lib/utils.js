@@ -112,15 +112,6 @@ export const fillBits = (length) =>
   Math.pow(2, length) - 1
 ;
 
-// prevent the default browser behaviour for the given event
-export const preventDefault = (evt) =>
-  evt.preventDefault()
-;
-
-export const stopPropagation = (evt) =>
-  evt.stopPropagation()
-;
-
 // get function which parses the attribute of given name
 // from a given event's target as integer
 export const parseDataAttr = (attrName) => (evt) =>

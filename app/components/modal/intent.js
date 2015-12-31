@@ -1,12 +1,17 @@
-import {preventDefault} from '../../lib/utils';
+import {Observable as O} from 'rx';
 
-export default (DOM) => {
+export default (DOM, keydown) => {
+  const closeEvent$ = O.merge(
+    DOM
+      .select('[data-modal-close]')
+      .events('click'),
+    keydown.filter((evt) => evt.keyCode === 27)
+  );
+
   return {
     close$:
-      DOM
-        .select('[data-modal-close]')
-        .events('click')
-        .do(preventDefault)
+      closeEvent$
         .map(() => true),
+    preventDefault: closeEvent$,
   };
 };

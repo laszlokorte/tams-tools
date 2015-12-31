@@ -19,11 +19,13 @@ export default (responses) => {
     value$,
   } = responses;
 
-  const state$ = model(props$.startWith(defaultProps), value$, intent(DOM));
+  const actions = intent(DOM);
+  const state$ = model(props$.startWith(defaultProps), value$, actions);
   const vtree$ = view(state$);
 
   return {
     DOM: vtree$,
     value$: state$.map(pluck('value')),
+    preventDefault: actions.preventDefault,
   };
 };

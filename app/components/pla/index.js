@@ -17,9 +17,8 @@ export default (responses) => {
   } = responses;
 
   const {isolateSource, isolateSink} = DOM;
-  const state$ = model(props$, data$, intent(
-    isolateSource(DOM, 'please')
-  ));
+  const actions = intent(isolateSource(DOM, 'please'));
+  const state$ = model(props$, data$, actions);
   const vtree$ = view(state$).shareReplay(1);
 
   const stage = isolate(graphics, 'mygraphics')({
@@ -35,5 +34,6 @@ export default (responses) => {
 
   return {
     DOM: O.just(div(stage.DOM)),
+    preventDefault: actions.preventDefault,
   };
 };

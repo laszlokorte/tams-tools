@@ -17,5 +17,6 @@ export default (responses) => {
 
   return {
     DOM: vtree$,
+    preventDefault: actions.preventDefault,
   };
 };
