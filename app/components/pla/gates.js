@@ -66,6 +66,7 @@ const inputPorts = (count, type, soder) =>
       y1: -40 + 10 * y,
       x2: 0,
       y2: -40 + 10 * y,
+      'stroke-width': 2,
       class: 'gate-port',
     }),
   ]))
@@ -107,6 +108,7 @@ const outputFeature = (soder) => [
       y1: 0,
       x2: 50,
       y2: 0,
+      'stroke-width': 2,
       class: 'gate-port',
     },
   }),
@@ -263,6 +265,7 @@ export const wires = {
         y1: startY,
         x2: endX,
         y2: endY,
+        'stroke-width': 2,
         class: 'wire wire-vertical',
       }),
     ]);
@@ -283,6 +286,7 @@ export const wires = {
         y1: startY,
         x2: endX,
         y2: startY,
+        'stroke-width': 2,
         class: 'wire wire-horizontal',
       }),
     ]);
