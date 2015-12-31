@@ -34,6 +34,9 @@ export default (responses) => {
 
   return {
     DOM: O.just(div(stage.DOM)),
-    preventDefault: actions.preventDefault,
+    preventDefault: O.merge(
+      actions.preventDefault,
+      stage.preventDefault
+    ),
   };
 };
