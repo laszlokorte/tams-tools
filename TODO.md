@@ -15,3 +15,7 @@
 ## performance
 
 * make use of virtual-dom thunk
+
+## cleanup
+
+* refactor css definitions
