@@ -10,6 +10,7 @@ const kvState = I.Record({
   currentEditMode: 'edit',
   currentMode: diagram.modeFromName('dnf'),
   currentCube: diagram.kvCube(),
+  currentLoop: diagram.kvLoop(),
   currentOutput: 0,
   diagram: diagram.newDiagram(),
 }, 'state');
@@ -148,6 +149,18 @@ const tryLoop = (state, startCell, targetCell) =>
     currentCube: diagram.newCubeFromTo(
       startCell, targetCell, state.diagram.inputs.size
     ),
+    currentLoop: diagram.kvLoop({
+      color: generateUnique(
+        state.diagram.loops
+        .map((loop) => loop.color)
+        .toSet()
+      , generateLoopColor),
+      cube: diagram.newCubeFromTo(
+        startCell, targetCell, state.diagram.inputs.size
+      ),
+      outputs: I.Set.of(state.currentOutput),
+      mode: state.currentMode,
+    }),
     currentOutput: state.currentOutput,
     diagram: state.diagram,
   })

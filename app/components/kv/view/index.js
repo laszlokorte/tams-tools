@@ -91,6 +91,7 @@ const renderOutputThumbnails = (layout, state, canAdd, canRemove) =>
             mode: state.currentMode,
             output: i,
             currentCube: state.currentCube,
+            currentLoop: state.currentLoop,
             compact: true,
           }),
           span('.output-thumbnails-label', output.name),
@@ -119,6 +120,7 @@ const renderBody = (layout, state) =>
     mode: state.currentMode,
     output: state.currentOutput,
     currentCube: state.currentCube,
+    currentLoop: state.currentLoop,
     compact: false,
   })
 ;

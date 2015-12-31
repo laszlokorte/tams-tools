@@ -164,6 +164,7 @@ export const renderTable = ({
   mode,
   output,
   currentCube,
+  currentLoop,
   compact = false,
   labelOffset: offset = diagram.inputs.size,
   }) => {
@@ -187,7 +188,7 @@ export const renderTable = ({
     renderLoops(
       diagram.loops.filter(
         (loop) => loopBelongsToOutput(loop, output)
-      ), mode, rows, cols) || null,
+      ).toList().push(currentLoop), mode, rows, cols) || null,
 
     table('.kv-table' + styleClass, {
       className: 'kv-mode-' + mode.name,
@@ -202,7 +203,7 @@ export const renderTable = ({
               return td('.kv-table-cell-body.kv-cell-container' + styleClass, [
                 renderTable({
                   layout: cell.children,
-                  diagram, mode, output, currentCube, compact,
+                  diagram, mode, output, currentCube, currentLoop, compact,
                   labelOffset}),
               ]);
             } else {
