@@ -22,13 +22,24 @@
   margin 3px
 
   &:nth-child(2n)
-    transform scaleX(0.9)
+    transform translate(3px, -3px)
   &:nth-child(3n)
-    transform scaleY(1.1)
-  &:nth-child(4n)
-    transform scaleY(0.9)
-  &:nth-child(5n)
-    transform scaleX(1.1)
+    transform translate(3px, 3px)
+  &:nth-child(4n-1)
+    transform translate(-3px, 3px)
+  &:nth-child(5n-1)
+    transform translate(-3px, -3px)
+
+.style-compact
+  .kv-loop
+    &:nth-child(2n)
+      transform translate(0.5px, -0.5px)
+    &:nth-child(3n)
+      transform translate(0.5px, 0.5px)
+    &:nth-child(4n-1)
+      transform translate(-0.5px, 0.5px)
+    &:nth-child(5n-1)
+      transform translate(-0.5px, -0.5px)
 
 .kv-loop-edge-top
   border-top-left-radius 0

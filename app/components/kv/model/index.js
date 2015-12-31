@@ -28,7 +28,7 @@ const colorPalette = [
   '#FF9800',
   '#FF5722',
   '#795548',
-];
+].sort((a,b) => parseInt(a.substr(4), 16) - parseInt(b.substr(4), 16));
 
 const generateUnique = (set, generator, i = set.size) => {
   const newName = generator(i);
