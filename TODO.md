@@ -11,6 +11,7 @@
 ## bugs
 
 * pla gate pins are cut off on large gates
+* position: relative not supported in firefox < 30
 
 ## performance
 
