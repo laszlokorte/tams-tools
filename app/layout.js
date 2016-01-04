@@ -5,16 +5,18 @@ import html from 'raw!./layout.html';
 document.getElementById('app').innerHTML = html;
 
 const canvas = document.getElementById('canvas');
-document.getElementById('canvas-toggle').addEventListener('mousedown', (evt) => {
-  evt.preventDefault();
+document.getElementById('canvas-toggle')
+  .addEventListener('mousedown', (evt) => {
+    evt.preventDefault();
 
-  canvas.classList.toggle('state-closed');
-});
+    canvas.classList.toggle('state-closed');
+  });
 
 const editModeButtons = document.querySelectorAll('.edit-mode');
-const editButtons = document.querySelectorAll('.thumbnail-action, #add-output');
+const editButtons =
+  document.querySelectorAll('.thumbnail-action, #add-output, .overlay-item');
 const modeBar = document.getElementById('mode-bar');
-document.getElementById('edit-function').addEventListener('mousedown', (evt) => {
+document.getElementById('edit-function').addEventListener('click', (evt) => {
   evt.preventDefault();
 
   modeBar.classList.toggle('state-collapsed');
@@ -26,7 +28,7 @@ document.getElementById('edit-function').addEventListener('mousedown', (evt) => 
   });
 });
 
-document.getElementById('edit-loops').addEventListener('mousedown', (evt) => {
+document.getElementById('edit-loops').addEventListener('click', (evt) => {
   evt.preventDefault();
 
   modeBar.classList.toggle('state-collapsed');

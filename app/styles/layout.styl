@@ -44,7 +44,7 @@ select
   display flex
   flex-direction row
   justify-content space-between
-  align-items center
+  align-items stretch
   align-content center
   padding 5px
 
@@ -58,16 +58,39 @@ select
 .toolbar-item-main
   flex-shrink 0
 
+.overlay-container
+  position relative
+.overlay-item
+  position absolute
+  top 0
+  left 0
+  right 0
+  display flex
+  flex-direction row
+  justify-content center
+  align-items stretch
+  align-content center
+  transition transform 0.3s ease-out,
+    opacity 0.3s ease-out
+
+  &:nth-child(2n+1)
+    transform-origin: 50% 0;
+  &:nth-child(2n)
+    transform-origin: 50% 100%;
+
+  &.state-hidden
+    transform scale(0)
+    opacity 0
+    pointer-events none
+
 .tabbar
-  padding 0 1em
   display flex
   flex-direction row
   justify-content space-between
-  align-items stretch
+  align-items flex-start
   align-content center
   overflow visible
-  transition width 0.5s ease-out,
-    margin-left 0.5s ease-out
+  transition transform 0.3s ease-out
   justify-content center
   width 100%
   margin-left 0
@@ -82,10 +105,6 @@ select
   &.tabbar-top
     padding-top 7px
 
-  &.state-collapsed
-    // width 20%
-    // margin-left 80%
-
 
 .tabbar-item
   margin 0
@@ -99,7 +118,13 @@ select
   flex-direction row
   justify-content center
   align-items stretch
-  align-content center
+  align-content flex-end
+
+.tabbar-body-wrap
+  justify-content flex-end
+  flex-shrink 2
+  flex-grow 0
+  flex-wrap wrap
 
 .tabbar-lead
 .tabbar-trail
@@ -108,15 +133,21 @@ select
   justify-content center
   align-items center
   align-content center
-  padding 0 0 2em
   flex-shrink 0
   flex-grow 0
-  transition opacity 0.2s 0s linear
+  transition opacity 0.2s 0s ease-out,
+    transform 0.2s 0s ease-out
   overflow hidden
+  align-self flex-end
 
 
   &.state-collapsed
     opacity 0
+    pointer-events none
+    &.tabbar-lead
+      transform translateX(20px)
+    &.tabbar-trail
+      transform translateX(-20px)
 
 .tabbar-body-group
   background-color #C7C7C7
@@ -146,7 +177,11 @@ select
     background-color color-light
     font-weight 600
 
+.tabbar-trail-big
+  padding 0 0.8em 2.5em
+
 .tabbar-tab-simple
+  color color-dark
   display inline-block
   vertical-align middle
   border-radius 5px
@@ -174,6 +209,8 @@ select
   overflow hidden
   width 32px
   height 32px
+  font-size 0
+
 
 .button-delete
   border-radius 50%
@@ -198,6 +235,7 @@ select
   overflow hidden
   direction ltr
   display inline-block
+  outline none
 
 .button-mid
   border none
@@ -211,6 +249,7 @@ select
   outline none
 
 .button-big
+  color color-dark
   text-decoration none
   display inline-block
   background-color #BBBBBB
@@ -240,7 +279,8 @@ select
 .button-arrow-left
 .button-arrow-right
   position relative
-  margin 0 2.5em
+  margin-left 2.5em
+  margin-right 2.5em
   &::after
     position absolute
     display block
@@ -295,6 +335,8 @@ select
   text-align center
   font-size 0.8rem
   line-height 80px
+  text-indent -500px
+  overflow hidden
 
 .thumbnail-label
   position absolute
@@ -388,3 +430,14 @@ select
 .sidepane-head
   background-color #C7C7C7
   padding 5px
+
+.spinner
+  display flex
+  flex-direction row
+  justify-content center
+  align-items center
+  align-content center
+
+.spinner-value
+  min-width 3em
+  text-align center

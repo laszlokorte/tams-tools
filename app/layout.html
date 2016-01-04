@@ -4,14 +4,15 @@
     <button class="button-mid">Load Examples...</button>
   </div>
 
-  <div class="toolbar-item">
-    <button class="button-round">Decrement</button>
-    <span class="spinner-value">7</span>
-    <button class="button-round">Increment</button>
-  </div>
+  <div class="toolbar-item toolbar-item-main overlay-container">
 
-  <div class="toolbar-item toolbar-item-main">
-    <ul class="inline-list">
+    <div class="spinner overlay-item">
+      <button class="button-round">Decrement</button>
+      <span class="spinner-value">7</span>
+      <button class="button-round">Increment</button>
+    </div>
+
+    <ul class="inline-list overlay-item state-hidden">
       <li class="inline-list-item">
         <span class="well" style="background-color: #D33C3A">
           <button class="button-icon icon-delete">Delete</button>
@@ -94,6 +95,9 @@
 
 <div class="headbar">
   <div class="tabbar tabbar-bottom align-center state-collapsed" id="mode-bar">
+    <div class="tabbar-lead edit-mode state-collapsed">
+      <a class="button-big button-arrow-left button-narrow" href="#edit-function" id="edit-function">Funktion bearbeiten</a>
+    </div>
     <ul class="tabbar-body tabbar-body-group">
       <li class="tabbar-item">
         <button class="tabbar-tab tabbar-group-tab state-active">DNF</button>
@@ -102,15 +106,16 @@
         <button class="tabbar-tab tabbar-group-tab">KNF</button>
       </li>
     </ul>
+    <div class="tabbar-trail edit-mode">
+      <a class="button-big button-arrow-right button-narrow" href="#edit-loops" id="edit-loops">Loops bearbeiten</a>
+    </div>
   </div>
 
   <div class="splitter">
     <div class="splitter-item splitter-item-primary">
       <div class="tabbar tabbar-top align-center">
-        <div class="tabbar-lead edit-mode state-collapsed">
-          <a class="button-big button-arrow-left button-narrow" href="#edit-function" id="edit-function">Funktion bearbeiten</a>
-        </div>
-        <ul class="tabbar-body">
+
+        <ul class="tabbar-body tabbar-body-wrap">
           <li class="tabbar-item">
             <div class="tabbar-tab tabbar-tab-big">
               <div class="thumbnail">
@@ -232,11 +237,8 @@
             </div>
           </li>
         </ul>
-        <div class="tabbar-trail">
-          <button class="button-big button-light button-square icon-add" id="add-output">AddOutput</button>
-        </div>
-        <div class="tabbar-trail edit-mode">
-          <a class="button-big button-arrow-right button-narrow" href="#edit-loops" id="edit-loops">Loops bearbeiten</a>
+        <div class="tabbar-trail tabbar-trail-big">
+          <button class="button-big button-light button-square icon-add" id="add-output">Add Output</button>
         </div>
       </div>
 
