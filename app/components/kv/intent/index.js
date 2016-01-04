@@ -21,7 +21,7 @@ export default (DOM, keydown) => {
 
   const mouseEnterEvent$ = DOM
     .select('.kv-cell-atom[data-kv-cell]')
-    .events('mouseenter');
+    .events('mouseenter', true);
 
   const touchMoveEvent$ = DOM
     .select('.kv-cell-atom[data-kv-cell]')

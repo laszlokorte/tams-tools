@@ -8,7 +8,7 @@ import {keyboardDriver} from './drivers/keyboard';
 import experiment from './components/experiment';
 
 const drivers = {
-  DOM: makeHammerDriver(makeDOMDriver('#app')),
+  DOM: makeHammerDriver(makeDOMDriver('#app-main')),
   Storage: storageDriver,
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,

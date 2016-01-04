@@ -30,6 +30,7 @@ module.exports = {
     app: "./app/index.js",
     experiment: "./app/experiment.js",
     debug: "./app/debug.js",
+    layout: "./app/layout.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -94,6 +95,14 @@ module.exports = {
       chunks: ['debug', 'vendor'],
       template: './app/index.html',
       filename: 'debug.html',
+      favicon: './app/favicon.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Layout',
+      minify: htmlMinifyOptions,
+      chunks: ['layout', 'vendor'],
+      template: './app/index.html',
+      filename: 'layout.html',
       favicon: './app/favicon.ico',
     }),
     new CopyWebpackPlugin([

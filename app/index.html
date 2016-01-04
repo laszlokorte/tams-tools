@@ -10,7 +10,8 @@
     <link href="{%=o.htmlWebpackPlugin.files.css[css] %}" rel="stylesheet">{% } %}
   </head>
   <body>
-    <div id="app" class="leftPane"></div>
+    <div id="app"></div>
+    <div id="app-main" class="leftPane"></div>
     <div id="app-assistent" class="rightPane"></div>
 
     {% if (o.webpackConfig.devServer && o.webpackConfig.watch) { %}

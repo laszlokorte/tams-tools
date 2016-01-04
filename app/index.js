@@ -9,7 +9,7 @@ import kv from './components/kv';
 import pla from './components/pla';
 
 const drivers = {
-  DOM: makeDOMDriver('#app'),
+  DOM: makeDOMDriver('#app-main'),
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
 };

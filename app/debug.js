@@ -26,7 +26,7 @@ const Canvas = ({DOM, content$}) => {
   ;
 
   const view = (state$) =>
-    state$.map(render)
+    state$.map((state) => div([render(state)]))
   ;
 
   const model = (cont$, actions) =>
@@ -59,7 +59,8 @@ const Drawing = ({DOM}) => {
         .events('click')
         // we can stop the propagation to prevent
         // the Canvas(outer) from getting click events
-        // which happen in the inner
+        // which happen in the inner:
+        //
         //.do((e) => e.stopPropagation())
         .map(() => true),
     })
@@ -78,7 +79,7 @@ const Drawing = ({DOM}) => {
   ;
 
   const view = (state$) =>
-    state$.map(render)
+    state$.map((state) => div([render(state)]))
   ;
 
   const model = (pos$, actions) =>
@@ -100,7 +101,7 @@ const Drawing = ({DOM}) => {
   const state$ = model(O.just({x: 23, y: 42}), actions);
   const innerVTree$ = view(state$);
 
-  const outerVTree$ = isolate(Canvas, 'myGraphics')({
+  const outerVTree$ = isolate(Canvas, 'myCanvas')({
     DOM,
     content$: isolateSink(innerVTree$, 'moreIsolation'),
   }).DOM;
@@ -108,13 +109,14 @@ const Drawing = ({DOM}) => {
   return {
     // Without the additional wrapper div,
     // the Canvas (which owns the outerVTree)
-    // does not get any evets:
-    //DOM: outerVTree$,
+    // does not get any events:
+    // DOM: outerVTree$,
 
     // With the wrapper div both Canvas and
     // Drawing get their events.
     // Canvas(outer) get's the events of the Drawing(inner)
-    // aswell. Not sure if
+    // aswell. Not sure if it is desired, but stopPropagation
+    // can be used to prevent it (see line 60)
     DOM: O.just(div(outerVTree$)),
   };
 };
