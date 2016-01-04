@@ -1,7 +1,9 @@
 <div class="toolbar">
   <div class="toolbar-item">
     <button class="button-round icon-help">Help</button>
-    <button class="button-mid">Load Examples...</button>
+    <button class="button-mid">Load...</button>
+    <button class="button-mid">Edit Function</button>
+    <button class="button-mid">Edit Loops</button>
   </div>
 
   <div class="toolbar-item toolbar-item-main overlay-container">
@@ -94,22 +96,7 @@
 </div>
 
 <div class="headbar">
-  <div class="tabbar tabbar-bottom align-center state-collapsed" id="mode-bar">
-    <div class="tabbar-lead edit-mode state-collapsed">
-      <a class="button-big button-arrow-left button-narrow" href="#edit-function" id="edit-function">Funktion bearbeiten</a>
-    </div>
-    <ul class="tabbar-body tabbar-body-group">
-      <li class="tabbar-item">
-        <button class="tabbar-tab tabbar-group-tab state-active">DNF</button>
-      </li>
-      <li class="tabbar-item">
-        <button class="tabbar-tab tabbar-group-tab">KNF</button>
-      </li>
-    </ul>
-    <div class="tabbar-trail edit-mode">
-      <a class="button-big button-arrow-right button-narrow" href="#edit-loops" id="edit-loops">Loops bearbeiten</a>
-    </div>
-  </div>
+
 
   <div class="splitter">
     <div class="splitter-item splitter-item-primary">
@@ -243,18 +230,106 @@
       </div>
 
       <div class="body">
-        <div class="tabbar align-right">
-          <ul class="tabbar-body">
-            <li class="tabbar-item">
-              <a href="#values" class="tabbar-tab tabbar-tab-simple state-active">Output Value</a>
-            </li>
-            <li class="tabbar-item">
-              <a href="#decimal" class="tabbar-tab tabbar-tab-simple">Decimal Index</a>
-            </li>
-            <li class="tabbar-item">
-              <a href="#binary" class="tabbar-tab tabbar-tab-simple">Binary Index</a>
-            </li>
-          </ul>
+        <div class="spring">
+          <div class="spring-item">
+            <div class="tabbar align-left">
+              <ul class="tabbar-body">
+                <li class="tabbar-item">
+                  <a href="#values" class="tabbar-tab tabbar-tab-dark state-active">DNF</a>
+                </li>
+                <li class="tabbar-item">
+                  <a href="#decimal" class="tabbar-tab tabbar-tab-dark">KNF</a>
+                </li>
+              </ul>
+            </div>
+            <ul class="inline-list vertical">
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+                <li class="inline-list-item">
+                  <span class="well" style="background-color: #D33C3A">
+                    <button class="button-icon icon-delete">Delete</button>
+                  </span>
+                </li>
+              </ul>
+          </div>
+          <div class="spring-item">
+            <div class="tabbar align-right">
+              <ul class="tabbar-body tabbar-break-vertical">
+                <li class="tabbar-item">
+                  <a href="#values" class="tabbar-tab tabbar-tab-simple state-active">Output Value</a>
+                </li>
+                <li class="tabbar-item">
+                  <a href="#decimal" class="tabbar-tab tabbar-tab-simple">Decimal Index</a>
+                </li>
+                <li class="tabbar-item">
+                  <a href="#binary" class="tabbar-tab tabbar-tab-simple">Binary Index</a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div class="scroller">

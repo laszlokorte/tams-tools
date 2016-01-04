@@ -27,15 +27,19 @@ select
 .inline-list
   display flex
   flex-direction row
-  justify-content center
+  justify-content flex-start
   align-items center
-  align-content center
+  align-content flex-start
+  flex-wrap wrap
   list-style none
   margin 0
-  padding 0
+  padding 10px 0 0
+
+  &.vertical
+    flex-direction column
 
 .inline-list-item
-  padding 0 4px
+  padding 4px
   display inline-block
 
 .toolbar
@@ -47,16 +51,6 @@ select
   align-items stretch
   align-content center
   padding 5px
-
-.toolbar-item
-  flex-basis 25%
-  flex-shrink 5
-
-  &.align-right
-    text-align right
-
-.toolbar-item-main
-  flex-shrink 0
 
 .overlay-container
   position relative
@@ -92,13 +86,15 @@ select
   overflow visible
   transition transform 0.3s ease-out
   justify-content center
-  width 100%
   margin-left 0
+  flex-shrink 0
 
   &.align-center
     justify-content center
   &.align-right
     justify-content flex-end
+  &.align-left
+    justify-content flex-start
 
   &.tabbar-bottom
     padding-bottom 7px
@@ -180,6 +176,10 @@ select
 .tabbar-trail-big
   padding 0 0.8em 2.5em
 
+.tabbar-break-vertical
+  +below(500px)
+    flex-direction column
+
 .tabbar-tab-simple
   color color-dark
   display inline-block
@@ -196,6 +196,26 @@ select
 
   &.state-active
     background-color #D9D9D9
+    font-weight 600
+
+
+.tabbar-tab-dark
+  color color-dark
+  display inline-block
+  vertical-align middle
+  border-radius 5px
+  padding 10px 15px
+  margin 10px 0
+  text-decoration none
+  max-width 80px
+  text-align center
+  line-height 1
+  font-size 0.9rem
+  outline none
+
+  &.state-active
+    background-color color-dark
+    color color-light
     font-weight 600
 
 .headbar
@@ -236,6 +256,7 @@ select
   direction ltr
   display inline-block
   outline none
+  flex-shrink 0
 
 .button-mid
   border none
@@ -441,3 +462,19 @@ select
 .spinner-value
   min-width 3em
   text-align center
+
+.spring
+  padding 0 2em
+  display flex
+  flex-direction row
+  justify-content space-between
+  align-items flex-start
+  align-content center
+
+.spring-item
+  max-width 60%
+  display flex
+  justify-content flex-start
+  align-items flex-start
+  align-content flex-start
+  flex-direction column
