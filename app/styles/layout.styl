@@ -59,11 +59,18 @@ select
   flex-shrink 0
 
 .tabbar
+  padding 0 1em
   display flex
   flex-direction row
   justify-content space-between
   align-items stretch
   align-content center
+  overflow visible
+  transition width 0.5s ease-out,
+    margin-left 0.5s ease-out
+  justify-content center
+  width 100%
+  margin-left 0
 
   &.align-center
     justify-content center
@@ -75,6 +82,11 @@ select
   &.tabbar-top
     padding-top 7px
 
+  &.state-collapsed
+    width 20%
+    margin-left 80%
+
+
 .tabbar-item
   margin 0
   padding 0
@@ -82,11 +94,11 @@ select
 .tabbar-body
   list-style none
   margin 0
-  padding 0
+  padding 10px 0 0
   display flex
   flex-direction row
   justify-content center
-  align-items flex-start
+  align-items stretch
   align-content center
 
 .tabbar-lead
@@ -96,7 +108,15 @@ select
   justify-content center
   align-items center
   align-content center
-  padding-bottom 2em
+  padding 0 0 2em
+  flex-shrink 0
+  flex-grow 0
+  transition opacity 0.2s 0s linear
+  overflow hidden
+
+
+  &.state-collapsed
+    opacity 0
 
 .tabbar-body-group
   background-color #C7C7C7
@@ -110,6 +130,7 @@ select
   padding 5px 15px
   border none
   color #666
+  outline none
 
   &.state-active
     background-color #2A2A2A
@@ -119,6 +140,7 @@ select
 .tabbar-tab-big
   margin 0 8px
   cursor pointer
+  outline none
 
   &.state-active
     background-color color-light
@@ -135,6 +157,7 @@ select
   text-align center
   line-height 1
   font-size 0.9rem
+  outline none
 
   &.state-active
     background-color #D9D9D9
@@ -196,12 +219,18 @@ select
   border none
   text-align center
   vertical-align middle
+  outline none
 
 .button-narrow
   max-width 100px
 
 .button-square
   width 3em
+  transition transform 0.3s ease-out, opacity 0.3s ease-in
+
+  &.state-hidden
+    transform scale(0.1)
+    opacity 0
 
 .button-light
   background-color color-light
@@ -209,6 +238,7 @@ select
 .button-arrow-left
 .button-arrow-right
   position relative
+  margin 0 2.5em
   &::after
     position absolute
     display block
@@ -220,19 +250,23 @@ select
     overflow hidden
     border-style solid
 
-.button-arrow-left::after
-  border-right-color #BBBBBB
-  left -2.4em
-  margin-left 1px
-  top 0
-  bottom 0
+.button-arrow-left
+  margin-right 1.5em
+  &::after
+    border-right-color #BBBBBB
+    left -2.4em
+    margin-left 1px
+    top 0
+    bottom 0
 
-.button-arrow-right::after
-  border-left-color #BBBBBB
-  right -2.4em
-  margin-right 1px
-  top 0
-  bottom 0
+.button-arrow-right
+  margin-left 1.5em
+  &::after
+    border-left-color #BBBBBB
+    right -2.4em
+    margin-right 1px
+    top 0
+    bottom 0
 
 .thumbnail
   display block
@@ -244,13 +278,18 @@ select
   position absolute
   right -10px
   top -10px
+  transition transform 0.3s ease-out, opacity 0.3s ease-in
+
+  &.state-hidden
+    transform scale(0.1)
+    opacity 0
 
 .thumbnail-body
-  width 100px
-  height 100px
+  width 60px
+  height 60px
   margin-bottom 40px
   background-color #D6D6D6
-  border 8px solid #F2F2F2
+  border 6px solid #F2F2F2
   text-align center
   font-size 0.8rem
   line-height 80px
@@ -294,10 +333,11 @@ select
     border-color #ccc
 
 .splitter
+  padding-top 10px
   display flex
   flex-direction row
   justify-content space-between
-  align-items strech
+  align-items stretch
   align-content flex-start
   overflow hidden
 
