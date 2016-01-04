@@ -4,6 +4,12 @@
     <button class="button-mid">Load Examples...</button>
   </div>
 
+  <div class="toolbar-item">
+    <button class="button-round">Decrement</button>
+    <span class="spinner-value">7</span>
+    <button class="button-round">Increment</button>
+  </div>
+
   <div class="toolbar-item toolbar-item-main">
     <ul class="inline-list">
       <li class="inline-list-item">
@@ -21,7 +27,7 @@
 
   <div class="toolbar-item align-right">
     <button class="button-mid">Export...</button>
-    <button class="button-mid button-icon icon-pla">PLA</button>
+    <button class="button-mid button-icon icon-pla" id="canvas-toggle">PLA</button>
   </div>
 </div>
 
@@ -37,63 +43,86 @@
     </ul>
   </div>
 
-  <div class="tabbar tabbar-top align-center">
-    <div class="tabbar-lead">
-      <a class="button-big button-arrow-left button-narrow" href="#edit-function">Funktion bearbeiten</a>
-    </div>
-    <ul class="tabbar-body">
-      <li class="tabbar-item">
-        <div class="tabbar-tab tabbar-tab-big">
-          <div class="thumbnail">
-            <span class="thumbnail-action">
-              <button class="button-icon button-delete icon-delete">Delete</button>
-            </span>
-            <div class="thumbnail-body">
-              Thumbnail
+  <div class="splitter">
+    <div class="splitter-item splitter-item-primary">
+      <div class="tabbar tabbar-top align-center">
+        <div class="tabbar-lead">
+          <a class="button-big button-arrow-left button-narrow" href="#edit-function">Funktion bearbeiten</a>
+        </div>
+        <ul class="tabbar-body">
+          <li class="tabbar-item">
+            <div class="tabbar-tab tabbar-tab-big">
+              <div class="thumbnail">
+                <span class="thumbnail-action">
+                  <button class="button-icon button-delete icon-delete">Delete</button>
+                </span>
+                <div class="thumbnail-body">
+                  Thumbnail
+                </div>
+                <div class="thumbnail-label">
+                  <span class="editable-field full-width">Test</span>
+                </div>
+              </div>
             </div>
-            <div class="thumbnail-label">
-              <span class="editable-field full-width">Test</span>
+          </li>
+          <li class="tabbar-item">
+            <div class="tabbar-tab tabbar-tab-big state-active">
+              <div class="thumbnail">
+                <span class="thumbnail-action">
+                  <button class="button-icon button-delete icon-delete">Delete</button>
+                </span>
+                <div class="thumbnail-body">
+                  Thumbnail
+                </div>
+                <div class="thumbnail-label">
+                  <input type="text" value="Test" maxlength="8" class="editable-field full-width state-active">
+                </div>
+              </div>
             </div>
+          </li>
+        </ul>
+        <div class="tabbar-trail">
+          <button class="button-big button-light button-square icon-add">AddOutput</button>
+        </div>
+        <div class="tabbar-trail">
+          <a class="button-big button-arrow-right button-narrow" href="#edit-loops">Loops bearbeiten</a>
+        </div>
+      </div>
+
+      <div class="body">
+        <div class="tabbar align-right">
+          <ul class="tabbar-body">
+            <li class="tabbar-item">
+              <a href="#values" class="tabbar-tab tabbar-tab-simple state-active">Output Value</a>
+            </li>
+            <li class="tabbar-item">
+              <a href="#decimal" class="tabbar-tab tabbar-tab-simple">Decimal Index</a>
+            </li>
+            <li class="tabbar-item">
+              <a href="#binary" class="tabbar-tab tabbar-tab-simple">Binary Index</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="scroller">
+          <div class="scroller-body">
+            Test
           </div>
         </div>
-      </li>
-      <li class="tabbar-item">
-        <div class="tabbar-tab tabbar-tab-big state-active">
-          <div class="thumbnail">
-            <span class="thumbnail-action">
-              <button class="button-icon button-delete icon-delete">Delete</button>
-            </span>
-            <div class="thumbnail-body">
-              Thumbnail
-            </div>
-            <div class="thumbnail-label">
-              <input type="text" value="Test" maxlength="8" class="editable-field full-width state-active">
-            </div>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <div class="tabbar-trail">
-      <button class="button-big button-light button-square icon-add">AddOutput</button>
+      </div>
     </div>
-    <div class="tabbar-trail">
-      <a class="button-big button-arrow-right button-narrow" href="#edit-loops">Loops bearbeiten</a>
+
+    <div class="splitter-item state-closed" id="canvas">
+      <div class="sidepane">
+        <div class="sidepane-head">
+          Kosten:
+        </div>
+        <div class="sidepane-body">
+          test
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="body">
-  <div class="tabbar align-right">
-    <ul class="tabbar-body">
-      <li class="tabbar-item">
-        <a href="#values" class="tabbar-tab tabbar-tab-simple state-active">Output Value</a>
-      </li>
-      <li class="tabbar-item">
-        <a href="#decimal" class="tabbar-tab tabbar-tab-simple">Decimal Index</a>
-      </li>
-      <li class="tabbar-item">
-        <a href="#binary" class="tabbar-tab tabbar-tab-simple">Binary Index</a>
-      </li>
-    </ul>
-  </div>
-</div>
+

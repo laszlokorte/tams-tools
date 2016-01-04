@@ -11,6 +11,7 @@ body
   padding 0
   margin 0
   font-family font-sans
+  background-color #F2F2F2
 
 a
 button
@@ -24,7 +25,6 @@ select
   font-size 1em
 
 .inline-list
-  display flex
   display flex
   flex-direction row
   justify-content center
@@ -75,6 +75,10 @@ select
   &.tabbar-top
     padding-top 7px
 
+.tabbar-item
+  margin 0
+  padding 0
+
 .tabbar-body
   list-style none
   margin 0
@@ -96,13 +100,16 @@ select
 
 .tabbar-body-group
   background-color #C7C7C7
-  padding 0 2px 2px
-  border-radius 0 0 7px 7px
+  padding 0 3px 3px
+  border-radius 0 0 8px 8px
 
 .tabbar-group-tab
+  background-color inherit
   border-radius 0 0 5px 5px
+  margin 0
   padding 5px 15px
   border none
+  color #666
 
   &.state-active
     background-color #2A2A2A
@@ -131,6 +138,7 @@ select
 
   &.state-active
     background-color #D9D9D9
+    font-weight 600
 
 .headbar
   background-color #D9D9D9
@@ -172,9 +180,10 @@ select
   background-color #313131
   color #fff
   border-radius 5px
-  padding 5px
+  padding 5px 10px
   font-size 10pt
   display inline-block
+  height 32px
 
 .button-big
   text-decoration none
@@ -283,3 +292,57 @@ select
   &.state-active
     background-color #fff
     border-color #ccc
+
+.splitter
+  display flex
+  flex-direction row
+  justify-content space-between
+  align-items strech
+  align-content flex-start
+  overflow hidden
+
+.splitter-item
+  flex-grow 1
+  flex-shrink 1
+  flex-basis 50%
+  position relative
+
+  transition flex 0.5s 0s linear
+
+  &.state-closed
+    flex-basis 0
+    flex-grow 0
+    flex-shrink 2
+    overflow hidden
+    transition-delay -0.2s
+
+.splitter-item-primary
+  flex-basis 70%
+  flex-grow 1.5
+  flex-shrink 0
+
+.scroller
+  max-width 100%
+  overflow auto
+
+.scroller-body
+  display flex
+  flex-direction row
+  justify-content center
+  align-items center
+  align-content center
+  min-height 50vh
+
+.sidepane
+  border 3px solid #C7C7C7
+  background-color #D9D9D9
+  margin-top 10px
+  position absolute
+  top 0
+  left 0
+  bottom 0
+  width 100%
+
+.sidepane-head
+  background-color #C7C7C7
+  padding 5px
