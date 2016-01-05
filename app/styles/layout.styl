@@ -257,18 +257,20 @@ space(u)
     opacity 1
 
 .output-panel
+  padding space(2) space(1.5) 0
   clear both
 
 .output-button-add
   border none
   outline none
   border 2px solid transparent
-  vertical-align middle
+  vertical-align top
   background-color color-background-secondary-weak
   width space(5)
   height space(5)
   text-indent -500px
   overflow hidden
+  margin space(1.5) space(1)
 
   background-image svgurl('assets/icons/plus.svg') svg(
     path fill shade(color-background-secondary-weak, 10%)
@@ -293,7 +295,6 @@ space(u)
 .output-list
   plainlist(inline: true)
   display inline-block
-  padding space(2) space(1.5) 0
   vertical-align middle
 
   > .output-list-item
