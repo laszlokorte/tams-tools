@@ -29,10 +29,10 @@ const renderValue = (val) => {
 };
 
 const _labelFor = ({inputs, offset}, rowsOrColumns, {include, exclude}) => {
-  if (rowsOrColumns.length > include &&
-    rowsOrColumns.length > exclude
+  if (rowsOrColumns.size > include &&
+    rowsOrColumns.size > exclude
     ) {
-    const intersect = rowsOrColumns[exclude].not().and(rowsOrColumns[include]);
+    const intersect = rowsOrColumns.get(exclude).not().and(rowsOrColumns.get(include));
     return inputs.get(offset + intersect.msb()).name;
   } else {
     return null;
@@ -147,8 +147,8 @@ const tableLables = ({rows, cols, offset, inputs}) => ({
     exclude: 1,
   }),
   left: _labelFor({inputs, offset}, rows, {
-    include: Math.ceil(rows.length / 2),
-    exclude: Math.ceil(rows.length / 2 - 1),
+    include: Math.ceil(rows.size / 2),
+    exclude: Math.ceil(rows.size / 2 - 1),
   }),
   right: _labelFor({inputs, offset}, rows, {
     include: 1,
@@ -170,8 +170,8 @@ export const renderTable = ({
   }) => {
   const cols = layout.columns;
   const rows = layout.rows;
-  const rowCount = rows.length;
-  const colCount = cols.length;
+  const rowCount = rows.size;
+  const colCount = cols.size;
   const labelOffset = offset - layout.count;
 
   const labels = tableLables({
@@ -198,7 +198,7 @@ export const renderTable = ({
       layout.grid.map((row, rowIndex) =>
         tr('.kv-table-row-body', [
           compact ? null : renderTableRowStart(rowIndex, rowCount, labels),
-          row.map((cell) => {
+          row.cells.map((cell) => {
             if (cell.children) {
               return td('.kv-table-cell-body.kv-cell-container' + styleClass, [
                 renderTable({
@@ -214,10 +214,10 @@ export const renderTable = ({
                 className: styleClass,
               });
             }
-          }),
+          }).toArray(),
           compact ? null : renderTableRowEnd(rowIndex, labels),
         ])
-      ),
+      ).toArray(),
       compact ? null : renderTableFoot(colCount, labels),
     ]),
   ]);

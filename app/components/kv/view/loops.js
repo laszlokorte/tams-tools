@@ -83,20 +83,20 @@ const calcCubeRange = (dontcare, cols, cube) => {
   );
 
   const start = fields.findIndex((v) => v);
-  const width = fields.filter((v) => v).length;
+  const width = fields.filter((v) => v).count();
 
   return {
     from: start,
     to: start + width - 1,
-    wrap: !fields[start + width - 1],
+    wrap: !fields.get(start + width - 1),
   };
 };
 
 // Render the collection of loops for a kv leaf grid
 // rows, cols: number of rows and columns
 export const renderLoops = (loops, mode, rows, cols) => {
-  const rowCount = rows.length;
-  const colCount = cols.length;
+  const rowCount = rows.size;
+  const colCount = cols.size;
 
   const padding =
     (colCount > 1 ? '.kv-loop-padding-top' : '') +

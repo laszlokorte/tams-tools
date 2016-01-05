@@ -1,5 +1,23 @@
 import BitSet from 'bitset.js';
+import I from 'immutable';
 import {zip} from '../../../lib/utils';
+
+const layout = I.Record({
+  treeHeight: 0,
+  count: 0,
+  columns: 0,
+  rows: 0,
+  grid: I.List(),
+}, 'layout');
+
+const layoutCell = I.Record({
+  scope: BitSet(),
+  children: null,
+}, 'cell');
+
+const layoutRow = I.Record({
+  cells: I.List(),
+}, 'row');
 
 /// The layouts for different KV diagram sizes
 const layouts = [
@@ -73,40 +91,40 @@ export const buildLayout = (size, scope) => {
     Math.log(newSize + 1) / Math.log(layouts.length)
   );
 
-  const rows = layouter(
+  const rows = I.List(layouter(
     subLayout.bind(null, {size: newSize, scope: _scope, stepSize})
-  );
+  )).map((cells) => layoutRow({cells: I.List(cells)}));
 
-  return {
+  return layout({
     treeHeight: treeHeight,
     count: sizeDelta,
     columns: rows
       .map((row) =>
-        row.map((col) => col.scope)
+        row.cells.map((cell) => cell.scope)
       )
       .reduce((prev, cols) =>
-        zip(prev, cols, (u,v) => u.and(v))
-      ),
-    rows: rows.map((cols) =>
-      cols.reduce(
+        prev.zipWith((u,v) => u.and(v), cols)
+      ).toList(),
+    rows: rows.map((row) =>
+      row.cells.reduce(
         (p,v) => p.and(v.scope),
-        BitSet().setRange(0, cols.length - 1, 1)
+        BitSet().setRange(0, row.cells.size - 1, 1)
       )
-    ),
+    ).toList(),
     grid: rows,
-  };
+  });
 };
 
 subLayout = ({size, scope, stepSize}, iString) => {
   const iInt = parseInt(iString, 2);
   if (size === 0) {
-    return {
+    return layoutCell({
       scope: BitSet(scope + iInt),
-    };
+    });
   } else {
-    return {
+    return layoutCell({
       scope: BitSet(scope + iInt),
       children: buildLayout(size, scope + iInt * stepSize),
-    };
+    });
   }
 };

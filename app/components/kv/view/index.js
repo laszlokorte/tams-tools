@@ -139,7 +139,9 @@ const render = ({state, layout}) =>
             button('.action-button-settings', 'Settings'),
           ]),
           div('.action-list-item', [
-            button('.action-button-help.help-button', 'Help'),
+            button('.action-button-help', {
+              attributes: {'data-action': 'help'},
+            }, 'Help'),
           ]),
         ]),
       ]),

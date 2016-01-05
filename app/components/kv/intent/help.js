@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 
 export const helpAction = ({DOM}) => {
-  const helpButton = DOM.select('.help-button');
+  const helpButton = DOM.select('[data-action="help"]');
   const event$ = helpButton
     .events('click');
 
