@@ -33,6 +33,7 @@ color-foreground-inverse-weak  = #A5A5A5
 color-foreground-inverse-strong  = #FFFFFF
 
 color-danger = #5D0000
+color-focus = #1AC0CF
 
 button-size = 36px
 button-size-small = 30px
@@ -49,6 +50,9 @@ body
 a
 button
   cursor pointer
+
+  &::-moz-focus-inner
+    border: 0
 
 button
 input
@@ -80,17 +84,26 @@ action-icon(icon)
   height button-size
   background-color transparent
   border none
-  background-image icon
+  background-image svgurl(icon) svg(
+    path fill color-background-secondary-strong
+  )
   background-size 80% 80%
   background-position 50% 50%
   background-repeat no-repeat
+
+  &:focus
+    background-image svgurl(icon) svg(
+      path fill color-background-secondary-strong,
+      path stroke color-focus,
+      path stroke-width 1px
+    )
 
 round()
   width button-size-small
   height button-size-small
   border-radius (button-size-small / 2)
   overflow hidden
-  border 3px solid transparent
+  border 2px solid transparent
   text-indent -500px
   font-size 0
   outline none
@@ -98,7 +111,7 @@ round()
 button(icon = false)
   line-height 1
   height button-size
-  border 1px solid transparent
+  border 2px solid transparent
   vertical-align middle
   padding-top 0
   padding-bottom 0
@@ -120,8 +133,12 @@ space(u)
   font-size 11pt
 
 .app-head
-  overflow hidden
+  overflow visible
   background-color color-background-secondary
+  border-bottom 1px solid rgba(0,0,0,0.1)
+
+  > :last-child
+    margin-bottom -1px
 
 .app-body
   overflow hidden
@@ -164,12 +181,11 @@ space(u)
   background-repeat no-repeat
 
   &:hover
+    background-color lighten(color-background-secondary-strong, 3%)
   &:focus
-    background-color lighten(color-background-secondary-strong, 10%)
-  &:focus
-    border-color lighten(color-background-secondary-strong, 20%)
+    border-color color-focus
   &:active
-    background-color darken(color-background-secondary-strong, 10%)
+    background-color darken(color-background-secondary-strong, 3%)
 
 .input-spinner-button-decrement
   background-image url('../assets/icons/minus.svg')
@@ -189,12 +205,11 @@ space(u)
     display none
 
   &:hover
+    background-color lighten(color-background-secondary-strong, 3%)
   &:focus
-    background-color lighten(color-background-secondary-strong, 10%)
-  &:focus
-    border-color lighten(color-background-secondary-strong, 20%)
+    border-color color-focus
   &:active
-    background-color darken(color-background-secondary-strong, 10%)
+    background-color darken(color-background-secondary-strong, 3%)
 
 
 .edit-mode-button-loops
@@ -213,30 +228,23 @@ space(u)
   padding 0 space(0.2)
 
 .action-button-open
-  action-icon(url('../assets/icons/open.svg'))
+  action-icon('assets/icons/open.svg')
 .action-button-settings
-  action-icon(url('../assets/icons/settings.svg'))
+  action-icon('assets/icons/settings.svg')
 .action-button-help
-  action-icon(url('../assets/icons/help.svg'))
+  action-icon('assets/icons/help.svg')
 
 .action-button-open
 .action-button-settings
 .action-button-help
   outline none
   &:hover
-  &:focus
     opacity 0.8
   &:active
     opacity 1
 
 .output-panel
   clear both
-
-.output-list
-  plainlist(inline: true)
-  display inline-block
-  padding space(2) space(1.5) 0
-  vertical-align middle
 
 .output-button-add
   button()
@@ -253,48 +261,70 @@ space(u)
   background-repeat no-repeat
 
   &:hover
-  &:focus
     background-color lighten(color-background-secondary-weak, 25%)
   &:focus
-    border-color lighten(color-background-secondary-weak, 20%)
+    border-color color-focus
 
   &:active
     background-color darken(color-background-secondary-weak, 2%)
 
 
+.output-list
+  plainlist(inline: true)
+  display inline-block
+  padding space(2) space(1.5) 0
+  vertical-align middle
+
+  .output-list-item
+    display block
+    float left
+    overflow visible
+
 .output-list-item
   position relative
   margin 0 space(0.5)
   cursor pointer
+  outline none
+  border 3px solid color-background-secondary
+  border-bottom-width 0
 
   &.state-current
     background-color color-background-primary
     font-weight font-bold
+    cursor default
     &>.output-thumbnail
       background-color inherit
+
+  &:focus
+    border-color color-focus
 
 .output-thumbnail
   background-color color-background-primary-weak
   padding 4px
 
+  > *
+    margin 0 auto
+
 .output-button-delete
   round()
+  border-width 3px
   position absolute
   top -5px
   right -5px
   border-color color-background-secondary
   background-color color-danger
 
-  background-image url('../assets/icons/delete.svg')
+  background-image svgurl('assets/icons/delete.svg') svg(
+    path fill tint(color-danger, 70%)
+  )
   background-size 50% 50%
   background-position 50% 50%
   background-repeat no-repeat
 
   &:hover
-  &:focus
     background-color lighten(color-danger, 5%)
   &:focus
-    border-color darken(color-danger, 10%)
+    border-color color-focus
 
   &:active
     background-color darken(color-danger, 10%)
@@ -304,6 +334,23 @@ space(u)
   height button-size
   line-height button-size
   text-align center
+  padding 0
+  margin 0
+  border none
+  outline none
+  background-color transparent
+
+  &.state-editable
+    background-color color-background-primary
+
+.output-label-edit
+  text-align center
+  outline none
+  border 1px solid grey
+  width 98%
+  margin 0 1%
+  &:focus
+    border-color color-focus
 
 .loop-bar
   margin space(2)
@@ -326,25 +373,26 @@ space(u)
     font-weight font-bold
     background-color color-background-inverse-strong
     color color-foreground-inverse-strong
+    pointer default
 
     &:hover
-    &:focus
+      color color-foreground-inverse-strong
       background-color lighten(color-background-inverse-strong, 1%)
     &:focus
-      border-color darken(color-background-inverse-strong, 1%)
+      border-color color-focus
 
     &:active
-      background-color darken(color-background-inverse-strong, 1%)
+      background-color darken(color-background-inverse-strong, 10%)
 
 
   &:hover
+    color lighten(color-foreground-inverse-weak, 50%)
+    background-color lighten(color-background-inverse-weak, 2%)
   &:focus
-    background-color lighten(color-background-inverse-weak, 1%)
-  &:focus
-    border-color darken(color-background-inverse-weak, 1%)
+    border-color color-focus
 
   &:active
-    background-color darken(color-background-inverse-weak, 1%)
+    background-color darken(color-background-inverse-weak, 10%)
 
 
 .loop-list
@@ -367,16 +415,20 @@ space(u)
   border-radius 0
   vertical-align middle
   background-color transparent
-  &:focus
+  border 3px solid transparent
   &:hover
-    opacity 0.5
-    background-image url('../assets/icons/delete-dark.svg')
+  &:focus
+    opacity 1
+    background-image svgurl('assets/icons/delete.svg') svg(
+      path fill black,
+      path opacity 0.5
+    )
     background-size 50%
     background-position 50% 50%
     background-repeat no-repeat
 
   &:focus
-    border 1px solid color-background-inverse-weak
+    border-color color-focus
 
   &:active
     background-color rgba(0,0,0,0.2)
