@@ -129,8 +129,8 @@ button(icon = false,
     background-image svgurl(icon) svg(
       path fill color-foreground
     )
-    background-size 50% 50%
-    background-position (-0.75*button-size) 50%
+    background-size space(1.2) space(1.2)
+    background-position space(0.7) 50%
     background-repeat no-repeat
   else
     padding-left space(1)
@@ -152,10 +152,6 @@ space(u)
 .app-head
   overflow visible
   background-color color-background-secondary
-  border-bottom 1px solid rgba(0,0,0,0.1)
-
-  > :last-child
-    margin-bottom -1px
 
 .app-body
   overflow hidden
@@ -170,6 +166,29 @@ space(u)
   padding space(0.5) space(0.5) space(0.5) space(1)
   margin-right space(0.5)
   background-color color-background-primary-weak
+
+.input-spinner-buttons
+  transition opacity 0.3s ease-out
+  transition-delay 0.3s
+
+.input-spinner-value
+.input-spinner-label
+  transition transform 0.2s ease-out
+  transition-delay 0s
+
+.input-spinner.state-readonly
+  .input-spinner-buttons
+    opacity 0
+    transition-delay 0s
+
+  .input-spinner-value
+    transform translateX(1.5 * button-size-small)
+    transition-delay 0.3s
+
+  .input-spinner-label
+    transform translateX(0.5 * button-size-small)
+    transition-delay 0.3s
+
 
 .input-spinner-label
 .input-spinner-value
@@ -197,6 +216,7 @@ space(u)
   background-position 50% 50%
   background-repeat no-repeat
   margin 0 space(0.2)
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
 
   &:hover
     background-color lighten(color-background-inverse, 3%)
@@ -207,6 +227,9 @@ space(u)
   &:disabled
     pointer default
     background-color lighten(color-background-inverse, 25%)
+    transform scale(0)
+    opacity 0
+    pointer-events none
 
 
 .input-spinner-button-decrement
@@ -281,15 +304,16 @@ space(u)
   margin space(1.5) space(1)
 
   background-image svgurl('assets/icons/plus.svg') svg(
-    path fill shade(color-background-secondary-weak, 10%)
+    path fill shade(color-background-secondary, 10%)
   )
   background-size 50% 50%
   background-position 50% 50%
   background-repeat no-repeat
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
 
   &:hover
     background-image svgurl('assets/icons/plus.svg') svg(
-      path fill shade(color-background-secondary-weak, 20%)
+      path fill shade(color-background-secondary, 20%)
     )
   &:focus
     border-color color-focus
@@ -299,6 +323,11 @@ space(u)
     background-image svgurl('assets/icons/plus.svg') svg(
       path fill shade(color-background-secondary-weak, 30%)
     )
+
+  &:disabled
+    transform scale(0)
+    opacity 0
+    pointer-events none
 
 .output-list
   plainlist(inline: true)
@@ -357,6 +386,7 @@ space(u)
   background-size 50% 50%
   background-position 50% 50%
   background-repeat no-repeat
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
 
   &:hover
     background-color lighten(color-danger, 5%)
@@ -365,6 +395,11 @@ space(u)
 
   &:active
     background-color darken(color-danger, 10%)
+
+  &:disabled
+    transform scale(0)
+    opacity 0
+    pointer-events none
 
 .output-label
   display block

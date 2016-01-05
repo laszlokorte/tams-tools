@@ -103,24 +103,38 @@ export default (DOM, keydown) => {
 
   const help = helpAction({DOM});
 
-  const removeLoopEvent$ = DOM
-    .select('[data-loop-index]')
+  const removeLoopButton = DOM
+    .select('[data-loop-index]');
+
+  const removeLoopEvent$ = removeLoopButton
     .events('click');
 
-  const addOutputEvent$ = DOM
-    .select('[data-kv-add-output]')
+  const addOutputButton = DOM
+    .select('[data-kv-add-output]');
+
+  const addOutputEvent$ = addOutputButton
     .events('click');
 
   const removeOutputEvent$ = DOM
     .select('[data-kv-remove-output]')
     .events('click');
 
-  const selectOutputEvent$ = DOM
-    .select('[data-kv-output]')
+  const outputItem = DOM
+    .select('[data-kv-output]');
+
+  const selectOutputEvent$ = outputItem
     .events('click');
 
-  const switchModeEvent$ = DOM
-    .select('[data-kv-mode]')
+  const editModeButton = DOM
+    .select('[data-edit-mode]');
+
+  const kvModeButton = DOM
+    .select('[data-kv-mode]');
+
+  const switchKvModeEvent$ = kvModeButton
+    .events('click');
+
+  const switchEditModeEvent$ = editModeButton
     .events('click');
 
   const incrementButton = DOM
@@ -183,9 +197,13 @@ export default (DOM, keydown) => {
         .map(parseDataAttr('kvOutput'))
         .filter(isFinite)
         .share(),
-    switchMode$:
-      switchModeEvent$
+    switchKvMode$:
+      switchKvModeEvent$
         .map((evt) => evt.currentTarget.dataset.kvMode)
+        .share(),
+    switchEditMode$:
+      switchEditModeEvent$
+        .map((evt) => evt.currentTarget.dataset.editMode)
         .share(),
     help$: help.action$,
 
@@ -195,10 +213,16 @@ export default (DOM, keydown) => {
       touchMoveEvent$,
       pointerDownEvent$,
       removeLoopEvent$,
+      removeLoopButton.events('mousedown'),
       addOutputEvent$,
+      addOutputButton.events('mousedown'),
       removeOutputEvent$,
       selectOutputEvent$,
-      switchModeEvent$,
+      outputItem.events('mousedown'),
+      switchKvModeEvent$,
+      kvModeButton.events('mousedown'),
+      switchEditModeEvent$,
+      editModeButton.events('mousedown'),
       incrementEvent$,
       decrementEvent$,
       incrementButton.events('mousedown'),

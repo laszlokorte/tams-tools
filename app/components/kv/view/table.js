@@ -32,7 +32,8 @@ const _labelFor = ({inputs, offset}, rowsOrColumns, {include, exclude}) => {
   if (rowsOrColumns.size > include &&
     rowsOrColumns.size > exclude
     ) {
-    const intersect = rowsOrColumns.get(exclude).not().and(rowsOrColumns.get(include));
+    const intersect = rowsOrColumns.get(exclude)
+      .not().and(rowsOrColumns.get(include));
     return inputs.get(offset + intersect.msb()).name;
   } else {
     return null;

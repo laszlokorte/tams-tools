@@ -11,7 +11,9 @@ import {
 import './index.styl';
 
 const renderInputSpinner = (state) =>
-  div('.input-spinner', [
+  div('.input-spinner' + (
+      state.currentEditMode !== 'function' ? '.state-readonly' : ''
+  ), [
     span('.input-spinner-label', 'Inputs'),
     span('.input-spinner-value', state.diagram.inputs.size.toString()),
     span('.input-spinner-buttons', [
@@ -28,50 +30,58 @@ const renderInputSpinner = (state) =>
 ;
 
 const renderLoopButton = (state, loop, index) =>
-  li([
-    button('.well', {
+  li('.loop-list-item', [
+    span('.loop-icon', {
       style: {
         backgroundColor: loop.color,
       },
-      attributes: {
-        'data-loop-index': index,
-      },
-    }, "X"),
-    button('.well-delete', 'Delete'),
-  ])
-;
-
-const renderModeButton = (state) => {
-  const mode = state.currentMode.name;
-  return button('.toggle-button', {attributes: {
-    'data-kv-mode': (mode === 'dnf' ? 'knf' : 'dnf'),
-  }},[
-    span('.toggle-button-state', {
-      className: (mode === 'dnf' ? 'state-active' : null),
-    }, 'DNF'),
-    span('.toggle-button-state', {
-      className: (mode === 'knf' ? 'state-active' : null),
-    }, 'KNF'),
-  ]);
-};
-
-const renderLoopList = (state) =>
-  div('.loop-list', [
-    renderModeButton(state),
-    span('.toolbar-title', 'Loops:'),
-    ul('.inline-list', [
-      state.diagram.loops
-      .map((loop, index) => ({loop, index}))
-      .filter(({loop}) => loop.mode === state.currentMode)
-      .map(({loop, index}) =>
-        renderLoopButton(state, loop, index)
-      ).toArray(),
-      //li(button('.well.well-add', 'Add Loop')),
+    }, [
+      button('.loop-button-delete', {
+        attributes: {
+          'data-loop-index': index,
+        },
+      }, "Delete"),
     ]),
   ])
 ;
 
-const renderOutputThumbnails = (layout, state, canAdd, canRemove) =>
+const renderModeButton = (state) => {
+  const modeName = state.currentKvMode.name;
+  return div('.loop-mode-switch', [
+    ul('.loop-mode-options', [
+      li('.loop-mode-options-item', [
+        button('.loop-mode' +
+          (modeName === 'dnf' ? '.state-active' : '')
+        , {
+          attributes: {'data-kv-mode': 'dnf'},
+        }, 'DNF'),
+      ]),
+      li('.loop-mode-options-item', [
+        button('.loop-mode' +
+          (modeName === 'knf' ? '.state-active' : '')
+        , {
+          attributes: {'data-kv-mode': 'knf'},
+        }, 'KNF'),
+      ]),
+    ]),
+  ]);
+};
+
+const renderLoopList = (state) =>
+  div('.loop-bar', [
+    renderModeButton(state),
+    ul('.loop-list',
+      state.diagram.loops
+      .map((loop, index) => ({loop, index}))
+      .filter(({loop}) => loop.mode === state.currentKvMode)
+      .map(({loop, index}) =>
+        renderLoopButton(state, loop, index)
+      ).toArray()
+    ),
+  ])
+;
+
+const renderOutputThumbnails = (layout, state, canEdit, canAdd, canRemove) =>
   div('.output-panel', [
     ul('.output-list',
       state.diagram.outputs.map((output, i) =>
@@ -86,7 +96,7 @@ const renderOutputThumbnails = (layout, state, canAdd, canRemove) =>
           renderTable({
             layout: layout,
             diagram: state.diagram,
-            mode: state.currentMode,
+            mode: state.currentKvMode,
             output: i,
             currentCube: state.currentCube,
             currentLoop: state.currentLoop,
@@ -94,16 +104,18 @@ const renderOutputThumbnails = (layout, state, canAdd, canRemove) =>
           }),
         ]),
         span('.output-label', 'Out 1'),
-        canRemove ? button('.output-button-delete', {
+        button('.output-button-delete', {
           attributes: {
             'data-kv-remove-output': i,
           },
-        }, 'Delete Button') : null,
+          disabled: !(canEdit && canRemove),
+        }, 'Delete Button'),
       ])
     ).toArray()),
-    canAdd ? button('.output-button-add', {
+    button('.output-button-add', {
       attributes: {'data-kv-add-output': true},
-    }, 'Add Output') : null,
+      disabled: !(canEdit && canAdd),
+    }, 'Add Output'),
   ])
 ;
 
@@ -111,7 +123,7 @@ const renderBody = (layout, state) =>
   renderTable({
     layout,
     diagram: state.diagram,
-    mode: state.currentMode,
+    mode: state.currentKvMode,
     output: state.currentOutput,
     currentCube: state.currentCube,
     currentLoop: state.currentLoop,
@@ -148,20 +160,27 @@ const render = ({state, layout}) =>
       div('.edit-panel', [
         renderInputSpinner(state),
         div('.edit-mode-panel', [
-          button('.edit-mode-button-function.state-hidden',
-            'Funktion bearbeiten'),
-          button('.edit-mode-button-loops',
-            'Loops bearbeiten »'),
+          button('.edit-mode-button-function' +
+            (state.currentEditMode === 'function' ? '.state-hidden' : '')
+            , {
+              attributes: {'data-edit-mode': 'function'}
+            },'« Funktion bearbeiten'),
+          button('.edit-mode-button-loops' +
+            (state.currentEditMode === 'loops' ? '.state-hidden' : '')
+            , {
+              attributes: {'data-edit-mode': 'loops'}
+            },'Loops bearbeiten »'),
         ]),
       ]),
 ,
-      //renderLoopList(state),
       renderOutputThumbnails(layout, state,
+        state.currentEditMode === 'function',
         state.diagram.outputs.size < 7,
         state.diagram.outputs.size > 1
       ),
     ]),
     div('.app-body', [
+      renderLoopList(state),
       renderTableContainer(layout, state),
     ]),
   ]);
