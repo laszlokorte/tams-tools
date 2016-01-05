@@ -10,24 +10,20 @@ import {
 
 import './index.styl';
 
-const renderToolbar = (state) =>
-  div('#toolbar.toolbar', [
-    button('.numberButton',
-      {
+const renderInputSpinner = (state) =>
+  div('.input-spinner', [
+    span('.input-spinner-label', 'Inputs'),
+    span('.input-spinner-value', state.diagram.inputs.size.toString()),
+    span('.input-spinner-buttons', [
+      button('.input-spinner-button-decrement', {
         attributes: {'data-kv-counter': 'decrement'},
-        disabled: state.diagram.inputs.size <= 0,
-      },
-      '-'),
-    span('.input-count',
-      {attributes: {'data-label': 'Inputs'}},
-      state.diagram.inputs.size),
-    button('.numberButton',
-      {
+        disabled: state.diagram.inputs.size < 1,
+      }, 'Decrement'),
+      button('.input-spinner-button-increment', {
         attributes: {'data-kv-counter': 'increment'},
         disabled: state.diagram.inputs.size >= 8,
-      },
-      '+'),
-    button('.help-button','Help'),
+      }, 'Increment'),
+    ]),
   ])
 ;
 
@@ -76,15 +72,17 @@ const renderLoopList = (state) =>
 ;
 
 const renderOutputThumbnails = (layout, state, canAdd, canRemove) =>
-  div('.output-thumbnails', [
-    ul('.inline-list', [
+  div('.output-panel', [
+    ul('.output-list',
       state.diagram.outputs.map((output, i) =>
-        li('.output-thumbnails-item' +
-        (i === state.currentOutput ? '.state-active' : ''), {
-          attributes: {
-            'data-kv-output': i,
-          },
-        }, [
+      li('.output-list-item' +
+      (i === state.currentOutput ? '.state-current' : ''), {
+        tabIndex: 0,
+        attributes: {
+          'data-kv-output': i,
+        },
+      }, [
+        div('.output-thumbnail', [
           renderTable({
             layout: layout,
             diagram: state.diagram,
@@ -94,22 +92,18 @@ const renderOutputThumbnails = (layout, state, canAdd, canRemove) =>
             currentLoop: state.currentLoop,
             compact: true,
           }),
-          span('.output-thumbnails-label', output.name),
-          canRemove ? span('.output-thumbnails-delete-button', {
-            attributes: {
-              'data-kv-remove-output': i,
-            },
-            title: 'Remove Output',
-          }, 'Remove') : null,
-        ])
-      ).toArray(),
-      canAdd && li('.output-thumbnails-item',
-        button('.output-thumbnails-add-button', {
-          attributes: {'data-kv-add-output': true},
-          title: 'Add Output',
-        },'Add Output')
-      ) || null,
-    ]),
+        ]),
+        span('.output-label', 'Out 1'),
+        canRemove ? button('.output-button-delete', {
+          attributes: {
+            'data-kv-remove-output': i,
+          },
+        }, 'Delete Button') : null,
+      ])
+    ).toArray()),
+    canAdd ? button('.output-button-add', {
+      attributes: {'data-kv-add-output': true},
+    }, 'Add Output') : null,
   ])
 ;
 
@@ -126,22 +120,48 @@ const renderBody = (layout, state) =>
 ;
 
 const renderTableContainer = (layout, state) =>
-  div('.scroller', [
-    div('.scoller-inner', [
+  div('.diagram-scroller', [
+    div('.diagram-scroller-body', [
       renderBody(layout, state),
     ]),
   ])
 ;
 
 const render = ({state, layout}) =>
-  div([
-    renderToolbar(state),
-    renderLoopList(state),
-    renderOutputThumbnails(layout, state,
-      state.diagram.outputs.size < 7,
-      state.diagram.outputs.size > 1
-    ),
-    renderTableContainer(layout, state),
+  div('.app', [
+    div('.app-head', [
+      div('.action-panel', [
+        div('.action-list', [
+          div('.action-list-item', [
+            button('.action-button-open', 'Open'),
+          ]),
+          div('.action-list-item', [
+            button('.action-button-settings', 'Settings'),
+          ]),
+          div('.action-list-item', [
+            button('.action-button-help.help-button', 'Help'),
+          ]),
+        ]),
+      ]),
+      div('.edit-panel', [
+        renderInputSpinner(state),
+        div('.edit-mode-panel', [
+          button('.edit-mode-button-function.state-hidden',
+            'Funktion bearbeiten'),
+          button('.edit-mode-button-loops',
+            'Loops bearbeiten »'),
+        ]),
+      ]),
+,
+      //renderLoopList(state),
+      renderOutputThumbnails(layout, state,
+        state.diagram.outputs.size < 7,
+        state.diagram.outputs.size > 1
+      ),
+    ]),
+    div('.app-body', [
+      renderTableContainer(layout, state),
+    ]),
   ]);
 
 export default (state$, {helpBox$}) =>

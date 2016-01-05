@@ -123,17 +123,25 @@ export default (DOM, keydown) => {
     .select('[data-kv-mode]')
     .events('click');
 
+  const incrementButton = DOM
+    .select('[data-kv-counter="increment"]');
+
+  const decrementButton = DOM
+    .select('[data-kv-counter="decrement"]');
+
+  const incrementEvent$ = incrementButton
+    .events('click');
+
+  const decrementEvent$ = decrementButton
+    .events('click');
+
   return {
     addInput$:
-      DOM
-        .select('[data-kv-counter="increment"]')
-        .events('click')
+      incrementEvent$
         .map(() => true)
         .share(),
     removeInput$:
-      DOM
-        .select('[data-kv-counter="decrement"]')
-        .events('click')
+      decrementEvent$
         .map(() => true)
         .share(),
     cycleValue$:
@@ -190,7 +198,11 @@ export default (DOM, keydown) => {
       addOutputEvent$,
       removeOutputEvent$,
       selectOutputEvent$,
-      switchModeEvent$
+      switchModeEvent$,
+      incrementEvent$,
+      decrementEvent$,
+      incrementButton.events('mousedown'),
+      decrementButton.events('mousedown')
     ).share(),
   };
 };

@@ -45,7 +45,7 @@ body
   padding 0
   margin 0
   font-family font-sans
-  background-color #F2F2F2
+  background-color color-background-primary
 
 a
 button
@@ -76,7 +76,7 @@ plainlist(inline = false)
   margin 0
   padding 0
   if inline
-    & > li
+    > *
       display inline-block
 
 action-icon(icon)
@@ -90,6 +90,9 @@ action-icon(icon)
   background-size 80% 80%
   background-position 50% 50%
   background-repeat no-repeat
+  overflow hidden
+  text-indent -500px
+  cursor pointer
 
   &:focus
     background-image svgurl(icon) svg(
@@ -193,6 +196,7 @@ space(u)
   background-size 45% 45%
   background-position 50% 50%
   background-repeat no-repeat
+  margin 0 space(0.2)
 
   &:hover
     background-color lighten(color-background-inverse, 3%)
@@ -200,6 +204,10 @@ space(u)
     border-color color-focus
   &:active
     background-color darken(color-background-inverse, 3%)
+  &:disabled
+    pointer default
+    background-color lighten(color-background-inverse, 25%)
+
 
 .input-spinner-button-decrement
   background-image svgurl('assets/icons/minus.svg') svg(
@@ -266,8 +274,8 @@ space(u)
   border 2px solid transparent
   vertical-align top
   background-color color-background-secondary-weak
-  width space(5)
-  height space(5)
+  width space(3)
+  height space(3)
   text-indent -500px
   overflow hidden
   margin space(1.5) space(1)
@@ -295,7 +303,7 @@ space(u)
 .output-list
   plainlist(inline: true)
   display inline-block
-  vertical-align middle
+  vertical-align bottom
 
   > .output-list-item
     display block
@@ -314,7 +322,7 @@ space(u)
     background-color color-background-primary
     font-weight font-bold
     cursor default
-    &>.output-thumbnail
+    > .output-thumbnail
       background-color inherit
 
   &:focus
@@ -323,6 +331,12 @@ space(u)
 .output-thumbnail
   background-color color-background-primary-weak
   padding 4px
+  overflow hidden
+  display flex
+  align-items center
+  justify-content center
+  min-width space(5)
+  min-height space(5)
 
   > *
     margin 0 auto
@@ -331,8 +345,9 @@ space(u)
   round()
   border-width 3px
   position absolute
-  top -5px
-  right -5px
+  top -12px
+  right -12px
+  z-index 10
   border-color color-background-secondary
   background-color color-danger
 
@@ -361,6 +376,7 @@ space(u)
   border none
   outline none
   background-color transparent
+  clear both
 
   &.state-editable
     background-color color-background-primary
