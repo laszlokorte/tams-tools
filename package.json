@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Tool to generate and edit KV Diagrams",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "compile": "env NODE_ENV=production webpack --config webpack/prod.config.babel.js --progress",
     "lint": "eslint .",
