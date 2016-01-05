@@ -1,4 +1,4 @@
-import BitSet from '../../../lib/monkeypatches/bitset.js';
+import BitSet from 'bitset.js';
 import {zip} from '../../../lib/utils';
 
 /// The layouts for different KV diagram sizes

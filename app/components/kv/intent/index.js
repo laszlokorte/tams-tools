@@ -1,5 +1,5 @@
 import {Observable as O} from 'rx';
-import BitSet from '../../../lib/monkeypatches/bitset.js';
+import BitSet from 'bitset.js';
 
 import {parseDataAttr} from '../../../lib/utils';
 

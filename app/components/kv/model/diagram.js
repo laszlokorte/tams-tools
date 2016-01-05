@@ -1,5 +1,5 @@
 import I from 'immutable';
-import BitSet from '../../../lib/monkeypatches/bitset.js';
+import BitSet from 'bitset.js';
 
 const _stride = (length, value) =>
   I.List(Array.apply(Array, {length: length}).map(() => value))
