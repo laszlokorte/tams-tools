@@ -108,7 +108,9 @@ round()
   font-size 0
   outline none
 
-button(icon = false)
+button(icon = false,
+  color-background = color-background-secondary-strong,
+  color-foreground = color-foreground-secondary-strong)
   line-height 1
   height button-size
   border 2px solid transparent
@@ -117,14 +119,26 @@ button(icon = false)
   padding-bottom 0
   padding-right space(1)
   outline none
+  background-color color-background
+  color color-foreground
   if icon
     padding-left button-size
-    background-image icon
+    background-image svgurl(icon) svg(
+      path fill color-foreground
+    )
     background-size 50% 50%
     background-position (-0.75*button-size) 50%
     background-repeat no-repeat
   else
     padding-left space(1)
+
+  &:hover
+    background-color lighten(color-background, 3%)
+  &:focus
+    border-color color-focus
+  &:active
+    background-color darken(color-background, 3%)
+
 
 space(u)
   unit(15 * u, px)
@@ -174,7 +188,7 @@ space(u)
 .input-spinner-button-decrement
 .input-spinner-button-increment
   round()
-  background-color color-background-secondary-strong
+  background-color color-background-inverse
   vertical-align top
   background-size 45% 45%
   background-position 50% 50%
@@ -188,9 +202,13 @@ space(u)
     background-color darken(color-background-secondary-strong, 3%)
 
 .input-spinner-button-decrement
-  background-image url('../assets/icons/minus.svg')
+  background-image svgurl('assets/icons/minus.svg') svg(
+    rect fill color-foreground-secondary
+  )
 .input-spinner-button-increment
-  background-image url('../assets/icons/plus.svg')
+  background-image svgurl('assets/icons/plus.svg') svg(
+    path fill color-foreground-secondary
+  )
 
 
 .edit-mode-panel
@@ -198,24 +216,19 @@ space(u)
 
 .edit-mode-button-loops
 .edit-mode-button-function
-  background-color color-background-secondary-strong
-  color color-foreground-secondary-strong
-
   &.state-hidden
     display none
 
-  &:hover
-    background-color lighten(color-background-secondary-strong, 3%)
-  &:focus
-    border-color color-focus
-  &:active
-    background-color darken(color-background-secondary-strong, 3%)
-
-
 .edit-mode-button-loops
-  button(url('../assets/icons/confirm.svg'))
+  button('assets/icons/confirm.svg',
+    color-background-inverse,
+    color-foreground-inverse
+    )
 .edit-mode-button-function
-  button(url('../assets/icons/edit.svg'))
+  button('assets/icons/edit.svg',
+    color-background-inverse,
+    color-foreground-inverse
+    )
 
 .action-panel
   margin space(1) space(1.5) 0 0
@@ -247,7 +260,9 @@ space(u)
   clear both
 
 .output-button-add
-  button()
+  border none
+  outline none
+  border 2px solid transparent
   vertical-align middle
   background-color color-background-secondary-weak
   width space(5)
@@ -255,19 +270,25 @@ space(u)
   text-indent -500px
   overflow hidden
 
-  background-image url('../assets/icons/plus-dark.svg')
+  background-image svgurl('assets/icons/plus.svg') svg(
+    path fill shade(color-background-secondary-weak, 10%)
+  )
   background-size 50% 50%
   background-position 50% 50%
   background-repeat no-repeat
 
   &:hover
-    background-color lighten(color-background-secondary-weak, 25%)
+    background-image svgurl('assets/icons/plus.svg') svg(
+      path fill shade(color-background-secondary-weak, 20%)
+    )
   &:focus
     border-color color-focus
 
   &:active
     background-color darken(color-background-secondary-weak, 2%)
-
+    background-image svgurl('assets/icons/plus.svg') svg(
+      path fill shade(color-background-secondary-weak, 30%)
+    )
 
 .output-list
   plainlist(inline: true)
@@ -275,7 +296,7 @@ space(u)
   padding space(2) space(1.5) 0
   vertical-align middle
 
-  .output-list-item
+  > .output-list-item
     display block
     float left
     overflow visible
@@ -365,9 +386,9 @@ space(u)
   plainlist(inline: true)
 
 .loop-mode
-  button()
-  background-color color-background-inverse-weak
-  color color-foreground-inverse-weak
+  button(false,
+    color-background-inverse-weak,
+    color-foreground-inverse-weak)
 
   &.state-active
     font-weight font-bold
@@ -387,7 +408,7 @@ space(u)
 
   &:hover
     color lighten(color-foreground-inverse-weak, 50%)
-    background-color lighten(color-background-inverse-weak, 2%)
+    background-color lighten(color-background-inverse-weak, 1%)
   &:focus
     border-color color-focus
 
