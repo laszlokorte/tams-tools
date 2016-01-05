@@ -63,8 +63,8 @@ select
   background-color grey
 
 .fake-table-small
-  width 80px
-  height 80px
+  width 100px
+  height 100px
   background-color grey
 
 plainlist(inline = false)
@@ -75,11 +75,15 @@ plainlist(inline = false)
     & > li
       display inline-block
 
-action-icon()
+action-icon(icon)
   width button-size
   height button-size
-  background-color color-background-secondary-strong
+  background-color transparent
   border none
+  background-image icon
+  background-size 80% 80%
+  background-position 50% 50%
+  background-repeat no-repeat
 
 round()
   width button-size-small
@@ -102,6 +106,10 @@ button(icon = false)
   outline none
   if icon
     padding-left button-size
+    background-image icon
+    background-size 50% 50%
+    background-position (-0.75*button-size) 50%
+    background-repeat no-repeat
   else
     padding-left space(1)
 
@@ -125,7 +133,8 @@ space(u)
 
 .input-spinner
   display inline-block
-  padding space(0.5) space(0.5) space(0.5)  space(1)
+  padding space(0.5) space(0.5) space(0.5) space(1)
+  margin-right space(0.5)
   background-color color-background-primary-weak
 
 .input-spinner-label
@@ -150,30 +159,48 @@ space(u)
   round()
   background-color color-background-secondary-strong
   vertical-align top
+  background-size 45% 45%
+  background-position 50% 50%
+  background-repeat no-repeat
+
+.input-spinner-button-decrement
+  background-image url('../assets/icons/minus.svg')
+.input-spinner-button-increment
+  background-image url('../assets/icons/plus.svg')
+
 
 .edit-mode-panel
   display inline-block
 
 .edit-mode-button-loops
 .edit-mode-button-function
-  button(true)
   background-color color-background-secondary-strong
   color color-foreground-secondary-strong
 
   &.state-hidden
     display none
 
+.edit-mode-button-loops
+  button(url('../assets/icons/confirm.svg'))
+.edit-mode-button-function
+  button(url('../assets/icons/edit.svg'))
+
 .action-panel
-  margin space(1) space(2) 0 0
+  margin space(1) space(1.5) 0 0
   float right
 
 .action-list
   plainlist(inline: true)
 
+.action-list-item
+  padding 0 space(0.2)
+
 .action-button-open
+  action-icon(url('../assets/icons/open.svg'))
 .action-button-settings
+  action-icon(url('../assets/icons/settings.svg'))
 .action-button-help
-  action-icon()
+  action-icon(url('../assets/icons/help.svg'))
 
 .output-panel
   clear both
@@ -193,12 +220,18 @@ space(u)
   text-indent -500px
   overflow hidden
 
+  background-image url('../assets/icons/plus-dark.svg')
+  background-size 50% 50%
+  background-position 50% 50%
+  background-repeat no-repeat
+
 .output-list-item
   position relative
   margin 0 space(0.5)
 
   &.state-current
     background-color color-background-primary
+    font-weight font-bold
     &>.output-thumbnail
       background-color inherit
 
@@ -213,6 +246,11 @@ space(u)
   right -5px
   border 3px solid color-background-secondary
   background-color color-danger
+
+  background-image url('../assets/icons/delete.svg')
+  background-size 50% 50%
+  background-position 50% 50%
+  background-repeat no-repeat
 
 .output-label
   display block
@@ -238,6 +276,7 @@ space(u)
   color color-foreground-inverse-weak
 
   &.state-active
+    font-weight font-bold
     background-color color-background-inverse-strong
     color color-foreground-inverse-strong
 
@@ -260,6 +299,14 @@ space(u)
   round()
   vertical-align middle
   background-color transparent
+  background-image url('../assets/icons/delete-dark.svg')
+  background-size 50%
+  background-position 50% 50%
+  background-repeat no-repeat
+  opacity 0
+
+  &:hover
+    opacity 0.5
 
 .diagram-scroller
   max-width 100%
