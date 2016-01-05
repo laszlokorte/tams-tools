@@ -1,14 +1,41 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,600')
 
 font-sans = 'Open Sans', sans-serif
-color-dark = #2A2A2A
-color-light = #F2F2F2
-color-dark-x = #222
-color-light-x = #fff
-color-dark-s = #333
-color-light-s = #eee
-color-dark-xs = #666
-color-light-xs = #ccc
+
+font-size-big = 18px
+font-size-default = 12px
+font-size-small = 10px
+
+font-bold = 600
+
+color-background-primary  = #FFFFFF
+color-background-primary-weak  = #E6E6E6
+color-background-primary-strong  = #FFFFFF
+
+color-background-secondary  = #C8C8C8
+color-background-secondary-weak  = #E6E6E6
+color-background-secondary-strong  = #7F7F7F
+
+color-background-inverse  = #363636
+color-background-inverse-weak  = #2E2E2E
+color-background-inverse-strong  = #222222
+
+color-foreground-primary  = #000000
+color-foreground-primary-weak  = #000000
+color-foreground-primary-strong  = #000000
+
+color-foreground-secondary  = #E4E4E4
+color-foreground-secondary-weak  = #E4E4E4
+color-foreground-secondary-strong  = #E4E4E4
+
+color-foreground-inverse  = #F0F0F0
+color-foreground-inverse-weak  = #A5A5A5
+color-foreground-inverse-strong  = #FFFFFF
+
+color-danger = #5D0000
+
+button-size = 36px
+button-size-small = 30px
 
 *
   box-sizing border-box
@@ -30,96 +57,218 @@ select
   font-family inherit
   font-size 1em
 
+.fake-table
+  width 420px
+  height 420px
+  background-color grey
+
+.fake-table-small
+  width 80px
+  height 80px
+  background-color grey
+
+plainlist(inline = false)
+  list-style none
+  margin 0
+  padding 0
+  if inline
+    & > li
+      display inline-block
+
+action-icon()
+  width button-size
+  height button-size
+  background-color color-background-secondary-strong
+  border none
+
+round()
+  width button-size-small
+  height button-size-small
+  border-radius (button-size-small / 2)
+  overflow hidden
+  border none
+  text-indent -500px
+  font-size 0
+  outline none
+
+button(icon = false)
+  line-height 1
+  height button-size
+  border none
+  vertical-align middle
+  padding-top 0
+  padding-bottom 0
+  padding-right space(1)
+  outline none
+  if icon
+    padding-left button-size
+  else
+    padding-left space(1)
+
+space(u)
+  unit(15 * u, px)
+
 .application
   font-size 11pt
 
-.stack
-  display flex
-  flex-flow row wrap
-  align-items center
-  justify-content space-around
-
-.stack-item
-  min-width 33%
-  display flex
-  flex-flow row nowrap
-  align-items flex-start
-  justify-content space-around
-
-.bar
+.app-head
   overflow hidden
+  background-color color-background-secondary
+
+.app-body
+  overflow hidden
+  background-color color-background-primary
+
+.edit-panel
+  margin space(1) 0 0 space(2)
+  float left
+
+.input-spinner
+  display inline-block
+  padding space(0.5) space(0.5) space(0.5)  space(1)
+  background-color color-background-primary-weak
+
+.input-spinner-label
+.input-spinner-value
+.input-spinner-buttons
+  display inline-block
+  line-height button-size-small
+  height button-size-small
+  vertical-align middle
+
+.input-spinner-label::after
+  content: ':'
+
+.input-spinner-value
+  font-size font-size-big
+  font-weight font-bold
+  min-width space(2)
+  text-align center
+
+.input-spinner-button-decrement
+.input-spinner-button-increment
+  round()
+  background-color color-background-secondary-strong
+  vertical-align top
+
+.edit-mode-panel
+  display inline-block
+
+.edit-mode-button-loops
+.edit-mode-button-function
+  button(true)
+  background-color color-background-secondary-strong
+  color color-foreground-secondary-strong
+
+  &.state-hidden
+    display none
+
+.action-panel
+  margin space(1) space(2) 0 0
+  float right
+
+.action-list
+  plainlist(inline: true)
+
+.action-button-open
+.action-button-settings
+.action-button-help
+  action-icon()
+
+.output-panel
+  clear both
+
+.output-list
+  plainlist(inline: true)
+  display inline-block
+  padding space(2) space(1.5) 0
+  vertical-align middle
+
+.output-button-add
+  button()
+  vertical-align middle
+  background-color color-background-secondary-weak
+  width space(5)
+  height space(5)
+  text-indent -500px
+  overflow hidden
+
+.output-list-item
+  position relative
+  margin 0 space(0.5)
+
+  &.state-current
+    background-color color-background-primary
+    &>.output-thumbnail
+      background-color inherit
+
+.output-thumbnail
+  background-color color-background-primary-weak
   padding 4px
 
-.bar-dark
-  background-color color-dark
-  color color-light
+.output-button-delete
+  round()
+  position absolute
+  top -5px
+  right -5px
+  border 3px solid color-background-secondary
+  background-color color-danger
 
-.button
-  display inline-block
-  border none
-  padding 0.3em 1em
-  background-color transparent
-  border 1px solid transparent
-  height 2.5em
-  line-height 1
-  outline none
-
-.button-toggle
-  &.state-active
-    font-weight 600
-
-.button-dark
-  background-color color-dark-s
-  color color-light-s
-  border-color color-dark
-  &.button-toggle
-    background-color color-dark
-    color color-dark-xs
-    &.state-active
-      color color-light
-
-.button-light
-  background-color color-light-s
-  color color-dark-s
-  border-color color-light-s
-  &.button-toggle
-    color color-dark-xs
-    &.state-active
-      background-color color-light-x
-      color color-dark-s
-
-.button-group
-  display flex
-  flex-flow row nowrap
-  align-items center
-  justify-content space-around
-  padding 2px
-
-.button-group-dark
-  background-color color-dark-x
-
-.inline-list
-  display flex
-  flex-flow row wrap
-  align-items center
-  justify-content flex-start
-  background-color none
-  margin 0 20px
-  padding 4px 0
-  list-style none
-
-.inline-list-item
-  padding 2px
-
-.well
+.output-label
   display block
-  width 28px
-  height 28px
+  height button-size
+  line-height button-size
+  text-align center
 
+.loop-bar
+  margin space(2)
+  padding space(0.5)
+  background-color color-background-inverse
 
-.align-space
-  justify-content space-between
-.align-start
-  justify-content flex-start
-.align-end
-  justify-content flex-end
+.loop-mode-switch
+  vertical-align middle
+  display inline-block
+
+.loop-mode-options
+  plainlist(inline: true)
+
+.loop-mode
+  button()
+  background-color color-background-inverse-weak
+  color color-foreground-inverse-weak
+
+  &.state-active
+    background-color color-background-inverse-strong
+    color color-foreground-inverse-strong
+
+.loop-list
+  plainlist(inline: true)
+  display inline-block
+  vertical-align middle
+  padding 0 space(0.5)
+
+.loop-list-item
+  padding 0 space(0.1)
+
+.loop-icon
+  width button-size-small
+  height button-size-small
+  vertical-align middle
+  display inline-block
+
+.loop-button-delete
+  round()
+  vertical-align middle
+  background-color transparent
+
+.diagram-scroller
+  max-width 100%
+  overflow auto
+
+.diagram-scroller-body
+  display flex
+  align-items center
+  justify-content center
+  min-width min-content
+  min-height min-content
+  padding space(2) 0

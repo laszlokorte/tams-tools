@@ -1,77 +1,117 @@
-<div class="application">
+<div class="app">
+  <div class="app-head">
 
-  <div class="bar bar-light stack align-space">
-    <div class="stack-item align-start">
-      <button class="button button-light">Load...</button>
-      <div class="button-group button-group-light">
-        <button class="button button-light button-toggle state-active">Funktion Bearbeiten</button>
-        <button class="button button-light button-toggle">Loops bearbeiten</button>
-      </div>
-    </div>
-
-    <div class="stack-item align-end">
-      <button class="button button-light">Export</button>
-      <button class="button button-light">Help</button>
-    </div>
-  </div>
-
-  <div class="bar bar-light stack">
-    <div class="stack-item">
-      <div>
-        <button class="button button-light">Decrement</button>
-        <span class="spinner-value">7</span>
-        <button class="button button-light">Increment</button>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="bar bar-dark">
-    <div class="stack-item align-space">
-      <div class="button-group button-group-dark">
-        <button class="button button-light button-toggle state-active">DNF</button>
-        <button class="button button-dark button-toggle">KNF</button>
-      </div>
-
-      <ul class="inline-list align-end">
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li><li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
-        <li class="inline-list-item"><span class="well" style="background-color: #1786AF"></span></li>
+    <div class="action-panel">
+      <ul class="action-list">
+        <li class="action-list-item">
+          <button class="action-button-open"></button>
+        </li>
+        <li class="action-list-item">
+          <button class="action-button-settings"></button>
+        </li>
+        <li class="action-list-item">
+          <button class="action-button-help"></button>
+        </li>
       </ul>
+    </div>
+
+    <div class="edit-panel">
+      <div class="input-spinner">
+        <span class="input-spinner-label">Inputs</span>
+        <span class="input-spinner-value">
+          7
+        </span>
+        <span class="input-spinner-buttons">
+          <button class="input-spinner-button-decrement">
+            Decrement
+          </button>
+          <button class="input-spinner-button-increment">
+            Increment
+          </button>
+        </span>
+      </div>
+      <div class="edit-mode-panel">
+        <button class="edit-mode-button-loops">
+          Loops bearbeiten »
+        </button>
+        <button class="edit-mode-button-function state-hidden">
+          Funktion bearbeiten
+        </button>
+      </div>
+    </div>
+
+    <div class="output-panel">
+      <ul class="output-list">
+        <li class="output-list-item">
+          <div class="output-thumbnail">
+            <div class="fake-table-small">
+            </div>
+          </div>
+          <span class="output-label">
+            Out 1
+          </span>
+          <button class="output-button-delete">
+            Remove
+          </button>
+        </li>
+
+        <li class="output-list-item state-current">
+          <div class="output-thumbnail">
+            <div class="fake-table-small">
+            </div>
+          </div>
+          <span class="output-label">
+            Out 1
+          </span>
+          <button class="output-button-delete">
+            Remove
+          </button>
+        </li>
+      </ul>
+
+      <button class="output-button-add">
+        Add Output
+      </button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <div class="loop-bar">
+      <div class="loop-mode-switch">
+        <ul class="loop-mode-options">
+          <li class="loop-mode-options-item">
+            <button class="loop-mode state-active">DNF</button>
+          </li>
+          <li class="loop-mode-options-item">
+            <button class="loop-mode">KNF</button>
+          </li>
+        </ul>
+      </div>
+
+      <ul class="loop-list">
+        <li class="loop-list-item">
+          <span class="loop-icon" style="background-color: #B43035">
+            <button class="loop-button-delete">
+              Delete
+            </button>
+          </span>
+        </li>
+        <li class="loop-list-item">
+          <span class="loop-icon" style="background-color: #B43035">
+            <button class="loop-button-delete">
+              Delete
+            </button>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="diagram-scroller">
+      <div class="diagram-scroller-body">
+        <div class="fake-table">
+
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -39,7 +39,7 @@
     "testem": "^0.9.11",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.2",
-    "webpack-dev-server": "^1.14.0",
+    "webpack-dev-server": "git@github.com:webpack/webpack-dev-server.git#4b58b42650341494cd7ad9688b72d66da3858e43",
     "webpack-merge": "^0.7.0"
   },
   "dependencies": {
