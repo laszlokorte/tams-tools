@@ -208,7 +208,8 @@ export const renderTable = ({
               return td('.kv-table-cell-body.kv-cell-container' + styleClass, [
                 renderTable({
                   layout: cell.children,
-                  diagram, kvMode, editMode, output, currentCube, currentLoop, compact,
+                  diagram, kvMode, editMode, output,
+                  currentCube, currentLoop, compact,
                   labelOffset}),
               ]);
             } else {
