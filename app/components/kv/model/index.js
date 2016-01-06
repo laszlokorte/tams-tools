@@ -294,7 +294,7 @@ const startRename = (state, outputIndex) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     renameOutput: outputIndex,
-    renameOutputValue: state.diagram.outputs.get(state.currentOutput).name,
+    renameOutputValue: state.diagram.outputs.get(outputIndex).name,
     renameOutputValid: true,
     diagram: state.diagram,
   })

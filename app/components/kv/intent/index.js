@@ -171,9 +171,6 @@ export default (DOM, keydown) => {
         .events('focusout')
   );
 
-  startRenameEvent$
-    .subscribe((e) => e.stopPropagation());
-
   const tryOutputNameEvent$ = outputEditLabel
     .events('input');
 
