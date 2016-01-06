@@ -4,7 +4,7 @@ const formatPLA = (pla) => {
   return [
     `.i ${pla.inputs.length}`,
     `.innames ${pla.inputs.join(' ')}`,
-    `.o ${pla.outputs.join(' ')}`,
+    `.o ${pla.outputs.length}`,
     `.outnames ${pla.outputs.join(' ')}`,
     `.p${pla.loops.length}`,
     pla.loops.map((loop) =>
