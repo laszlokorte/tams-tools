@@ -31,7 +31,13 @@
     direction ltr
     white-space nowrap
     overflow hidden
-    background-color #888
+    background-color #aaa
+
+.kv-cell-atom:hover
+  background-color #c9c9c9
+
+.kv-cell-atom[data-edit="function"]:active
+  background-color #c0c0c0
 
 .kv-mode-dnf
   .kv-cell-atom:not([data-kv-value='true'])
@@ -40,7 +46,7 @@
   .kv-cell-atom[data-kv-value='false']
     font-weight normal
     &.style-compact:not(.state-error)
-      background-color #C9C9C9
+      background-color #cfcfcf
 
 .kv-mode-knf
   .kv-cell-atom:not([data-kv-value='false'])
@@ -49,7 +55,7 @@
   .kv-cell-atom[data-kv-value='true']
     font-weight normal
     &.style-compact:not(.state-error)
-      background-color #C9C9C9
+      background-color #cfcfcf
 
 
 
@@ -157,3 +163,7 @@
   &.kv-table
     &.style-compact
       border-spacing 2px
+
+.edit-function
+  > .kv-loops-container
+    opacity 0.3

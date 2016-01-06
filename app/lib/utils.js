@@ -4,16 +4,6 @@
  * Utility functions which are not specific for domain of kv diagrams.
  */
 
-// Zip the values of the given arrays with the given function
-// result: [f(a[0],b[0]), f(a[1],b[1]), f(a[2],b[2]), ...]
-export const zip = (a, b, func) => {
-  const result = [];
-  for (let i = 0, j = Math.min(a.length, b.length);i < j;i++) {
-    result.push(func(a[i], b[i]));
-  }
-  return result;
-};
-
 // returns the index of the highest bit of the given number
 // should be equal to floor(ln2(num))
 export const highestBit = (num) => {

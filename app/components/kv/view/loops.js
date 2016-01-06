@@ -94,7 +94,7 @@ const calcCubeRange = (dontcare, cols, cube) => {
 
 // Render the collection of loops for a kv leaf grid
 // rows, cols: number of rows and columns
-export const renderLoops = (loops, mode, rows, cols) => {
+export const renderLoops = (loops, kvMode, rows, cols) => {
   const rowCount = rows.size;
   const colCount = cols.size;
 
@@ -110,7 +110,7 @@ export const renderLoops = (loops, mode, rows, cols) => {
 
   return div('.kv-loops-container' + padding,
     loops
-    .filter((loop) => loop.mode === mode)
+    .filter((loop) => loop.mode === kvMode)
     .map((loop) =>
       renderLoop({
         color: loop.color,

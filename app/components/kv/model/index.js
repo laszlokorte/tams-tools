@@ -189,7 +189,9 @@ const removeLoop = (state, loopIndex) =>
 const addLoop = (state, outputIndex, start, end) => {
   const newCube = diagram.newCubeFromTo(start, end, state.diagram.inputs.size);
   const values = state.diagram.outputs.get(outputIndex).values;
-  if (!diagram.isValidCubeForValuesInMode(newCube, values, state.currentKvMode)) {
+  if (!diagram.isValidCubeForValuesInMode(
+    newCube, values, state.currentKvMode
+  )) {
     return state;
   }
 

@@ -29,7 +29,7 @@ const renderInputSpinner = (state) =>
   ])
 ;
 
-const renderLoopButton = (state, loop, index) =>
+const renderLoopIcon = (loop, index, editable) =>
   li('.loop-list-item', [
     span('.loop-icon', {
       style: {
@@ -40,6 +40,7 @@ const renderLoopButton = (state, loop, index) =>
         attributes: {
           'data-loop-index': index,
         },
+        disabled: !editable,
       }, "Delete"),
     ]),
   ])
@@ -67,21 +68,25 @@ const renderModeButton = (state) => {
   ]);
 };
 
-const renderLoopList = (state) =>
-  div('.loop-bar', [
+const renderLoopList = (state, editable) =>
+  div('.loop-bar' + (editable ? '' : '.state-faded'), [
     renderModeButton(state),
     ul('.loop-list',
+      state.diagram.loops
+      .filter((loop) => loop.mode === state.currentKvMode)
+      .isEmpty() ?
+      [li('.loop-list-item-empty', 'Keine Loops')] :
       state.diagram.loops
       .map((loop, index) => ({loop, index}))
       .filter(({loop}) => loop.mode === state.currentKvMode)
       .map(({loop, index}) =>
-        renderLoopButton(state, loop, index)
+        renderLoopIcon(loop, index, editable)
       ).toArray()
     ),
   ])
 ;
 
-const renderOutputThumbnails = (layout, state, canEdit, canAdd, canRemove) =>
+const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
   div('.output-panel', [
     ul('.output-list',
       state.diagram.outputs.map((output, i) =>
@@ -96,14 +101,15 @@ const renderOutputThumbnails = (layout, state, canEdit, canAdd, canRemove) =>
           renderTable({
             layout: layout,
             diagram: state.diagram,
-            mode: state.currentKvMode,
+            kvMode: state.currentKvMode,
+            editMode: state.currentEditMode,
             output: i,
             currentCube: state.currentCube,
             currentLoop: state.currentLoop,
             compact: true,
           }),
         ]),
-        span('.output-label', 'Out 1'),
+        span('.output-label', output.name),
         button('.output-button-delete', {
           attributes: {
             'data-kv-remove-output': i,
@@ -123,7 +129,8 @@ const renderBody = (layout, state) =>
   renderTable({
     layout,
     diagram: state.diagram,
-    mode: state.currentKvMode,
+    kvMode: state.currentKvMode,
+    editMode: state.currentEditMode,
     output: state.currentOutput,
     currentCube: state.currentCube,
     currentLoop: state.currentLoop,
@@ -145,14 +152,27 @@ const render = ({state, layout}) =>
       div('.action-panel', [
         div('.action-list', [
           div('.action-list-item', [
-            button('.action-button-open', 'Open'),
+            button('.action-button-open', {
+              attributes: {'data-action': 'open'},
+              title: 'Open Diagram...',
+            }, 'Open...'),
           ]),
           div('.action-list-item', [
-            button('.action-button-settings', 'Settings'),
+            button('.action-button-export', {
+              attributes: {'data-action': 'save'},
+              title: 'Export Diagram...',
+            }, 'Export...'),
+          ]),
+          div('.action-list-item', [
+            button('.action-button-settings', {
+              attributes: {'data-action': 'settings'},
+              title: 'Settings...',
+            }, 'Settings'),
           ]),
           div('.action-list-item', [
             button('.action-button-help', {
               attributes: {'data-action': 'help'},
+              title: 'Help...',
             }, 'Help'),
           ]),
         ]),
@@ -163,31 +183,34 @@ const render = ({state, layout}) =>
           button('.edit-mode-button-function' +
             (state.currentEditMode === 'function' ? '.state-hidden' : '')
             , {
-              attributes: {'data-edit-mode': 'function'}
+              attributes: {'data-edit-mode': 'function'},
             },'« Funktion bearbeiten'),
           button('.edit-mode-button-loops' +
             (state.currentEditMode === 'loops' ? '.state-hidden' : '')
             , {
-              attributes: {'data-edit-mode': 'loops'}
+              attributes: {'data-edit-mode': 'loops'},
             },'Loops bearbeiten »'),
         ]),
       ]),
 ,
-      renderOutputThumbnails(layout, state,
-        state.currentEditMode === 'function',
-        state.diagram.outputs.size < 7,
-        state.diagram.outputs.size > 1
-      ),
+      renderOutputThumbnails(layout, state, {
+        canEdit: state.currentEditMode === 'function',
+        canAdd: state.diagram.outputs.size < 7,
+        canRemove: state.diagram.outputs.size > 1,
+      }),
     ]),
     div('.app-body', [
-      renderLoopList(state),
+      renderLoopList(state, state.currentEditMode === 'loops'),
       renderTableContainer(layout, state),
     ]),
   ]);
 
-export default (state$, {helpBox$}) =>
+export default (state$, {helpBox$, settings$, open$, save$}) =>
   O.just(div([
     helpBox$,
+    settings$,
+    open$,
+    save$,
     state$.map(render),
   ]))
 ;

@@ -179,6 +179,7 @@ space(u)
 .input-spinner.state-readonly
   .input-spinner-buttons
     opacity 0
+    pointer-events none
     transition-delay 0s
 
   .input-spinner-value
@@ -273,12 +274,15 @@ space(u)
 
 .action-button-open
   action-icon('assets/icons/open.svg')
+.action-button-export
+  action-icon('assets/icons/export.svg')
 .action-button-settings
   action-icon('assets/icons/settings.svg')
 .action-button-help
   action-icon('assets/icons/help.svg')
 
 .action-button-open
+.action-button-export
 .action-button-settings
 .action-button-help
   outline none
@@ -430,6 +434,13 @@ space(u)
   padding space(0.5)
   background-color color-background-inverse
 
+  > .loop-list
+    transition opacity 0.1s linear
+
+  &.state-faded
+    > .loop-list
+      opacity 0.7
+
 .loop-mode-switch
   vertical-align middle
   display inline-block
@@ -475,7 +486,10 @@ space(u)
   padding 0 space(0.5)
 
 .loop-list-item
-  padding 0 space(0.1)
+  padding space(0.1)
+.loop-list-item-empty
+  color darken(color-foreground-secondary, 40%)
+  padding 0 space(0.5)
 
 .loop-icon
   width button-size-small
@@ -506,6 +520,10 @@ space(u)
   &:active
     background-color rgba(0,0,0,0.2)
 
+  &:disabled
+    cursor default
+    opacity 0
+
 .diagram-scroller
   max-width 100%
   overflow auto
@@ -517,3 +535,8 @@ space(u)
   min-width min-content
   min-height min-content
   padding space(2) 0
+
+.export-text
+  display block
+  width 100%
+  min-height 15em

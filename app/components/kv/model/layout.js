@@ -1,6 +1,5 @@
 import BitSet from 'bitset.js';
 import I from 'immutable';
-import {zip} from '../../../lib/utils';
 
 const layout = I.Record({
   treeHeight: 0,

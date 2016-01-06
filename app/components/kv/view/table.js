@@ -110,7 +110,7 @@ const renderTableRowEnd = (rowIndex, {right}) =>
 ;
 
 const renderTableCell = ({
-  diagram, output, mode, cell,
+  diagram, output, kvMode, editMode, cell,
   currentCube, className,
 }) => {
   const value = diagram.outputs
@@ -119,7 +119,7 @@ const renderTableCell = ({
     .get(cellToInt(cell));
 
   const active = insideCube(cell, currentCube);
-  const error = active && !isValidValueForMode(value, mode);
+  const error = active && !isValidValueForMode(value, kvMode);
 
   return td('.kv-table-cell-body.kv-cell-atom' + className,
     {
@@ -132,6 +132,7 @@ const renderTableCell = ({
         'data-kv-index': cell.toString(10),
         'data-kv-value': value,
         'data-kv-output': output,
+        'data-edit': editMode,
       },
     },
     renderValue(value)
@@ -162,7 +163,8 @@ const tableLables = ({rows, cols, offset, inputs}) => ({
 export const renderTable = ({
   layout,
   diagram,
-  mode,
+  kvMode,
+  editMode,
   output,
   currentCube,
   currentLoop,
@@ -183,16 +185,18 @@ export const renderTable = ({
   });
 
   const styleClass = (compact ? '.style-compact' : '');
+  const modeClass = '.edit-' + editMode;
 
-  return div('.kv-container' + styleClass, [
+  return div('.kv-container' + styleClass + modeClass, [
+    (editMode === 'loops' || !compact) &&
     layout.treeHeight === 0 &&
     renderLoops(
       diagram.loops.filter(
         (loop) => loopBelongsToOutput(loop, output)
-      ).toList().push(currentLoop), mode, rows, cols) || null,
+      ).toList().push(currentLoop), kvMode, rows, cols) || null,
 
     table('.kv-table' + styleClass, {
-      className: 'kv-mode-' + mode.name,
+      className: 'kv-mode-' + kvMode.name,
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
       compact ? null : renderTableHead(colCount, labels),
@@ -204,12 +208,12 @@ export const renderTable = ({
               return td('.kv-table-cell-body.kv-cell-container' + styleClass, [
                 renderTable({
                   layout: cell.children,
-                  diagram, mode, output, currentCube, currentLoop, compact,
+                  diagram, kvMode, editMode, output, currentCube, currentLoop, compact,
                   labelOffset}),
               ]);
             } else {
               return renderTableCell({
-                diagram, output, mode,
+                diagram, output, kvMode, editMode,
                 cell: cell.scope,
                 currentCube,
                 className: styleClass,

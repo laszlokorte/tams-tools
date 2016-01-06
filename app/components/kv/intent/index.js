@@ -4,6 +4,9 @@ import BitSet from 'bitset.js';
 import {parseDataAttr} from '../../../lib/utils';
 
 import {helpAction} from './help';
+import {settingsAction} from './settings';
+import {openAction} from './open';
+import {saveAction} from './save';
 
 const touchTarget = (evt) =>
   document.elementFromPoint(
@@ -20,11 +23,11 @@ export default (DOM, keydown) => {
   const mouseUp$ = O.fromEvent(document, 'mouseup');
 
   const mouseEnterEvent$ = DOM
-    .select('.kv-cell-atom[data-kv-cell]')
+    .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
     .events('mouseenter', true);
 
   const touchMoveEvent$ = DOM
-    .select('.kv-cell-atom[data-kv-cell]')
+    .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
     .events('touchmove');
 
   const pointerEnter$ = O.merge(
@@ -45,12 +48,11 @@ export default (DOM, keydown) => {
 
   const pointerDownEvent$ = O.merge(
       DOM
-        .select('.kv-cell-atom[data-kv-cell]')
+        .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
         .events('touchstart'),
       DOM
-        .select('.kv-cell-atom[data-kv-cell]')
+        .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
         .events('mousedown')
-        .filter((evt) => !!evt.shiftKey)
     );
 
   const pointerDown$ = pointerDownEvent$
@@ -102,6 +104,9 @@ export default (DOM, keydown) => {
     );
 
   const help = helpAction({DOM});
+  const open = openAction({DOM});
+  const exprt = saveAction({DOM});
+  const settings = settingsAction({DOM});
 
   const removeLoopButton = DOM
     .select('[data-loop-index]');
@@ -160,9 +165,8 @@ export default (DOM, keydown) => {
         .share(),
     cycleValue$:
       DOM
-        .select('.kv-cell-atom[data-kv-cell]')
+        .select('.kv-cell-atom[data-edit="function"][data-kv-cell]')
         .events('click')
-        .filter((evt) => !evt.shiftKey)
         .map((evt) => ({
           reverse: evt.altKey,
           output: parseInt(evt.currentTarget.dataset.kvOutput, 10),
@@ -206,9 +210,14 @@ export default (DOM, keydown) => {
         .map((evt) => evt.currentTarget.dataset.editMode)
         .share(),
     help$: help.action$,
+    settings$: settings.action$,
+    open$: open.action$,
+    save$: exprt.action$,
 
     preventDefault: O.merge(
       help.preventDefault,
+      settings.preventDefault,
+      open.preventDefault,
       mouseEnterEvent$,
       touchMoveEvent$,
       pointerDownEvent$,
