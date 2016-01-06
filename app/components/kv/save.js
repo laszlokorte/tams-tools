@@ -1,4 +1,4 @@
-import {div, h1, textarea} from '@cycle/dom';
+import {div, h1, h3, textarea} from '@cycle/dom';
 
 const formatPLA = (pla) => {
   return [
@@ -22,6 +22,7 @@ const formatPLA = (pla) => {
 
 export default (pla$) => div([
   h1('.modal-box-title', 'Export...'),
+  h3('PLA'),
   div(pla$
     .map(formatPLA)
     .startWith('')
