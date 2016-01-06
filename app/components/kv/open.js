@@ -33,7 +33,7 @@ export default () => div([
   ]),
   h3('From File'),
   div([
-    input({type: 'file'}),
+    input('.block-button', {type: 'file'}),
   ]),
 ])
 ;

@@ -566,10 +566,18 @@ space(u)
   display block
   text-align left
   width 100%
-  border none
+  border 3px solid transparent
   outline none
   padding (button-size / 4)
   line-height (button-size / 2)
   background-color color-background-primary-weak
   color color-foreground-primary
   cursor pointer
+
+  &:active
+    background-color darken(color-background-primary-weak, 3%)
+  &:lighten
+    background-color darken(color-background-primary-weak, 1%)
+  &:focus
+    border-color color-focus
+
