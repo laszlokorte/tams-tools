@@ -67,7 +67,7 @@ export default (responses) => {
   );
 
   const plaData$ = state$.delay(0).debounce(10).map(({state}) =>
-    toPLA(state.diagram, state.currentMode, state.currentCube)
+    toPLA(state.diagram, state.currentKvMode, state.currentCube)
   );
 
   plaData$.subscribe(plaSubject);
