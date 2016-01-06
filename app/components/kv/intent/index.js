@@ -134,7 +134,8 @@ export default (DOM, keydown) => {
     .select('[data-kv-output-edit-label]');
 
   const selectOutputEvent$ = outputItem
-    .events('click');
+    .events('click')
+    .filter((e) => e.target.tagName !== 'INPUT');
 
   const editModeButton = DOM
     .select('[data-edit-mode]');
@@ -161,7 +162,8 @@ export default (DOM, keydown) => {
     .events('click');
 
   const startRenameEvent$ = outputLabel
-    .events('click');
+    .events('click')
+    .filter((evt) => evt.target.tagName !== 'INPUT');
 
   const cancelRenameEvent$ = O.merge(
     outputEditLabel
