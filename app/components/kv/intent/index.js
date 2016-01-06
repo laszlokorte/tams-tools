@@ -105,7 +105,7 @@ export default (DOM, keydown) => {
 
   const help = helpAction({DOM});
   const open = openAction({DOM});
-  const exprt = saveAction({DOM});
+  const save = saveAction({DOM});
   const settings = settingsAction({DOM});
 
   const removeLoopButton = DOM
@@ -238,7 +238,7 @@ export default (DOM, keydown) => {
     help$: help.action$,
     settings$: settings.action$,
     open$: open.action$,
-    save$: exprt.action$,
+    save$: save.action$,
 
     startRename$:
       startRenameEvent$
@@ -269,6 +269,7 @@ export default (DOM, keydown) => {
       help.preventDefault,
       settings.preventDefault,
       open.preventDefault,
+      save.preventDefault,
       mouseEnterEvent$,
       touchMoveEvent$,
       pointerDownEvent$,
