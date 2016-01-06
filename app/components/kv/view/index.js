@@ -1,7 +1,9 @@
 import {Observable as O} from 'rx';
+import FocusHook from 'virtual-dom/virtual-hyperscript/hooks/focus-hook';
 
 import {
   div, button ,span, ul, li,
+  input,
 } from '@cycle/dom';
 
 import {
@@ -92,6 +94,7 @@ const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
       state.diagram.outputs.map((output, i) =>
       li('.output-list-item' +
       (i === state.currentOutput ? '.state-current' : ''), {
+        key: i,
         tabIndex: 0,
         attributes: {
           'data-kv-output': i,
@@ -109,7 +112,25 @@ const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
             compact: true,
           }),
         ]),
-        span('.output-label', output.name),
+        span('.output-label' + (
+          canEdit ? '.state-editable' : ''
+        ),{
+          attributes: {
+            'data-kv-output-label': i,
+          },
+        }, state.renameOutput === i ? [
+          input('.output-label-edit' + (
+            state.renameOutputValid ? '' : '.state-invalid'
+          ), {
+            value: state.renameOutputValue,
+            focus: new FocusHook(),
+            attributes: {
+              maxlength: 7,
+              size: 7,
+              'data-kv-output-edit-label': i,
+            },
+          }),
+        ] : output.name),
         button('.output-button-delete', {
           attributes: {
             'data-kv-remove-output': i,

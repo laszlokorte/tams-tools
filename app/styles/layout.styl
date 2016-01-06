@@ -418,7 +418,7 @@ space(u)
   clear both
 
   &.state-editable
-    background-color color-background-primary
+    cursor text
 
 .output-label-edit
   text-align center
@@ -426,8 +426,13 @@ space(u)
   border 1px solid grey
   width 98%
   margin 0 1%
+  ackground-color color-background-primary
   &:focus
     border-color color-focus
+
+  &.state-invalid
+    border-color color-danger
+    background-color tint(#f00, 90%)
 
 .loop-bar
   margin space(2)

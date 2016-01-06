@@ -109,6 +109,16 @@ export const intToCell = (
   BitSet(int)
 ;
 
+const OUTPUT_NAME_MAX_LENGTH = 8;
+const SPACE_REG_EXP = /\s+/i;
+export const isValidOutputName = (
+  /*string*/name
+  ) =>
+  name.length > 0 &&
+  name.length <= OUTPUT_NAME_MAX_LENGTH &&
+  name.match(SPACE_REG_EXP) === null
+;
+
 /// check if the the given value is allowed
 /// to be contained inside a cube for the given mode.
 export const isValidValueForMode = (

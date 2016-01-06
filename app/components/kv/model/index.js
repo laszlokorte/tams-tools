@@ -12,6 +12,9 @@ const kvState = I.Record({
   currentCube: diagram.kvCube(),
   currentLoop: diagram.kvLoop(),
   currentOutput: 0,
+  renameOutput: -1,
+  renameOutputValue: null,
+  renameOutputValid: false,
   diagram: diagram.newDiagram(),
 }, 'state');
 
@@ -284,6 +287,58 @@ const switchEditMode = (state, mode) =>
   })
 ;
 
+const startRename = (state, outputIndex) =>
+  kvState({
+    currentEditMode: state.currentEditMode,
+    currentKvMode: state.currentKvMode,
+    currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
+    renameOutput: outputIndex,
+    renameOutputValue: state.diagram.outputs.get(state.currentOutput).name,
+    renameOutputValid: true,
+    diagram: state.diagram,
+  })
+;
+
+const cancelRename = (state) =>
+  kvState({
+    currentEditMode: state.currentEditMode,
+    currentKvMode: state.currentKvMode,
+    currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
+    diagram: state.diagram,
+  })
+;
+
+const confirmOutputName = (state) =>
+  (state.renameOutput > -1) &&
+  state.renameOutputValid ?
+  kvState({
+    currentEditMode: state.currentEditMode,
+    currentKvMode: state.currentKvMode,
+    currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
+    diagram: diagram.renameOutput(
+      state.renameOutput,
+      state.renameOutputValue,
+      state.diagram
+    ),
+  }) : state
+;
+
+const tryOutputName = (state, outputIndex, name) =>
+  kvState({
+    currentEditMode: state.currentEditMode,
+    currentKvMode: state.currentKvMode,
+    currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
+    renameOutput: state.renameOutput,
+    renameOutputValue: name,
+    renameOutputValid: diagram.isValidOutputName(name),
+    diagram: state.diagram,
+  })
+;
+
 const modifiers = (actions) => {
   return O.merge(
     actions.addInput$.map(() => (state) => {
@@ -321,6 +376,18 @@ const modifiers = (actions) => {
     }),
     actions.switchEditMode$.map((mode) => (state) => {
       return switchEditMode(state, mode);
+    }),
+    actions.startRename$.map((outputIndex) => (state) => {
+      return startRename(state, outputIndex);
+    }),
+    actions.cancelRename$.map(() => (state) => {
+      return cancelRename(state);
+    }),
+    actions.confirmOutputName$.map(() => (state) => {
+      return confirmOutputName(state);
+    }),
+    actions.tryOutputName$.map(({outputIndex, name}) => (state) => {
+      return tryOutputName(state, outputIndex, name);
     })
   );
 };

@@ -127,6 +127,12 @@ export default (DOM, keydown) => {
   const outputItem = DOM
     .select('[data-kv-output]');
 
+  const outputLabel = DOM
+    .select('.state-editable[data-kv-output-label]');
+
+  const outputEditLabel = DOM
+    .select('[data-kv-output-edit-label]');
+
   const selectOutputEvent$ = outputItem
     .events('click');
 
@@ -153,6 +159,27 @@ export default (DOM, keydown) => {
 
   const decrementEvent$ = decrementButton
     .events('click');
+
+  const startRenameEvent$ = outputLabel
+    .events('click');
+
+  const cancelRenameEvent$ = O.merge(
+    outputEditLabel
+        .events('keydown')
+        .filter((e) => e.keyCode === 27),
+    outputEditLabel
+        .events('focusout')
+  );
+
+  startRenameEvent$
+    .subscribe((e) => e.stopPropagation());
+
+  const tryOutputNameEvent$ = outputEditLabel
+    .events('input');
+
+  const confirmOutputNameEvent$ = outputEditLabel
+    .events('keydown')
+    .filter((e) => e.keyCode === 13);
 
   return {
     addInput$:
@@ -214,6 +241,31 @@ export default (DOM, keydown) => {
     open$: open.action$,
     save$: exprt.action$,
 
+    startRename$:
+      startRenameEvent$
+        .map((evt) => parseInt(evt.currentTarget.dataset.kvOutputLabel, 10))
+        .share(),
+
+    cancelRename$:
+      cancelRenameEvent$
+        .map(() => true)
+        .share(),
+
+    tryOutputName$:
+      tryOutputNameEvent$
+        .map((evt) => ({
+          outputIndex: parseInt(
+            evt.currentTarget.dataset.kvOutputEditLabel,
+            10),
+          name: evt.currentTarget.value,
+        }))
+        .share(),
+
+    confirmOutputName$:
+      confirmOutputNameEvent$
+        .map((evt) => true)
+        .share(),
+
     preventDefault: O.merge(
       help.preventDefault,
       settings.preventDefault,
@@ -227,7 +279,8 @@ export default (DOM, keydown) => {
       addOutputButton.events('mousedown'),
       removeOutputEvent$,
       selectOutputEvent$,
-      outputItem.events('mousedown'),
+      outputItem.events('mousedown')
+        .filter((e) => e.target.tagName !== 'INPUT'),
       switchKvModeEvent$,
       kvModeButton.events('mousedown'),
       switchEditModeEvent$,
@@ -235,7 +288,11 @@ export default (DOM, keydown) => {
       incrementEvent$,
       decrementEvent$,
       incrementButton.events('mousedown'),
-      decrementButton.events('mousedown')
+      decrementButton.events('mousedown'),
+      startRenameEvent$,
+      cancelRenameEvent$,
+      tryOutputNameEvent$,
+      confirmOutputNameEvent$
     ).share(),
   };
 };
