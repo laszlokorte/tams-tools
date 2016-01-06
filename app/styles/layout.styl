@@ -20,6 +20,8 @@ color-background-inverse  = #363636
 color-background-inverse-weak  = #2E2E2E
 color-background-inverse-strong  = #222222
 
+color-background-highlight = #00AB6C
+
 color-foreground-primary  = #000000
 color-foreground-primary-weak  = #000000
 color-foreground-primary-strong  = #000000
@@ -31,6 +33,8 @@ color-foreground-secondary-strong  = #E4E4E4
 color-foreground-inverse  = #F0F0F0
 color-foreground-inverse-weak  = #A5A5A5
 color-foreground-inverse-strong  = #FFFFFF
+
+color-foreground-highlight = #fff
 
 color-danger = #5D0000
 color-focus = #1AC0CF
@@ -163,9 +167,16 @@ space(u)
 
 .input-spinner
   display inline-block
+  position relative
   padding space(0.5) space(0.5) space(0.5) space(1)
   margin-right space(0.5)
   background-color color-background-primary-weak
+  color color-foreground-primary
+  border 3px solid color-background-highlight
+  transition border-color 0.3s 0.3s ease-out
+  &.state-readonly
+    border-color transparent
+    transition-delay 0
 
 .input-spinner-buttons
   transition opacity 0.3s ease-out
@@ -300,7 +311,8 @@ space(u)
   outline none
   border 2px solid transparent
   vertical-align top
-  background-color color-background-secondary-weak
+  background-color color-background-highlight
+  color color-foreground-highlight
   width space(3)
   height space(3)
   text-indent -500px
@@ -308,7 +320,7 @@ space(u)
   margin space(1.5) space(1)
 
   background-image svgurl('assets/icons/plus.svg') svg(
-    path fill shade(color-background-secondary, 10%)
+    path fill shade(color-foreground-highlight, 10%)
   )
   background-size 50% 50%
   background-position 50% 50%
@@ -316,17 +328,12 @@ space(u)
   transition transform 0.3s ease-out, opacity 0.3s ease-out
 
   &:hover
-    background-image svgurl('assets/icons/plus.svg') svg(
-      path fill shade(color-background-secondary, 20%)
-    )
+    background-color tint(color-background-highlight, 10%)
   &:focus
     border-color color-focus
 
   &:active
-    background-color darken(color-background-secondary-weak, 2%)
-    background-image svgurl('assets/icons/plus.svg') svg(
-      path fill shade(color-background-secondary-weak, 30%)
-    )
+    background-color tint(color-background-highlight, 20%)
 
   &:disabled
     transform scale(0)

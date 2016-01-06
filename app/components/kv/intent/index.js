@@ -262,7 +262,7 @@ export default (DOM, keydown) => {
 
     confirmOutputName$:
       confirmOutputNameEvent$
-        .map((evt) => true)
+        .map(() => true)
         .share(),
 
     preventDefault: O.merge(
