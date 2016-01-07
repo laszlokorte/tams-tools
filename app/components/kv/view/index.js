@@ -77,7 +77,7 @@ const renderLoopList = (state, editable) =>
       state.diagram.loops
       .filter((loop) => loop.mode === state.currentKvMode)
       .isEmpty() ?
-      [li('.loop-list-item-empty', 'No loops have created yet')] :
+      [li('.loop-list-item-empty', 'No loops have been created yet')] :
       state.diagram.loops
       .map((loop, index) => ({loop, index}))
       .filter(({loop}) => loop.mode === state.currentKvMode)
