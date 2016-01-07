@@ -2,7 +2,7 @@ import {div, h1, h3, ul, li, label, input} from '@cycle/dom';
 
 export default () => div([
   h1('.modal-box-title', 'Settings'),
-  h3('Anzeige'),
+  h3('Cell view'),
   ul('.block-list', [
     li([label('.block-button', [
       input({
@@ -11,7 +11,7 @@ export default () => div([
         value: 'function',
         checked: true,
       }),
-      'Funktionswert Anzeigen',
+      'Show function value',
     ])]),
     li([label('.block-button', [
       input({
@@ -19,7 +19,7 @@ export default () => div([
         name: 'view',
         value: 'decimal',
       }),
-      'Dezimalindex Anzeigen',
+      'Show decimal index',
     ])]),
     li([label('.block-button', [
       input({
@@ -27,7 +27,7 @@ export default () => div([
         name: 'view',
         value: 'binary',
       }),
-      'Binärindex anzeigen',
+      'Show binary index',
     ])]),
   ]),
 ])
