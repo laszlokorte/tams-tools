@@ -339,6 +339,20 @@ const tryOutputName = (state, outputIndex, name) =>
   })
 ;
 
+const openDiagram = (state, json) => {
+  const openedDiagram = diagram.fromJSON(json);
+  if (openedDiagram) {
+    return kvState({
+      currentEditMode: state.currentEditMode,
+      currentKvMode: state.currentKvMode,
+      currentOutput: 0,
+      diagram: openedDiagram,
+    });
+  } else {
+    return state;
+  }
+};
+
 const modifiers = (actions) => {
   return O.merge(
     actions.addInput$.map(() => (state) => {
@@ -388,6 +402,9 @@ const modifiers = (actions) => {
     }),
     actions.tryOutputName$.map(({outputIndex, name}) => (state) => {
       return tryOutputName(state, outputIndex, name);
+    }),
+    actions.openDiagram$.map((data) => (state) => {
+      return openDiagram(state, data);
     })
   );
 };

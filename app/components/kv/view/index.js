@@ -174,25 +174,25 @@ const render = ({state, layout}) =>
         div('.action-list', [
           div('.action-list-item', [
             button('.action-button-open', {
-              attributes: {'data-action': 'open'},
+              attributes: {'data-panel': 'open'},
               title: 'Open Diagram...',
             }, 'Open...'),
           ]),
           div('.action-list-item', [
             button('.action-button-export', {
-              attributes: {'data-action': 'save'},
+              attributes: {'data-panel': 'save'},
               title: 'Export Diagram...',
             }, 'Export...'),
           ]),
           div('.action-list-item', [
             button('.action-button-settings', {
-              attributes: {'data-action': 'settings'},
+              attributes: {'data-panel': 'settings'},
               title: 'Settings...',
             }, 'Settings'),
           ]),
           div('.action-list-item', [
             button('.action-button-help', {
-              attributes: {'data-action': 'help'},
+              attributes: {'data-panel': 'help'},
               title: 'Help...',
             }, 'Help'),
           ]),
@@ -226,12 +226,9 @@ const render = ({state, layout}) =>
     ]),
   ]);
 
-export default (state$, {helpBox$, settings$, open$, save$}) =>
+export default (state$, {panel$s}) =>
   O.just(div([
-    helpBox$,
-    settings$,
-    open$,
-    save$,
+    panel$s,
     state$.map(render),
   ]))
 ;

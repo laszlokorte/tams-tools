@@ -509,14 +509,14 @@ export const fromJSON = (
   /*object*/json
   ) =>
   kvDiagram({
-    inputs: I.fromJS(json.inputs, (i, input) => kvInput({
+    inputs: I.List(json.inputs).map((input) => kvInput({
       name: input,
-    })).toList(),
-    outputs: I.fromJS(json.outputs, (i, output) => kvOutput({
+    })),
+    outputs: I.List(json.outputs).map((output) => kvOutput({
       name: output.name,
       values: I.List(output.values),
-    })).toList(),
-    loops: I.fromJS(json.loops, (i, loop) => kvLoop({
+    })),
+    loops: I.List(json.loops).map((loop) => kvLoop({
       color: loop.color,
       cube: kvCube({
         include: intToCell(loop.include),
@@ -524,7 +524,7 @@ export const fromJSON = (
       }),
       outputs: I.Set(loop.outputs),
       mode: modeFromName(loop.mode),
-    })).toList(),
+    })),
   })
 ;
 

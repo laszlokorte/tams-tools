@@ -1,16 +1,15 @@
-import {Observable as O, Subject} from 'rx';
+import {Observable as O, ReplaySubject, Subject} from 'rx';
 import isolate from '@cycle/isolate';
-
-import ModalBox from '../modal';
 
 import model from './model';
 import view from './view';
 import intent from './intent';
-import helpPanel from './help';
-import settingsPanel from './settings';
-import openPanel from './open';
-import savePanel from './save';
-import {toPLA} from './model/diagram';
+import {toPLA, toJSON} from './model/diagram';
+
+import HelpPanel from './panels/help';
+import SettingsPanel from './panels/settings';
+import OpenPanel from './panels/open';
+import SavePanel from './panels/save';
 
 export default (responses) => {
   const {
@@ -18,51 +17,50 @@ export default (responses) => {
     keydown,
   } = responses;
 
-  const actions = intent(DOM, keydown);
-  const helpBox = isolate(ModalBox, 'helpBox')({
+  const plaSubject = new ReplaySubject();
+  const jsonSubject = new ReplaySubject();
+  const panelSubject = new Subject();
+
+  const helpPanel = isolate(HelpPanel, 'helpPanel')({
     DOM,
-    props$: actions.help$
-      .startWith(true)
-      .map((visible) => ({visible})),
-    content$: O.just(helpPanel()),
     keydown,
+    visible$: panelSubject
+      .map((p) => p === 'help'),
   });
 
-  const settingsDialogue = isolate(ModalBox, 'settingsDialogue')({
+  const settingsPanel = isolate(SettingsPanel, 'settingsPanel')({
     DOM,
-    props$: actions.settings$
-      .startWith(false)
-      .map((visible) => ({visible})),
-    content$: O.just(settingsPanel()),
     keydown,
+    visible$: panelSubject
+      .map((p) => p === 'settings'),
   });
 
-  const openDialogue = isolate(ModalBox, 'openDialogue')({
+  const openPanel = isolate(OpenPanel, 'openPanel')({
     DOM,
-    props$: actions.open$
-      .startWith(false)
-      .map((visible) => ({visible})),
-    content$: O.just(openPanel()),
     keydown,
+    visible$: panelSubject
+      .map((p) => p === 'open'),
   });
 
-  const plaSubject = new Subject();
-  const saveDialogue = isolate(ModalBox, 'saveDialogue')({
+  const savePanel = isolate(SavePanel, 'savePanel')({
     DOM,
-    props$: actions.save$
-      .startWith(false)
-      .map((visible) => ({visible})),
-    content$: O.just(savePanel(plaSubject.shareReplay(1))),
     keydown,
+    pla$: plaSubject,
+    json$: jsonSubject,
+    visible$: panelSubject
+      .map((p) => p === 'save'),
   });
 
+  const actions = intent(DOM, keydown, openPanel.data$);
   const state$ = model(O.empty(), actions).shareReplay(1);
   const vtree$ = view(
     state$, {
-      helpBox$: helpBox.DOM,
-      settings$: settingsDialogue.DOM,
-      open$: openDialogue.DOM,
-      save$: saveDialogue.DOM,
+      panel$s: [
+        helpPanel.DOM,
+        settingsPanel.DOM,
+        openPanel.DOM,
+        savePanel.DOM,
+      ],
     }
   );
 
@@ -70,7 +68,11 @@ export default (responses) => {
     toPLA(state.diagram, state.currentKvMode, state.currentCube)
   );
 
+  actions.panel$.subscribe(panelSubject);
   plaData$.subscribe(plaSubject);
+  state$.map(({state}) =>
+    JSON.stringify(toJSON(state.diagram))
+  ).subscribe(jsonSubject);
 
   return {
     DOM: vtree$,

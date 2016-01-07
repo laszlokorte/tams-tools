@@ -3,10 +3,7 @@ import BitSet from 'bitset.js';
 
 import {parseDataAttr} from '../../../lib/utils';
 
-import {helpAction} from './help';
-import {settingsAction} from './settings';
-import {openAction} from './open';
-import {saveAction} from './save';
+import panelActions from './panels';
 
 const touchTarget = (evt) =>
   document.elementFromPoint(
@@ -14,7 +11,7 @@ const touchTarget = (evt) =>
     evt.changedTouches[0].clientY
   )
 ;
-export default (DOM, keydown) => {
+export default (DOM, keydown, openData$) => {
   const cancel$ = keydown
     .filter((evt) => evt.keyCode === 27)
   ;
@@ -103,10 +100,7 @@ export default (DOM, keydown) => {
       ).switch()
     );
 
-  const help = helpAction({DOM});
-  const open = openAction({DOM});
-  const save = saveAction({DOM});
-  const settings = settingsAction({DOM});
+  const panels = panelActions({DOM});
 
   const removeLoopButton = DOM
     .select('[data-loop-index]');
@@ -235,10 +229,7 @@ export default (DOM, keydown) => {
       switchEditModeEvent$
         .map((evt) => evt.currentTarget.dataset.editMode)
         .share(),
-    help$: help.action$,
-    settings$: settings.action$,
-    open$: open.action$,
-    save$: save.action$,
+    panel$: panels.open$,
 
     startRename$:
       startRenameEvent$
@@ -265,11 +256,10 @@ export default (DOM, keydown) => {
         .map(() => true)
         .share(),
 
+    openDiagram$: openData$,
+
     preventDefault: O.merge(
-      help.preventDefault,
-      settings.preventDefault,
-      open.preventDefault,
-      save.preventDefault,
+      panels.preventDefault,
       mouseEnterEvent$,
       touchMoveEvent$,
       pointerDownEvent$,

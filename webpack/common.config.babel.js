@@ -41,7 +41,6 @@ module.exports = {
   target: "web",
   entry: {
     app: "./app/index.js",
-    experiment: "./app/experiment.js",
     debug: "./app/debug.js",
     layout: "./app/layout.js",
     vendor: require("../app/vendor.js"),
@@ -59,10 +58,10 @@ module.exports = {
       {test: /\.js$/, loader: "eslint-loader", exclude: vendorModules},
     ],
     loaders: [
-      // {
-      //   test: /\.(json)$/,
-      //   loader: "file?name=[path][name].[ext]&context=./app/static",
-      // },
+      {
+        test: /\.(json)$/,
+        loader: "json",
+      },
       {
         test: /\.(png|jpg|svg|ttf|eot|woff|woff2)$/,
         loader: 'url?name=[path][name].[ext]',
@@ -92,14 +91,6 @@ module.exports = {
       minify: htmlMinifyOptions,
       chunks: ['app', 'vendor'],
       template: './app/index.html',
-      favicon: './app/favicon.ico',
-    }),
-    new HtmlWebpackPlugin({
-      title: 'Experiment',
-      minify: htmlMinifyOptions,
-      chunks: ['experiment', 'vendor'],
-      template: './app/index.html',
-      filename: 'experiment.html',
       favicon: './app/favicon.ico',
     }),
     new HtmlWebpackPlugin({
