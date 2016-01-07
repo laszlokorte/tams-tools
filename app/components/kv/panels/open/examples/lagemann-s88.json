@@ -1,0 +1,36 @@
+{
+    "inputs": [
+        "i0",
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5"
+    ],
+    "loops": [
+    ],
+    "outputs": [
+        {
+            "name": "Y1",
+            "values": [
+              false, true, false, true,
+              false, false, null, true,
+              true, true, false, null,
+              null, false, false, false,
+              null, true, false, false,
+              null, null, null, null,
+              null, false, null, false,
+              null, false, false, false,
+              false, false, null, false,
+              false, false, null, null,
+              null, false, false, false,
+              null, false, false, null,
+              null, null, false, false,
+              null, null, null, null,
+              null, false, false, null,
+              null, null, false, false
+            ]
+        }
+    ]
+}
+

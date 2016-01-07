@@ -46,18 +46,19 @@
     "webpack-merge": "^0.7.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.3.14",
     "@cycle/core": "^6.0.0",
     "@cycle/dom": "^9.0.1",
     "@cycle/isolate": "^1.2.0",
     "@cycle/storage": "^2.0.3",
     "@cyclic/cycle-hammer-driver": "^0.1.1",
+    "babel-polyfill": "^6.3.14",
     "bitset.js": "^3.1.0",
     "immutable": "^3.7.6",
     "jeet": "^6.1.2",
     "nib": "^1.1.0",
     "rupture": "^0.6.1",
     "rx": "^4.0.0",
+    "select-all-hook": "^1.1.0",
     "virtual-dom": "^2.1.1"
   },
   "babel": {

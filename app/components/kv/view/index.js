@@ -199,19 +199,19 @@ const render = ({state, layout}) =>
         ]),
       ]),
       div('.edit-panel', [
-        renderInputSpinner(state),
         div('.edit-mode-panel', [
           button('.edit-mode-button-function' +
             (state.currentEditMode === 'function' ? '.state-hidden' : '')
             , {
               attributes: {'data-edit-mode': 'function'},
-            },'« Edit function'),
+            },'Edit function'),
           button('.edit-mode-button-loops' +
             (state.currentEditMode === 'loops' ? '.state-hidden' : '')
             , {
               attributes: {'data-edit-mode': 'loops'},
-            },'Edit loops »'),
+            },'Edit loops'),
         ]),
+        renderInputSpinner(state),
       ]),
 ,
       renderOutputThumbnails(layout, state, {

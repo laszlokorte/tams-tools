@@ -1,1 +1,65 @@
-{"inputs":["A","B"],"outputs":[{"name":"O1x","values":[true,true,true,true]},{"name":"O2x","values":[true,true,false,false]}],"loops":[{"color":"#ffc107","include":1,"exclude":0,"outputs":[0],"mode":"dnf"},{"color":"#3f51b5","include":0,"exclude":1,"outputs":[0],"mode":"dnf"},{"color":"#8bc34a","include":0,"exclude":2,"outputs":[0,1],"mode":"dnf"},{"color":"#795548","include":2,"exclude":0,"outputs":[1],"mode":"knf"}]}
+{
+    "inputs": [
+        "A",
+        "B"
+    ],
+    "loops": [
+        {
+            "color": "#ffc107",
+            "exclude": 0,
+            "include": 1,
+            "mode": "dnf",
+            "outputs": [
+                0
+            ]
+        },
+        {
+            "color": "#3f51b5",
+            "exclude": 1,
+            "include": 0,
+            "mode": "dnf",
+            "outputs": [
+                0
+            ]
+        },
+        {
+            "color": "#8bc34a",
+            "exclude": 2,
+            "include": 0,
+            "mode": "dnf",
+            "outputs": [
+                0,
+                1
+            ]
+        },
+        {
+            "color": "#795548",
+            "exclude": 0,
+            "include": 2,
+            "mode": "knf",
+            "outputs": [
+                1
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "name": "O1x",
+            "values": [
+                true,
+                true,
+                true,
+                true
+            ]
+        },
+        {
+            "name": "O2x",
+            "values": [
+                true,
+                true,
+                false,
+                false
+            ]
+        }
+    ]
+}

@@ -50,14 +50,14 @@ const layoutInputs = (inputs, height) => {
   };
 };
 
-const layoutOutputs = (pla, height, loopCount) => {
+const layoutOutputs = (pla) => {
   const outputWireCounts = pla.outputs.map((o, index) =>
     pla.loops
       .map((loop, idx) => ({idx, loop}))
       .filter(({loop}) => loop.out[index] === 1)
       .length
   );
-  const maxOutputWireCount = Math.max.apply(Math, [0].concat(outputWireCounts));
+  const maxOutputWireCount = Math.max(0, ...outputWireCounts);
   const outputGateWidth = (2 + Math.max(7, maxOutputWireCount));
   const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const outputWireCount = pla.outputs.map(

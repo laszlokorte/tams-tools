@@ -77,6 +77,9 @@ export default (responses) => {
   return {
     DOM: vtree$,
     plaData$,
-    preventDefault: actions.preventDefault,
+    preventDefault: O.merge(
+      actions.preventDefault,
+      openPanel.preventDefault
+    ),
   };
 };

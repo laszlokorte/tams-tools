@@ -167,6 +167,7 @@ space(u)
 
 .input-spinner
   display inline-block
+  clear both
   position relative
   padding space(0.5) space(0.5) space(0.5) space(1)
   margin-right space(0.5)
@@ -255,23 +256,29 @@ space(u)
 
 
 .edit-mode-panel
-  display inline-block
+  display block
+  padding-bottom space(1)
 
 .edit-mode-button-loops
 .edit-mode-button-function
+  opacity 0.7
+  width 150px
   &.state-hidden
-    display none
+    opacity 1
+    font-weight 600
 
 .edit-mode-button-loops
-  button('assets/icons/confirm.svg',
+  button(false,
     color-background-inverse,
     color-foreground-inverse
     )
 .edit-mode-button-function
-  button('assets/icons/edit.svg',
+  button(false,
     color-background-inverse,
     color-foreground-inverse
     )
+  &.state-hidden
+    color tint(color-background-highlight, 40%)
 
 .action-panel
   margin space(1) space(1.5) 0 0
@@ -307,9 +314,8 @@ space(u)
   clear both
 
 .output-button-add
-  border none
   outline none
-  border 2px solid transparent
+  border 5px solid color-background-primary
   vertical-align top
   background-color color-background-highlight
   color color-foreground-highlight
@@ -426,6 +432,8 @@ space(u)
 
   &.state-editable
     cursor text
+    color darken(color-background-highlight, 20%)
+    text-decoration underline
 
 .output-label-edit
   text-align center
@@ -515,16 +523,14 @@ space(u)
   vertical-align middle
   background-color transparent
   border 3px solid transparent
-  &:hover
-  &:focus
-    opacity 1
-    background-image svgurl('assets/icons/delete.svg') svg(
-      path fill black,
-      path opacity 0.5
-    )
-    background-size 50%
-    background-position 50% 50%
-    background-repeat no-repeat
+
+  background-image svgurl('assets/icons/delete.svg') svg(
+    path fill black,
+    path opacity 0.5
+  )
+  background-size 50%
+  background-position 50% 50%
+  background-repeat no-repeat
 
   &:focus
     border-color color-focus
@@ -565,6 +571,12 @@ space(u)
   margin 0
   padding 0
 
+  &.style-small
+    max-height 200px
+    overflow-y auto
+    border 2px solid color-background-inverse-weak
+    padding space(0.3)
+
   > li
     display block
     padding space(0.2) 0
@@ -580,11 +592,12 @@ space(u)
   background-color color-background-primary-weak
   color color-foreground-primary
   cursor pointer
+  transition background-color 0.1s 0s ease-out
 
+  &:hover
+    background-color lighten(color-background-primary-weak, 15%)
   &:active
-    background-color darken(color-background-primary-weak, 3%)
-  &:lighten
-    background-color darken(color-background-primary-weak, 1%)
+    background-color darken(color-background-primary-weak, 5%)
   &:focus
     border-color color-focus
 
