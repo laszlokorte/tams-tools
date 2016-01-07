@@ -7,6 +7,7 @@
 // 0000 10
 // 0001 10
 // 0010 11
+// --11 01
 // .e
 // `;
 
@@ -41,7 +42,7 @@ const valueToString = (value) => {
   if (value === 1 || value === 0) {
     return value;
   } else {
-    return '*';
+    return '-';
   }
 };
 

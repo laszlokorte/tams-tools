@@ -77,7 +77,7 @@ const renderLoopList = (state, editable) =>
       state.diagram.loops
       .filter((loop) => loop.mode === state.currentKvMode)
       .isEmpty() ?
-      [li('.loop-list-item-empty', 'Keine Loops')] :
+      [li('.loop-list-item-empty', 'No loops have created yet')] :
       state.diagram.loops
       .map((loop, index) => ({loop, index}))
       .filter(({loop}) => loop.mode === state.currentKvMode)
@@ -205,12 +205,12 @@ const render = ({state, layout}) =>
             (state.currentEditMode === 'function' ? '.state-hidden' : '')
             , {
               attributes: {'data-edit-mode': 'function'},
-            },'« Funktion bearbeiten'),
+            },'« Edit function'),
           button('.edit-mode-button-loops' +
             (state.currentEditMode === 'loops' ? '.state-hidden' : '')
             , {
               attributes: {'data-edit-mode': 'loops'},
-            },'Loops bearbeiten »'),
+            },'Edit loops »'),
         ]),
       ]),
 ,
