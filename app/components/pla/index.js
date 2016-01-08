@@ -7,6 +7,7 @@ import graphics from '../graphics';
 
 import model from './model';
 import view from './view';
+import costPanel from './view/cost-panel';
 import intent from './intent';
 
 export default (responses) => {
@@ -33,7 +34,10 @@ export default (responses) => {
   });
 
   return {
-    DOM: O.just(div(stage.DOM)),
+    DOM: O.just(div([
+      data$.map(costPanel),
+      stage.DOM,
+    ])),
     preventDefault: O.merge(
       actions.preventDefault,
       stage.preventDefault
