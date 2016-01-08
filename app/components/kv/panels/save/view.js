@@ -21,7 +21,7 @@ const render = ({pla$, json$, props: {visible}}) => div([
         href: URL.createObjectURL(new Blob([text], {type: 'text/json'})),
         attributes: {
           'data-download': 'json',
-          download: 'KV.json',
+          download: 'kv-diagram.json',
         },
       }, 'Save...'),
     ]))
