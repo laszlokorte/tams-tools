@@ -7,7 +7,7 @@ import {
 } from '../model/diagram';
 
 const renderSingleLoop = ({color, top, right, bottom, left, xEdge, yEdge}) => {
-  return div('.kv-loop', {
+  return div('.kv-loop-single', {
     style: {
       top: `${top}%`,
       right: `${right}%`,
@@ -111,13 +111,13 @@ export const renderLoops = (loops, kvMode, rows, cols) => {
   return div('.kv-loops-container' + padding,
     loops
     .filter((loop) => loop.mode === kvMode)
-    .map((loop) =>
+    .map((loop) => div('.kv-loop', [
       renderLoop({
         color: loop.color,
         rowCount, colCount,
         x: calcCubeRange(scopeMask.and(rowMask), cols, loop.cube),
         y: calcCubeRange(scopeMask.and(colMask), rows, loop.cube),
-      })
-    ).toArray()
+      }),
+    ])).toArray()
   );
 };
