@@ -79,6 +79,7 @@ const layoutOutputs = (pla, outputGateWidth) => {
       inputCount: outputWireCount[index],
       rotation: Rotation.NORTH,
       soderOutput: true,
+      mayOmit: true,
     })),
     wires: Array.prototype.concat.apply([],
       pla.outputs.map((_, index) =>
@@ -127,13 +128,15 @@ const layoutLoops = (pla, outputGateWidth) => {
   return {
     height: height,
     labels: [],
-    gates: loopInputs.map((loop, index) => ({
+    gates: loopInputs
+    .map((loop, index) => ({
       type: pla.mode === 'dnf' ? 'and' : 'or',
       center: {x: 0, y: gateWidth * index},
       inputCount: loop.length,
       rotation: Rotation.EAST,
       color: pla.loops[index].color,
       highlight: pla.loops[index].highlight,
+      mayOmit: true,
     })),
     wires: Array.prototype.concat.apply([],
       loopInputs
@@ -147,7 +150,8 @@ const layoutLoops = (pla, outputGateWidth) => {
             soderStart: true,
           })
       )).concat(
-        pla.loops.map((name, index) => [
+        loopInputs
+        .map((name, index) => [
           {
             type: 'horizontal',
             from: {

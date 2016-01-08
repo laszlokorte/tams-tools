@@ -10,13 +10,13 @@ const render = ({data}) =>
       type,
       center, rotation, inputCount,
       soderInput,soderOutput, color,
-      highlight,
+      highlight, mayOmit,
     }, key) =>
       gates[type]({
         key,
         center, rotation, inputCount,
         soderInput, soderOutput, color,
-        highlight,
+        highlight, mayOmit,
       })
     ),
     data.circuit.wires.map(({

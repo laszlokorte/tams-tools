@@ -110,6 +110,44 @@ const outputFeature = (soder) => [
 ]
 ;
 
+const passThroughWire = (color) => [
+  svg('line', {
+    attributes: {
+      x1: -30,
+      y1: 0,
+      x2: 0,
+      y2: 0,
+      'stroke-width': 2,
+      stroke: color || 'black',
+      class: 'gate-omitted',
+    },
+  }),
+]
+;
+
+const signalName = (signal) =>
+  signal === null ?
+  '?' : signal.toString()
+;
+
+const omitGate = (color, angle, inputCount, defaultSignal) => {
+  if (inputCount === 1) {
+    return passThroughWire(color);
+  } else if (inputCount === 0) {
+    return [
+      passThroughWire(color),
+      svg('text', {
+        x: 0,
+        y: 0,
+        'text-anchor': 'middle',
+        'alignment-baseline': 'middle',
+        class: 'signal-name',
+        transform: `translate(-50, 0) rotate(${-angle})`,
+      }, signalName(defaultSignal)),
+    ];
+  }
+};
+
 const negatorFeature = (color) =>
   svg('circle', {
     attributes: {
@@ -184,7 +222,11 @@ const bufferBodyFeature = (color) =>
   })
 ;
 
-const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
+const composedGate = ({
+  inputIndent, type,
+  features, bodyWidth = 70,
+  canOmit, defaultSignal = null
+}) => {
   return ({
     key,
     center: {x, y},
@@ -194,6 +236,7 @@ const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
     soderInput = false,
     color,
     highlight,
+    mayOmit,
   }) => {
     const angle = 90 * (rotation - 1);
     const centerX = (x * 10);
@@ -208,8 +251,14 @@ const composedGate = ({inputIndent, type, features, bodyWidth = 70}) => {
     }, [
       outputFeature(soderOutput),
       inputPorts(inputCount, type, soderInput),
-      inputExtension(inputIndent, inputCount, bodyWidth),
-      features.map((feat) => feat(color)),
+      (mayOmit && canOmit && inputCount < 2 &&
+        (defaultSignal !== null || inputCount > 0)
+      ) ? [
+        omitGate(color, angle, inputCount, defaultSignal),
+      ] : [
+        inputExtension(inputIndent, inputCount, bodyWidth),
+        features.map((feat) => feat(color)),
+      ],
     ]);
   };
 };
@@ -293,6 +342,8 @@ export const gates = {
     type: 'and',
     inputIndent: 25,
     features: [andBodyFeature],
+    canOmit: true,
+    defaultSignal: 1,
   }),
 
   nand: composedGate({
@@ -305,6 +356,8 @@ export const gates = {
     type: 'or',
     inputIndent: 20,
     features: [orBodyFeature],
+    canOmit: true,
+    defaultSignal: 0,
   }),
 
   nor: composedGate({
@@ -330,6 +383,7 @@ export const gates = {
     inputIndent: 50,
     bodyWidth: 50,
     features: [bufferBodyFeature],
+    canOmit: true,
   }),
 
   negator: composedGate({
@@ -337,5 +391,6 @@ export const gates = {
     inputIndent: 50,
     bodyWidth: 50,
     features: [bufferBodyFeature, negatorFeature],
+    defaultSignal: 1,
   }),
 };
