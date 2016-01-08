@@ -3,6 +3,14 @@ import BitSet from 'bitset.js';
 
 import {parseDataAttr} from '../../../lib/utils';
 
+const isNoInput = (evt) => {
+  const tagName = evt.target.tagName;
+  return tagName !== 'INPUT' &&
+    tagName !== 'TEXTAREA' &&
+    tagName !== 'SELECT' &&
+    tagName !== 'BUTTON';
+};
+
 export default ({DOM}) => {
   const outputLabel = DOM
     .select('.state-editable[data-kv-output-label]');
@@ -34,7 +42,7 @@ export default ({DOM}) => {
 
   const startRenameEvent$ = outputLabel
     .events('click')
-    .filter((evt) => evt.target.tagName !== 'INPUT');
+    .filter(isNoInput);
 
   const cancelRenameEvent$ = O.merge(
     outputEditLabel

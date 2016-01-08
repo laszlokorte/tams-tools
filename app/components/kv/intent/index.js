@@ -7,8 +7,7 @@ import loopActions from './loops';
 import functionActions from './function';
 
 const isNoInput = (evt) => {
-  const tagName = evt.currentTarget.tagName;
-
+  const tagName = evt.target.tagName;
   return tagName !== 'INPUT' &&
     tagName !== 'TEXTAREA' &&
     tagName !== 'SELECT' &&
