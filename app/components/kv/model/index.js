@@ -7,7 +7,7 @@ import {buildLayout} from './layout';
 import {memoize, clamp, padLeft} from '../../../lib/utils';
 
 const kvState = I.Record({
-  currentEditMode: 'function',
+  currentEditMode: 'loops',
   currentKvMode: diagram.modeFromName('dnf'),
   currentCube: diagram.kvCube(),
   currentLoop: diagram.kvLoop(),
