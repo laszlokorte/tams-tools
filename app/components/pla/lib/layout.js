@@ -50,15 +50,7 @@ const layoutInputs = (inputs, height) => {
   };
 };
 
-const layoutOutputs = (pla) => {
-  const outputWireCounts = pla.outputs.map((o, index) =>
-    pla.loops
-      .map((loop, idx) => ({idx, loop}))
-      .filter(({loop}) => loop.out[index] === 1)
-      .length
-  );
-  const maxOutputWireCount = Math.max(0, ...outputWireCounts);
-  const outputGateWidth = (2 + Math.max(7, maxOutputWireCount));
+const layoutOutputs = (pla, outputGateWidth) => {
   const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const outputWireCount = pla.outputs.map(
     (_, index) => pla.loops
@@ -110,8 +102,7 @@ const layoutOutputs = (pla) => {
   };
 };
 
-const layoutLoops = (pla) => {
-  const outputGateWidth = (2 + Math.max(7, pla.loops.length));
+const layoutLoops = (pla, outputGateWidth) => {
   const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const height = pla.loops.length * gateWidth;
 
@@ -173,10 +164,24 @@ const layoutLoops = (pla) => {
   };
 };
 
+const calcOutputGateWidth = (pla) => {
+  const outputWireCounts = pla.outputs.map((o, index) =>
+    pla.loops
+      .map((loop, idx) => ({idx, loop}))
+      .filter(({loop}) => loop.out[index] === 1)
+      .length
+  );
+  const maxOutputWireCount = Math.max(0, ...outputWireCounts);
+  const outputGateWidth = (2 + Math.max(7, maxOutputWireCount));
+
+  return outputGateWidth;
+};
+
 export default (pla) => {
-  const loops = layoutLoops(pla);
+  const outputGateWidth = calcOutputGateWidth(pla);
+  const loops = layoutLoops(pla, outputGateWidth);
   const inputs = layoutInputs(pla.inputs, loops.height);
-  const outputs = layoutOutputs(pla, loops.height, pla.loops.length);
+  const outputs = layoutOutputs(pla, outputGateWidth);
 
   return {
     gates: Array.prototype.concat.call(
