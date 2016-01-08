@@ -1,4 +1,4 @@
-import {div, h1, h3, dl, dt, dd, br} from '@cycle/dom';
+import {div, h1, h2, dl, dt, dd, br} from '@cycle/dom';
 
 const helpItem = (title, body) => [
   dt('.modal-item-titel', title),
@@ -7,7 +7,7 @@ const helpItem = (title, body) => [
 
 export default () => div([
   h1('.modal-box-title', 'Karnaugh-Veitch-Diagram Editor'),
-  h3('Edit function'),
+  h2('Edit function'),
   dl([
     helpItem('Change Size:', [
       'You can change the amount of inputs.',
@@ -22,7 +22,7 @@ export default () => div([
       '(hold ALT key for reversed cycle direction)',
     ]),
   ]),
-  h3('Edit loops'),
+  h2('Edit loops'),
   dl([
     helpItem('Loop Mode:', [
       'You can switch between DNF and KNF mode',
