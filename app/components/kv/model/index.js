@@ -20,21 +20,26 @@ const kvState = I.Record({
 }, 'state');
 
 const colorPalette = [
-  '#E91E63',
-  '#9C27B0',
-  '#3F51B5',
-  '#2196F3',
-  '#00BCD4',
-  '#009688',
-  '#4CAF50',
-  '#8BC34A',
-  '#CDDC39',
-  '#FFC107',
-  '#FF9800',
-  '#FF5722',
-  '#795548',
-].sort((a,b) => parseInt(a.substr(4), 16) - parseInt(b.substr(4), 16));
-
+  "#cc0000",
+  "#00cc00",
+  "#0000cc",
+  "#00cccc",
+  "#cc00cc",
+  "#dddd00",
+  "#FFC107",
+  "#3F51B5",
+  "#8BC34A",
+  "#795548",
+  "#009688",
+  "#2196F3",
+  "#FF5722",
+  "#9C27B0",
+  "#FF9800",
+  "#CDDC39",
+  "#00BCD4",
+  "#E91E63",
+  "#4CAF50",
+];
 const generateUnique = (set, generator, i = set.size) => {
   const newName = generator(i);
 
