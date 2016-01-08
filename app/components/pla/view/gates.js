@@ -225,7 +225,7 @@ const bufferBodyFeature = (color) =>
 const composedGate = ({
   inputIndent, type,
   features, bodyWidth = 70,
-  canOmit, defaultSignal = null
+  canOmit, defaultSignal = null,
 }) => {
   return ({
     key,

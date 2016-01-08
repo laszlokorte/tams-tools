@@ -59,7 +59,6 @@ export default ({DOM}) => {
         .events('focusout')
   ).share();
 
-
   return {
     addInput$:
       incrementEvent$
