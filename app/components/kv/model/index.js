@@ -21,9 +21,9 @@ const kvState = I.Record({
 }, 'state');
 
 const colorPalette = [
-  "#cc0000",
-  "#00cc00",
-  "#0000cc",
+  "#ff0000",
+  "#00ff00",
+  "#0000ff",
   "#00cccc",
   "#cc00cc",
   "#dddd00",
