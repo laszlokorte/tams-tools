@@ -16,6 +16,7 @@ const kvState = I.Record({
   renameOutputValue: null,
   renameOutputValid: false,
   diagram: diagram.newDiagram(),
+  errorMessage: null,
 }, 'state');
 
 const colorPalette = [
@@ -340,17 +341,28 @@ const tryOutputName = (state, outputIndex, name) =>
 ;
 
 const openDiagram = (state, json) => {
-  const openedDiagram = diagram.fromJSON(json);
-  if (openedDiagram) {
-    return kvState({
-      currentEditMode: state.currentEditMode,
-      currentKvMode: state.currentKvMode,
-      currentOutput: 0,
-      diagram: openedDiagram,
-    });
-  } else {
-    return state;
+  try {
+    const parsed = JSON.parse(json);
+    const openedDiagram = diagram.fromJSON(parsed);
+    if (openedDiagram) {
+      return kvState({
+        currentEditMode: state.currentEditMode,
+        currentKvMode: state.currentKvMode,
+        currentOutput: 0,
+        diagram: openedDiagram,
+      });
+    }
+  } catch (e) {
   }
+
+  return kvState({
+    currentEditMode: state.currentEditMode,
+    currentKvMode: state.currentKvMode,
+    currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
+    diagram: state.diagram,
+    errorMessage: "Invalid Data",
+  });
 };
 
 const modifiers = (actions) => {

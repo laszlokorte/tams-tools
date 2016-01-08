@@ -5,19 +5,18 @@ import {div} from '@cycle/dom';
 import ModalBox from '../../../modal';
 import intent from './intent';
 import view from './view';
+import model from './model';
 
 export default ({DOM, keydown, visible$}) => {
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
+  const state$ = model(visible$, actions);
   const modal = isolate(ModalBox)({
     DOM,
     keydown,
-    props$: O.merge(
-      visible$.startWith(false).map((visible) => ({visible})),
-      actions.open$.map(() => false)
-    ),
-    content$: isolateSink(O.just(view()), 'modalBody'),
+    props$: state$.map(({props}) => props),
+    content$: isolateSink(view(state$), 'modalBody'),
   });
 
   return {

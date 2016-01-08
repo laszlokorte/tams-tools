@@ -167,8 +167,13 @@ const renderTableContainer = (layout, state) =>
   ])
 ;
 
-const render = ({state, layout}) =>
+const render = ({state, layout}, index) =>
   div('.app', [
+    state.errorMessage ? div('.error-message', {
+      key: `error-${index}`,
+    }, [
+      state.errorMessage.toString(),
+    ]) : null,
     div('.app-head', [
       div('.action-panel', [
         div('.action-list', [

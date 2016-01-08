@@ -21,13 +21,10 @@ export default ({DOM}) => {
 
             return fileReader(file);
           })
-  )
-  .map(::JSON.parse)
-  .retry()
-  .share();
+  );
 
   return {
-    open$,
+    open$: open$.share(),
     preventDefault: O.merge(
       openExampleEvent$,
       openExampleButton.events('mousedown')

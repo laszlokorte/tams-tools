@@ -2,7 +2,7 @@ import {div, h1, h3, ul, li, button, input} from '@cycle/dom';
 
 import examples from './examples';
 
-export default () => div([
+const render = () => div([
   h1('.modal-box-title', 'Open...'),
   h3('Examples'),
   ul('.block-list.style-small', [
@@ -23,4 +23,8 @@ export default () => div([
     }),
   ]),
 ])
+;
+
+export default (state$) =>
+  state$.map(render)
 ;
