@@ -44,20 +44,21 @@ export default ({DOM}) => {
     .events('click')
     .filter(isNoInput);
 
-  const cancelRenameEvent$ = O.merge(
-    outputEditLabel
-        .events('keydown')
-        .filter((e) => e.keyCode === 27),
-    outputEditLabel
-        .events('focusout')
-  );
+  const cancelRenameEvent$ = outputEditLabel
+    .events('keydown')
+    .filter((e) => e.keyCode === 27);
 
   const tryOutputNameEvent$ = outputEditLabel
     .events('input');
 
-  const confirmOutputNameEvent$ = outputEditLabel
-    .events('keydown')
-    .filter((e) => e.keyCode === 13);
+  const confirmOutputNameEvent$ = O.merge(
+    outputEditLabel
+      .events('keydown')
+      .filter((e) => e.keyCode === 13),
+    outputEditLabel
+        .events('focusout')
+  ).share();
+
 
   return {
     addInput$:
