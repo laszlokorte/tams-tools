@@ -33,6 +33,7 @@ export default (responses) => {
     keydown,
     visible$: panelSubject
       .map((p) => p === 'settings'),
+    viewSetting$: O.just('function'),
   });
 
   const openPanel = isolate(OpenPanel, 'openPanel')({
@@ -51,7 +52,7 @@ export default (responses) => {
       .map((p) => p === 'save'),
   });
 
-  const actions = intent(DOM, keydown, openPanel.data$);
+  const actions = intent(DOM, keydown, openPanel.data$, settingsPanel.viewSetting$);
   const state$ = model(O.empty(), actions).shareReplay(1);
   const vtree$ = view(
     state$, {

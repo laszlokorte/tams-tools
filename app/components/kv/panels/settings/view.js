@@ -1,6 +1,6 @@
 import {div, h1, h3, ul, li, label, input} from '@cycle/dom';
 
-export default () => div([
+const render = ({view}) => div([
   h1('.modal-box-title', 'Settings'),
   h3('Cell view'),
   ul('.block-list', [
@@ -9,7 +9,7 @@ export default () => div([
         type: 'radio',
         name: 'view',
         value: 'function',
-        checked: true,
+        checked: view === 'function',
       }),
       'Show function value',
     ])]),
@@ -18,6 +18,7 @@ export default () => div([
         type: 'radio',
         name: 'view',
         value: 'decimal',
+        checked: view === 'decimal',
       }),
       'Show decimal index',
     ])]),
@@ -26,9 +27,14 @@ export default () => div([
         type: 'radio',
         name: 'view',
         value: 'binary',
+        checked: view === 'binary',
       }),
       'Show binary index',
     ])]),
   ]),
 ])
+;
+
+export default (state$) =>
+  state$.map(render)
 ;

@@ -17,6 +17,7 @@ const kvState = I.Record({
   renameOutputValid: false,
   diagram: diagram.newDiagram(),
   errorMessage: null,
+  viewSetting: 'function',
 }, 'state');
 
 const colorPalette = [
@@ -103,6 +104,7 @@ const addInput = (state) =>
       , generateInputName),
       state.diagram
     ),
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -115,6 +117,7 @@ const removeInput = (state) =>
     diagram: diagram.popInput(
       state.diagram
     ),
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -148,6 +151,7 @@ const cycleValue = (
       ),
       state.diagram
     ),
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -172,6 +176,7 @@ const tryLoop = (state, startCell, targetCell) =>
     }),
     currentOutput: state.currentOutput,
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -182,6 +187,7 @@ const stopTryLoop = (state) =>
     currentCube: diagram.kvCube(),
     currentOutput: state.currentOutput,
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -192,6 +198,7 @@ const removeLoop = (state, loopIndex) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: diagram.removeLoop(loopIndex, state.diagram),
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -226,6 +233,7 @@ const addLoop = (state, outputIndex, start, end) => {
       outputs: outputs,
       mode: state.currentKvMode,
     }), state.diagram),
+    viewSetting: state.viewSetting,
   });
 };
 
@@ -245,6 +253,7 @@ const addOutput = (state) => {
     currentCube: state.currentCube,
     currentOutput: newDiagram.outputs.size - 1,
     diagram: newDiagram,
+    viewSetting: state.viewSetting,
   });
 };
 
@@ -260,6 +269,7 @@ const removeOutput = (state, outputIndex) =>
       outputIndex,
       state.diagram
     ),
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -270,6 +280,7 @@ const selectOutput = (state, outputIndex) =>
     currentCube: state.currentCube,
     currentOutput: clamp(outputIndex, 0, state.diagram.outputs.size - 1),
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -280,6 +291,7 @@ const switchKvMode = (state, mode) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -290,6 +302,7 @@ const switchEditMode = (state, mode) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -303,6 +316,7 @@ const startRename = (state, outputIndex) =>
     renameOutputValue: state.diagram.outputs.get(outputIndex).name,
     renameOutputValid: true,
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -313,6 +327,7 @@ const cancelRename = (state) =>
     currentCube: state.currentCube,
     currentOutput: state.currentOutput,
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -329,6 +344,7 @@ const confirmOutputName = (state) =>
       state.renameOutputValue,
       state.diagram
     ),
+    viewSetting: state.viewSetting,
   }) : state
 ;
 
@@ -342,6 +358,7 @@ const tryOutputName = (state, outputIndex, name) =>
     renameOutputValue: name,
     renameOutputValid: diagram.isValidOutputName(name),
     diagram: state.diagram,
+    viewSetting: state.viewSetting,
   })
 ;
 
@@ -355,6 +372,7 @@ const openDiagram = (state, json) => {
         currentKvMode: state.currentKvMode,
         currentOutput: 0,
         diagram: openedDiagram,
+        viewSetting: state.viewSetting,
       });
     }
   } catch (e) {
@@ -367,6 +385,18 @@ const openDiagram = (state, json) => {
     currentOutput: state.currentOutput,
     diagram: state.diagram,
     errorMessage: "Invalid Data",
+    viewSetting: state.viewSetting,
+  });
+};
+
+const setViewSetting = (state, viewSetting) => {
+  return kvState({
+    currentEditMode: state.currentEditMode,
+    currentKvMode: state.currentKvMode,
+    currentCube: state.currentCube,
+    currentOutput: state.currentOutput,
+    diagram: state.diagram,
+    viewSetting: viewSetting,
   });
 };
 
@@ -422,6 +452,9 @@ const modifiers = (actions) => {
     }),
     actions.openDiagram$.map((data) => (state) => {
       return openDiagram(state, data);
+    }),
+    actions.setViewSetting$.map((viewSetting) => (state) => {
+      return setViewSetting(state, viewSetting);
     })
   );
 };

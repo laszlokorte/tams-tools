@@ -156,6 +156,7 @@ const renderBody = (layout, state) =>
     currentCube: state.currentCube,
     currentLoop: state.currentLoop,
     compact: false,
+    cellStyle: state.viewSetting,
   })
 ;
 

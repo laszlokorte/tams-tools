@@ -111,7 +111,7 @@ const renderTableRowEnd = (rowIndex, {right}) =>
 
 const renderTableCell = ({
   diagram, output, kvMode, editMode, cell,
-  currentCube, className,
+  currentCube, className, cellStyle,
 }) => {
   const value = diagram.outputs
     .get(output)
@@ -121,21 +121,27 @@ const renderTableCell = ({
   const active = insideCube(cell, currentCube);
   const error = active && !isValidValueForMode(value, kvMode);
 
-  return td('.kv-table-cell-body.kv-cell-atom' + className,
+  const binaryIndex = padLeft(cell.toString(2), diagram.inputs.size, '0');
+  const decimalIndex = cell.toString(10);
+
+  const cellIndex = cellStyle === 'binary' ? binaryIndex : decimalIndex;
+  const cellContent = cellStyle === 'function' ? renderValue(value) : cellIndex;
+
+  return td('.kv-table-cell-body.kv-cell-atom' + className + ' .cell-style-' + cellStyle,
     {
       className: [
         (active ? 'state-active' : null),
         (error ? 'state-error' : null),
       ].join(' '),
       attributes: {
-        'data-kv-cell': padLeft(cell.toString(2), diagram.inputs.size, '0'),
-        'data-kv-index': cell.toString(10),
+        'data-kv-cell': binaryIndex,
+        'data-kv-index': decimalIndex,
         'data-kv-value': value,
         'data-kv-output': output,
         'data-edit': editMode,
       },
     },
-    renderValue(value)
+    cellContent
   );
 };
 
@@ -170,6 +176,7 @@ export const renderTable = ({
   currentLoop,
   compact = false,
   labelOffset: offset = diagram.inputs.size,
+  cellStyle = 'function',
   }) => {
   const cols = layout.columns;
   const rows = layout.rows;
@@ -210,7 +217,7 @@ export const renderTable = ({
                   layout: cell.children,
                   diagram, kvMode, editMode, output,
                   currentCube, currentLoop, compact,
-                  labelOffset}),
+                  labelOffset, cellStyle}),
               ]);
             } else {
               return renderTableCell({
@@ -218,6 +225,7 @@ export const renderTable = ({
                 cell: cell.scope,
                 currentCube,
                 className: styleClass,
+                cellStyle,
               });
             }
           }).toArray(),

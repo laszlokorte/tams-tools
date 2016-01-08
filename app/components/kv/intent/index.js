@@ -11,7 +11,7 @@ const touchTarget = (evt) =>
     evt.changedTouches[0].clientY
   )
 ;
-export default (DOM, keydown, openData$) => {
+export default (DOM, keydown, openData$, viewSetting$) => {
   const cancel$ = keydown
     .filter((evt) => evt.keyCode === 27)
   ;
@@ -257,6 +257,8 @@ export default (DOM, keydown, openData$) => {
         .share(),
 
     openDiagram$: openData$,
+
+    setViewSetting$: viewSetting$,
 
     preventDefault: O.merge(
       panels.preventDefault,
