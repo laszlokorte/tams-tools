@@ -52,7 +52,12 @@ export default (responses) => {
       .map((p) => p === 'save'),
   });
 
-  const actions = intent(DOM, keydown, openPanel.data$, settingsPanel.viewSetting$);
+  const actions = intent({
+    DOM, keydown,
+    openData$: openPanel.data$,
+    viewSetting$: settingsPanel.viewSetting$,
+  });
+
   const state$ = model(O.empty(), actions).shareReplay(1);
   const vtree$ = view(
     state$, {

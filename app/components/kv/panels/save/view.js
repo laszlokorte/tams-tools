@@ -1,4 +1,3 @@
-import {Observable as O} from 'rx';
 import {div, h1, h3, a, textarea} from '@cycle/dom';
 import SelectAllHook from 'select-all-hook';
 

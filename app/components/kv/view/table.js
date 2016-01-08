@@ -127,7 +127,8 @@ const renderTableCell = ({
   const cellIndex = cellStyle === 'binary' ? binaryIndex : decimalIndex;
   const cellContent = cellStyle === 'function' ? renderValue(value) : cellIndex;
 
-  return td('.kv-table-cell-body.kv-cell-atom' + className + ' .cell-style-' + cellStyle,
+  return td('.kv-table-cell-body.kv-cell-atom' +
+    className + ' .cell-style-' + cellStyle,
     {
       className: [
         (active ? 'state-active' : null),
