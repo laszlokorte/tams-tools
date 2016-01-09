@@ -73,7 +73,10 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
     addOutput$: functions.addOutput$,
     removeOutput$: functions.removeOutput$,
     startRename$: functions.startRename$,
-    cancelRename$: functions.cancelRename$,
+    cancelRename$: O.merge(
+      functions.cancelRename$,
+      panels.open$
+    ).share(),
     tryOutputName$: functions.tryOutputName$,
     confirmOutputName$: functions.confirmOutputName$,
 
