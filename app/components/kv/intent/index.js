@@ -53,9 +53,7 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
         .share(),
     switchEditMode$:
       switchEditModeEvent$
-        .do(::console.log)
         .map((evt) => evt.ownerTarget.dataset.editMode)
-        .do(::console.log)
         .share(),
     openDiagram$: openData$,
     setViewSetting$: viewSetting$,
