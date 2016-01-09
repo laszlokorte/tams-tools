@@ -399,6 +399,21 @@ export const removeLoop = (
   )
 ;
 
+/// Remove the loop at the given index from the output of the given diagram.
+export const removeLoopFromOutput = (
+  /*int*/loopIndex,
+  /*int*/outputIndex,
+  /*kvDiagram*/diagram
+  ) =>
+  diagram.update('loops', (loops) =>
+    loops.updateIn([loopIndex, 'outputs'],
+      (outputs) => outputs.remove(outputIndex)
+    )
+    .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size))
+    .toList()
+  )
+;
+
 /// Set the given cell to the given value for the given output.
 export const setValue = (
   /*int*/outputIndex,

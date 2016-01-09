@@ -42,7 +42,7 @@ export default ({DOM, cancel$}) => {
             BitSet(element.dataset.kvCell) : null,
         };
       })
-  );
+  ).share();
 
   const pointerDownEvent$ = O.merge(
       DOM
@@ -51,10 +51,11 @@ export default ({DOM, cancel$}) => {
       DOM
         .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
         .events('mousedown')
-    );
+    ).share();
 
   const pointerDown$ = pointerDownEvent$
     .map((evt) => ({
+      allOutputs: !evt.altKey,
       cell: BitSet(evt.ownerTarget.dataset.kvCell),
       output: parseInt(evt.ownerTarget.dataset.kvOutput, 10),
     }))
@@ -67,8 +68,9 @@ export default ({DOM, cancel$}) => {
   );
 
   const drag$ = pointerDown$
-    .map(({cell, output}) =>
+    .map(({cell, output, allOutputs}) =>
       O.just({
+        allOutputs,
         output: output,
         startCell: cell,
         targetCell: cell,
@@ -80,6 +82,7 @@ export default ({DOM, cancel$}) => {
           (a, b) => a.equals(b)
         )
         .map(({cell: targetCell}) => ({
+          allOutputs,
           output,
           startCell: cell,
           targetCell,
@@ -91,7 +94,8 @@ export default ({DOM, cancel$}) => {
         pointerUp$
       )
     )
-    .switch();
+    .switch()
+    .share();
 
   const dragEnd$ = drag$
     .sample(
@@ -99,23 +103,24 @@ export default ({DOM, cancel$}) => {
         pointerDown$.map(() => pointerUp$),
         cancel$.map(() => O.empty())
       ).switch()
-    );
+    ).share();
 
   return {
     removeLoop$:
       removeLoopEvent$
-        .map(parseDataAttr('loopIndex'))
-        .filter(isFinite)
+        .map((evt) => ({
+          loopIndex: parseInt(evt.ownerTarget.dataset.loopIndex, 10),
+          allOutputs: !evt.altKey,
+        }))
         .share(),
     tryLoop$:
-      drag$
-        .share(),
+      drag$,
     stopTryLoop$:
       O.merge(dragEnd$, cancel$)
         .map(() => true)
         .share(),
     addLoop$:
-      dragEnd$.share(),
+      dragEnd$,
 
     preventDefault: O.merge(
       removeLoopEvent$,
@@ -123,6 +128,6 @@ export default ({DOM, cancel$}) => {
       mouseEnterEvent$,
       touchMoveEvent$,
       pointerDownEvent$
-    ),
+    ).share(),
   };
 };

@@ -107,7 +107,6 @@ const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
             kvMode: state.currentKvMode,
             editMode: state.currentEditMode,
             output: i,
-            currentCube: state.currentCube,
             currentLoop: state.currentLoop,
             compact: true,
           }),

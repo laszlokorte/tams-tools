@@ -146,7 +146,7 @@ const cycleValue = (
   )
 ;
 
-const tryLoop = (state, startCell, targetCell) =>
+const tryLoop = ({state, startCell, targetCell, allOutputs}) =>
   state
   .set('currentCube',
     KVD.newCubeFromTo(
@@ -162,7 +162,8 @@ const tryLoop = (state, startCell, targetCell) =>
       cube: KVD.newCubeFromTo(
         startCell, targetCell, state.diagram.inputs.size
       ),
-      outputs: I.Set.of(state.currentOutput),
+      outputs: allOutputs ?
+        I.Set(state.diagram.outputs.keys()) : I.Set.of(state.currentOutput),
       mode: state.currentKvMode,
     })
   )
@@ -174,13 +175,17 @@ const stopTryLoop = (state) =>
   .set('currentLoop', KVD.kvLoop())
 ;
 
-const removeLoop = (state, loopIndex) =>
+const removeLoop = (state, loopIndex, allOutputs) =>
   state.update('diagram', (diagram) =>
-    KVD.removeLoop(loopIndex, diagram)
+    allOutputs ? KVD.removeLoop(loopIndex, diagram) :
+      KVD.removeLoopFromOutput(loopIndex, state.currentOutput, diagram)
   )
 ;
 
-const addLoop = (state, outputIndex, start, end) => {
+const addLoop = ({
+  state, outputIndex,
+  start, end, allMatchingOutputs = true,
+}) => {
   const newCube = KVD.newCubeFromTo(start, end, state.diagram.inputs.size);
   const values = state.diagram.outputs.get(outputIndex).values;
   if (!KVD.isValidCubeForValuesInMode(
@@ -189,12 +194,13 @@ const addLoop = (state, outputIndex, start, end) => {
     return state;
   }
 
-  const outputs = state.diagram.outputs
+  const outputs = allMatchingOutputs ?
+    state.diagram.outputs
     .map((output, index) => ({output, index}))
     .filter(({output}) =>
       KVD.isValidCubeForValuesInMode(newCube,
         output.values, state.currentKvMode)
-    ).map(({index}) => index).toSet();
+    ).map(({index}) => index).toSet() : I.Set.of(outputIndex);
 
   return state.update('diagram', (diagram) =>
     KVD.appendLoop(KVD.kvLoop({
@@ -320,17 +326,27 @@ const modifiers = (actions) => {
     actions.cycleValue$.map(({output, cell, reverse}) => (state) => {
       return cycleValue(state, output, cell, reverse);
     }),
-    actions.tryLoop$.map(({startCell, targetCell}) => (state) => {
-      return tryLoop(state, startCell, targetCell);
+    actions.tryLoop$.map(({
+      startCell, targetCell,
+      allOutputs = true,
+    }) => (state) => {
+      return tryLoop({state, startCell, targetCell, allOutputs});
     }),
     actions.stopTryLoop$.map(() => (state) => {
       return stopTryLoop(state);
     }),
-    actions.removeLoop$.map((loopIndex) => (state) => {
-      return removeLoop(state, loopIndex);
+    actions.removeLoop$.map(({loopIndex, allOutputs}) => (state) => {
+      return removeLoop(state, loopIndex, allOutputs);
     }),
-    actions.addLoop$.map(({output, startCell, targetCell}) => (state) => {
-      return addLoop(state, output, startCell, targetCell);
+    actions.addLoop$.map(({
+      output, startCell, targetCell,
+      allOutputs = true,
+    }) => (state) => {
+      return addLoop({
+        state, outputIndex: output,
+        start: startCell, end: targetCell,
+        allMatchingOutputs: allOutputs,
+      });
     }),
     actions.addOutput$.map(() => (state) => {
       return addOutput(state);

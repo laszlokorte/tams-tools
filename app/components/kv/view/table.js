@@ -8,7 +8,7 @@ import {padLeft} from '../../../lib/utils';
 import {renderLoops} from './loops';
 
 import {
-  insideCube, isValidValueForMode,
+  insideLoop, isValidValueForMode,
   loopBelongsToOutput,
   cellToInt,
 } from '../model/diagram';
@@ -115,14 +115,14 @@ const renderTableRowEnd = (rowIndex, {right}) =>
 
 const renderTableCell = ({
   diagram, output, kvMode, editMode, cell,
-  currentCube, className, cellStyle,
+  currentLoop, className, cellStyle,
 }) => {
   const value = diagram.outputs
     .get(output)
     .values
     .get(cellToInt(cell));
 
-  const active = insideCube(cell, currentCube);
+  const active = insideLoop(output, cell, currentLoop);
   const error = active && !isValidValueForMode(value, kvMode);
 
   const binaryIndex = padLeft(cell.toString(2), diagram.inputs.size, '0');
@@ -177,7 +177,6 @@ export const renderTable = ({
   kvMode,
   editMode,
   output,
-  currentCube,
   currentLoop,
   compact = false,
   labelOffset: offset = diagram.inputs.size,
@@ -203,9 +202,9 @@ export const renderTable = ({
     (editMode === 'loops' || !compact) &&
     layout.treeHeight === 0 &&
     renderLoops(
-      diagram.loops.filter(
+      diagram.loops.push(currentLoop).filter(
         (loop) => loopBelongsToOutput(loop, output)
-      ).toList().push(currentLoop), kvMode, rows, cols) || null,
+      ).toList(), kvMode, rows, cols) || null,
 
     table('.kv-table' + styleClass, {
       className: 'kv-mode-' + kvMode.name,
@@ -223,14 +222,14 @@ export const renderTable = ({
                 renderTable({
                   layout: cell.children,
                   diagram, kvMode, editMode, output,
-                  currentCube, currentLoop, compact,
+                  currentLoop, compact,
                   labelOffset, cellStyle}),
               ]);
             } else {
               return renderTableCell({
                 diagram, output, kvMode, editMode,
                 cell: cell.scope,
-                currentCube,
+                currentLoop,
                 className: styleClass,
                 cellStyle,
               });
