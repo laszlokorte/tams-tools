@@ -8,7 +8,8 @@ const isNoInput = (evt) => {
   const tagName = evt.target.tagName;
   return tagName !== 'INPUT' &&
     tagName !== 'TEXTAREA' &&
-    tagName !== 'SELECT';
+    tagName !== 'SELECT' &&
+    evt.target.contentEditable !== "true";
 };
 
 export default ({DOM, keydown, openData$, viewSetting$}) => {

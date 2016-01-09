@@ -5,7 +5,8 @@ const isNoInput = (evt) => {
   const tagName = evt.target.tagName;
   return tagName !== 'INPUT' &&
     tagName !== 'TEXTAREA' &&
-    tagName !== 'SELECT';
+    tagName !== 'SELECT' &&
+    evt.target.contentEditable !== "true";
 };
 
 export default ({DOM}) => {
@@ -97,12 +98,16 @@ export default ({DOM}) => {
 
     tryOutputName$:
       tryOutputNameEvent$
-        .map((evt) => ({
-          outputIndex: parseInt(
-            evt.ownerTarget.dataset.kvOutputEditLabel,
-            10),
-          name: evt.ownerTarget.value,
-        }))
+        .map((evt) => {
+          const textProp = ('innerText' in evt.ownerTarget) ?
+            'innerText' : 'textContent';
+          return {
+            outputIndex: parseInt(
+              evt.ownerTarget.dataset.kvOutputEditLabel,
+              10),
+            name: evt.ownerTarget[textProp],
+          };
+        })
         .share(),
 
     confirmOutputName$:

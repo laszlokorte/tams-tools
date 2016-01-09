@@ -3,7 +3,6 @@ import FocusHook from 'virtual-dom/virtual-hyperscript/hooks/focus-hook';
 
 import {
   div, button ,span, ul, li,
-  input,
 } from '@cycle/dom';
 
 import {
@@ -118,17 +117,17 @@ const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
             'data-kv-output-label': i,
           },
         }, state.renameOutput === i ? [
-          input('.output-label-edit' + (
+          span('.output-label-edit' + (
             state.renameOutputValid ? '' : '.state-invalid'
           ), {
-            value: state.renameOutputValue,
             focus: new FocusHook(),
             attributes: {
+              tabindex: 0,
+              contenteditable: true,
               maxlength: 7,
-              size: 7,
               'data-kv-output-edit-label': i,
             },
-          }),
+          }, output.name),
         ] : output.name),
         button('.output-button-delete', {
           attributes: {

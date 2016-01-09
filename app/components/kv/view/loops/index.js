@@ -4,7 +4,9 @@ import {
 
 import {
   insideCubeMasked,
-} from '../model/diagram';
+} from '../../model/diagram';
+
+import './index.styl';
 
 const renderSingleLoop = ({color, top, right, bottom, left, xEdge, yEdge}) => {
   return div('.kv-loop-single', {
@@ -94,7 +96,7 @@ const calcCubeRange = (dontcare, cols, cube) => {
 
 // Render the collection of loops for a kv leaf grid
 // rows, cols: number of rows and columns
-export const renderLoops = (loops, kvMode, rows, cols) => {
+export default (loops, kvMode, rows, cols) => {
   const rowCount = rows.size;
   const colCount = cols.size;
 

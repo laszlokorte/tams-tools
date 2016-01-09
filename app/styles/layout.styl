@@ -396,7 +396,7 @@ $keyframe-name = slide-up
   height button-size
   line-height button-size
   text-align center
-  padding 0
+  padding 0 1em
   margin 0
   border none
   outline none
@@ -409,12 +409,16 @@ $keyframe-name = slide-up
     text-decoration underline
 
 .output-label-edit
+  display inline-block
+  white-space nowrap
   text-align center
   outline none
   border 1px solid grey
-  width 98%
-  margin 0 1%
-  ackground-color color-background-primary
+  width 100%
+  margin 0
+  background-color color-background-primary
+  max-width 10em
+  overflow hidden
   &:focus
     border-color color-focus
 
