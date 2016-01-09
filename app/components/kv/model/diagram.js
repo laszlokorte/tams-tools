@@ -216,10 +216,11 @@ const resizeCube = (
   /*kvCube*/cube
   ) => {
   const mask = BitSet().setRange(0, inputCount, 1);
-  return kvCube({
-    include: mask.and(cube.include),
-    exclude: mask.and(cube.exclude),
-  });
+
+  return cube
+    .set('include', mask.and(cube.include))
+    .set('exclude', mask.and(cube.exclude))
+  ;
 };
 
 /// Adjust the given loop for a new amount of inputs.
@@ -273,19 +274,9 @@ const excludeFromLoop = (
   const newCube = excludeFromCube(cell, loop.cube);
 
   if (isEmptyCube(newCube, inputCount) && loop.outputs.size > 1) {
-    return kvLoop({
-      color: loop.color,
-      cube: loop.cube,
-      outputs: loop.outputs.remove(outputIndex),
-      mode: loop.mode,
-    });
+    return loop.removeIn(['outputs', outputIndex]);
   } else {
-    return kvLoop({
-      color: loop.color,
-      cube: newCube,
-      outputs: loop.outputs,
-      mode: loop.mode,
-    });
+    return loop.set('cube', newCube);
   }
 };
 
@@ -294,37 +285,39 @@ export const appendInput = (
   /*String*/name,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs.push(kvInput({
+  diagram.update('inputs', (inputs) =>
+    inputs.push(kvInput({
       name,
-    })),
-    outputs: diagram.outputs.map(
+    }))
+  ).update('outputs', (outputs) =>
+    outputs.map(
       (output) => output.set('values',
         output.values.concat(output.values)
       )
-    ).toList(),
-    loops: diagram.loops,
-  })
+    ).toList()
+  )
 ;
 
 /// Remove one input from the given diagram.
 export const popInput = (
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs.pop(),
-    outputs: diagram.outputs.map(
+  diagram
+  .update('inputs', (inputs) => inputs.pop())
+  .update('outputs', (outputs) =>
+    outputs.map(
       (output) => output.set('values',
         output.values.setSize(output.values.size / 2)
       )
-    ),
-    loops: diagram.loops
-      .map((loop) =>
-        resizeLoop(diagram.inputs.size - 1, loop)
-      )
-      .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size - 1))
-      .toList(),
-  })
+    ).toList()
+  )
+  .update('loops', (loops) =>
+    loops.map(
+      (loop) => resizeLoop(diagram.inputs.size - 1, loop)
+    )
+    .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size - 1))
+    .toList()
+  )
 ;
 
 /// Rename the input at the given index.
@@ -333,13 +326,7 @@ export const renameInput = (
   /*String*/name,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs.update(inputIndex,
-      () => kvInput({name})
-    ),
-    outputs: diagram.outputs,
-    loops: diagram.loops,
-  })
+  diagram.updateIn(['inputs', inputIndex,'name'], name)
 ;
 
 /// Add an output with the given name to the given diagram.
@@ -347,14 +334,16 @@ export const appendOutput = (
   /*String*/name,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs,
-    outputs: diagram.outputs.push(kvOutput({
+  diagram.update('outputs', (outputs) =>
+    outputs.push(kvOutput({
       name,
       values: _stride(Math.pow(2, diagram.inputs.size), VALUE_0),
-    })),
-    loops: diagram.loops,
-  })
+    }))
+  )
+;
+
+const decrementValuesAbove = (limit) => (value) =>
+  value > limit ? Math.max(0, value - 1) : value
 ;
 
 /// Remove the output at the given index from the given diagram.
@@ -362,25 +351,18 @@ export const removeOutput = (
   /*int*/outputIndex,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs,
-    outputs: diagram.outputs.remove(outputIndex),
-    loops: diagram.loops.map(
-      (loop) => kvLoop({
-        color: loop.color,
-        cube: loop.cube,
-        mode: loop.mode,
-        outputs: loop.outputs
-          .filter(
-            (o) => o !== outputIndex
-          ).map(
-            (o) => o >= outputIndex ? Math.max(0, o - 1) : o
-          ).toSet(),
-      })
+  diagram.update('loops', (loops) =>
+    loops.map(
+      (loop) => loop.update('outputs', (outputs) =>
+        outputs
+        .remove(outputIndex)
+        .map(decrementValuesAbove(outputIndex - 1))
+        .toSet()
+      )
     )
     .filter((l) => !isEmptyLoop(l, diagram.inputs.size))
-    .toList(),
-  })
+    .toList()
+  ).removeIn(['outputs', outputIndex])
 ;
 
 /// Rename the output at the given index to the given name.
@@ -389,16 +371,9 @@ export const renameOutput = (
   /*String*/name,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs,
-    outputs: diagram.outputs.update(outputIndex,
-      (output) => kvOutput({
-        name,
-        values: output.values,
-      })
-    ),
-    loops: diagram.loops,
-  })
+  diagram.setIn(
+    ['outputs', outputIndex, 'name'], name
+  )
 ;
 
 /// Add the given loop to the given diagram.
@@ -406,14 +381,12 @@ export const appendLoop = (
   /*kvLoop*/loop,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs,
-    outputs: diagram.outputs,
-    loops: diagram.loops
+  diagram.update('loops', (loops) =>
+    loops
       .push(resizeLoop(diagram.inputs.size, loop))
       .filter((l) => !isEmptyLoop(l, diagram.inputs.size))
-      .toList(),
-  })
+      .toList()
+  )
 ;
 
 /// Remove the loop at the given index from the diagram.
@@ -421,11 +394,9 @@ export const removeLoop = (
   /*int*/loopIndex,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs,
-    outputs: diagram.outputs,
-    loops: diagram.loops.delete(loopIndex),
-  })
+  diagram.update('loops',
+    (loops) => loops.delete(loopIndex)
+  )
 ;
 
 /// Set the given cell to the given value for the given output.
@@ -435,21 +406,17 @@ export const setValue = (
   /*mixed*/value,
   /*kvDiagram*/diagram
   ) =>
-  kvDiagram({
-    inputs: diagram.inputs,
-    outputs: diagram.outputs.update(outputIndex, (output) =>
-      output.update('values', (values) =>
-        values.set(cellToInt(cell), value)
-      )
-    ),
-    loops: diagram.loops.map((loop) =>
+  diagram.updateIn(['outputs', outputIndex, 'values'],
+    (values) => values.set(cellToInt(cell), value)
+  ).update('loops', (loops) =>
+    loops.map((loop) =>
       !loopBelongsToOutput(loop, outputIndex) ||
       isValidValueForMode(value, loop.mode) ?
         loop : excludeFromLoop(outputIndex, cell, loop, diagram.inputs.size)
     )
     .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size))
-    .toList(),
-  })
+    .toList()
+  )
 ;
 
 /// Get the value for the given output of the given diagram.

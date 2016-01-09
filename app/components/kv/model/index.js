@@ -1,21 +1,21 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import * as diagram from './diagram';
+import * as KVD from './diagram';
 import {buildLayout} from './layout';
 
 import {memoize, clamp, padLeft} from '../../../lib/utils';
 
 const kvState = I.Record({
   currentEditMode: 'loops',
-  currentKvMode: diagram.modeFromName('dnf'),
-  currentCube: diagram.kvCube(),
-  currentLoop: diagram.kvLoop(),
+  currentKvMode: KVD.modeFromName('dnf'),
+  currentCube: KVD.kvCube(),
+  currentLoop: KVD.kvLoop(),
   currentOutput: 0,
   renameOutput: -1,
   renameOutputValue: null,
   renameOutputValid: false,
-  diagram: diagram.newDiagram(),
+  diagram: KVD.newDiagram(),
   errorMessage: null,
   viewSetting: 'function',
 }, 'state');
@@ -88,37 +88,33 @@ const generateLoopColor = (i) =>
 
 const layout = memoize(buildLayout);
 
-const applyModification = (prev, modfn) => modfn(prev);
+const clearError = (state) =>
+  state ? state.remove('errorMessage') : state
+;
+
+const applyModification = (prev, modfn) => {
+  return modfn(clearError(prev));
+};
 
 const addInput = (state) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: diagram.appendInput(
+  state.update('diagram', (diagram) =>
+    KVD.appendInput(
       generateUnique(
-        state.diagram.inputs
+        diagram.inputs
         .map((input) => input.name)
         .toSet()
       , generateInputName),
-      state.diagram
-    ),
-    viewSetting: state.viewSetting,
-  })
+      diagram
+    )
+  )
 ;
 
 const removeInput = (state) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: diagram.popInput(
-      state.diagram
-    ),
-    viewSetting: state.viewSetting,
-  })
+  state.update('diagram', (diagram) =>
+    KVD.popInput(
+      diagram
+    )
+  )
 ;
 
 const nextValue = (
@@ -137,75 +133,57 @@ const cycleValue = (
   /*BitSet*/cell,
   /*boolean*/reverse
   ) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: diagram.setValue(
+  state.update('diagram', (diagram) =>
+    KVD.setValue(
       outputIndex,
       cell,
       nextValue(
-        diagram.getValue(outputIndex, cell, state.diagram),
+        KVD.getValue(outputIndex, cell, diagram),
         reverse
       ),
-      state.diagram
-    ),
-    viewSetting: state.viewSetting,
-  })
+      diagram
+    )
+  )
 ;
 
 const tryLoop = (state, startCell, targetCell) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: diagram.newCubeFromTo(
+  state
+  .set('currentCube',
+    KVD.newCubeFromTo(
       startCell, targetCell, state.diagram.inputs.size
-    ),
-    currentLoop: diagram.kvLoop({
+    )
+  ).set('currentLoop',
+    KVD.kvLoop({
       color: generateUnique(
         state.diagram.loops
         .map((loop) => loop.color)
         .toSet()
       , generateLoopColor),
-      cube: diagram.newCubeFromTo(
+      cube: KVD.newCubeFromTo(
         startCell, targetCell, state.diagram.inputs.size
       ),
       outputs: I.Set.of(state.currentOutput),
       mode: state.currentKvMode,
-    }),
-    currentOutput: state.currentOutput,
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+    })
+  )
 ;
 
 const stopTryLoop = (state) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: diagram.kvCube(),
-    currentOutput: state.currentOutput,
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+  state
+  .set('currentCube', KVD.kvCube())
+  .set('currentLoop', KVD.kvLoop())
 ;
 
 const removeLoop = (state, loopIndex) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: diagram.removeLoop(loopIndex, state.diagram),
-    viewSetting: state.viewSetting,
-  })
+  state.update('diagram', (diagram) =>
+    KVD.removeLoop(loopIndex, diagram)
+  )
 ;
 
 const addLoop = (state, outputIndex, start, end) => {
-  const newCube = diagram.newCubeFromTo(start, end, state.diagram.inputs.size);
+  const newCube = KVD.newCubeFromTo(start, end, state.diagram.inputs.size);
   const values = state.diagram.outputs.get(outputIndex).values;
-  if (!diagram.isValidCubeForValuesInMode(
+  if (!KVD.isValidCubeForValuesInMode(
     newCube, values, state.currentKvMode
   )) {
     return state;
@@ -214,31 +192,26 @@ const addLoop = (state, outputIndex, start, end) => {
   const outputs = state.diagram.outputs
     .map((output, index) => ({output, index}))
     .filter(({output}) =>
-      diagram.isValidCubeForValuesInMode(newCube,
+      KVD.isValidCubeForValuesInMode(newCube,
         output.values, state.currentKvMode)
     ).map(({index}) => index).toSet();
 
-  return kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: diagram.appendLoop(diagram.kvLoop({
+  return state.update('diagram', (diagram) =>
+    KVD.appendLoop(KVD.kvLoop({
       color: generateUnique(
-        state.diagram.loops
+        diagram.loops
         .map((loop) => loop.color)
         .toSet()
       , generateLoopColor),
       cube: newCube,
       outputs: outputs,
       mode: state.currentKvMode,
-    }), state.diagram),
-    viewSetting: state.viewSetting,
-  });
+    }), diagram)
+  );
 };
 
 const addOutput = (state) => {
-  const newDiagram = diagram.appendOutput(
+  const newDiagram = KVD.appendOutput(
     generateUnique(
       state.diagram.outputs
       .map((output) => output.name)
@@ -247,158 +220,94 @@ const addOutput = (state) => {
     state.diagram
   );
 
-  return kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: newDiagram.outputs.size - 1,
-    diagram: newDiagram,
-    viewSetting: state.viewSetting,
-  });
+  return state
+    .set('diagram', newDiagram)
+    .set('currentOutput', newDiagram.outputs.size - 1);
 };
 
 const removeOutput = (state, outputIndex) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: Math.max(0,
-      state.currentOutput >= outputIndex ?
-      state.currentOutput - 1 : state.currentOutput),
-    diagram: diagram.removeOutput(
+  state.update('currentOutput', (currentOutput) =>
+    Math.max(0,
+      currentOutput >= outputIndex ?
+      currentOutput - 1 : currentOutput
+    )
+  ).update('diagram', (diagram) =>
+    KVD.removeOutput(
       outputIndex,
-      state.diagram
-    ),
-    viewSetting: state.viewSetting,
-  })
+      diagram
+    )
+  )
 ;
 
 const selectOutput = (state, outputIndex) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: clamp(outputIndex, 0, state.diagram.outputs.size - 1),
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+  state.set('currentOutput',
+    clamp(outputIndex, 0, state.diagram.outputs.size - 1))
 ;
 
 const switchKvMode = (state, mode) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: diagram.modeFromName(mode),
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+  state.set('currentKvMode', KVD.modeFromName(mode))
 ;
 
 const switchEditMode = (state, mode) =>
-  kvState({
-    currentEditMode: mode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+  state.set('currentEditMode', mode)
 ;
 
 const startRename = (state, outputIndex) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    renameOutput: outputIndex,
-    renameOutputValue: state.diagram.outputs.get(outputIndex).name,
-    renameOutputValid: true,
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+  state
+    .set('renameOutput', outputIndex)
+    .set('renameOutputValue',
+      state.diagram.outputs.get(outputIndex).name)
+    .set('renameOutputValid', true)
 ;
 
 const cancelRename = (state) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+  state
+    .remove('renameOutput')
+    .remove('renameOutputValue')
+    .remove('renameOutputValid')
 ;
 
 const confirmOutputName = (state) =>
   (state.renameOutput > -1) &&
   state.renameOutputValid ?
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: diagram.renameOutput(
-      state.renameOutput,
-      state.renameOutputValue,
-      state.diagram
-    ),
-    viewSetting: state.viewSetting,
-  }) : state
+  state
+    .remove('renameOutput')
+    .remove('renameOutputValue')
+    .remove('renameOutputValid')
+    .update('diagram', (diagram) =>
+      KVD.renameOutput(
+        state.renameOutput,
+        state.renameOutputValue,
+        diagram
+      )
+    ) : state
 ;
 
 const tryOutputName = (state, outputIndex, name) =>
-  kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    renameOutput: state.renameOutput,
-    renameOutputValue: name,
-    renameOutputValid: diagram.isValidOutputName(name),
-    diagram: state.diagram,
-    viewSetting: state.viewSetting,
-  })
+  state
+    .set('renameOutputValue', name)
+    .set('renameOutputValid', KVD.isValidOutputName(name))
+
 ;
 
 const openDiagram = (state, json) => {
   try {
     const parsed = JSON.parse(json);
-    const openedDiagram = diagram.fromJSON(parsed);
+    const openedDiagram = KVD.fromJSON(parsed);
     if (openedDiagram) {
-      return kvState({
-        currentEditMode: state.currentEditMode,
-        currentKvMode: state.currentKvMode,
-        currentOutput: 0,
-        diagram: openedDiagram,
-        viewSetting: state.viewSetting,
-      });
+      return state
+        .set('diagram', openedDiagram)
+        .set('currentOutput', 0);
     }
   } catch (e) {
   }
 
-  return kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: state.diagram,
-    errorMessage: "Invalid Data",
-    viewSetting: state.viewSetting,
-  });
+  return state.set('errorMessage', 'InvalidData');
 };
 
-const setViewSetting = (state, viewSetting) => {
-  return kvState({
-    currentEditMode: state.currentEditMode,
-    currentKvMode: state.currentKvMode,
-    currentCube: state.currentCube,
-    currentOutput: state.currentOutput,
-    diagram: state.diagram,
-    viewSetting: viewSetting,
-  });
-};
+const setViewSetting = (state, viewSetting) =>
+  state.set('viewSetting', viewSetting)
+;
 
 const modifiers = (actions) => {
   return O.merge(
@@ -464,10 +373,10 @@ const initialState = kvState();
 const stateFromJson = (json) =>
   kvState({
     currentEditMode: json.currentEditMode,
-    currentKvMode: diagram.modeFromName(String(json.mode)),
-    currentCube: diagram.cubeFromJson(json.cube),
+    currentKvMode: KVD.modeFromName(String(json.mode)),
+    currentCube: KVD.cubeFromJson(json.cube),
     currentOutput: json.currentOutput,
-    diagram: diagram.fromJSON(json),
+    diagram: KVD.fromJSON(json),
   })
 ;
 
