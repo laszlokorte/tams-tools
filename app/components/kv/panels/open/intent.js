@@ -13,11 +13,11 @@ export default ({DOM}) => {
 
   const open$ = O.merge(
     openExampleEvent$
-          .map((evt) => evt.currentTarget.dataset.openJson),
+          .map((evt) => evt.ownerTarget.dataset.openJson),
 
     openFileEvent$
           .flatMapLatest((evt) => {
-            const file = evt.currentTarget.files[0];
+            const file = evt.ownerTarget.files[0];
 
             return fileReader(file);
           })

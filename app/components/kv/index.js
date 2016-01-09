@@ -86,6 +86,6 @@ export default (responses) => {
     preventDefault: O.merge(
       actions.preventDefault,
       openPanel.preventDefault
-    ),
+    ).share(),
   };
 };

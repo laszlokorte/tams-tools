@@ -31,7 +31,7 @@ export default ({DOM, cancel$}) => {
   const pointerEnter$ = O.merge(
     mouseEnterEvent$
       .map((evt) => ({
-        cell: BitSet(evt.currentTarget.dataset.kvCell),
+        cell: BitSet(evt.ownerTarget.dataset.kvCell),
       }))
     ,
     touchMoveEvent$
@@ -55,8 +55,8 @@ export default ({DOM, cancel$}) => {
 
   const pointerDown$ = pointerDownEvent$
     .map((evt) => ({
-      cell: BitSet(evt.currentTarget.dataset.kvCell),
-      output: parseInt(evt.currentTarget.dataset.kvOutput, 10),
+      cell: BitSet(evt.ownerTarget.dataset.kvCell),
+      output: parseInt(evt.ownerTarget.dataset.kvOutput, 10),
     }))
     .filter(({cell}) => cell !== null)
     ;

@@ -28,7 +28,7 @@ export const memoize = (func) => {
 // get function which parses the attribute of given name
 // from a given event's target as integer
 export const parseDataAttr = (attrName) => (evt) =>
-  parseInt(evt.currentTarget.dataset[attrName], 10)
+  parseInt(evt.ownerTarget.dataset[attrName], 10)
 ;
 
 export const log = (...args) => {

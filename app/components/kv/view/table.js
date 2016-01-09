@@ -42,7 +42,9 @@ const _labelFor = ({inputs, offset}, rowsOrColumns, {include, exclude}) => {
 
 const renderTableHead = (colCount, {top, left, right, bottom}) =>
   top !== null &&
-  tr('.kv-table-row-title.kv-row-top',[
+  tr('.kv-table-row-title.kv-row-top', {
+    key: 'head-row',
+  }, [
     left !== null &&
     th('.kv-table-corner') || null,
 
@@ -62,7 +64,9 @@ const renderTableHead = (colCount, {top, left, right, bottom}) =>
 ;
 
 const renderTableFoot = (colCount, {left, right, bottom}) =>
-  bottom !== null && tr('.kv-table-row-title.kv-row-bottom', [
+  bottom !== null && tr('.kv-table-row-title.kv-row-bottom', {
+    key: 'foot-row',
+  }, [
     left !== null &&
     th('.kv-table-corner') || null,
 
@@ -209,7 +213,9 @@ export const renderTable = ({
     }, [
       compact ? null : renderTableHead(colCount, labels),
       layout.grid.map((row, rowIndex) =>
-        tr('.kv-table-row-body', [
+        tr('.kv-table-row-body', {
+          key: `body-row${rowIndex}`,
+        }, [
           compact ? null : renderTableRowStart(rowIndex, rowCount, labels),
           row.cells.map((cell) => {
             if (cell.children) {

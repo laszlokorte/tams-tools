@@ -73,8 +73,8 @@ export default ({DOM}) => {
         .events('click')
         .map((evt) => ({
           reverse: evt.altKey,
-          output: parseInt(evt.currentTarget.dataset.kvOutput, 10),
-          cell: BitSet(evt.currentTarget.dataset.kvCell),
+          output: parseInt(evt.ownerTarget.dataset.kvOutput, 10),
+          cell: BitSet(evt.ownerTarget.dataset.kvCell),
         }))
         .share(),
     addOutput$:
@@ -89,7 +89,7 @@ export default ({DOM}) => {
 
     startRename$:
       startRenameEvent$
-        .map((evt) => parseInt(evt.currentTarget.dataset.kvOutputLabel, 10))
+        .map((evt) => parseInt(evt.ownerTarget.dataset.kvOutputLabel, 10))
         .share(),
 
     cancelRename$:
@@ -101,9 +101,9 @@ export default ({DOM}) => {
       tryOutputNameEvent$
         .map((evt) => ({
           outputIndex: parseInt(
-            evt.currentTarget.dataset.kvOutputEditLabel,
+            evt.ownerTarget.dataset.kvOutputEditLabel,
             10),
-          name: evt.currentTarget.value,
+          name: evt.ownerTarget.value,
         }))
         .share(),
 

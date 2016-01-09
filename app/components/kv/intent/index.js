@@ -15,7 +15,8 @@ const isNoInput = (evt) => {
 
 export default ({DOM, keydown, openData$, viewSetting$}) => {
   const cancel$ = keydown
-    .filter((evt) => evt.keyCode === 27);
+    .filter((evt) => evt.keyCode === 27)
+    .share();
 
   const loops = loopActions({DOM, cancel$});
   const functions = functionActions({DOM});
@@ -48,11 +49,13 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
         .share(),
     switchKvMode$:
       switchKvModeEvent$
-        .map((evt) => evt.currentTarget.dataset.kvMode)
+        .map((evt) => evt.ownerTarget.dataset.kvMode)
         .share(),
     switchEditMode$:
       switchEditModeEvent$
-        .map((evt) => evt.currentTarget.dataset.editMode)
+        .do(::console.log)
+        .map((evt) => evt.ownerTarget.dataset.editMode)
+        .do(::console.log)
         .share(),
     openDiagram$: openData$,
     setViewSetting$: viewSetting$,
