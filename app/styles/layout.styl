@@ -402,6 +402,7 @@ $keyframe-name = slide-up
   outline none
   background-color transparent
   clear both
+  overflow hidden
 
   &.state-editable
     cursor text
@@ -409,21 +410,23 @@ $keyframe-name = slide-up
     text-decoration underline
 
 .output-label-edit
-  display inline-block
+  display block
   white-space nowrap
   text-align center
-  outline none
-  border 1px solid grey
-  width 100%
-  margin 0
+  border none
+  outline 1px solid grey
+  margin space(0.25) 0 0
+  height (button-size - space(0.5))
+  line-height (button-size - space(0.5))
   background-color color-background-primary
   max-width 10em
   overflow hidden
+  text-decoration none
   &:focus
-    border-color color-focus
+    outline-color color-focus
 
   &.state-invalid
-    border-color color-danger
+    outline-color color-danger
     background-color tint(#f00, 90%)
 
 .loop-bar
