@@ -1,7 +1,5 @@
 import {Observable as O} from 'rx';
 
-import {parseDataAttr} from '../../../lib/utils';
-
 import panelActions from './panels';
 import loopActions from './loops';
 import functionActions from './function';
@@ -44,7 +42,7 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
   return {
     selectOutput$:
       selectOutputEvent$
-        .map(parseDataAttr('kvOutput'))
+        .map((evt) => parseInt(evt.ownerTarget.dataset.kvOutput, 10))
         .filter(isFinite)
         .share(),
     switchKvMode$:

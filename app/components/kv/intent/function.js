@@ -1,8 +1,6 @@
 import {Observable as O} from 'rx';
 import BitSet from 'bitset.js';
 
-import {parseDataAttr} from '../../../lib/utils';
-
 const isNoInput = (evt) => {
   const tagName = evt.target.tagName;
   return tagName !== 'INPUT' &&
@@ -83,7 +81,7 @@ export default ({DOM}) => {
         .share(),
     removeOutput$:
       removeOutputEvent$
-        .map(parseDataAttr('kvRemoveOutput'))
+        .map((evt) => parseInt(evt.ownerTarget.dataset.kvRemoveOutput, 10))
         .filter(isFinite)
         .share(),
 

@@ -1,8 +1,6 @@
 import {Observable as O} from 'rx';
 import BitSet from 'bitset.js';
 
-import {parseDataAttr} from '../../../lib/utils';
-
 const touchTarget = (evt) =>
   document.elementFromPoint(
     evt.changedTouches[0].clientX,
