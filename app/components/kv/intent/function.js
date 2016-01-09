@@ -7,8 +7,7 @@ const isNoInput = (evt) => {
   const tagName = evt.target.tagName;
   return tagName !== 'INPUT' &&
     tagName !== 'TEXTAREA' &&
-    tagName !== 'SELECT' &&
-    tagName !== 'BUTTON';
+    tagName !== 'SELECT';
 };
 
 export default ({DOM}) => {
