@@ -26,7 +26,7 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
 
   const selectOutputEvent$ = outputItem
     .events('click')
-    .filter((e) => e.target.tagName !== 'INPUT');
+    .filter(isNoInput);
 
   const editModeButton = DOM
     .select('[data-edit-mode]');

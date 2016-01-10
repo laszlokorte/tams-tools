@@ -42,12 +42,23 @@ export default ({DOM}) => {
     .events('click')
     .filter(isNoInput);
 
+  // IE9,10,11 do not fire input
+  // events on contentEditable elements
+  // So take both keyup and input events
+  // But only care about the stream of which
+  // we get the first event and then ignore the
+  // other stream.
+  // If available the input event is prefered because
+  // it is fired on each value change and not only
+  // keyboard input
+  const tryOutputNameEvent$ = O.amb(
+    outputEditLabel.events('keyup'),
+    outputEditLabel.events('input')
+  ).share();
+
   const cancelRenameEvent$ = outputEditLabel
     .events('keydown')
     .filter((e) => e.keyCode === 27);
-
-  const tryOutputNameEvent$ = outputEditLabel
-    .events('input');
 
   const confirmOutputNameEvent$ = O.merge(
     outputEditLabel
