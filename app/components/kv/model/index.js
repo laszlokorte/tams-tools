@@ -4,7 +4,7 @@ import I from 'immutable';
 import * as KVD from './diagram';
 import {buildLayout} from './layout';
 
-import {memoize, clamp, padLeft} from '../../../lib/utils';
+import {memoize, clamp, padLeft, compose} from '../../../lib/utils';
 
 const kvState = I.Record({
   currentEditMode: 'loops',
@@ -41,6 +41,7 @@ const colorPalette = [
   "#E91E63",
   "#4CAF50",
 ];
+
 const generateUnique = (set, generator, i = set.size) => {
   const newName = generator(i);
 
@@ -91,10 +92,6 @@ const layout = memoize(buildLayout);
 const clearError = (state) =>
   state ? state.remove('errorMessage') : state
 ;
-
-const applyModification = (prev, modfn) => {
-  return modfn(clearError(prev));
-};
 
 const addInput = (state) =>
   state.update('diagram', (diagram) =>
@@ -317,14 +314,14 @@ const setViewSetting = (state, viewSetting) =>
 
 const modifiers = (actions) => {
   return O.merge(
-    actions.addInput$.map(() => (state) => {
-      return addInput(state);
-    }),
-    actions.removeInput$.map(() => (state) => {
-      return removeInput(state);
-    }),
+    actions.addInput$.map(() =>
+      compose(cancelRename, addInput)
+    ),
+    actions.removeInput$.map(() =>
+      compose(cancelRename, removeInput)
+    ),
     actions.cycleValue$.map(({output, cell, reverse}) => (state) => {
-      return cycleValue(state, output, cell, reverse);
+      return cycleValue.bind(cancelRename(state), output, cell, reverse);
     }),
     actions.tryLoop$.map(({
       startCell, targetCell,
@@ -348,20 +345,20 @@ const modifiers = (actions) => {
         allMatchingOutputs: allOutputs,
       });
     }),
-    actions.addOutput$.map(() => (state) => {
-      return addOutput(state);
-    }),
+    actions.addOutput$.map(() =>
+      compose(cancelRename, addOutput)
+    ),
     actions.removeOutput$.map((index) => (state) => {
-      return removeOutput(state, index);
+      return removeOutput(cancelRename(state), index);
     }),
     actions.selectOutput$.map((index) => (state) => {
-      return selectOutput(state, index);
+      return selectOutput(cancelRename(state), index);
     }),
     actions.switchKvMode$.map((mode) => (state) => {
-      return switchKvMode(state, mode);
+      return switchKvMode(cancelRename(state), mode);
     }),
     actions.switchEditMode$.map((mode) => (state) => {
-      return switchEditMode(state, mode);
+      return switchEditMode(cancelRename(state), mode);
     }),
     actions.startRename$.map((outputIndex) => (state) => {
       return startRename(state, outputIndex);
@@ -376,10 +373,10 @@ const modifiers = (actions) => {
       return tryOutputName(state, outputIndex, name);
     }),
     actions.openDiagram$.map((data) => (state) => {
-      return openDiagram(state, data);
+      return openDiagram(cancelRename(state), data);
     }),
     actions.setViewSetting$.map((viewSetting) => (state) => {
-      return setViewSetting(state, viewSetting);
+      return setViewSetting(cancelRename(state), viewSetting);
     })
   );
 };
@@ -395,6 +392,10 @@ const stateFromJson = (json) =>
     diagram: KVD.fromJSON(json),
   })
 ;
+
+const applyModification = (prev, modfn) => {
+  return modfn(clearError(prev));
+};
 
 export default (initial$, actions) =>
     O.merge(
