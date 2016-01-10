@@ -1,0 +1,88 @@
+{
+    "inputs": [
+        "Z0",
+        "Z1",
+        "Z2"
+    ],
+    "loops": [],
+    "outputs": [
+        {
+            "name": "Z0+",
+            "values": [
+                null,
+                false,
+                false,
+                null,
+                false,
+                null,
+                true,
+                null
+            ]
+        },
+        {
+            "name": "Z1+",
+            "values": [
+                null,
+                true,
+                false,
+                null,
+                true,
+                null,
+                false,
+                null
+            ]
+        },
+        {
+            "name": "Z2+",
+            "values": [
+                null,
+                false,
+                true,
+                null,
+                true,
+                null,
+                false,
+                null
+            ]
+        },
+        {
+            "name": "Red",
+            "values": [
+                null,
+                false,
+                false,
+                null,
+                true,
+                null,
+                true,
+                null
+            ]
+        },
+        {
+            "name": "Yellow",
+            "values": [
+                null,
+                false,
+                false,
+                null,
+                false,
+                null,
+                true,
+                null
+            ]
+        },
+        {
+            "name": "Green",
+            "values": [
+                null,
+                true,
+                false,
+                null,
+                false,
+                null,
+                false,
+                null
+            ]
+        }
+    ]
+}

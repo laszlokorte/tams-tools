@@ -1,63 +1,52 @@
 {
     "inputs": [
-        "A",
-        "B"
+        "Z0",
+        "Z1"
     ],
-    "loops": [
-        {
-            "color": "#ffc107",
-            "exclude": 0,
-            "include": 1,
-            "mode": "dnf",
-            "outputs": [
-                0
-            ]
-        },
-        {
-            "color": "#3f51b5",
-            "exclude": 1,
-            "include": 0,
-            "mode": "dnf",
-            "outputs": [
-                0
-            ]
-        },
-        {
-            "color": "#8bc34a",
-            "exclude": 2,
-            "include": 0,
-            "mode": "dnf",
-            "outputs": [
-                0,
-                1
-            ]
-        },
-        {
-            "color": "#795548",
-            "exclude": 0,
-            "include": 2,
-            "mode": "knf",
-            "outputs": [
-                1
-            ]
-        }
-    ],
+    "loops": [],
     "outputs": [
         {
-            "name": "O1x",
+            "name": "Z0+",
             "values": [
                 true,
+                false,
                 true,
-                true,
-                true
+                false
             ]
         },
         {
-            "name": "O2x",
+            "name": "Z1+",
+            "values": [
+                false,
+                true,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "Red",
             "values": [
                 true,
                 true,
                 false,
+                false
+            ]
+        },
+        {
+            "name": "Yellow",
+            "values": [
+                false,
+                true,
+                false,
+                true
+            ]
+        },
+        {
+            "name": "Green",
+            "values": [
+                false,
+                false,
+                true,
                 false
             ]
         }

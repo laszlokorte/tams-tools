@@ -4,6 +4,10 @@ export default [
     data: require('./ampel-1.json'),
   },
   {
+    name: "Ampel 2",
+    data: require('./ampel-2.json'),
+  },
+  {
     name: "7 Segment Anzeige",
     data: require('./7-segment.json'),
   },
