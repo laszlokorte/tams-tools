@@ -3,6 +3,12 @@ import isolate from '@cycle/isolate';
 import {makeDOMDriver, div} from '@cycle/dom';
 import {Observable as O} from 'rx';
 
+/*
+  This file is just used as playground
+  to reconstruct some error cases separated from
+  the application
+*/
+
 const Canvas = ({DOM, content$}) => {
   const intent = (D) =>
     ({

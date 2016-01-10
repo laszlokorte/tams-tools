@@ -4,6 +4,13 @@ import {Rotation} from '../lib/layout';
 
 import './gates.styl';
 
+/*
+   This file contains the svg definitions
+   for all the gates
+*/
+
+// Get an array of positions for the input ports
+// for a given number of inputs
 const inputOffsets = (count) => {
   let result = [];
 
@@ -37,6 +44,7 @@ const inputOffsets = (count) => {
   return result;
 };
 
+// Get a solder point for the given position
 const soderPoint = (x,y) =>
   svg('circle', {
     attributes: {
@@ -48,6 +56,10 @@ const soderPoint = (x,y) =>
   })
 ;
 
+// Get a number of input ports for the given
+// type of gate
+// soder defines if the pins should have soder
+ // points drawn to them
 const inputPorts = (count, type, soder) =>
   svg('g', {
     attributes: {
@@ -95,6 +107,7 @@ const inputExtension = (indent, count, bodyWidth) => {
 }
 ;
 
+// Get an output port
 const outputFeature = (soder) => [
   soder ? soderPoint(50, 0) : null,
   svg('line', {
@@ -110,6 +123,9 @@ const outputFeature = (soder) => [
 ]
 ;
 
+// Get a short wire of the siz of a gate
+// which can be used to replace a gate
+// with a single port
 const passThroughWire = (color) => [
   svg('line', {
     attributes: {
@@ -125,11 +141,14 @@ const passThroughWire = (color) => [
 ]
 ;
 
+// Convert a signal value into a string
 const signalName = (signal) =>
   signal === null ?
   '?' : signal.toString()
 ;
 
+// Get a replacement for a gate that is not needed
+// (A gate with 0 or 1 input ports)
 const omitGate = (color, angle, inputCount, defaultSignal) => {
   if (inputCount === 1) {
     return passThroughWire(color);
@@ -148,6 +167,7 @@ const omitGate = (color, angle, inputCount, defaultSignal) => {
   }
 };
 
+// The shape of a negator
 const negatorFeature = (color) =>
   svg('circle', {
     attributes: {
@@ -160,6 +180,8 @@ const negatorFeature = (color) =>
   })
 ;
 
+// The line that distinguishes an OR gates
+// from a XOR gate
 const exclusionFeature = (color) =>
   svg('path', {
     attributes: {
@@ -172,6 +194,8 @@ const exclusionFeature = (color) =>
   })
 ;
 
+// The shape in which the input pins on an OR gate
+// are cutted to fit the gate.
 const orMaskFeature = (offset = 0) =>
   svg('path', {
     attributes: {
@@ -183,6 +207,7 @@ const orMaskFeature = (offset = 0) =>
   })
 ;
 
+// The shape of an OR gate
 const orBodyFeature = (color) =>
   svg('path', {
     attributes: {
@@ -196,6 +221,7 @@ const orBodyFeature = (color) =>
   })
 ;
 
+// The shape of an AND gate
 const andBodyFeature = (color) =>
   svg('path', {
     attributes: {
@@ -210,6 +236,7 @@ const andBodyFeature = (color) =>
   })
 ;
 
+// The shape of a buffer
 const bufferBodyFeature = (color) =>
   svg('path', {
     attributes: {
@@ -222,6 +249,8 @@ const bufferBodyFeature = (color) =>
   })
 ;
 
+// create a function the returns a gate composed
+// of multiple parts
 const composedGate = ({
   inputIndent, type,
   features, bodyWidth = 70,
@@ -263,6 +292,8 @@ const composedGate = ({
   };
 };
 
+// Get a mask for clipping the input ports to make
+// them fit the shape of the gate
 const inputClipPath = ({type, size, indent, extra}) =>
   svg('clipPath', {
     attributes: {id: type + 'ClipPath'},
@@ -279,6 +310,7 @@ const inputClipPath = ({type, size, indent, extra}) =>
   ])
 ;
 
+// The list of all masks used to clip the input ports
 export const clipPaths = (size = 400) =>
   svg('defs', [
     inputClipPath({type: 'xnor', indent: 10, size, extra: orMaskFeature(-10)}),
@@ -292,7 +324,9 @@ export const clipPaths = (size = 400) =>
   ])
 ;
 
+// functions to generate wires
 export const wires = {
+  // Get a vertical wire
   vertical: ({key, from, toY, input, inputCount, soderStart, soderEnd}) => {
     const startX = -40 + 10 * (from.x + inputOffsets(inputCount)[input]);
     const startY = 10 * from.y;
@@ -314,6 +348,8 @@ export const wires = {
       }),
     ]);
   },
+
+  // Get an horizontal wire
   horizontal: ({key, from, toX, input, inputCount, soderStart, soderEnd}) => {
     const startX = 10 * from.x;
     const startY = -40 + 10 * (from.y + inputOffsets(inputCount)[input]);
@@ -337,6 +373,7 @@ export const wires = {
   },
 };
 
+// functions to generate gates
 export const gates = {
   and: composedGate({
     type: 'and',

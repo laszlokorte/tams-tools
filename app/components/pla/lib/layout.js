@@ -1,3 +1,5 @@
+// The direction in which the output
+// port of a gate is pointing
 export const Rotation = {
   NORTH: 0,
   EAST: 1,
@@ -5,6 +7,7 @@ export const Rotation = {
   WEST: 3,
 };
 
+// Calculate the layout for the given input ports
 const layoutInputs = (inputs, height) => {
   return {
     height: 25,
@@ -50,6 +53,8 @@ const layoutInputs = (inputs, height) => {
   };
 };
 
+// calculate the layout of the output gates
+// for the given pla
 const layoutOutputs = (pla, outputGateWidth) => {
   const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const outputWireCount = pla.outputs.map(
@@ -103,6 +108,8 @@ const layoutOutputs = (pla, outputGateWidth) => {
   };
 };
 
+// calculate the positions for the gates which
+// correspond to the loops of the given pla
 const layoutLoops = (pla, outputGateWidth) => {
   const gateWidth = (2 + Math.max(7, pla.inputs.length));
   const height = pla.loops.length * gateWidth;
@@ -168,6 +175,7 @@ const layoutLoops = (pla, outputGateWidth) => {
   };
 };
 
+// calculate the width of the largest output gate
 const calcOutputGateWidth = (pla) => {
   const outputWireCounts = pla.outputs.map((o, index) =>
     pla.loops
@@ -181,6 +189,7 @@ const calcOutputGateWidth = (pla) => {
   return outputGateWidth;
 };
 
+// Calculate a circuit layout for the given pla
 export default (pla) => {
   const outputGateWidth = calcOutputGateWidth(pla);
   const loops = layoutLoops(pla, outputGateWidth);

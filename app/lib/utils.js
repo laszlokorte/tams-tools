@@ -1,7 +1,5 @@
 /**
- * This File Contains:
- *
- * Utility functions which are not specific for domain of kv diagrams.
+ * This file contains utility functions
  */
 
 // wrap the given function to memoize return values
@@ -25,23 +23,27 @@ export const memoize = (func) => {
   };
 };
 
-export const log = (...args) => {
-  console.log(...args);
-  return args[0];
-};
-
+// get a function the returns a property
+// of the object it get's passed as argument.
 export const pluck = (key) =>
   (obj) => obj[key]
 ;
 
+// if value < min return min
+// if value > max return max
+// otherwise return value
 export const clamp = (value, min, max) =>
   Math.min(Math.max(value, min), max)
 ;
 
-export const padLeft = (string, width, pad) =>
-  Array(width - String(string).length + 1).join(pad) + string
+// get a string of given width
+// by prepending pad to base
+export const padLeft = (base, width, pad) =>
+  Array(width - String(base).length + 1).join(pad) + base
 ;
 
+// compose multiple functions to a single one
+// compose(a,b,c)(x) === c(b(a(x)))
 export const compose = (...functions) =>
   (arg) =>
     functions.reduce((acc, fn) =>

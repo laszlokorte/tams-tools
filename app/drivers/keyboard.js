@@ -1,5 +1,7 @@
 import {Observable as O} from 'rx';
 
+// This driver captures global key down event
+// and provides them as Observable
 export const keyboardDriver = () => {
   return O.fromEventPattern(
     (h) => {
