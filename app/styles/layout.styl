@@ -146,7 +146,7 @@ $keyframe-name = slide-up
   margin space(1) 0 0 space(2)
   float left
 
-.input-spinner
+.spinner
   display inline-block
   clear both
   position relative
@@ -160,49 +160,49 @@ $keyframe-name = slide-up
     border-color transparent
     transition-delay 0
 
-.input-spinner-buttons
+.spinner-buttons
   transition opacity 0.3s ease-out
   transition-delay 0.3s
 
-.input-spinner-value
-.input-spinner-label
+.spinner-value
+.spinner-label
   transition transform 0.2s ease-out
   transition-delay 0s
 
-.input-spinner.state-readonly
-  .input-spinner-buttons
+.spinner.state-readonly
+  .spinner-buttons
     opacity 0
     pointer-events none
     transition-delay 0s
 
-  .input-spinner-value
+  .spinner-value
     transform translateX(1.5 * button-size-small)
     transition-delay 0.3s
 
-  .input-spinner-label
+  .spinner-label
     transform translateX(0.5 * button-size-small)
     transition-delay 0.3s
 
 
-.input-spinner-label
-.input-spinner-value
-.input-spinner-buttons
+.spinner-label
+.spinner-value
+.spinner-buttons
   display inline-block
   line-height button-size-small
   height button-size-small
   vertical-align middle
 
-.input-spinner-label::after
+.spinner-label::after
   content: ':'
 
-.input-spinner-value
+.spinner-value
   font-size font-size-big
   font-weight font-bold
   min-width space(2.5)
   text-align center
 
-.input-spinner-button-decrement
-.input-spinner-button-increment
+.spinner-button-decrement
+.spinner-button-increment
   round()
   background-color color-background-inverse
   vertical-align top
@@ -226,11 +226,11 @@ $keyframe-name = slide-up
     pointer-events none
 
 
-.input-spinner-button-decrement
+.spinner-button-decrement
   background-image svgurl('assets/icons/minus.svg') svg(
     rect fill color-foreground-secondary
   )
-.input-spinner-button-increment
+.spinner-button-increment
   background-image svgurl('assets/icons/plus.svg') svg(
     path fill color-foreground-secondary
   )

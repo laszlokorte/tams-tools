@@ -351,6 +351,9 @@ const modifiers = (actions) => {
     actions.removeOutput$.map((index) => (state) => {
       return removeOutput(cancelRename(state), index);
     }),
+    actions.removeLastOutput$.map(() => (state) => {
+      return removeOutput(cancelRename(state), state.diagram.outputs.size - 1);
+    }),
     actions.selectOutput$.map((index) => (state) => {
       return selectOutput(cancelRename(state), index);
     }),

@@ -16,26 +16,37 @@ export default ({DOM}) => {
   const outputEditLabel = DOM
     .select('[data-kv-output-edit-label]');
 
-  const incrementButton = DOM
-    .select('[data-kv-counter="increment"]');
+  const incrementInputsButton = DOM
+    .select('[data-spinner="inputs"] [data-spinner-action="increment"]');
 
-  const decrementButton = DOM
-    .select('[data-kv-counter="decrement"]');
+  const decrementInputsButton = DOM
+    .select('[data-spinner="inputs"] [data-spinner-action="decrement"]');
+
+  const incrementOutputsButton = DOM
+    .select('[data-spinner="outputs"] [data-spinner-action="increment"]');
+
+  const decrementOutputsButton = DOM
+    .select('[data-spinner="outputs"] [data-spinner-action="decrement"]');
 
   const addOutputButton = DOM
     .select('[data-kv-add-output]');
 
-  const addOutputEvent$ = addOutputButton
-    .events('click');
+  const addOutputEvent$ = O.merge(
+    addOutputButton.events('click'),
+    incrementOutputsButton.events('click')
+  );
 
   const removeOutputEvent$ = DOM
     .select('[data-kv-remove-output]')
     .events('click');
 
-  const incrementEvent$ = incrementButton
+  const decrementOutputsEvent$ = decrementOutputsButton
     .events('click');
 
-  const decrementEvent$ = decrementButton
+  const incrementInputsEvent$ = incrementInputsButton
+    .events('click');
+
+  const decrementInputsEvent$ = decrementInputsButton
     .events('click');
 
   const startRenameEvent$ = outputLabel
@@ -70,11 +81,11 @@ export default ({DOM}) => {
 
   return {
     addInput$:
-      incrementEvent$
+      incrementInputsEvent$
         .map(() => true)
         .share(),
     removeInput$:
-      decrementEvent$
+      decrementInputsEvent$
         .map(() => true)
         .share(),
     cycleValue$:
@@ -96,7 +107,10 @@ export default ({DOM}) => {
         .map((evt) => parseInt(evt.ownerTarget.dataset.kvRemoveOutput, 10))
         .filter(isFinite)
         .share(),
-
+    removeLastOutput$:
+      decrementOutputsEvent$
+        .map(() => true)
+        .share(),
     startRename$:
       startRenameEvent$
         .map((evt) => parseInt(evt.ownerTarget.dataset.kvOutputLabel, 10))
@@ -127,10 +141,12 @@ export default ({DOM}) => {
         .share(),
 
     preventDefault: O.merge(
-      incrementEvent$,
-      decrementEvent$,
-      incrementButton.events('mousedown'),
-      decrementButton.events('mousedown'),
+      incrementInputsEvent$,
+      decrementInputsEvent$,
+      incrementInputsButton.events('mousedown'),
+      decrementInputsButton.events('mousedown'),
+      incrementOutputsButton.events('mousedown'),
+      decrementOutputsButton.events('mousedown'),
       startRenameEvent$,
       cancelRenameEvent$,
       tryOutputNameEvent$,

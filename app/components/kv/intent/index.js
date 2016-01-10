@@ -69,6 +69,7 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
     cycleValue$: functions.cycleValue$,
     addOutput$: functions.addOutput$,
     removeOutput$: functions.removeOutput$,
+    removeLastOutput$: functions.removeLastOutput$,
     startRename$: functions.startRename$,
     cancelRename$: O.merge(
       functions.cancelRename$,

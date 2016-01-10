@@ -9,26 +9,9 @@ import {
   renderTable,
 } from './table';
 
-import './index.styl';
+import renderSpinner from './spinner';
 
-const renderInputSpinner = (state) =>
-  div('.input-spinner' + (
-      state.currentEditMode !== 'function' ? '.state-readonly' : ''
-  ), [
-    span('.input-spinner-label', 'Inputs'),
-    span('.input-spinner-value', state.diagram.inputs.size.toString()),
-    span('.input-spinner-buttons', [
-      button('.input-spinner-button-decrement', {
-        attributes: {'data-kv-counter': 'decrement'},
-        disabled: state.diagram.inputs.size < 1,
-      }, 'Decrement'),
-      button('.input-spinner-button-increment', {
-        attributes: {'data-kv-counter': 'increment'},
-        disabled: state.diagram.inputs.size >= 8,
-      }, 'Increment'),
-    ]),
-  ])
-;
+import './index.styl';
 
 const renderLoopIcon = (loop, index, editable) =>
   li('.loop-list-item', [
@@ -215,9 +198,28 @@ const render = ({state, layout}, index) =>
               attributes: {'data-edit-mode': 'loops'},
             },'Edit loops'),
         ]),
-        renderInputSpinner(state),
+        renderSpinner({
+          attributes: {
+            'data-spinner': 'inputs',
+          },
+          label: 'Inputs',
+          readonly: state.currentEditMode !== 'function',
+          value: state.diagram.inputs.size,
+          min: 0,
+          max: 8,
+        }),
+        renderSpinner({
+          attributes: {
+            'data-spinner': 'outputs',
+          },
+          label: 'Outputs',
+          readonly: state.currentEditMode !== 'function',
+          value: state.diagram.outputs.size,
+          min: 1,
+          max: 7,
+        }),
       ]),
-,
+
       renderOutputThumbnails(layout, state, {
         canEdit: state.currentEditMode === 'function',
         canAdd: state.diagram.outputs.size < 7,
