@@ -320,9 +320,9 @@ const modifiers = (actions) => {
     actions.removeInput$.map(() =>
       compose(cancelRename, removeInput)
     ),
-    actions.cycleValue$.map(({output, cell, reverse}) => (state) => {
-      return cycleValue.bind(cancelRename(state), output, cell, reverse);
-    }),
+    actions.cycleValue$.map(({output, cell, reverse}) => (state) =>
+      cycleValue(cancelRename(state), output, cell, reverse)
+    ),
     actions.tryLoop$.map(({
       startCell, targetCell,
       allOutputs = true,
