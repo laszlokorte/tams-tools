@@ -4,6 +4,10 @@ export default [
     data: require('./ampel-1.json'),
   },
   {
+    name: "7 Segment Anzeige",
+    data: require('./7-segment.json'),
+  },
+  {
     name: "Mertsching B1 s.91",
     data: require('./mertsching-b1-s91.json'),
   },
