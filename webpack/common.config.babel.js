@@ -44,6 +44,7 @@ module.exports = {
     debug: "./app/debug.js",
     layout: "./app/layout.js",
     logic: "./app/logic.js",
+    led: "./app/led.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -100,6 +101,14 @@ module.exports = {
       chunks: ['logic', 'vendor'],
       template: './app/index.html',
       filename: 'logic.html',
+      favicon: './app/favicon.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'LED Tester',
+      minify: htmlMinifyOptions,
+      chunks: ['led', 'vendor'],
+      template: './app/index.html',
+      filename: 'led.html',
       favicon: './app/favicon.ico',
     }),
     new HtmlWebpackPlugin({
