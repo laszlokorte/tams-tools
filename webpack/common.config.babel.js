@@ -99,6 +99,7 @@ module.exports = {
       minify: htmlMinifyOptions,
       chunks: ['logic', 'vendor'],
       template: './app/index.html',
+      filename: 'logic.html',
       favicon: './app/favicon.ico',
     }),
     new HtmlWebpackPlugin({
