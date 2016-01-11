@@ -43,6 +43,7 @@ module.exports = {
     app: "./app/index.js",
     debug: "./app/debug.js",
     layout: "./app/layout.js",
+    logic: "./app/logic.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -90,6 +91,13 @@ module.exports = {
       title: 'KV Diagram Editor',
       minify: htmlMinifyOptions,
       chunks: ['app', 'vendor'],
+      template: './app/index.html',
+      favicon: './app/favicon.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Logic Parser',
+      minify: htmlMinifyOptions,
+      chunks: ['logic', 'vendor'],
       template: './app/index.html',
       favicon: './app/favicon.ico',
     }),
