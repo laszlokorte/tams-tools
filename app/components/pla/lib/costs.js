@@ -1,7 +1,3 @@
-const zeroIfLess = (min, val) =>
-  val >= min ? val : 0;
-;
-
 const calcLoopCosts = (pla) => {
   // the number of input ports of each loop gate
   const portCount = pla.loops.map((loop) =>
