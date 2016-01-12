@@ -17,7 +17,7 @@ export default (DOM, keydown) => {
     ).share(),
     cycleOutput$: ledEvent$.map(
       (evt) => parseInt(evt.ownerTarget.getAttribute('data-led'), 10)
-    ).share().do(::console.log),
+    ).share(),
     decimalInput$: inputEvent$.map(
       (evt) => parseInt(evt.ownerTarget.value, 10)
     ).share(),
