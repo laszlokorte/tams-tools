@@ -6,10 +6,11 @@ export default (responses) => {
   const {
     DOM,
     keydown,
+    data$,
   } = responses;
 
   const actions = intent(DOM, keydown);
-  const state$ = model(actions);
+  const state$ = model(data$, actions);
   const vtree$ = view(state$);
 
   return {

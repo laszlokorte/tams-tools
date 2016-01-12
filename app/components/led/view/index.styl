@@ -1,0 +1,29 @@
+@import '../../../styles/global'
+
+.switch-button
+  stroke grey
+  stroke-width 3px
+  fill darken(darkred, 30%)
+  cursor pointer
+
+  &.state-enabled
+    fill green
+
+.led
+  fill grey
+  cursor pointer
+
+  &.state-enabled
+    fill green
+
+  &.state-undefined
+    fill orange
+
+.number-field
+  font-size inherit
+  font-family inherit
+  padding 3px
+  width 150px
+  margin-left 90px
+  outline none
+  border 2px solid #ccc
