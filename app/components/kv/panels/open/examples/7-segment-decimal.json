@@ -1,0 +1,76 @@
+{
+    "inputs": [
+        "i0",
+        "i1",
+        "i2",
+        "i3"
+    ],
+    "loops": [
+    ],
+    "outputs": [
+        {
+            "name": "a",
+            "values": [
+                true, false, true, true,
+                false, true, true, true,
+                true, true, null, null,
+                null, null, null, null
+            ]
+        },
+        {
+            "name": "b",
+            "values": [
+                true, true, true, true,
+                true, false, false, true,
+                true, true, null, null,
+                null, null, null, null
+            ]
+        },
+        {
+            "name": "c",
+            "values": [
+                true, true, false, true,
+                true, true, true, true,
+                true, true, null, null,
+                null, null, null, null
+            ]
+        },
+        {
+            "name": "d",
+            "values": [
+                true, false, true, true,
+                false, true, true, false,
+                true, true, null, null,
+                null, null, null, null
+            ]
+        },
+        {
+            "name": "e",
+            "values": [
+                true, false, true, false,
+                false, false, true, false,
+                true, false, null, null,
+                null, null, null, null
+            ]
+        },
+        {
+            "name": "f",
+            "values": [
+                true, false, false, false,
+                true, true, true, false,
+                true, true, null, null,
+                null, null, null, null
+            ]
+        },
+        {
+            "name": "g",
+            "values": [
+                false, false, true, true,
+                true, true, true, false,
+                true, true, null, null,
+                null, null, null, null
+            ]
+        }
+    ]
+}
+

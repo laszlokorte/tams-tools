@@ -8,8 +8,24 @@ export default [
     data: require('./ampel-2.json'),
   },
   {
-    name: "7 Segment Anzeige",
-    data: require('./7-segment.json'),
+    name: "7 Segment Anzeige (Dezimal)",
+    data: require('./7-segment-decimal.json'),
+  },
+  {
+    name: "7 Segment Anzeige (Hexadezimal)",
+    data: require('./7-segment-hex.json'),
+  },
+  {
+    name: "Volladdierer",
+    data: require('./full-adder.json'),
+  },
+  {
+    name: "Multiplexer",
+    data: require('./multiplexer.json'),
+  },
+  {
+    name: "Würfel",
+    data: require('./dice.json'),
   },
   {
     name: "Mertsching B1 s.91",

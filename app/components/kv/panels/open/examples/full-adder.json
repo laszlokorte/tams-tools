@@ -1,0 +1,36 @@
+{
+    "inputs": [
+        "a",
+        "b",
+        "ci"
+    ],
+    "loops": [],
+    "outputs": [
+        {
+            "name": "co",
+            "values": [
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true
+            ]
+        },
+        {
+            "name": "s",
+            "values": [
+                false,
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true
+            ]
+        }
+    ]
+}

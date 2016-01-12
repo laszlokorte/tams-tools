@@ -1,0 +1,23 @@
+{
+    "inputs": [
+        "s",
+        "a0",
+        "a1"
+    ],
+    "loops": [],
+    "outputs": [
+        {
+            "name": "Y",
+            "values": [
+                false,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true
+            ]
+        }
+    ]
+}

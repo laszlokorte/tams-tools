@@ -1,0 +1,59 @@
+{
+    "inputs": [
+        "b0",
+        "b1",
+        "b2"
+    ],
+    "loops": [],
+    "outputs": [
+        {
+            "name": "x1",
+            "values": [
+                false, false, true, true,
+                true, true, true, null
+            ]
+        },
+        {
+            "name": "x2",
+            "values": [
+                false, false, false, false,
+                true, true, true, null
+            ]
+        },
+        {
+            "name": "x3",
+            "values": [
+                false, false, false, false,
+                false, false, true, null
+            ]
+        },
+        {
+            "name": "x4",
+            "values": [
+                false, false, false, false,
+                false, false, true, null
+            ]
+        },
+        {
+            "name": "x5",
+            "values": [
+                false, true, false, true,
+                false, true, false, null
+            ]
+        },
+        {
+            "name": "x6",
+            "values": [
+                false, false, false, false,
+                true, true, true, null
+            ]
+        },
+        {
+            "name": "x7",
+            "values": [
+                false, false, true, true,
+                true, true, true, null
+            ]
+        }
+    ]
+}
