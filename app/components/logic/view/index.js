@@ -1,5 +1,8 @@
 import I from 'immutable';
-import {svg, div, textarea, h2, ul, li} from '@cycle/dom';
+import {
+  svg, div, textarea, h2, ul, li,
+  table, tr, th, td,
+} from '@cycle/dom';
 
 import './index.styl';
 
@@ -29,6 +32,14 @@ const expressionTree = (expression, x, y, width, acc) => {
           stroke: 'lightgray',
         })
       )
+      .push(
+        svg('text', {
+          x: x,
+          y: y - 15,
+          'text-anchor': 'middle',
+          'alignment-baseline': 'middle',
+        }, expression.operator)
+      )
     )
     .concat(expressionTree(
       expression.lhs, x - width / 4, y + 100, width / 2,
@@ -42,6 +53,14 @@ const expressionTree = (expression, x, y, width, acc) => {
           'stroke-width': 2,
           stroke: 'lightgray',
         })
+      )
+      .push(
+        svg('text', {
+          x: x,
+          y: y - 15,
+          'text-anchor': 'middle',
+          'alignment-baseline': 'middle',
+        }, expression.operator)
       )
     ));
   case 'unary':
@@ -62,6 +81,14 @@ const expressionTree = (expression, x, y, width, acc) => {
           'stroke-width': 2,
           stroke: 'lightgray',
         })
+      )
+      .push(
+        svg('text', {
+          x: x - 15,
+          y: y,
+          'text-anchor': 'end',
+          'alignment-baseline': 'middle',
+        }, expression.operator)
       )
     );
   case 'group':
@@ -91,6 +118,28 @@ const expressionTree = (expression, x, y, width, acc) => {
         cy: y,
         r: 5,
       })
+    ).push(
+      svg('text', {
+        x: x,
+        y: y + 20,
+        'text-anchor': 'middle',
+        'alignment-baseline': 'middle',
+      }, expression.name)
+    );
+  case 'constant':
+    return acc.push(
+      svg('circle', {
+        cx: x,
+        cy: y,
+        r: 5,
+      })
+    ).push(
+      svg('text', {
+        x: x,
+        y: y + 20,
+        'text-anchor': 'middle',
+        'alignment-baseline': 'middle',
+      }, expression.value.toString())
     );
   default:
     return acc;
@@ -124,6 +173,24 @@ const render = (state) =>
           },
         }, [
           expressionTree(state.expression, 200, 50, 700, I.List()).toArray(),
+        ]),
+        h2('Table'),
+        table([
+          tr([
+            state.identifiers.map(
+              (name) => th(name)
+            ).toArray(),
+            th('Result')
+          ]),
+          state.table.map(
+          (row) => tr([
+            state.identifiers.map(
+              (name) => td([
+                row.identifierValues.get(name).toString()
+              ])
+            ).toArray(),
+            td(row.value.toString()),
+          ])).toArray()
         ]),
       ]),
     ],
