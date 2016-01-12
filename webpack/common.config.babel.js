@@ -61,6 +61,10 @@ module.exports = {
     ],
     loaders: [
       {
+        test: /\.jison$/,
+        loader: "jison-loader",
+      },
+      {
         test: /\.(json)$/,
         loader: "json",
       },
@@ -131,4 +135,7 @@ module.exports = {
       {from: 'app/static'},
     ]),
   ],
+  node: {
+    fs: 'empty',
+  },
 };

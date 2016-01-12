@@ -1,12 +1,15 @@
 import {Observable as O} from 'rx';
-import lexer from '../lib/parser/lexer';
+import parser from '../lib/syntax/logic-c.jison';
 
-export default (actions) =>
-  actions.input$
-    .map((string) => lexer(string))
-    .map((token$) =>
-      token$.scan((acc, token) => acc.concat([token.value]), [])
-    )
-    .switch()
-    .startWith([])
+export default (actions) => {
+  const parsed$ = actions.input$
+    .map(::parser.parse)
+  ;
+
+  const c = (e) =>
+    O.just(e).concat(parsed$).catch(c)
+  ;
+
+  return parsed$.catch(c).startWith("");
+}
 ;
