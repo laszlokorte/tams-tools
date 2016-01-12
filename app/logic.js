@@ -1,4 +1,3 @@
-import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import {preventDefaultDriver} from './drivers/prevent-default';
