@@ -35,19 +35,19 @@ expressions
 
 e
     : e 'AND' e
-        {$$ = {operator: 'AND', lhs: $1, rhs: $3};}
+        {$$ = {node: 'binary', operator: 'AND', lhs: $1, rhs: $3};}
     | e 'OR' e
-        {$$ = {operator: 'OR', lhs: $1, rhs: $3};}
+        {$$ = {node: 'binary', operator: 'OR', lhs: $1, rhs: $3};}
     | e 'XOR' e
-        {$$ = {operator: 'XOR', lhs: $1, rhs: $3};}
+        {$$ = {node: 'binary', operator: 'XOR', lhs: $1, rhs: $3};}
     | 'NOT' e
-        {$$ = {operator: 'NOT', operand: $2};}
+        {$$ = {node: 'unary', operator: 'NOT', operand: $2};}
     | '(' e ')'
-        {$$ = $2;}
+        {$$ = {node: 'par', size: 1, content: $2};}
     | IDENTIFIER
-        {$$ = {identifier: yytext};}
+        {$$ = {node: 'identifier', name: yytext};}
     | TRUE
-        {$$ = {constant: true};}
+        {$$ = {node: 'constant', value: true};}
     | FALSE
-        {$$ = {constant: false};}
+        {$$ = {node: 'constant', value: false};}
     ;

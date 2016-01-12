@@ -1,8 +1,8 @@
-import {div, textarea} from '@cycle/dom';
+import {div, textarea, h2, ul, li} from '@cycle/dom';
 
 import './index.styl';
 
-const render = (result) =>
+const render = (state) =>
   div([
     div('.logic-input', [
       textarea('.logic-input-field', {
@@ -10,9 +10,21 @@ const render = (result) =>
       }),
       div('.logic-input-background'),
     ]),
-    div([
-      result && result.toString(),
-    ]),
+    state && state.expression && [
+      div([
+        state.expression.toString(),
+        h2('Variables'),
+        ul(state.identifiers.map(
+          (name) => li([name])
+        ).toArray()),
+      ]),
+    ],
+    state && state.error && [
+      h2('Error'),
+      div([
+        state.error.toString(),
+      ]),
+    ],
   ])
 ;
 
