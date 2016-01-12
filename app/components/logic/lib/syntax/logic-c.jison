@@ -43,7 +43,7 @@ e
     | 'NOT' e
         {$$ = {node: 'unary', operator: 'NOT', operand: $2};}
     | '(' e ')'
-        {$$ = {node: 'par', size: 1, content: $2};}
+        {$$ = {node: 'group', style: 1, content: $2};}
     | IDENTIFIER
         {$$ = {node: 'identifier', name: yytext};}
     | TRUE
