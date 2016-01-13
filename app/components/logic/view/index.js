@@ -1,10 +1,33 @@
 import I from 'immutable';
 import {
-  svg, div, textarea, h2, ul, li,
+  svg, div, span, textarea, h2, ul, li,
   table, tr, th, td,
 } from '@cycle/dom';
 
 import './index.styl';
+
+const expressionToString = (expression) => {
+  if (expression === null) {
+    return '';
+  }
+
+  switch (expression.node) {
+  case 'binary':
+    return `(${expressionToString(expression.lhs)} ` +
+      `${expression.operator} ` +
+      `${expressionToString(expression.rhs)})`;
+  case 'unary':
+    return `${expression.operator}(${expressionToString(expression.operand)})`;
+  case 'group':
+    return `${expressionToString(expression.content)}`;
+  case 'identifier':
+    return expression.name;
+  case 'constant':
+    return expression.value;
+  default:
+    throw new Error(`unknown node: ${expression.node}`);
+  }
+};
 
 const expressionTree = (expression, x, y, width, acc) => {
   if (expression === null) {
@@ -146,17 +169,40 @@ const expressionTree = (expression, x, y, width, acc) => {
   }
 };
 
+const markError = (string, error) => {
+  if (!error) {
+    return [string];
+  } else {
+    const loc = error.loc;
+    const lines = string.split('\n');
+    const linesBefore = lines.slice(0, loc.first_line - 1)
+      .join('').length + loc.first_line - 1;
+    const start = linesBefore + loc.last_column;
+    const end = linesBefore + loc.last_column + error.text.length;
+
+    return [
+      string.substring(0, start),
+      span('.overlay-text-marker.text-marker-error',
+        string.substring(start, end)
+      ),
+      string.substring(end),
+    ];
+  }
+};
+
 const render = (state) =>
   div([
     div('.logic-input', [
       textarea('.logic-input-field', {
         placeholder: 'Enter some logic expression...',
       }),
-      div('.logic-input-background'),
+      div('.logic-input-overlay', [
+        state ? markError(state.string, state.error) : '',
+      ]),
     ]),
     state && state.expression && [
       div([
-        state.expression.toString(),
+        expressionToString(state.expression),
         h2('Variables'),
         ul(state.identifiers.map(
           (name) => li([name])
@@ -175,29 +221,34 @@ const render = (state) =>
           expressionTree(state.expression, 200, 50, 700, I.List()).toArray(),
         ]),
         h2('Table'),
-        table([
-          tr([
+        table('.table', [
+          tr('.table-head-row', [
             state.identifiers.map(
-              (name) => th(name)
+              (name) => th('.table-head-cell',name)
             ).toArray(),
-            th('Result')
+            state.subExpressions.map(
+              (expr) => th('.table-head-cell', expressionToString(expr))
+            ).toArray(),
           ]),
           state.table.map(
-          (row) => tr([
+          (row) => tr('.table-body-row', [
             state.identifiers.map(
-              (name) => td([
-                row.identifierValues.get(name).toString()
+              (name, i, all) => td('.table-body-cell' +
+              (i + 1 === all.size ? '.table-group-end' : ''), [
+                row.identifierValues.get(name).toString(),
               ])
             ).toArray(),
-            td(row.value.toString()),
-          ])).toArray()
+            row.values.map((val) =>
+              td('.table-body-cell', val.toString())
+            ).toArray(),
+          ])).toArray(),
         ]),
       ]),
     ],
     state && state.error && [
       h2('Error'),
       div([
-        state.error.toString(),
+        'Unexpected token: ' + state.error.token,
       ]),
     ],
   ])

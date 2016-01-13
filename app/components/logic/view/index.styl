@@ -5,6 +5,8 @@
   font-family font-sans
   color color-foreground-primary
   border 1px solid color-background-secondary-strong
+  position relative
+  overflow hidden
 
 .logic-input-field
   box-sizing border-box
@@ -16,5 +18,66 @@
   max-width 100%
   min-width 100%
   width 100%
-  padding 5px
   outline none
+
+.logic-input-field
+  padding 5px
+  letter-spacing inherit
+  white-space pre
+  word-wrap break-word
+  height 100%
+.logic-input-overlay
+  word-wrap break-word
+  padding 5px
+  z-index 1
+  letter-spacing inherit
+  white-space pre
+  font-size inherit
+  top 0
+  left 0
+  right 0
+  position absolute
+  pointer-events none
+  display block
+  vertical-align middle
+  color transparent
+
+
+.overlay-text-marker
+  display inline
+  z-index 100
+  color inherit
+  padding 0 0 0
+  margin 0 -1px
+  background rgba(200,200,200,0.2)
+  border 1px solid #aaa
+  color inherit
+  border-radius 3px
+
+.text-marker-error
+  background-color rgba(200,0,0,0.2)
+  border-color #ffaaaa
+
+.text-marker-warning
+  background-color rgba(200,180,0,0.2)
+  border-color #fff8aa
+
+.table
+  border-spacing 0
+  border-collapse collapse
+  margin 20px
+
+.table-head-cell
+  border-bottom 1px solid black
+
+.table-head-cell
+  padding 4px 30px 0
+
+.table-body-cell
+  padding 4px
+  text-align center
+
+.table-group-end
+  border-right 1px solid #555
+  &:last-child
+    border-right none
