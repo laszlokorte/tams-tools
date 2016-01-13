@@ -18,7 +18,7 @@ export default (responses) => {
   } = responses;
 
   const {isolateSource, isolateSink} = DOM;
-  const actions = intent(isolateSource(DOM, 'please'));
+  const actions = intent(isolateSource(DOM, 'graphicsContent'));
   const state$ = model(props$, data$, actions);
   const vtree$ = view(state$).shareReplay(1);
 
@@ -30,7 +30,7 @@ export default (responses) => {
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map(pluck('bounds')),
-    content$: isolateSink(vtree$, 'please'),
+    content$: isolateSink(vtree$, 'graphicsContent'),
   });
 
   return {
