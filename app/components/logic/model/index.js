@@ -166,23 +166,30 @@ export default (actions) => {
       try {
         return {
           string,
-          expression: parser.parse(string),
+          expressions: parser.parse(string),
         };
       } catch (e) {
         throw new ParseError(string, e.hash);
       }
     })
-    .map(({expression, string}) => {
-      const identifiers = collectIdentifiers(expression)
-        .toList();
-      const subExpressions = collectSubExpressions(expression)
-        .reverse().toList();
+    .map(({expressions, string}) => {
+      const expressionList = I.List(expressions);
+      const identifiers = expressionList.flatMap(
+        (expression) => collectIdentifiers(expression)
+      ).toSet().toList();
+
+      const subExpressions = expressionList.flatMap(
+          (expression) => collectSubExpressions(expression)
+            .reverse().toList()
+      );
       const table = evaluateAll({expressions: subExpressions, identifiers});
       return {
         string,
-        expression,
+        expressions: expressionList,
         identifiers: identifiers,
-        treeHeight: treeHeight(expression, 0),
+        treeHeights: expressionList.map((expr) =>
+          treeHeight(expr, 0)
+        ).toArray(),
         table,
         subExpressions,
       };

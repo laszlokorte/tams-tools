@@ -170,7 +170,7 @@ const expressionTree = (expression, x, y, width, acc) => {
 };
 
 const markError = (string, error) => {
-  if (!error) {
+  if (!error || !error.loc) {
     return [string];
   } else {
     const loc = error.loc;
@@ -200,9 +200,11 @@ const render = (state) =>
         state ? markError(state.string, state.error) : '',
       ]),
     ]),
-    state && state.expression && [
+    state && state.expressions && [
       div([
-        expressionToString(state.expression),
+        state.expressions.map((expr) =>
+          expressionToString(expr)
+        ).join(','),
         h2('Variables'),
         ul(state.identifiers.map(
           (name) => li([name])
@@ -212,14 +214,21 @@ const render = (state) =>
           attributes: {
             style: 'border: 1px solid black',
             width: 800,
-            height: 100 * (1 + state.treeHeight),
+            height: 100 * (1 + state.treeHeights.reduce((acc, h) => acc + h + 1, 0)),
             class: 'graphics-root',
-            viewBox: '0 0 400 ' + (100 * (1 + state.treeHeight)),
+            viewBox: '0 0 800 ' + (100 * (state.treeHeights.reduce((acc, h) => acc + h + 1, 0))),
             preserveAspectRatio: 'xMidYMin meet',
           },
-        }, [
-          expressionTree(state.expression, 200, 50, 700, I.List()).toArray(),
-        ]),
+        }, state.expressions.toArray().reduce((acc, expr, i) => ({
+          elements: [
+            ...(acc.elements),
+            ...expressionTree(expr, 400, acc.y + 50, 700, I.List()).toArray(),
+          ],
+          y: acc.y + state.treeHeights[i] * 100 + 50,
+        }), {
+          elements: [],
+          y: 50,
+        }).elements),
         h2('Table'),
         table('.table', [
           tr('.table-head-row', [
@@ -248,7 +257,10 @@ const render = (state) =>
     state && state.error && [
       h2('Error'),
       div([
-        'Unexpected token: ' + state.error.token,
+        state.error.token ?
+        'Unexpected token: ' + state.error.token :
+        'Unexpected character'
+        ,
       ]),
     ],
   ])

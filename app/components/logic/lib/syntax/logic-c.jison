@@ -11,6 +11,7 @@
 "!"                       {return 'NOT';}
 "("                       {return '(';}
 ")"                       {return ')';}
+","                       {return ',';}
 <<EOF>>                   {return 'EOF';}
 
 /lex
@@ -27,10 +28,17 @@
 %% /* language grammar */
 
 expressions
-    : e EOF
+    : expressionList EOF
         {return $1;}
     | EOF
-        {return null;}
+        {return [];}
+    ;
+
+expressionList
+    : e
+        {$$ = [$1];}
+    | expressionList ',' e
+        {$$ = $1; $1.push($3);}
     ;
 
 e
