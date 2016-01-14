@@ -12,6 +12,7 @@ const render = ({data}) =>
         y2: edge.toY * data.scaleY,
         stroke: 'black',
         'stroke-width': '2px',
+        class: 'tree-edge',
       })
     ).toArray(),
     data.nodes.map((node) => [
@@ -19,12 +20,14 @@ const render = ({data}) =>
         cx: node.x * data.scaleX,
         cy: node.y * data.scaleY,
         r: 5,
+        class: 'tree-node',
       }),
       svg('text', {
-        x: node.x * data.scaleX,
-        y: node.y * data.scaleY + (node.leaf ? 16 : -16),
-        'text-anchor': 'middle',
+        x: node.x * data.scaleX + (node.leaf ? 0 : node.xOffset),
+        y: node.y * data.scaleY + (node.leaf ? 16 : -10),
+        'text-anchor': node.leaf ? 'middle' : node.labelAnchor,
         'alignment-baseline': 'middle',
+        class: 'tree-node-label',
       }, node.label),
     ]).toArray(),
   ])

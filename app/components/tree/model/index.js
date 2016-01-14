@@ -16,13 +16,13 @@ export default (props$, data$, actions) => {
           data: {
             nodes: layout.nodes,
             edges: layout.edges,
-            scaleX: 50,
+            scaleX: 70,
             scaleY: 70,
           },
           active,
           bounds: {
-            minX: layout.bounds.minX * 50 - 60,
-            maxX: layout.bounds.maxX * 50 + 60,
+            minX: layout.bounds.minX * 70 - 60,
+            maxX: layout.bounds.maxX * 70 + 60,
             minY: layout.bounds.minY * 70 - 60,
             maxY: layout.bounds.maxY * 70 + 60,
           },

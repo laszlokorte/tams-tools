@@ -6,6 +6,8 @@ const graphNode = I.Record({
   x: 0,
   y: 0,
   leaf: false,
+  labelAnchor: 'middle',
+  xOffset: 0,
 });
 
 const graphEdge = I.Record({
@@ -16,17 +18,39 @@ const graphEdge = I.Record({
   toY: 0,
 });
 
-const nodeList = (layoutNode, acc = I.List()) => {
+const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
   if (layoutNode === null) {
     return acc;
   }
-  return layoutNode.children.reduce(
-    (prev, c) => nodeList(c, prev)
-  , acc.push(graphNode({
+
+  let labelAnchor = rel;
+  let xOffset = 0;
+
+  if (rel === 'start') {
+    xOffset = 5;
+  } else if (rel === 'end') {
+    xOffset = -5;
+  }
+
+  const mid = (layoutNode.children.length - 1) / 2;
+
+  return layoutNode.children.reduce((prev, c, i) => {
+    let newRel;
+    if (i < mid) {
+      newRel = 'end';
+    } else if (i > mid) {
+      newRel = 'start';
+    } else {
+      newRel = rel;
+    }
+    return nodeList(c, prev, newRel);
+  }, acc.push(graphNode({
     label: layoutNode.node.name,
     x: layoutNode.x,
     y: layoutNode.y,
     leaf: layoutNode.children.length === 0,
+    labelAnchor: labelAnchor,
+    xOffset: xOffset,
   })));
 };
 
