@@ -81,3 +81,14 @@
   border-right 1px solid #555
   &:last-child
     border-right none
+
+.variable-list
+  list-style none
+  margin 20px
+  padding 0
+.variable-list > li
+  display inline
+  &::after
+    content ', '
+  &:last-child::after
+    content ''

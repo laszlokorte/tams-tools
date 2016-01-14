@@ -1,6 +1,5 @@
-import I from 'immutable';
 import {
-  svg, div, span, textarea, h2, ul, li,
+  div, span, textarea, h2, ul, li,
   table, tr, th, td,
 } from '@cycle/dom';
 
@@ -29,146 +28,6 @@ const expressionToString = (expression) => {
   }
 };
 
-const expressionTree = (expression, x, y, width, acc) => {
-  if (expression === null) {
-    return acc;
-  }
-
-  switch (expression.node) {
-  case 'binary':
-    return expressionTree(
-      expression.rhs, x + width / 4, y + 100, width / 2,
-      acc.push(
-        svg('circle', {
-          cx: x,
-          cy: y,
-          r: 5,
-        })
-      )
-      .push(
-        svg('line', {
-          x1: x,
-          y1: y,
-          x2: x + width / 4,
-          y2: y + 100,
-          'stroke-width': 2,
-          stroke: 'lightgray',
-        })
-      )
-      .push(
-        svg('text', {
-          x: x,
-          y: y - 15,
-          'text-anchor': 'middle',
-          'alignment-baseline': 'middle',
-        }, expression.operator)
-      )
-    )
-    .concat(expressionTree(
-      expression.lhs, x - width / 4, y + 100, width / 2,
-      acc
-      .push(
-        svg('line', {
-          x1: x,
-          y1: y,
-          x2: x - width / 4,
-          y2: y + 100,
-          'stroke-width': 2,
-          stroke: 'lightgray',
-        })
-      )
-      .push(
-        svg('text', {
-          x: x,
-          y: y - 15,
-          'text-anchor': 'middle',
-          'alignment-baseline': 'middle',
-        }, expression.operator)
-      )
-    ));
-  case 'unary':
-    return expressionTree(expression.operand, x, y + 50, width,
-      acc.push(
-        svg('circle', {
-          cx: x,
-          cy: y,
-          r: 5,
-        })
-      )
-      .push(
-        svg('line', {
-          x1: x,
-          y1: y,
-          x2: x,
-          y2: y + 50,
-          'stroke-width': 2,
-          stroke: 'lightgray',
-        })
-      )
-      .push(
-        svg('text', {
-          x: x - 15,
-          y: y,
-          'text-anchor': 'end',
-          'alignment-baseline': 'middle',
-        }, expression.operator)
-      )
-    );
-  case 'group':
-    return expressionTree(expression.content, x, y + 50, width,
-      acc.push(
-        svg('circle', {
-          cx: x,
-          cy: y,
-          r: 5,
-        })
-      )
-      .push(
-        svg('line', {
-          x1: x,
-          y1: y,
-          x2: x,
-          y2: y + 50,
-          'stroke-width': 2,
-          stroke: 'lightgray',
-        })
-      )
-    );
-  case 'identifier':
-    return acc.push(
-      svg('circle', {
-        cx: x,
-        cy: y,
-        r: 5,
-      })
-    ).push(
-      svg('text', {
-        x: x,
-        y: y + 20,
-        'text-anchor': 'middle',
-        'alignment-baseline': 'middle',
-      }, expression.name)
-    );
-  case 'constant':
-    return acc.push(
-      svg('circle', {
-        cx: x,
-        cy: y,
-        r: 5,
-      })
-    ).push(
-      svg('text', {
-        x: x,
-        y: y + 20,
-        'text-anchor': 'middle',
-        'alignment-baseline': 'middle',
-      }, expression.value.toString())
-    );
-  default:
-    return acc;
-  }
-};
-
 const markError = (string, error) => {
   if (!error || !error.loc) {
     return [string];
@@ -183,7 +42,7 @@ const markError = (string, error) => {
     return [
       string.substring(0, start),
       span('.overlay-text-marker.text-marker-error',
-        string.substring(start, end)
+        string.substring(start, end) || ' '
       ),
       string.substring(end),
     ];
@@ -202,33 +61,14 @@ const render = (state) =>
     ]),
     state && state.expressions && [
       div([
-        state.expressions.map((expr) =>
-          expressionToString(expr)
-        ).join(','),
-        h2('Variables'),
-        ul(state.identifiers.map(
-          (name) => li([name])
+        h2('Expressions'),
+        ul('.expression-list', state.expressions.map((expr) =>
+          li('.expression-list-item', expressionToString(expr))
         ).toArray()),
-        h2('Tree'),
-        svg('svg', {
-          attributes: {
-            style: 'border: 1px solid black',
-            width: 800,
-            height: 100 * (1 + state.treeHeights.reduce((acc, h) => acc + h + 1, 0)),
-            class: 'graphics-root',
-            viewBox: '0 0 800 ' + (100 * (state.treeHeights.reduce((acc, h) => acc + h + 1, 0))),
-            preserveAspectRatio: 'xMidYMin meet',
-          },
-        }, state.expressions.toArray().reduce((acc, expr, i) => ({
-          elements: [
-            ...(acc.elements),
-            ...expressionTree(expr, 400, acc.y + 50, 700, I.List()).toArray(),
-          ],
-          y: acc.y + state.treeHeights[i] * 100 + 50,
-        }), {
-          elements: [],
-          y: 50,
-        }).elements),
+        h2('Variables'),
+        ul('.variable-list', state.identifiers.map(
+          (name) => li('.variable-list-item', name)
+        ).toArray()),
         h2('Table'),
         table('.table', [
           tr('.table-head-row', [
