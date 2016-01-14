@@ -2,6 +2,8 @@ import model from './model';
 import view from './view';
 import intent from './intent';
 
+import toTree from './lib/tree';
+
 export default (responses) => {
   const {
     DOM,
@@ -15,5 +17,10 @@ export default (responses) => {
   return {
     DOM: vtree$,
     preventDefault: actions.preventDefault,
+    tree$: state$.map(
+      (state) => state && state.expressions &&
+        state.expressions.size > 0 ?
+        toTree(state.expressions.get(0)) : null
+    ),
   };
 };

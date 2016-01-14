@@ -14,7 +14,7 @@ const drivers = {
   keydown: keyboardDriver,
 };
 
-Cycle.run(logic, drivers);
+const {sinks: {tree$}} = Cycle.run(logic, drivers);
 
 // The drivers for the PLA circuit renderer
 const driversAssistent = {
@@ -25,90 +25,7 @@ const driversAssistent = {
   props$: () => O.just({}),
   // The PLA circuit renderer get's the plaData$ which
   // is produced from the kv diagram editor as input
-  data$: () => O.just({
-    name: 'Root',
-    children: [
-      {
-        name: 'Alone',
-        children: [
-          {
-            name: 'Lonely',
-            children: [],
-          },
-        ],
-      },
-      {
-        name: 'Left',
-        children: [
-          {
-            name: '1',
-            children: [],
-          },
-          {
-            name: '2',
-            children: [
-              {
-                name: '1',
-                children: [],
-              },
-              {
-                name: '2',
-                children: [],
-              },
-              {
-                name: '3',
-                children: [],
-              },
-            ],
-          },
-          {
-            name: '3',
-            children: [
-              {
-                name: '1',
-                children: [
-                  {
-                    name: '1',
-                    children: [],
-                  },
-                  {
-                    name: '2',
-                    children: [],
-                  },
-                  {
-                    name: '3',
-                    children: [],
-                  },
-                ],
-              },
-              {
-                name: '2',
-                children: [],
-              },
-              {
-                name: '3',
-                children: [],
-              },
-
-            ],
-          },
-        ],
-      },
-      {
-        name: 'Right',
-        children: [
-          {
-            name: 'A',
-            children: [],
-          },
-          {
-            name: 'B',
-            children: [],
-          },
-        ],
-      },
-    ],
-  }),
+  data$: () => tree$,
 };
 
 // This is the PLA circuit renderer
