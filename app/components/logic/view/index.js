@@ -54,7 +54,7 @@ const render = (state) =>
     div('.logic-input', [
       textarea('.logic-input-field', {
         placeholder: 'Enter some logic expression...',
-      }),
+      }, [state ? state.string : '(P&Q)&(R&S&T)']),
       div('.logic-input-overlay', [
         state ? markError(state.string, state.error) : '',
       ]),
@@ -70,27 +70,31 @@ const render = (state) =>
           (name) => li('.variable-list-item', name)
         ).toArray()),
         h2('Table'),
-        table('.table', [
-          tr('.table-head-row', [
-            state.identifiers.map(
-              (name) => th('.table-head-cell',name)
-            ).toArray(),
-            state.subExpressions.map(
-              (expr) => th('.table-head-cell', expressionToString(expr))
-            ).toArray(),
+        div('.table-scroller', [
+          div('.table-scroller-body', [
+            table('.table', [
+              tr('.table-head-row', [
+                state.identifiers.map(
+                  (name) => th('.table-head-cell',name)
+                ).toArray(),
+                state.subExpressions.map(
+                  (expr) => th('.table-head-cell', expressionToString(expr))
+                ).toArray(),
+              ]),
+              state.table.map(
+              (row) => tr('.table-body-row', [
+                state.identifiers.map(
+                  (name, i, all) => td('.table-body-cell' +
+                  (i + 1 === all.size ? '.table-group-end' : ''), [
+                    row.identifierValues.get(name).toString(),
+                  ])
+                ).toArray(),
+                row.values.map((val) =>
+                  td('.table-body-cell', val.toString())
+                ).toArray(),
+              ])).toArray(),
+            ]),
           ]),
-          state.table.map(
-          (row) => tr('.table-body-row', [
-            state.identifiers.map(
-              (name, i, all) => td('.table-body-cell' +
-              (i + 1 === all.size ? '.table-group-end' : ''), [
-                row.identifierValues.get(name).toString(),
-              ])
-            ).toArray(),
-            row.values.map((val) =>
-              td('.table-body-cell', val.toString())
-            ).toArray(),
-          ])).toArray(),
         ]),
       ]),
     ],

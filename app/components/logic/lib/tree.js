@@ -36,6 +36,10 @@ const toTree = (expression) => {
     return null;
   }
 
+  if (expression.node === 'group') {
+    return toTree(expression.content);
+  }
+
   return {
     name: name(expression),
     children: children(expression).map(toTree),

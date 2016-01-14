@@ -6,7 +6,10 @@ export default (DOM, keydown) => {
   const changeEvent$ = inputField.events('input');
 
   return {
-    input$: changeEvent$.map((evt) => evt.ownerTarget.value).share(),
+    input$: changeEvent$
+      .map((evt) => evt.ownerTarget.value)
+      .startWith('(P&Q)&(R&S&T)')
+      .share(),
     preventDefault: O.empty(),
   };
 };

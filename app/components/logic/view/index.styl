@@ -69,6 +69,8 @@
 
 .table-head-cell
   border-bottom 1px solid black
+  white-space pre
+  word-wrap none
 
 .table-head-cell
   padding 4px 30px 0
@@ -92,3 +94,13 @@
     content ', '
   &:last-child::after
     content ''
+
+
+.table-scroller
+  max-width 100%
+  overflow auto
+
+.table-scroller-body
+  min-width min-content
+  min-height min-content
+  padding space(2) 0
