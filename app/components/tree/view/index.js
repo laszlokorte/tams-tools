@@ -4,29 +4,29 @@ import './index.styl';
 
 const render = ({data}) =>
   svg('g',[
+    data.edges.map((edge) =>
+      svg('line', {
+        x1: edge.fromX * data.scaleX,
+        y1: edge.fromY * data.scaleY,
+        x2: edge.toX * data.scaleX,
+        y2: edge.toY * data.scaleY,
+        stroke: 'black',
+        'stroke-width': '2px',
+      })
+    ).toArray(),
     data.nodes.map((node) => [
       svg('circle', {
-        cx: node.x * 50,
-        cy: node.y * 70,
-        r: 10,
+        cx: node.x * data.scaleX,
+        cy: node.y * data.scaleY,
+        r: 5,
       }),
       svg('text', {
-        x: node.x * 50,
-        y: node.y * 70 - 20,
+        x: node.x * data.scaleX,
+        y: node.y * data.scaleY + (node.leaf ? 16 : -16),
         'text-anchor': 'middle',
         'alignment-baseline': 'middle',
       }, node.label),
     ]).toArray(),
-    data.edges.map((edge) =>
-      svg('line', {
-        x1: edge.fromX * 50,
-        y1: edge.fromY * 70,
-        x2: edge.toX * 50,
-        y2: edge.toY * 70,
-        stroke: 'black',
-        'stroke-width': '2px'
-      })
-    ).toArray(),
   ])
 ;
 
