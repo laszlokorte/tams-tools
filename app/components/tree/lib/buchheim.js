@@ -1,10 +1,10 @@
+/*eslint-disable no-class */
+
 /*
   ported from:
   http://billmill.org/pymag-trees/
   https://github.com/llimllib/pymag-trees/
 */
-
-/*eslint-disable no-class */
 class LayoutNode {
   constructor(node, parent = null, depth = 0, number = 1) {
     this.x = -1;
