@@ -44,7 +44,7 @@ const autoCenterModifier = ({
   return () => ({
     x: centerX + (pivotX - 0.5) * contentWidth,
     y: centerY + (pivotY - 0.5) * contentHeight + height / 2 / zoom,
-    zoom,
+    zoom: clamp(zoom, 0.2, 5),
   });
 };
 
