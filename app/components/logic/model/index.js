@@ -1,6 +1,10 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
-import parser from '../lib/syntax/logic-c.jison';
+import cParser from '../lib/syntax/logic-c.jison';
+import javaParser from '../lib/syntax/logic-java.jison';
+import latexParser from '../lib/syntax/logic-latex.jison';
+import mathParser from '../lib/syntax/logic-math.jison';
+import pythonParser from '../lib/syntax/logic-python.jison';
 
 const row = I.Record({
   identifierValues: I.Map(),
@@ -86,7 +90,9 @@ const evaluateAll = ({
   });
 };
 
-const collectSubExpressions = (expression, acc = I.OrderedSet(), collect = true) => {
+const collectSubExpressions = (
+  expression, acc = I.OrderedSet(), collect = true
+) => {
   if (expression === null) {
     return acc;
   }
@@ -160,18 +166,29 @@ function ParseError(string, error) {
   this.error = error;
 };
 
+const parser = (language) => (string) => {
+  try {
+    return {
+      string,
+      expressions: language.parse(string),
+    };
+  } catch (e) {
+    throw new ParseError(string, e.hash);
+  }
+};
+
 export default (actions) => {
-  const parsed$ = actions.input$
-    .map((string) => {
-      try {
-        return {
-          string,
-          expressions: parser.parse(string),
-        };
-      } catch (e) {
-        throw new ParseError(string, e.hash);
-      }
-    })
+  const parsed$ = actions.input$.flatMapLatest((string) => {
+    const single$ = O.just(string);
+
+    return O.catch(
+      single$.map(parser(cParser)),
+      single$.map(parser(javaParser)),
+      single$.map(parser(latexParser)),
+      single$.map(parser(mathParser)),
+      single$.map(parser(pythonParser))
+    );
+  })
     .map(({expressions, string}) => {
       const expressionList = I.List(expressions);
       const identifiers = expressionList.flatMap(

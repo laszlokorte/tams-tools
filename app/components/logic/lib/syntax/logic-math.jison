@@ -2,18 +2,17 @@
 %lex
 %%
 \s+                       {/* skip whitespace */}
-"1"                       {return 'TRUE';}
-"0"                       {return 'FALSE';}
+"1"                    {return 'TRUE';}
+"0"                   {return 'FALSE';}
 [A-Za-z][_A-Za-z0-9]*\b   {return 'IDENTIFIER';}
-"*"                       {return 'AND';}
-"+"                       {return 'OR';}
+"*"                      {return 'AND';}
+"+"                      {return 'OR';}
 "-"                       {return 'NOT';}
 "("                       {return '(';}
 ")"                       {return ')';}
-"["                       {return '(';}
-"]"                       {return ')';}
-"{"                       {return '(';}
-"}"                       {return ')';}
+"["                       {return '[';}
+"]"                       {return ']';}
+","                       {return ',';}
 <<EOF>>                   {return 'EOF';}
 
 /lex
@@ -30,25 +29,36 @@
 %% /* language grammar */
 
 expressions
-    : e EOF
+    : expressionList EOF
         {return $1;}
+    | EOF
+        {return [];}
+    ;
+
+expressionList
+    : e
+        {$$ = [$1];}
+    | expressionList ',' e
+        {$$ = $1; $1.push($3);}
     ;
 
 e
     : e 'AND' e
-        {$$ = {operator: 'AND', lhs: $1, rhs: $3};}
+        {$$ = {node: 'binary', operator: 'AND', lhs: $1, rhs: $3};}
     | e 'OR' e
-        {$$ = {operator: 'OR', lhs: $1, rhs: $3};}
+        {$$ = {node: 'binary', operator: 'OR', lhs: $1, rhs: $3};}
     | e 'XOR' e
-        {$$ = {operator: 'XOR', lhs: $1, rhs: $3};}
+        {$$ = {node: 'binary', operator: 'XOR', lhs: $1, rhs: $3};}
     | 'NOT' e
-        {$$ = {operator: 'NOT', operand: $2};}
+        {$$ = {node: 'unary', operator: 'NOT', operand: $2};}
     | '(' e ')'
-        {$$ = $2;}
+        {$$ = {node: 'group', style: 1, content: $2};}
+    | '[' e ']'
+        {$$ = {node: 'group', style: 2, content: $2};}
     | IDENTIFIER
-        {$$ = {identifier: yytext};}
+        {$$ = {node: 'identifier', name: yytext};}
     | TRUE
-        {$$ = {constant: true};}
+        {$$ = {node: 'constant', value: true};}
     | FALSE
-        {$$ = {constant: false};}
+        {$$ = {node: 'constant', value: false};}
     ;
