@@ -65,6 +65,10 @@ module.exports = {
         loader: "jison-loader",
       },
       {
+        test: /\.pegjs$/,
+        loader: 'pegjs-loader'
+      },
+      {
         test: /\.(json)$/,
         loader: "json",
       },
