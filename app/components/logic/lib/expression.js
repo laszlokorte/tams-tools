@@ -33,7 +33,7 @@ export const expressionFromJson = (data) => {
     return expressionUnion({
       node: data.node.toString(),
       operator: data.operator.toString(),
-      operand: data.operator.toString(),
+      operand: expressionFromJson(data.operand),
     });
   case 'group':
     return expressionUnion({
