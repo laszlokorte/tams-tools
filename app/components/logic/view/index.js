@@ -1,6 +1,6 @@
 import {
   div, span, textarea, h2, ul, li,
-  table, tr, th, td,
+  table, tr, th, td, select, option
 } from '@cycle/dom';
 
 import './index.styl';
@@ -51,10 +51,18 @@ const markError = (string, error) => {
 
 const render = (state) =>
   div([
+    select('.syntax-selector',{
+      name: 'language',
+    }, [
+      option({value: 'c'}, 'C'),
+      option({value: 'java'}, 'Java'),
+      option({value: 'python'}, 'Python'),
+      option({value: 'latex'}, 'Latex'),
+    ]),
     div('.logic-input', [
       textarea('.logic-input-field', {
         placeholder: 'Enter some logic expression...',
-      }, [state ? state.string : '(P&Q)&(R&S&T)']),
+      }),
       div('.logic-input-overlay', [
         state ? markError(state.string, state.error) : '',
       ]),
