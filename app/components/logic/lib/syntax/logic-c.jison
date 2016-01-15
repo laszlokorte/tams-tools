@@ -18,8 +18,8 @@
 
 /* operator associations and precedence */
 
-%left 'AND'
 %left 'OR'
+%left 'AND'
 %left 'XOR'
 %left 'NOT'
 
