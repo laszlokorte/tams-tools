@@ -51,7 +51,7 @@ const render = (state) =>
     select('.syntax-selector',{
       name: 'language',
     }, [
-      option({value: 'auto', selected: state.lang === 'auto'}, 'Auto detect'),
+      //option({value: 'auto', selected: state.lang === 'auto'}, 'Auto detect'),
       option({value: 'c', selected: state.lang === 'c'}, 'C'),
       option({value: 'python', selected: state.lang === 'pyhton'}, 'Python'),
       option({value: 'math', selected: state.lang === 'math'}, 'Math'),
