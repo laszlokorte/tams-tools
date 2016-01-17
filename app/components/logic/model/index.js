@@ -9,74 +9,89 @@ import {
 } from '../lib/expression';
 
 import cParser from '../lib/syntax/logic-c.pegjs';
-import javaParser from '../lib/syntax/logic-java.jison';
-import latexParser from '../lib/syntax/logic-latex.jison';
-import mathParser from '../lib/syntax/logic-math.jison';
-import pythonParser from '../lib/syntax/logic-python.jison';
+import latexParser from '../lib/syntax/logic-latex.pegjs';
+import mathParser from '../lib/syntax/logic-math.pegjs';
+import pythonParser from '../lib/syntax/logic-python.pegjs';
 
-const parsers = {
-  c: cParser,
-  java: cParser,
-  latex: cParser,
-  math: cParser,
-  python: cParser,
+const autoParser = {
+  parse: () => { throw new Error("not implemented"); },
 };
 
-function ParseError(string, name, location) {
+const parsers = {
+  auto: autoParser,
+  c: cParser,
+  latex: latexParser,
+  math: mathParser,
+  python: pythonParser,
+};
+
+function ParseError(lang, string, name, location) {
+  this.lang = lang;
   this.string = string;
   this.name = name;
   this.location = location;
 };
 
+const parse = ({string, lang}) => {
+  try {
+    return {
+      lang,
+      string,
+      expressions: parsers[lang].parse(string).map(expressionFromJson),
+    };
+  } catch (e) {
+    throw new ParseError(lang, string, e.name, e.location);
+  }
+};
+
+const analyze = ({lang, expressions, string}) => {
+  const expressionList = I.List(expressions);
+
+  const identifiers = expressionList.flatMap(
+    (expression) => collectIdentifiers(expression)
+  ).toSet().toList();
+
+  const subExpressions = expressionList.flatMap(
+    (expression) => collectSubExpressions(expression)
+      .reverse().toList()
+  );
+
+  const table = evaluateAll({
+    expressions: subExpressions,
+    identifiers,
+  });
+
+  return {
+    lang,
+    string,
+    expressions: expressionList,
+    identifiers,
+    table,
+    subExpressions,
+  };
+};
+
+const handleError = (error) =>
+  O.just({
+    lang: error.lang,
+    error: {
+      location: error.location,
+      name: error.name,
+    },
+    string: error.string,
+  })
+;
+
 export default (actions) => {
-  const parsed$ = actions.input$.combineLatest(
+  const parsed$ = actions.input$.startWith('').combineLatest(
     actions.language$.startWith('c'),
-    (string, lang) => {
-      try {
-        return {
-          string,
-          expressions: parsers[lang].parse(string).map(expressionFromJson),
-        };
-      } catch (e) {
-        console.log(e);
-        throw new ParseError(string, e.name, e.location);
-      }
-    }
-  )
-    .map(({expressions, string}) => {
-      const expressionList = I.List(expressions);
-      const identifiers = expressionList.flatMap(
-        (expression) => collectIdentifiers(expression)
-      ).toSet().toList();
+    (s, l) =>
+      O.just({string: s, lang: l})
+      .map(parse)
+      .map(analyze)
+      .catch(handleError)
+  ).switch();
 
-      const subExpressions = expressionList.flatMap(
-          (expression) => collectSubExpressions(expression)
-            .reverse().toList()
-      );
-      const table = evaluateAll({expressions: subExpressions, identifiers});
-      return {
-        string,
-        expressions: expressionList,
-        identifiers: identifiers,
-        table,
-        subExpressions,
-      };
-    })
-  ;
-
-  const c = (e) =>
-    O.just({
-      error: {
-        location: e.location,
-        name: e.name,
-      },
-      string: e.string,
-    })
-      .concat(parsed$).catch(c)
-  ;
-
-  return parsed$.catch(c)
-    .startWith(null)
-    ;
+  return parsed$;
 }
 ;

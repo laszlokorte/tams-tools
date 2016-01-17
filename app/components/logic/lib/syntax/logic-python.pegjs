@@ -7,17 +7,14 @@ start
   }
 
 operatorMul "binary operator"
-  = "&&" { return "AND"; }
-  / "&" { return "AND"; }
-  / "^" { return "XOR"; }
+  = "and" { return "AND"; }
+  / "xor" { return "XOR"; }
 
 operatorAdd "binary operator"
-  = "||" { return "OR"; }
-  / "|" { return "OR"; }
+  = "or" { return "OR"; }
 
 operatorUnary "unary operator"
-  = "!" { return "NOT"; }
-  / "~" { return "NOT"; }
+  = "not" { return "NOT"; }
 
 identifierName
   = name:([A-Za-z_][_a-zA-Z0-9]*) {
@@ -26,9 +23,7 @@ identifierName
 
 literalValue
   = "true" { return true; }
-  / "1" { return true; }
   / "false" { return false; }
-  / "0" { return false; }
 
 parentheses
   = "(" _ content:additive _ ")" {
@@ -69,9 +64,9 @@ multiplicative
 
 primary
   = _ lit:literal _ { return lit; }
-  / _ id:identifier _ { return id; }
   / _ group:group _ { return group; }
   / _ un:unary { return un; }
+  / _ id:identifier _ { return id; }
 
 group "group"
   = paren:parentheses {
