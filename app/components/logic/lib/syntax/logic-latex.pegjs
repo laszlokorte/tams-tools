@@ -7,31 +7,111 @@ start
   }
 
 operatorMul "binary operator"
-  = "&&" { return "AND"; }
-  / "&" { return "AND"; }
-  / "^" { return "XOR"; }
+  = "\\wedge"    { return "AND"; }
+  / "\\oplus"    { return "XOR"; }
+  / ""           { return "AND"; }
+  / "+"          { return "XOR"; }
 
 operatorAdd "binary operator"
-  = "||" { return "OR"; }
-  / "|" { return "OR"; }
+  = "\\vee"      { return "OR"; }
 
 operatorUnary "unary operator"
-  = "!" { return "NOT"; }
-  / "~" { return "NOT"; }
+  = "\\neg"      { return "NOT"; }
+  / "\\overline" { return "NOT"; }
+
 
 identifierName
-  = name:([A-Za-z_][_a-zA-Z0-9]*) {
-      return name[0] + name[1].reduce((acc, current) => acc+current, "");
+  = first:[A-Za-z_] tail:[\-_a-zA-Z0-9\{\}]* {
+      return first + tail.join("");
+    }
+  / '"' chars:charNoDoubleQuote+ '"' {
+      return chars.join("");
+    }
+  / "'" chars:charNoSingleQuote+ "'" {
+      return chars.join("");
     }
 
+charNoDoubleQuote
+  = charEscapeSequence
+    / '""' { return '"'; }
+    / [^"]
+
+charNoSingleQuote
+  = charEscapeSequence
+    / "''" { return "'"; }
+    / [^']
+
+charEscapeSequence
+  = "\\\\"    { return "\\"; }
+    / "\\'"   { return "'";  }
+    / '\\"'   { return '"';  }
+
 literalValue
+  // top
   = "true" { return true; }
   / "1" { return true; }
+  / "W" { return true; }
+  / "T" { return true; }
+  // bottom
   / "false" { return false; }
   / "0" { return false; }
+  / "F" { return false; }
+
 
 parentheses
-  = "(" _ content:additive _ ")" {
+  = roundParens
+  / angularParens
+
+
+roundParens
+  = '(' _ content:additive _ ')' {
+    return {content: content, style: 1}
+  }
+  / '\\bigl(' _ content:additive _ '\\bigr)' {
+    return {content: content, style: 1}
+  }
+  / '\\Bigl(' _ content:additive _ '\\Bigr)' {
+    return {content: content, style: 1}
+  }
+  / '\\biggl(' _ content:additive _ '\\biggr)' {
+    return {content: content, style: 1}
+  }
+  / '\\Biggl(' _ content:additive _ '\\Biggr)' {
+    return {content: content, style: 1}
+  }
+
+
+angularParens
+  = '[' _ content:additive _ ']' {
+    return {content: content, style: 1}
+  }
+  / '\\bigl[' _ content:additive _ '\\bigr]' {
+    return {content: content, style: 1}
+  }
+  / '\\Bigl[' _ content:additive _ '\\Bigr]' {
+    return {content: content, style: 1}
+  }
+  / '\\biggl[' _ content:additive _ '\\biggr]' {
+    return {content: content, style: 1}
+  }
+  / '\\Biggl[' _ content:additive _ '\\Biggr]' {
+    return {content: content, style: 1}
+  }
+
+
+  / '\\lbrack' _ content:additive _ '\\rbrack' {
+    return {content: content, style: 1}
+  }
+  / '\\bigl\\lbrack' _ content:additive _ '\\bigr\\rbrack' {
+    return {content: content, style: 1}
+  }
+  / '\\Bigl\\lbrack' _ content:additive _ '\\Bigr\\rbrack' {
+    return {content: content, style: 1}
+  }
+  / '\\biggl\\lbrack' _ content:additive _ '\\biggr\\rbrack' {
+    return {content: content, style: 1}
+  }
+  / '\\Biggl\\lbrack' _ content:additive _ '\\Biggr\\rbrack' {
     return {content: content, style: 1}
   }
 

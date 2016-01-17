@@ -20,15 +20,41 @@ operatorUnary "unary operator"
   / "~" { return "NOT"; }
 
 identifierName
-  = name:([A-Za-z_][_a-zA-Z0-9]*) {
-      return name[0] + name[1].reduce((acc, current) => acc+current, "");
+  = first:[A-Za-z_] tail:[\-_a-zA-Z0-9]* {
+      return first + tail.join("");
+    }
+  / '"' chars:charNoDoubleQuote+ '"' {
+      return chars.join("");
+    }
+  / "'" chars:charNoSingleQuote+ "'" {
+      return chars.join("");
     }
 
+charNoDoubleQuote
+  = charEscapeSequence
+    / '""' { return '"'; }
+    / [^"]
+
+charNoSingleQuote
+  = charEscapeSequence
+    / "''" { return "'"; }
+    / [^']
+
+charEscapeSequence
+  = "\\\\"    { return "\\"; }
+    / "\\'"   { return "'";  }
+    / '\\"'   { return '"';  }
+
 literalValue
+  // top
   = "true" { return true; }
   / "1" { return true; }
+  / "W" { return true; }
+  / "T" { return true; }
+  // bottom
   / "false" { return false; }
   / "0" { return false; }
+  / "F" { return false; }
 
 parentheses
   = "(" _ content:additive _ ")" {

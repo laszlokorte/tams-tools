@@ -22,8 +22,15 @@ identifierName
     }
 
 literalValue
+  // top
   = "true" { return true; }
+  / "1" { return true; }
+  / "W" { return true; }
+  / "T" { return true; }
+  // bottom
   / "false" { return false; }
+  / "0" { return false; }
+  / "F" { return false; }
 
 parentheses
   = "(" _ content:additive _ ")" {
