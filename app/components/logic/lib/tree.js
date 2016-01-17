@@ -17,15 +17,15 @@ const children = (expression) => {
 const name = (expression) => {
   switch (expression.node) {
   case 'binary':
-    return expression.operator;
+    return expression.operator.toString();
   case 'unary':
-    return expression.operator;
+    return expression.operator.toString();
   case 'group':
     return "(...)";
   case 'identifier':
-    return expression.name;
+    return expression.name.toString();
   case 'constant':
-    return expression.value;
+    return expression.value.toString();
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
