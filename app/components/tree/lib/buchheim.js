@@ -1,10 +1,9 @@
-/*eslint-disable no-class */
-
 /*
   ported from:
   http://billmill.org/pymag-trees/
   https://github.com/llimllib/pymag-trees/
 */
+/* eslint-disable no-class/no-class */
 class LayoutNode {
   constructor(node, parent = null, depth = 0, number = 1) {
     this.x = -1;
@@ -60,6 +59,7 @@ class LayoutNode {
     );
   }
 };
+/*eslint-enable no-class/no-class */
 
 const moveSubtree = (wl, wr, shift) => {
   const subtrees = wr.number - wl.number;
@@ -100,6 +100,7 @@ const secondWalk = (v, m = 0, depth = 0) => {
   }
 };
 
+/* eslint-disable max-statements */
 const apportion = (v, default_ancestor, distance) => {
   const w = v.leftBrother();
   let new_default_ancestor = default_ancestor;
@@ -146,6 +147,7 @@ const apportion = (v, default_ancestor, distance) => {
   }
   return new_default_ancestor;
 };
+/* eslint-enable max-statements */
 
 const firstWalk = (v, distance = 1) => {
   if (v.children.length === 0) {
