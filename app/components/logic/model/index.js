@@ -8,7 +8,7 @@ import {
   evaluateAll,
 } from '../lib/expression';
 
-import cParser from '../lib/syntax/logic-c.jison';
+import cParser from '../lib/syntax/logic-c.pegjs';
 import javaParser from '../lib/syntax/logic-java.jison';
 import latexParser from '../lib/syntax/logic-latex.jison';
 import mathParser from '../lib/syntax/logic-math.jison';
@@ -16,15 +16,16 @@ import pythonParser from '../lib/syntax/logic-python.jison';
 
 const parsers = {
   c: cParser,
-  java: javaParser,
-  latex: latexParser,
-  math: mathParser,
-  python: pythonParser,
+  java: cParser,
+  latex: cParser,
+  math: cParser,
+  python: cParser,
 };
 
-function ParseError(string, error) {
+function ParseError(string, name, location) {
   this.string = string;
-  this.error = error;
+  this.name = name;
+  this.location = location;
 };
 
 export default (actions) => {
@@ -38,7 +39,7 @@ export default (actions) => {
         };
       } catch (e) {
         console.log(e);
-        throw new ParseError(string, e.hash);
+        throw new ParseError(string, e.name, e.location);
       }
     }
   )
@@ -65,7 +66,10 @@ export default (actions) => {
 
   const c = (e) =>
     O.just({
-      error: e.error,
+      error: {
+        location: e.location,
+        name: e.name,
+      },
       string: e.string,
     })
       .concat(parsed$).catch(c)

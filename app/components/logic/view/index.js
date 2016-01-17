@@ -1,6 +1,6 @@
 import {
   div, span, textarea, h2, ul, li,
-  table, tr, th, td, select, option
+  table, tr, th, td, select, option,
 } from '@cycle/dom';
 
 import './index.styl';
@@ -29,15 +29,12 @@ const expressionToString = (expression) => {
 };
 
 const markError = (string, error) => {
-  if (!error || !error.loc) {
+  if (!error || !error.location) {
     return [string];
   } else {
-    const loc = error.loc;
-    const lines = string.split('\n');
-    const linesBefore = lines.slice(0, loc.first_line - 1)
-      .join('').length + loc.first_line - 1;
-    const start = linesBefore + loc.last_column;
-    const end = linesBefore + loc.last_column + error.text.length;
+    const loc = error.location;
+    const start = loc.start.offset;
+    const end = loc.end.offset;
 
     return [
       string.substring(0, start),
