@@ -8,12 +8,10 @@ import {pla} from '../lib/pla';
 
 const plaUiState = I.Record({
   circuit: pla(),
-  scaleX: 1,
-  scaleY: 1,
   bounds: bounds(),
 }, 'treeUiState');
 
-export default (props$, data$, actions) => {
+export default (props$, data$/*, actions*/) => {
   const layout$ = data$
     .map(layoutPLA)
     .shareReplay(1);
@@ -22,7 +20,7 @@ export default (props$, data$, actions) => {
     props$,
     () =>
       layout$.map((layout) => {
-        return {
+        return plaUiState({
           circuit: layout,
           bounds: bounds({
             minX: layout.bounds.minX * 10,
@@ -30,7 +28,7 @@ export default (props$, data$, actions) => {
             minY: layout.bounds.minY * 10,
             maxY: layout.bounds.maxY * 10,
           }),
-        };
+        });
       })
   ).switch();
 };
