@@ -4,7 +4,7 @@ import {
 
 import {
   insideCubeMasked,
-} from '../../model/diagram';
+} from '../../lib/diagram';
 
 import './index.styl';
 

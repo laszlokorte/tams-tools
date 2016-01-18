@@ -5,7 +5,7 @@ import {td} from '@cycle/dom';
 import {
   insideLoop, isValidValueForMode,
   cellToInt,
-} from '../../model/diagram';
+} from '../../lib/diagram';
 
 import renderValue from './value';
 

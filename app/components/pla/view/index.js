@@ -3,10 +3,10 @@ import {svg} from '@cycle/dom';
 import {gates, wires, clipPaths} from './gates';
 import './index.styl';
 
-const render = ({data}) =>
+const render = (state) =>
   svg('g',[
     clipPaths(3000),
-    data.circuit.gates.map(({
+    state.circuit.gates.map(({
       type,
       center, rotation, inputCount,
       soderInput,soderOutput, color,
@@ -19,7 +19,7 @@ const render = ({data}) =>
         highlight, mayOmit,
       })
     ),
-    data.circuit.wires.map(({
+    state.circuit.wires.map(({
       type,
       from, toX, toY, input, inputCount,
       soderStart, soderEnd,
@@ -30,7 +30,7 @@ const render = ({data}) =>
         soderStart, soderEnd,
       })
     ),
-    data.circuit.labels.map(({text, align, anchor}) =>
+    state.circuit.labels.map(({text, align, anchor}) =>
       svg('text', {
         key: 'label-' + text,
         x: anchor.x * 10,

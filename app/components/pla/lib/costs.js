@@ -1,14 +1,14 @@
 const calcLoopCosts = (pla) => {
   // the number of input ports of each loop gate
   const portCount = pla.loops.map((loop) =>
-    loop.in.filter((v) => v !== null).length
+    loop.in.count((v) => v !== null)
   )
   // gates with less than 2 input ports can be ignored
   .filter((c) => c > 1)
   ;
 
   return {
-    gates: portCount.length,
+    gates: portCount.count(),
     inputs: portCount
       .reduce((acc, count) => acc + count, 0),
   };
@@ -19,15 +19,15 @@ const calcOutputCosts = (pla) => {
     .map((_, index) =>
       // count to how many loop gates
       // this output is connected
-      pla.loops.filter(
-        (loop) => loop.out[index] === 1
-      ).length
+      pla.loops.count(
+        (loop) => loop.out.get(index) === 1
+      )
     )
     // gates with less than 2 input ports can be ignored
     .filter((c) => c > 1);
 
   return {
-    gates: outputMap.length,
+    gates: outputMap.count(),
     inputs: outputMap
       .reduce((prev, count) => prev + count, 0),
   };

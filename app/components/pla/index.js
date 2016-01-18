@@ -5,6 +5,7 @@ import {div} from '@cycle/dom';
 import {pluck} from '../../lib/utils';
 import graphics from '../graphics';
 
+import {plaFromJson} from './lib/pla';
 import model from './model';
 import view from './view';
 import costPanel from './view/cost-panel';
@@ -17,9 +18,10 @@ export default (responses) => {
     data$,
   } = responses;
 
+  const pla$ = data$.map(plaFromJson);
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'));
-  const state$ = model(props$, data$, actions);
+  const state$ = model(props$, pla$, actions);
   const vtree$ = view(state$).shareReplay(1);
 
   const stage = isolate(graphics, 'mygraphics')({
@@ -35,7 +37,7 @@ export default (responses) => {
 
   return {
     DOM: O.just(div([
-      data$.map(costPanel),
+      pla$.map(costPanel),
       stage.DOM,
     ])),
     preventDefault: O.merge(

@@ -5,7 +5,7 @@ import {
 
 import {
   loopBelongsToOutput,
-} from '../../model/diagram';
+} from '../../lib/diagram';
 
 import renderLoops from '../loops';
 

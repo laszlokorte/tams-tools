@@ -1,8 +1,8 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import * as KVD from './diagram';
-import {buildLayout} from './layout';
+import * as KVD from '../lib/diagram';
+import {buildLayout} from '../lib/layout';
 
 import {memoize, clamp, padLeft, compose} from '../../../lib/utils';
 

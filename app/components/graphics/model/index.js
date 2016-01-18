@@ -1,6 +1,7 @@
 import {Observable as O} from 'rx';
 
 import {clamp} from '../../../lib/utils';
+import {ContentThunk} from './contentThunk';
 
 const clampPosition = (modifierFn, {minX, minY, maxX, maxY}) =>
   (cam) => {
@@ -46,19 +47,6 @@ const autoCenterModifier = ({
     y: centerY + (pivotY - 0.5) * contentHeight + height / 2 / zoom,
     zoom: clamp(zoom, 0.2, 5),
   });
-};
-
-const ContentThunk = function thunkConstructor(node, key) {
-  this.node = node;
-  this.key = key;
-};
-ContentThunk.prototype.type = "Thunk";
-ContentThunk.prototype.render = function thunkRender(previous) {
-  if (!previous || previous.key !== this.key) {
-    return this.node;
-  } else {
-    return previous.vnode;
-  }
 };
 
 export default ({props$, camera$, bounds$, content$}, actions) => {

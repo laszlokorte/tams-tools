@@ -4,7 +4,7 @@ import isolate from '@cycle/isolate';
 import model from './model';
 import view from './view';
 import intent from './intent';
-import {toPLA, toJSON} from './model/diagram';
+import {toPLA, toJSON} from './lib/diagram';
 
 import HelpPanel from './panels/help';
 import SettingsPanel from './panels/settings';

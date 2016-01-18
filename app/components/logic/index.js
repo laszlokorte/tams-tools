@@ -17,7 +17,7 @@ export default (responses) => {
   return {
     DOM: vtree$,
     preventDefault: actions.preventDefault,
-    tree$: state$.map(
+    tree$: state$.debounce(200).map(
       (state) => state && state.expressions &&
         state.expressions.size > 0 ?
         toTree(state.expressions.get(0)) : null

@@ -175,7 +175,7 @@ const negatorFeature = (color) =>
       cy: 0,
       r: 8,
       class: 'gate-body',
-      stroke: color,
+      stroke: color || void 0,
     },
   })
 ;
@@ -189,7 +189,7 @@ const exclusionFeature = (color) =>
       c0,0 17.5,-3 17.5,-35
       c0,-32.5 -17.5,-35 -17.5,-35`,
       class: 'gate-body-extra',
-      stroke: color,
+      stroke: color || void 0,
     },
   })
 ;
@@ -216,7 +216,7 @@ const orBodyFeature = (color) =>
       c27.5,3 45,0 65,35
       c-15,32 -32.5,32.5 -65,35Z`,
       class: 'gate-body',
-      stroke: color,
+      stroke: color || void 0,
     },
   })
 ;
@@ -231,7 +231,7 @@ const andBodyFeature = (color) =>
       c15,0 30,15 30,35
       c0,20 -15,35 -30,35Z`,
       class: 'gate-body',
-      stroke: color,
+      stroke: color || void 0,
     },
   })
 ;
@@ -244,7 +244,7 @@ const bufferBodyFeature = (color) =>
       l35,25
       l-35,25Z`,
       class: 'gate-body',
-      stroke: color,
+      stroke: color || void 0,
     },
   })
 ;
@@ -336,8 +336,8 @@ export const wires = {
     return svg('g', {
       key: 'wire-vertical-' + key,
     }, [
-      soderStart && soderPoint(startX, startY),
-      soderEnd && soderPoint(endX, endY),
+      soderStart ? soderPoint(startX, startY) : null,
+      soderEnd ? soderPoint(endX, endY) : null,
       svg('line', {
         x1: startX,
         y1: startY,
@@ -359,8 +359,8 @@ export const wires = {
     return svg('g', {
       key: 'wire-horizontal-' + key,
     }, [
-      soderStart && soderPoint(startX, startY),
-      soderEnd && soderPoint(endX, endY),
+      soderStart ? soderPoint(startX, startY) : null,
+      soderEnd ? soderPoint(endX, endY) : null,
       svg('line', {
         x1: startX,
         y1: startY,
