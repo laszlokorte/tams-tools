@@ -1,6 +1,7 @@
 import {
   div, span, textarea, h2, ul, li,
   table, tr, th, td, select, option,
+  label, input,
 } from '@cycle/dom';
 
 import './index.styl';
@@ -85,6 +86,14 @@ const render = (state) =>
           (name) => li('.variable-list-item', name)
         ).toArray()),
         h2('Table'),
+        label([
+          input({
+            type: 'checkbox',
+            name: 'subexpressions',
+            checked: state.showSubExpressions,
+          }),
+          'Show sub expressions',
+        ]),
         div('.table-scroller', [
           div('.table-scroller-body', [
             table('.table', [

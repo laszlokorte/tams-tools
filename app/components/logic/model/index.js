@@ -100,7 +100,7 @@ const languages = {
   python: pythonLang,
 };
 
-const parse = ({string, lang}) => {
+const parse = ({string, lang, showSubExpressions}) => {
   try {
     const parseResult = languages[lang]
       .parse(string);
@@ -109,6 +109,7 @@ const parse = ({string, lang}) => {
       lang: parseResult.lang,
       detected: parseResult.detected,
       string,
+      showSubExpressions,
       expressions: parseResult.parsed.map(expressionFromJson),
     };
   } catch (e) {
@@ -116,17 +117,17 @@ const parse = ({string, lang}) => {
   }
 };
 
-const analyze = ({lang, detected, expressions, string}) => {
+const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
   const expressionList = I.List(expressions);
 
   const identifiers = expressionList.flatMap(
     (expression) => collectIdentifiers(expression)
   ).toSet().toList();
 
-  const subExpressions = expressionList.flatMap(
+  const subExpressions = showSubExpressions ? expressionList.flatMap(
     (expression) => collectSubExpressions(expression)
       .reverse().toList()
-  );
+  ) : expressionList;
 
   const table = evaluateAll({
     expressions: subExpressions,
@@ -141,6 +142,7 @@ const analyze = ({lang, detected, expressions, string}) => {
     identifiers,
     table,
     subExpressions,
+    showSubExpressions,
   };
 };
 
@@ -157,10 +159,17 @@ const handleError = (error) =>
 ;
 
 export default (actions) => {
-  const parsed$ = actions.input$.startWith('').combineLatest(
+  const parsed$ = O.combineLatest(
+    actions.input$.startWith(''),
     actions.language$.startWith('auto'),
-    (s, l) =>
-      O.just({string: s, lang: l, detected: null})
+    actions.showSubExpressions$.startWith(true),
+    (string, lang, showSubExpressions) =>
+      O.just({
+        string,
+        lang,
+        detected: null,
+        showSubExpressions,
+      })
       .map(parse)
       .map(analyze)
       .catch(handleError)
