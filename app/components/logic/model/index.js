@@ -88,7 +88,11 @@ const autoLang = language({
       }
     }
 
-    throw new ParseError('auto', string, 'Language could not be recognized.', null);
+    throw new ParseError(
+      'auto', string,
+      'Language could not be recognized.',
+      null
+    );
   },
 });
 
@@ -173,6 +177,24 @@ export default (actions) => {
       .map(parse)
       .map(analyze)
       .catch(handleError)
+      .map(({
+        detected,
+        expressions,
+        identifiers,
+        table,
+        subExpressions,
+        error,
+      }) => ({
+        lang,
+        detected,
+        string,
+        expressions,
+        identifiers,
+        table,
+        subExpressions,
+        showSubExpressions,
+        error,
+      }))
   ).switch();
 
   return parsed$;

@@ -19,7 +19,7 @@ export default (responses) => {
     preventDefault: actions.preventDefault,
     tree$: state$.debounce(200).map(
       (state) => {
-        if(state &&
+        if (state &&
           state.expressions &&
           state.expressions.size > 0
         ) {
