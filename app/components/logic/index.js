@@ -18,9 +18,23 @@ export default (responses) => {
     DOM: vtree$,
     preventDefault: actions.preventDefault,
     tree$: state$.debounce(200).map(
-      (state) => state && state.expressions &&
-        state.expressions.size > 0 ?
-        toTree(state.expressions.get(0)) : null
+      (state) => {
+        if(state &&
+          state.expressions &&
+          state.expressions.size > 0
+        ) {
+          if (state.expressions.size === 1) {
+            return toTree(state.expressions.get(0));
+          } else {
+            return {
+              name: 'Expression List',
+              children: state.expressions.map(toTree).toArray(),
+            };
+          }
+        } else {
+          return null;
+        }
+      }
     ),
   };
 };
