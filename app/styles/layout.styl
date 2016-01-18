@@ -100,12 +100,13 @@ button(icon = false,
   else
     padding-left space(1)
 
-  &:hover
-    background-color lighten(color-background, 3%)
-  &:focus
-    border-color color-focus
-  &:active
-    background-color darken(color-background, 3%)
+  &:not(.state-active)
+    &:hover
+      background-color lighten(color-background, 3%)
+    &:focus
+      border-color color-focus
+    &:active
+      background-color darken(color-background, 3%)
 
 
 space(u)
@@ -167,25 +168,13 @@ $keyframe-name = slide-up
   transition opacity 0.3s ease-out
   transition-delay 0.3s
 
+.spinner-label
+  margin-right space(0.5)
+
 .spinner-value
 .spinner-label
   transition transform 0.2s ease-out
   transition-delay 0s
-
-.spinner.state-readonly
-  .spinner-buttons
-    opacity 0
-    pointer-events none
-    transition-delay 0s
-
-  .spinner-value
-    transform translateX(1.5 * button-size-small)
-    transition-delay 0.3s
-
-  .spinner-label
-    transform translateX(0.5 * button-size-small)
-    transition-delay 0.3s
-
 
 .spinner-label
 .spinner-value
@@ -201,7 +190,7 @@ $keyframe-name = slide-up
 .spinner-value
   font-size font-size-big
   font-weight font-bold
-  min-width space(2.5)
+  min-width space(2)
   text-align center
 
 .spinner-button-decrement
@@ -228,6 +217,15 @@ $keyframe-name = slide-up
     opacity 0
     pointer-events none
 
+.state-readonly
+  .spinner-button-decrement
+  .spinner-button-increment
+      pointer default
+      background-color lighten(color-background-inverse, 25%)
+      transform scale(0)
+      opacity 0
+      pointer-events none
+
 
 .spinner-button-decrement
   background-image svgurl('assets/icons/minus.svg') svg(
@@ -252,6 +250,7 @@ $keyframe-name = slide-up
   opacity 0.7
   width 150px
   &.state-active
+    cursor default
     opacity 1
     font-weight 600
     color tint(color-background-highlight, 40%)
@@ -321,6 +320,7 @@ $keyframe-name = slide-up
     transform scale(0)
     opacity 0
     pointer-events none
+    cursor default
 
 .output-list
   plainlist(inline: true)
@@ -393,6 +393,7 @@ $keyframe-name = slide-up
     transform scale(0)
     opacity 0
     pointer-events none
+    cursor default
 
 .output-label
   display block
@@ -460,6 +461,7 @@ $keyframe-name = slide-up
     color-foreground-inverse-weak)
 
   &.state-active
+    cursor default
     font-weight font-bold
     background-color color-background-inverse-strong
     color color-foreground-inverse-strong
@@ -472,7 +474,7 @@ $keyframe-name = slide-up
       border-color color-focus
 
     &:active
-      background-color darken(color-background-inverse-strong, 10%)
+      background-color color-background-inverse-strong
 
 
   &:hover
@@ -482,6 +484,7 @@ $keyframe-name = slide-up
     border-color color-focus
 
   &:active
+    color #fff
     background-color darken(color-background-inverse-weak, 10%)
 
 
