@@ -13,18 +13,6 @@ import latexParser from '../lib/syntax/logic-latex.pegjs';
 import mathParser from '../lib/syntax/logic-math.pegjs';
 import pythonParser from '../lib/syntax/logic-python.pegjs';
 
-const autoParser = {
-  parse: () => { throw new Error("not implemented"); },
-};
-
-const parsers = {
-  auto: autoParser,
-  c: cParser,
-  latex: latexParser,
-  math: mathParser,
-  python: pythonParser,
-};
-
 function ParseError(lang, string, name, location) {
   this.lang = lang;
   this.string = string;
@@ -32,19 +20,103 @@ function ParseError(lang, string, name, location) {
   this.location = location;
 };
 
+const language = I.Record({
+  name: null,
+  parse: () => { throw new Error("not implemented"); },
+});
+
+const cLang = language({
+  name: 'C',
+  parse: (string) => {
+    return {
+      lang: 'c',
+      parsed: cParser.parse(string),
+    };
+  },
+});
+
+const latexLang = language({
+  name: 'Latex',
+  parse: (string) => {
+    return {
+      lang: 'latex',
+      parsed: latexParser.parse(string),
+    };
+  },
+});
+
+const pythonLang = language({
+  name: 'Python',
+  parse: (string) => {
+    return {
+      lang: 'python',
+      parsed: pythonParser.parse(string),
+    };
+  },
+});
+
+const mathLang = language({
+  name: 'Math',
+  parse: (string) => {
+    return {
+      lang: 'math',
+      parsed: mathParser.parse(string),
+    };
+  },
+});
+
+const allLanguages = [
+  cLang,
+  pythonLang,
+  latexLang,
+  mathLang,
+];
+
+const autoLang = language({
+  name: 'Auto detect',
+  parse: (string) => {
+    for (const lang of allLanguages) {
+      try {
+        const result = lang.parse(string);
+        return {
+          parsed: result.parsed,
+          lang: 'auto',
+          detected: result.lang,
+        };
+      } catch (e) {
+
+      }
+    }
+
+    throw new ParseError('auto', string, 'can not detect', null);
+  },
+});
+
+const languages = {
+  auto: autoLang,
+  c: cLang,
+  latex: latexLang,
+  math: mathLang,
+  python: pythonLang,
+};
+
 const parse = ({string, lang}) => {
   try {
+    const parseResult = languages[lang]
+      .parse(string);
+
     return {
-      lang,
+      lang: parseResult.lang,
+      detected: parseResult.detected,
       string,
-      expressions: parsers[lang].parse(string).map(expressionFromJson),
+      expressions: parseResult.parsed.map(expressionFromJson),
     };
   } catch (e) {
     throw new ParseError(lang, string, e.name, e.location);
   }
 };
 
-const analyze = ({lang, expressions, string}) => {
+const analyze = ({lang, detected, expressions, string}) => {
   const expressionList = I.List(expressions);
 
   const identifiers = expressionList.flatMap(
@@ -63,6 +135,7 @@ const analyze = ({lang, expressions, string}) => {
 
   return {
     lang,
+    detected,
     string,
     expressions: expressionList,
     identifiers,
@@ -74,6 +147,7 @@ const analyze = ({lang, expressions, string}) => {
 const handleError = (error) =>
   O.just({
     lang: error.lang,
+    detected: null,
     error: {
       location: error.location,
       name: error.name,
@@ -84,13 +158,14 @@ const handleError = (error) =>
 
 export default (actions) => {
   const parsed$ = actions.input$.startWith('').combineLatest(
-    actions.language$.startWith('c'),
+    actions.language$.startWith('auto'),
     (s, l) =>
-      O.just({string: s, lang: l})
+      O.just({string: s, lang: l, detected: null})
       .map(parse)
       .map(analyze)
       .catch(handleError)
-  ).switch();
+  ).switch()
+  .do(::console.log);
 
   return parsed$;
 }
