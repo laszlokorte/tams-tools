@@ -8,13 +8,15 @@ start
 
 operatorMul "binary operator"
   = "&&" { return "AND"; }
-  / "&" { return "AND"; }
-  / "" { return "AND"; }
-  / "^" { return "XOR"; }
+  / "&"  { return "AND"; }
+  / "*"  { return "AND"; }
+  / "^"  { return "XOR"; }
+  / ""   { return "AND"; }
 
 operatorAdd "binary operator"
   = "||" { return "OR"; }
-  / "|" { return "OR"; }
+  / "|"  { return "OR"; }
+  / "+"  { return "OR"; }
 
 operatorUnary "unary operator"
   = "!" { return "NOT"; }

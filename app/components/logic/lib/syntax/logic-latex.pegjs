@@ -9,8 +9,8 @@ start
 operatorMul "binary operator"
   = "\\wedge"    { return "AND"; }
   / "\\oplus"    { return "XOR"; }
+  / "+"          { return "OR"; }
   / ""           { return "AND"; }
-  / "+"          { return "XOR"; }
 
 operatorAdd "binary operator"
   = "\\vee"      { return "OR"; }
@@ -52,15 +52,18 @@ literalValue
   / "1" { return true; }
   / "W" { return true; }
   / "T" { return true; }
+  / "\\top" { return true; }
   // bottom
   / "false" { return false; }
   / "0" { return false; }
   / "F" { return false; }
+  / "\\bot" { return false; }
 
 
 parentheses
   = roundParens
   / angularParens
+/// curlyParens
 
 
 roundParens
@@ -68,50 +71,55 @@ roundParens
     return {content: content, style: 1}
   }
   / '\\bigl(' _ content:additive _ '\\bigr)' {
-    return {content: content, style: 1}
+    return {content: content, style: 2}
   }
   / '\\Bigl(' _ content:additive _ '\\Bigr)' {
-    return {content: content, style: 1}
+    return {content: content, style: 3}
   }
   / '\\biggl(' _ content:additive _ '\\biggr)' {
-    return {content: content, style: 1}
+    return {content: content, style: 4}
   }
   / '\\Biggl(' _ content:additive _ '\\Biggr)' {
-    return {content: content, style: 1}
+    return {content: content, style: 5}
   }
 
 
 angularParens
   = '[' _ content:additive _ ']' {
-    return {content: content, style: 1}
+    return {content: content, style: 6}
   }
   / '\\bigl[' _ content:additive _ '\\bigr]' {
-    return {content: content, style: 1}
+    return {content: content, style: 7}
   }
   / '\\Bigl[' _ content:additive _ '\\Bigr]' {
-    return {content: content, style: 1}
+    return {content: content, style: 8}
   }
   / '\\biggl[' _ content:additive _ '\\biggr]' {
-    return {content: content, style: 1}
+    return {content: content, style: 9}
   }
   / '\\Biggl[' _ content:additive _ '\\Biggr]' {
-    return {content: content, style: 1}
+    return {content: content, style: 10}
   }
 
 
   / '\\lbrack' _ content:additive _ '\\rbrack' {
-    return {content: content, style: 1}
+    return {content: content, style: 6}
   }
   / '\\bigl\\lbrack' _ content:additive _ '\\bigr\\rbrack' {
-    return {content: content, style: 1}
+    return {content: content, style: 7}
   }
   / '\\Bigl\\lbrack' _ content:additive _ '\\Bigr\\rbrack' {
-    return {content: content, style: 1}
+    return {content: content, style: 8}
   }
   / '\\biggl\\lbrack' _ content:additive _ '\\biggr\\rbrack' {
-    return {content: content, style: 1}
+    return {content: content, style: 9}
   }
   / '\\Biggl\\lbrack' _ content:additive _ '\\Biggr\\rbrack' {
+    return {content: content, style: 10}
+  }
+
+curlyParens
+  = '{' _ content:additive _ '}' {
     return {content: content, style: 1}
   }
 
