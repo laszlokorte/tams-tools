@@ -21,9 +21,9 @@ const expressionToString = (expression) => {
   case 'group':
     return `${expressionToString(expression.content)}`;
   case 'identifier':
-    return expression.name;
+    return expression.name.toString();
   case 'constant':
-    return expression.value;
+    return expression.value.toString();
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
@@ -127,8 +127,7 @@ const render = (state) =>
       div([
         state.error.token ?
         'Unexpected token: ' + state.error.token :
-        'Unexpected character'
-        ,
+        state.error.message,
       ]),
     ],
   ])

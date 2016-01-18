@@ -115,6 +115,9 @@ angularParens
     return {content: content, style: 1}
   }
 
+expressionSeparator "expression separator"
+  = ","
+
 EOF
   = !.
 
@@ -122,7 +125,7 @@ _ "whitespace"
   = [ \t\n\r]*
 
 expressions
-  = head:expression tail:("," expression)+ {
+  = head:expression tail:(expressionSeparator expression)+ {
     return [head, ...tail.map((t) => t[1])];
   }
   / head:expression {
