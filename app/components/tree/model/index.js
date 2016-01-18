@@ -11,7 +11,7 @@ const treeUiState = I.Record({
   bounds: bounds(),
 }, 'treeUiState');
 
-export default (props$, data$, actions) => {
+export default (props$, data$/*, actions*/) => {
   const layout$ = data$.map(layoutTree).shareReplay(1);
   return O.combineLatest(
     props$,

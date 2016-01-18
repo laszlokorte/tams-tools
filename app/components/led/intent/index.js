@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 
-export default (DOM, keydown) => {
+export default (DOM/*, keydown*/) => {
   const switchButton = DOM.select('.switch-button');
   const led = DOM.select('.led');
   const numberField = DOM.select('.number-field');

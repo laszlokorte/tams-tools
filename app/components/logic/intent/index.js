@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 
-export default (DOM, keydown) => {
+export default (DOM/*, keydown*/) => {
   const inputField = DOM.select('.logic-input-field');
   const syntaxtSelector = DOM.select('.syntax-selector');
 

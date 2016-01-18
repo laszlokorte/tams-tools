@@ -6,6 +6,8 @@ import {keyboardDriver} from './drivers/keyboard';
 
 import led from './components/led';
 
+/*eslint-disable max-len*/
+
 const drivers7Segment = {
   DOM: makeDOMDriver('#app-main'),
   preventDefault: preventDefaultDriver,
@@ -19,7 +21,7 @@ const drivers7Segment = {
           true, false, true, true,
           false, true, true, true,
           true, true, null, null,
-          null, null, null, null
+          null, null, null, null,
         ],
       },
       {
@@ -28,7 +30,7 @@ const drivers7Segment = {
           true, true, true, true,
           true, false, false, true,
           true, true, null, null,
-          null, null, null, null
+          null, null, null, null,
         ],
       },
       {
@@ -37,7 +39,7 @@ const drivers7Segment = {
           true, true, false, true,
           true, true, true, true,
           true, true, null, null,
-          null, null, null, null
+          null, null, null, null,
         ],
       },
       {
@@ -46,7 +48,7 @@ const drivers7Segment = {
           true, false, true, true,
           false, true, true, false,
           true, true, null, null,
-          null, null, null, null
+          null, null, null, null,
         ],
       },
       {
@@ -55,7 +57,7 @@ const drivers7Segment = {
           true, false, true, false,
           false, false, true, false,
           true, false, null, null,
-          null, null, null, null
+          null, null, null, null,
         ],
       },
       {
@@ -64,7 +66,7 @@ const drivers7Segment = {
           true, false, false, false,
           true, true, true, false,
           true, true, null, null,
-          null, null, null, null
+          null, null, null, null,
         ],
       },
       {
@@ -73,7 +75,7 @@ const drivers7Segment = {
           false, false, true, true,
           true, true, true, false,
           true, true, null, null,
-          null, null, null, null
+          null, null, null, null,
         ],
       },
     ],

@@ -52,8 +52,14 @@ const render = (state) =>
       name: 'language',
     }, [
       state.lang === 'auto' ?
-      option({value: 'auto', selected: true}, `Auto detect (${state.detected || '???'})`) :
-      option({value: 'auto', selected: false}, `Auto detect`),
+      option(
+        {value: 'auto', selected: true},
+        `Auto detect (${state.detected || '???'})`
+      ) :
+      option(
+        {value: 'auto', selected: false},
+        `Auto detect`
+      ),
 
       option({value: 'c', selected: state.lang === 'c'}, 'C'),
       option({value: 'python', selected: state.lang === 'pyhton'}, 'Python'),
