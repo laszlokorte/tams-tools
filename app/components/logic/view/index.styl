@@ -1,5 +1,8 @@
 @import '../../../styles/global'
 
+.logic-panel
+  margin 10px 20px
+
 .logic-input
   font-size font-size-big
   font-family font-sans
@@ -7,6 +10,13 @@
   border 1px solid color-background-secondary-strong
   position relative
   overflow hidden
+
+.logic-language-chooser
+  padding 5px 0
+  display block
+
+.logic-language-chooser-label
+  padding 0 5px
 
 .logic-input-field
   box-sizing border-box
@@ -104,3 +114,22 @@
   min-width min-content
   min-height min-content
   padding space(2) 0
+
+.error-box
+  margin-top 10px
+  padding 10px
+  border 2px solid darkred
+  background-color tint(red, 90%)
+
+.error-box-title
+  margin 0
+  padding 0
+  font-size 16px
+  line-height 1
+  display inline
+
+  &::after
+    content ': '
+
+.error-body
+  display inline

@@ -48,24 +48,27 @@ const markError = (string, error) => {
 };
 
 const render = (state) =>
-  div([
-    select('.syntax-selector',{
-      name: 'language',
-    }, [
-      state.lang === 'auto' ?
-      option(
-        {value: 'auto', selected: true},
-        `Auto detect (${state.detected || '???'})`
-      ) :
-      option(
-        {value: 'auto', selected: false},
-        `Auto detect`
-      ),
+  div('.logic-panel', [
+    label('.logic-language-chooser',[
+      span('.logic-language-chooser-label', 'Language:'),
+      select('.syntax-selector',{
+        name: 'language',
+      }, [
+        state.lang === 'auto' ?
+        option(
+          {value: 'auto', selected: true},
+          `Auto detect (${state.detected || '???'})`
+        ) :
+        option(
+          {value: 'auto', selected: false},
+          `Auto detect`
+        ),
 
-      option({value: 'c', selected: state.lang === 'c'}, 'C'),
-      option({value: 'python', selected: state.lang === 'pyhton'}, 'Python'),
-      option({value: 'math', selected: state.lang === 'math'}, 'Math'),
-      option({value: 'latex', selected: state.lang === 'latex'}, 'Latex'),
+        option({value: 'c', selected: state.lang === 'c'}, 'C'),
+        option({value: 'python', selected: state.lang === 'pyhton'}, 'Python'),
+        option({value: 'math', selected: state.lang === 'math'}, 'Math'),
+        option({value: 'latex', selected: state.lang === 'latex'}, 'Latex'),
+      ])
     ]),
     div('.logic-input', [
       textarea('.logic-input-field', {
@@ -75,7 +78,7 @@ const render = (state) =>
         state ? markError(state.string, state.error) : '',
       ]),
     ]),
-    state && state.expressions && [
+    state && state.expressions && state.expressions.size ? [
       div([
         h2('Expressions'),
         ul('.expression-list', state.expressions.map((expr) =>
@@ -121,15 +124,15 @@ const render = (state) =>
           ]),
         ]),
       ]),
-    ],
-    state && state.error && [
-      h2('Error'),
-      div([
+    ] : null,
+    state && state.error && div('.error-box', [
+      h2('.error-box-title','Error'),
+      div('.error-body',[
         state.error.token ?
         'Unexpected token: ' + state.error.token :
         state.error.message,
       ]),
-    ],
+    ]),
   ])
 ;
 
