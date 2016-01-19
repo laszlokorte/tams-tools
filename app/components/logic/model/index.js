@@ -13,7 +13,7 @@ import latexParser from '../lib/syntax/logic-latex.pegjs';
 import mathParser from '../lib/syntax/logic-math.pegjs';
 import pythonParser from '../lib/syntax/logic-python.pegjs';
 
-function ParseError(lang, string, message, location, detected = null) {
+function ParseError({lang, string, message, location, detected = null}) {
   this.lang = lang;
   this.string = string;
   this.message = message;
@@ -100,13 +100,13 @@ const autoLang = language({
       }
     }
 
-    throw new ParseError(
-      'auto',
+    throw new ParseError({
+      lang: 'auto',
       string,
-      error.message,
-      error.location,
-      detected
-    );
+      message: error.message,
+      location: error.location,
+      detected,
+    });
   },
 });
 
@@ -131,7 +131,12 @@ const parse = ({string, lang, showSubExpressions}) => {
       expressions: parseResult.parsed.map(expressionFromJson),
     };
   } catch (e) {
-    throw new ParseError(lang, string, e.message, e.location, e.detected);
+    throw new ParseError({
+      lang, string,
+      message: e.message,
+      location: e.location,
+      detected: e.detected,
+    });
   }
 };
 
