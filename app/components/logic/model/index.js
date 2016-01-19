@@ -213,7 +213,10 @@ export default (actions) => {
         subExpressions,
         error,
         allSubExpressions,
-      }) => actions.selectRow$.startWith(null).map(
+      }) => actions.selectRow$
+        .startWith(null)
+        .scan((prev, val) => prev === val ? null : val)
+        .map(
         (selectedRow) => {
           let subEvalutation = null;
 
