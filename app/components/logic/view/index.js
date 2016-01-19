@@ -23,7 +23,7 @@ const expressionToString = (expression) => {
   case 'identifier':
     return expression.name.toString();
   case 'constant':
-    return expression.value.toString();
+    return expression.value ? '1' : '0';
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
@@ -113,11 +113,11 @@ const render = (state) =>
                 state.identifiers.map(
                   (name, i, all) => td('.table-body-cell' +
                   (i + 1 === all.size ? '.table-group-end' : ''), [
-                    row.identifierValues.get(name).toString(),
+                    row.identifierValues.get(name) ? '1' : '0',
                   ])
                 ).toArray(),
                 row.values.map((val) =>
-                  td('.table-body-cell', val.toString())
+                  td('.table-body-cell', val ? '1' : '0')
                 ).toArray(),
               ])).toArray(),
             ]),

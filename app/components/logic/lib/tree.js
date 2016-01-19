@@ -25,7 +25,7 @@ const name = (expression) => {
   case 'identifier':
     return expression.name.toString();
   case 'constant':
-    return expression.value.toString();
+    return expression.value ? '1' : '0';
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
