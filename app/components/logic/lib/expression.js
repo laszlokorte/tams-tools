@@ -68,7 +68,7 @@ export const evalBinary = (expression, identifierMap, evalExpr) => {
     ;
   case 'XOR':
     return !evalExpr(expression.lhs, identifierMap) !==
-      !evalExpr(expression.lhs, identifierMap)
+      !evalExpr(expression.rhs, identifierMap)
     ;
   default:
     throw new Error(`unknown operator: ${expression.operator}`);
