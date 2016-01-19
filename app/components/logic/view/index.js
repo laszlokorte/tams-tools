@@ -68,7 +68,7 @@ const render = (state) =>
         option({value: 'python', selected: state.lang === 'pyhton'}, 'Python'),
         option({value: 'math', selected: state.lang === 'math'}, 'Math'),
         option({value: 'latex', selected: state.lang === 'latex'}, 'Latex'),
-      ])
+      ]),
     ]),
     div('.logic-input', [
       textarea('.logic-input-field', {
