@@ -6,15 +6,23 @@ start
     return []
   }
 
+logicAnd = "and"
+logicOr = "or"
+logicXor = "xor"
+logicNot = "not"
+
+logicTop = "true" / "1" / "T" / "W"
+logicBottom = "false" / "0" / "F"
+
 operatorMul "binary operator"
-  = "and" { return "AND"; }
-  / "xor" { return "XOR"; }
+  = logicAnd { return "AND"; }
+  / logicXor { return "XOR"; }
 
 operatorAdd "binary operator"
-  = "or" { return "OR"; }
+  = logicOr { return "OR"; }
 
 operatorUnary "unary operator"
-  = "not" { return "NOT"; }
+  = logicNot { return "NOT"; }
 
 identifierName
   = name:([A-Za-z_][_a-zA-Z0-9]*) {
@@ -22,15 +30,8 @@ identifierName
     }
 
 literalValue
-  // top
-  = "true" { return true; }
-  / "1" { return true; }
-  / "W" { return true; }
-  / "T" { return true; }
-  // bottom
-  / "false" { return false; }
-  / "0" { return false; }
-  / "F" { return false; }
+  = logicTop { return true; }
+  / logicBottom { return false; }
 
 parentheses
   = "(" _ content:additive _ ")" {

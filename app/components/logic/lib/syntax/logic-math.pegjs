@@ -6,22 +6,23 @@ start
     return []
   }
 
+logicAnd = "&&" / "&" / "*" / ""
+logicOr = "||" / "|" / "+"
+logicXor = "^"
+logicNot = "!" / "~" / "-"
+
+logicTop = "true" / "1" / "T" / "W"
+logicBottom = "false" / "0" / "F"
+
 operatorMul "binary operator"
-  = "&&" { return "AND"; }
-  / "&"  { return "AND"; }
-  / "*"  { return "AND"; }
-  / "^"  { return "XOR"; }
-  / ""   { return "AND"; }
+  = logicAnd { return "AND"; }
+  / logicXor { return "XOR"; }
 
 operatorAdd "binary operator"
-  = "||" { return "OR"; }
-  / "|"  { return "OR"; }
-  / "+"  { return "OR"; }
+  = logicOr { return "OR"; }
 
 operatorUnary "unary operator"
-  = "!" { return "NOT"; }
-  / "~" { return "NOT"; }
-  / "-" { return "NOT"; }
+  = logicNot { return "NOT"; }
 
 
 identifierName
@@ -51,15 +52,8 @@ charEscapeSequence
     / '\\"'   { return '"';  }
 
 literalValue
-  // top
-  = "true" { return true; }
-  / "1" { return true; }
-  / "W" { return true; }
-  / "T" { return true; }
-  // bottom
-  / "false" { return false; }
-  / "0" { return false; }
-  / "F" { return false; }
+  = logicTop    { return true; }
+  / logicBottom { return false; }
 
 parentheses
   = "(" _ content:additive _ ")" {

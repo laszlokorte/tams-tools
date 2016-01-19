@@ -6,19 +6,23 @@ start
     return []
   }
 
+logicAnd = "&&" / "&" / "*" / "\\wedge" / ""
+logicOr = "||" / "|" / "+" / "\\vee"
+logicXor = "^" / "\\oplus"
+logicNot = "!" / "~" / "-" / "\\neg" / "\\overline"
+
+logicTop = "true" / "1" / "T" / "W" / "\\top"
+logicBottom = "false" / "0" / "F" / "\\bot"
+
 operatorMul "binary operator"
-  = "\\wedge"    { return "AND"; }
-  / "\\oplus"    { return "XOR"; }
-  / "+"          { return "OR"; }
-  / ""           { return "AND"; }
+  = logicAnd { return "AND"; }
+  / logicXor { return "XOR"; }
 
 operatorAdd "binary operator"
-  = "\\vee"      { return "OR"; }
+  = logicOr { return "OR"; }
 
 operatorUnary "unary operator"
-  = "\\neg"      { return "NOT"; }
-  / "\\overline" { return "NOT"; }
-
+  = logicNot { return "NOT"; }
 
 identifierName
   = first:[A-Za-z_] tail:[\-_a-zA-Z0-9\{\}]* {
@@ -47,17 +51,8 @@ charEscapeSequence
     / '\\"'   { return '"';  }
 
 literalValue
-  // top
-  = "true" { return true; }
-  / "1" { return true; }
-  / "W" { return true; }
-  / "T" { return true; }
-  / "\\top" { return true; }
-  // bottom
-  / "false" { return false; }
-  / "0" { return false; }
-  / "F" { return false; }
-  / "\\bot" { return false; }
+  = logicTop
+  / logicBottom
 
 
 parentheses
