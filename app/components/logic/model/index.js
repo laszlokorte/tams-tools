@@ -13,11 +13,12 @@ import latexParser from '../lib/syntax/logic-latex.pegjs';
 import mathParser from '../lib/syntax/logic-math.pegjs';
 import pythonParser from '../lib/syntax/logic-python.pegjs';
 
-function ParseError(lang, string, message, location) {
+function ParseError(lang, string, message, location, detected = null) {
   this.lang = lang;
   this.string = string;
   this.message = message;
   this.location = location;
+  this.detected = detected;
 };
 
 const language = I.Record({
@@ -75,23 +76,36 @@ const allLanguages = [
 const autoLang = language({
   name: 'Auto detect',
   parse: (string) => {
+    let error = null;
+    let detected = null;
     for (const lang of allLanguages) {
       try {
         const result = lang.parse(string);
         return {
           parsed: result.parsed,
           lang: 'auto',
-          detected: result.lang,
+          detected: lang.name,
         };
       } catch (e) {
-
+        if (!error) {
+          detected = lang.name;
+          error = e;
+        } else if (
+          e.location.start.offset >
+          error.location.start.offset
+        ) {
+          detected = lang.name;
+          error = e;
+        }
       }
     }
 
     throw new ParseError(
-      'auto', string,
-      'Language could not be recognized.',
-      null
+      'auto',
+      string,
+      error.message,
+      error.location,
+      detected
     );
   },
 });
@@ -117,7 +131,7 @@ const parse = ({string, lang, showSubExpressions}) => {
       expressions: parseResult.parsed.map(expressionFromJson),
     };
   } catch (e) {
-    throw new ParseError(lang, string, e.message, e.location);
+    throw new ParseError(lang, string, e.message, e.location, e.detected);
   }
 };
 
@@ -155,7 +169,7 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
 const handleError = (error) =>
   O.just({
     lang: error.lang,
-    detected: null,
+    detected: error.detected,
     error: {
       location: error.location,
       message: error.message,
@@ -199,6 +213,6 @@ export default (actions) => {
       }))
   ).switch();
 
-  return parsed$;
+  return parsed$.share();
 }
 ;
