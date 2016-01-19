@@ -27,7 +27,6 @@ const render = (state) =>
         fill: 'black',
         style: {
           fill: node.color || void 0,
-          stroke: node.color || void 0,
         },
       }),
       svg('text', {
@@ -36,6 +35,9 @@ const render = (state) =>
         'text-anchor': node.leaf ? 'middle' : node.labelAnchor,
         'alignment-baseline': 'middle',
         class: 'tree-node-label',
+        style: {
+          fill: node.color || 'black',
+        },
       }, node.label),
     ]).toArray(),
   ])
