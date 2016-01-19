@@ -2,7 +2,7 @@ start
   = list:expressions EOF {
     return list;
   }
-  / EOF {
+  / _ EOF {
     return []
   }
 
