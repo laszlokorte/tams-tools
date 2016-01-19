@@ -100,10 +100,15 @@
 .table-body-cell
   transition background-color 0.1s ease-in-out
 
-.table-body-row:hover
-  .table-body-cell
-    background-color #fafafa
-    cursor pointer
+.table-body-row
+  &:hover
+    .table-body-cell
+      background-color #fafafa
+      cursor pointer
+  &.state-selected
+    .table-body-cell
+      background-color #ddd
+      font-weight bold
 
 .variable-list
   list-style none

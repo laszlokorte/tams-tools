@@ -7,6 +7,7 @@ export const graphNode = I.Record({
   leaf: false,
   labelAnchor: 'middle',
   xOffset: 0,
+  color: null,
 }, 'graphNode');
 
 export const graphEdge = I.Record({
@@ -15,6 +16,7 @@ export const graphEdge = I.Record({
   fromY: 0,
   toX: 0,
   toY: 0,
+  color: null,
 }, 'graphEdge');
 
 export const _graph = I.Record({
@@ -55,6 +57,7 @@ const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
     leaf: layoutNode.children.length === 0,
     labelAnchor: labelAnchor,
     xOffset: xOffset,
+    color: layoutNode.node.color,
   })));
 };
 
@@ -69,6 +72,7 @@ const edgeList = (layoutNode, acc = I.List()) => {
     fromY: layoutNode.parent.y,
     toX: layoutNode.x,
     toY: layoutNode.y,
+    color: layoutNode.node.color,
   })) : acc);
 };
 

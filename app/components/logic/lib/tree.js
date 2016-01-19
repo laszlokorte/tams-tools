@@ -1,3 +1,6 @@
+const greenColor = '#00cc00';
+const redColor = '#cc0000';
+
 const children = (expression) => {
   switch (expression.node) {
   case 'binary':
@@ -31,18 +34,33 @@ const name = (expression) => {
   }
 };
 
-const toTree = (expression) => {
+const color = (expression, evalutationMap) => {
+  switch (expression.node) {
+  case 'binary':
+  case 'unary':
+  case 'group':
+  case 'identifier':
+    return evalutationMap.get(expression) ? greenColor : redColor;
+  case 'constant':
+    return expression.value ? greenColor : redColor;
+  default:
+    throw new Error(`unknown node: ${expression.node}`);
+  }
+};
+
+const toTree = (expression, evalutationMap) => {
   if (expression === null) {
     return null;
   }
 
   if (expression.node === 'group') {
-    return toTree(expression.content);
+    return toTree(expression.content, evalutationMap);
   }
 
   return {
     name: name(expression),
-    children: children(expression).map(toTree),
+    children: children(expression).map((e) => toTree(e, evalutationMap)),
+    color: evalutationMap && color(expression, evalutationMap),
   };
 };
 

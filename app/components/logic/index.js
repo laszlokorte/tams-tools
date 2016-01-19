@@ -25,11 +25,13 @@ export default (responses) => {
           state.expressions.size > 0
         ) {
           if (state.expressions.size === 1) {
-            return toTree(state.expressions.get(0));
+            return toTree(state.expressions.get(0), state.subEvalutation);
           } else {
             return {
               name: 'Expression List',
-              children: state.expressions.map(toTree).toArray(),
+              children: state.expressions.map(
+                (e) => toTree(e, state.subEvalutation)
+              ).toArray(),
             };
           }
         } else {

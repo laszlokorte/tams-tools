@@ -6,6 +6,7 @@ import {
   collectIdentifiers,
   collectSubExpressions,
   evaluateAll,
+  evaluateExpression,
 } from '../lib/expression';
 
 import cParser from '../lib/syntax/logic-c.pegjs';
@@ -147,12 +148,17 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
     (expression) => collectIdentifiers(expression)
   ).toSet().toList();
 
-  const subExpressions = showSubExpressions ? expressionList.flatMap(
+  const allSubExpressions = expressionList.flatMap(
     (expression) => collectSubExpressions(expression)
       .toList()
-  ) : expressionList.filter(
+  );
+
+  const visibleSubExpressions = expressionList.filter(
     (e) => e.node !== 'identifier' && e.node !== 'constant'
   );
+
+  const subExpressions = showSubExpressions ?
+    allSubExpressions : visibleSubExpressions;
 
   const table = evaluateAll({
     expressions: subExpressions,
@@ -168,6 +174,7 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
     table,
     subExpressions,
     showSubExpressions,
+    allSubExpressions,
   };
 };
 
@@ -198,24 +205,45 @@ export default (actions) => {
       .map(parse)
       .map(analyze)
       .catch(handleError)
-      .map(({
+      .flatMap(({
         detected,
         expressions,
         identifiers,
         table,
         subExpressions,
         error,
-      }) => ({
-        lang,
-        detected,
-        string,
-        expressions,
-        identifiers,
-        table,
-        subExpressions,
-        showSubExpressions,
-        error,
-      }))
+        allSubExpressions,
+      }) => actions.selectRow$.startWith(null).map(
+        (selectedRow) => {
+          let subEvalutation = null;
+
+          /*eslint-disable max-nested-callbacks*/
+          if (selectedRow !== null) {
+            const identifierMap = I.Map(identifiers.map(
+              (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
+            ));
+
+            subEvalutation = I.Map(allSubExpressions.map((expr) =>
+              [expr, evaluateExpression(expr, identifierMap)]
+            )).merge(identifierMap);
+          }
+          /*eslint-enable max-nested-callbacks*/
+
+          return {
+            lang,
+            detected,
+            string,
+            expressions,
+            identifiers,
+            table,
+            subExpressions,
+            showSubExpressions,
+            error,
+            selectedRow,
+            subEvalutation,
+          };
+        }
+      ))
   ).switch();
 
   return parsed$.share();

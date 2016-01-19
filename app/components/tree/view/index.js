@@ -3,16 +3,19 @@ import {svg} from '@cycle/dom';
 import './index.styl';
 
 const render = (state) =>
-  svg('g',[
+  svg('g', [
     state.graph.edges.map((edge) =>
       svg('line', {
         x1: edge.fromX * state.scaleX,
         y1: edge.fromY * state.scaleY,
         x2: edge.toX * state.scaleX,
         y2: edge.toY * state.scaleY,
-        stroke: 'black',
         'stroke-width': '2px',
         class: 'tree-edge',
+        stroke: 'black',
+        style: {
+          stroke: edge.color || void 0,
+        },
       })
     ).toArray(),
     state.graph.nodes.map((node) => [
@@ -21,6 +24,11 @@ const render = (state) =>
         cy: node.y * state.scaleY,
         r: 5,
         class: 'tree-node',
+        fill: 'black',
+        style: {
+          fill: node.color || void 0,
+          stroke: node.color || void 0,
+        },
       }),
       svg('text', {
         x: node.x * state.scaleX + (node.leaf ? 0 : node.xOffset),

@@ -102,7 +102,7 @@ export const evaluateExpression = (expression, identifierMap) => {
       evaluateExpression
     );
   case 'identifier':
-    return !!identifierMap.get(expression.name);
+    return !!identifierMap.get(expression);
   case 'constant':
     return expression.value;
   default:
@@ -175,7 +175,7 @@ export const collectIdentifiers = (expression, acc = I.Set()) => {
   case 'group':
     return collectIdentifiers(expression.content, acc);
   case 'identifier':
-    return acc.add(expression.name);
+    return acc.add(expression);
   case 'constant':
     return acc;
   default:

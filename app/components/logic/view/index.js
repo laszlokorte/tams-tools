@@ -86,7 +86,7 @@ const render = (state) =>
         ).toArray()),
         h2('Variables'),
         ul('.variable-list', state.identifiers.map(
-          (name) => li('.variable-list-item', name)
+          (identifier) => li('.variable-list-item', identifier.name)
         ).toArray()),
         h2('Table'),
         label([
@@ -102,18 +102,23 @@ const render = (state) =>
             table('.table', [
               tr('.table-head-row', [
                 state.identifiers.map(
-                  (name) => th('.table-head-cell',name)
+                  (identifier) => th('.table-head-cell', identifier.name)
                 ).toArray(),
                 state.subExpressions.map(
                   (expr) => th('.table-head-cell', expressionToString(expr))
                 ).toArray(),
               ]),
               state.table.map(
-              (row) => tr('.table-body-row', [
+              (row, index) => tr('.table-body-row', {
+                className: state.selectedRow === index ? 'state-selected' : void 0,
+                attributes: {
+                  'data-index': index,
+                },
+              }, [
                 state.identifiers.map(
-                  (name, i, all) => td('.table-body-cell' +
+                  (identifier, i, all) => td('.table-body-cell' +
                   (i + 1 === all.size ? '.table-group-end' : ''), [
-                    row.identifierValues.get(name) ? '1' : '0',
+                    row.identifierValues.get(identifier) ? '1' : '0',
                   ])
                 ).toArray(),
                 row.values.map((val) =>
