@@ -40,7 +40,7 @@ parentheses
 expressionSeparator "expression separator"
   = ","
 
-EOF
+EOF "end of input"
   = !.
 
 _ "whitespace"
@@ -78,7 +78,7 @@ primary
   / _ un:unary { return un; }
   / _ id:identifier _ { return id; }
 
-group "group"
+group
   = paren:parentheses {
     return {node: 'group', content: paren.content, style: paren.style};
   }
