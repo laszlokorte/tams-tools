@@ -130,8 +130,10 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
 
   const subExpressions = showSubExpressions ? expressionList.flatMap(
     (expression) => collectSubExpressions(expression)
-      .reverse().toList()
-  ) : expressionList;
+      .toList()
+  ) : expressionList.filter(
+    (e) => e.node !== 'identifier' && e.node !== 'constant'
+  );
 
   const table = evaluateAll({
     expressions: subExpressions,
