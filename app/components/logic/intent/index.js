@@ -9,12 +9,6 @@ export default (DOM/*, keydown*/) => {
   const syntaxChangeEvent$ = syntaxtSelector.events('change');
   const subExprEvent$ = subExpressionCheckbox.events('change');
 
-  changeEvent$.subscribe((evt) => {
-    const target = evt.ownerTarget;
-    target.style.height = "auto";
-    target.style.height = target.scrollHeight + 'px';
-  });
-
   return {
     input$: changeEvent$
       .map((evt) => evt.ownerTarget.value)
@@ -26,5 +20,8 @@ export default (DOM/*, keydown*/) => {
       .map((evt) => evt.ownerTarget.checked)
       .share(),
     preventDefault: O.empty(),
+    autoResize: changeEvent$
+      .map((evt) => evt.ownerTarget)
+      .share(),
   };
 };

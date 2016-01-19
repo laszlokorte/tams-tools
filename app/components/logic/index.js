@@ -17,6 +17,7 @@ export default (responses) => {
   return {
     DOM: vtree$,
     preventDefault: actions.preventDefault,
+    autoResize: actions.autoResize,
     tree$: state$.debounce(200).map(
       (state) => {
         if (state &&

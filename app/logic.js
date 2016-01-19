@@ -4,6 +4,7 @@ import {makeDOMDriver} from '@cycle/dom';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 import {preventDefaultDriver} from './drivers/prevent-default';
 import {keyboardDriver} from './drivers/keyboard';
+import {autoResizeDriver} from './drivers/textarea-resize';
 
 import logic from './components/logic';
 import tree from './components/tree';
@@ -12,6 +13,7 @@ const drivers = {
   DOM: makeDOMDriver('#app-main'),
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
+  autoResize: autoResizeDriver,
 };
 
 const {sinks: {tree$}} = Cycle.run(logic, drivers);
