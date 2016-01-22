@@ -110,7 +110,8 @@ const render = (state) =>
               ]),
               state.table.map(
               (row, index) => tr('.table-body-row', {
-                className: state.selectedRow === index ? 'state-selected' : void 0,
+                className: state.selectedRow === index ?
+                  'state-selected' : void 0,
                 attributes: {
                   'data-index': index,
                 },
