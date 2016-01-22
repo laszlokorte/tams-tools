@@ -1,4 +1,3 @@
-import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
 import {div} from '@cycle/dom';
 
@@ -20,7 +19,7 @@ export default ({DOM, keydown, visible$}) => {
   });
 
   return {
-    DOM: O.just(div(modal.DOM)),
+    DOM: modal.DOM.map((e) => div([e])),
     preventDefault: actions.preventDefault,
     data$: actions.open$,
   };

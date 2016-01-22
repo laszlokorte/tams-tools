@@ -4,9 +4,11 @@ import {makeDOMDriver} from '@cycle/dom';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 import {preventDefaultDriver} from './drivers/prevent-default';
 import {keyboardDriver} from './drivers/keyboard';
+import isolate from '@cycle/isolate';
 
 import kv from './components/kv';
 import pla from './components/pla';
+import splitPane from './components/splitpane';
 
 /*
   This file is the entry point for the application
@@ -14,28 +16,53 @@ import pla from './components/pla';
   the CycleJS main loop with the main function
 */
 
+const kvdApp = (sources) => {
+  const {
+    DOM,
+    preventDefault,
+    keydown,
+  } = sources;
+
+  const kvComponent = isolate(kv)({
+    DOM, preventDefault, keydown,
+  });
+
+  const plaComponent = isolate(pla)({
+    DOM, preventDefault, keydown,
+    data$: kvComponent.plaData$,
+    props$: O.just({}),
+  });
+
+  const kvDOM = kvComponent.DOM.shareReplay(1);
+  const plaDOM = plaComponent.DOM.shareReplay(1);
+
+  const splitComponent = isolate(splitPane)({
+    DOM,
+    preventDefault,
+    keydown,
+    props$: O.just({proportion: 0.65}),
+    firstChild$: kvDOM,
+    secondChild$: plaDOM,
+  });
+
+  kvDOM.subscribe();
+  plaDOM.subscribe();
+
+  return {
+    DOM: splitComponent.DOM,
+    preventDefault: O.merge(
+      kvComponent.preventDefault,
+      plaComponent.preventDefault,
+      splitComponent.preventDefault
+    ),
+  };
+};
+
 // The drivers for the kv editor
 const drivers = {
-  DOM: makeDOMDriver('#app-main'),
+  DOM: makeHammerDriver(makeDOMDriver('#app')),
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
 };
 
-// This is the KV diagram editor
-// It outputs a Stream of PLA data.
-const {sinks: {plaData$}} = Cycle.run(kv, drivers);
-
-// The drivers for the PLA circuit renderer
-const driversAssistent = {
-  // The HammerDriver enabled support for touch events
-  DOM: makeHammerDriver(makeDOMDriver('#app-assistent')),
-  preventDefault: preventDefaultDriver,
-  keydown: keyboardDriver,
-  props$: () => O.just({}),
-  // The PLA circuit renderer get's the plaData$ which
-  // is produced from the kv diagram editor as input
-  data$: () => plaData$,
-};
-
-// This is the PLA circuit renderer
-Cycle.run(pla, driversAssistent);
+Cycle.run(kvdApp, drivers);

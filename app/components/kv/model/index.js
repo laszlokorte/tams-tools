@@ -408,6 +408,10 @@ export default (initial$, actions) =>
       .map((kv) => () => kv),
       modifiers(actions)
     ).scan(applyModification, null)
+    .distinctUntilChanged(
+      (s) => s,
+      (a,b) => a === b
+    )
     .map((state) => ({
       state: state,
       layout: layout(state.diagram.inputs.size),

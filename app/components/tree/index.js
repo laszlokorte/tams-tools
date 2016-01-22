@@ -32,9 +32,7 @@ export default (responses) => {
   });
 
   return {
-    DOM: O.just(div([
-      stage.DOM,
-    ])),
+    DOM: stage.DOM.map((e) => div([e])),
     preventDefault: O.merge(
       actions.preventDefault,
       stage.preventDefault

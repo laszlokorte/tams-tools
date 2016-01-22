@@ -14,6 +14,6 @@ export default ({DOM, keydown, visible$}) => {
   });
 
   return {
-    DOM: O.just(div(modal.DOM)),
+    DOM: modal.DOM.map((e) => div([e])),
   };
 };

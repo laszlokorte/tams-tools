@@ -36,10 +36,14 @@ export default (responses) => {
   });
 
   return {
-    DOM: O.just(div([
+    DOM: O.combineLatest(
       pla$.map(costPanel),
       stage.DOM,
-    ])),
+      (plaEl, stageEl) => div([
+        plaEl,
+        stageEl,
+      ])
+    ),
     preventDefault: O.merge(
       actions.preventDefault,
       stage.preventDefault

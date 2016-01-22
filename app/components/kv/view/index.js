@@ -233,8 +233,11 @@ const render = ({state, layout}, index) =>
   ]);
 
 export default (state$, {panel$s}) =>
-  O.just(div([
-    panel$s,
-    state$.map(render),
-  ]))
+  O.combineLatest(state$, ...panel$s,
+    (state, ...panels) =>
+      div([
+        panels,
+        render(state),
+      ])
+  )
 ;

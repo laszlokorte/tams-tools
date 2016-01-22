@@ -23,6 +23,6 @@ export default ({
   });
 
   return {
-    DOM: O.just(div(modal.DOM)),
+    DOM: modal.DOM.map((e) => div([e])),
   };
 };

@@ -56,12 +56,10 @@ const logicApp = (sources) => {
 };
 
 const driversSplit = {
-  // The HammerDriver enabled support for touch events
   DOM: makeHammerDriver(makeDOMDriver('#app')),
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
   autoResize: autoResizeDriver,
 };
 
-// This is the PLA circuit renderer
-const {sinks: {DOM}} = Cycle.run(logicApp, driversSplit);
+Cycle.run(logicApp, driversSplit);

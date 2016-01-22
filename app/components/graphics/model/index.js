@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 
 import {clamp} from '../../../lib/utils';
-import {ContentThunk} from './contentThunk';
+import {ContentThunk} from '../../../lib/contentThunk';
 
 const clampPosition = (modifierFn, {minX, minY, maxX, maxY}) =>
   (cam) => {

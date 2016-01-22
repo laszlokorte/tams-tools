@@ -21,7 +21,7 @@ export default ({DOM, keydown, visible$, viewSetting$ = O.empty()}) => {
   });
 
   return {
-    DOM: O.just(div(modal.DOM)),
+    DOM: modal.DOM.map((e) => div([e])),
     viewSetting$: state$.map((settings) => settings.view),
   };
 };
