@@ -11,7 +11,7 @@ export default (responses) => {
   } = responses;
 
   const actions = intent(DOM, keydown);
-  const state$ = model(actions);
+  const state$ = model(actions).shareReplay(1);
   const vtree$ = view(state$);
 
   return {

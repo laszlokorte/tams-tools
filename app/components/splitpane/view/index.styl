@@ -1,0 +1,54 @@
+.splitpane-container
+  position absolute
+  left 0
+  right 0
+  bottom 0
+  top 0
+
+.splitpane-body
+  position absolute
+
+.splitpane-body-left
+.splitpane-body-right
+  top 0
+  bottom 0
+  width 50%
+  overflow auto
+
+.splitpane-body-left
+  left 0
+
+.splitpane-body-right
+  right 0
+
+.splitpane-handle
+  position absolute
+  width 1em
+  height 1em
+  background-color #999
+  overflow hidden
+  text-indent -999px
+
+  &:hover
+    background-color #aaa
+  &:active
+    background-color #888
+
+.splitpane-handle-horizontal
+  top 0
+  height 100%;
+  margin-left -0.5em
+  cursor col-resize
+
+@media(pointer:coarse)
+  .splitpane-handle-horizontal
+    overflow visible
+    &::after
+      content ''
+      width 3em
+      margin-left -0.5em
+      position absolute
+      top 0
+      bottom 0
+      left 0
+      right 0
