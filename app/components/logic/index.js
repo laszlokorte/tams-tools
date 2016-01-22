@@ -32,6 +32,7 @@ export default (responses) => {
               children: state.expressions.map(
                 (e) => toTree(e, state.subEvalutation)
               ).toArray(),
+              hidden: true,
             };
           }
         } else {

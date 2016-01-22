@@ -50,7 +50,7 @@ const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
       newRel = rel;
     }
     return nodeList(c, prev, newRel);
-  }, acc.push(graphNode({
+  }, layoutNode.node.hidden ? acc : acc.push(graphNode({
     label: layoutNode.node.name,
     x: layoutNode.x,
     y: layoutNode.y,
@@ -67,7 +67,7 @@ const edgeList = (layoutNode, acc = I.List()) => {
   }
   return layoutNode.children.reduce(
     (prev, c) => edgeList(c, prev)
-  , layoutNode.parent ? acc.push(graphEdge({
+  , layoutNode.parent && !layoutNode.parent.node.hidden ? acc.push(graphEdge({
     fromX: layoutNode.parent.x,
     fromY: layoutNode.parent.y,
     toX: layoutNode.x,

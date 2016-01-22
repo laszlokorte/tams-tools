@@ -9,10 +9,10 @@ const boundingBox = (nodes) => {
     minY: Math.min(box.minY, node.y),
     maxY: Math.max(box.maxY, node.y),
   }), {
-    minX: 0,
-    maxX: 0,
-    minY: 0,
-    maxY: 0,
+    minX: Infinity,
+    maxX: -Infinity,
+    minY: Infinity,
+    maxY: -Infinity,
   }));
 };
 
