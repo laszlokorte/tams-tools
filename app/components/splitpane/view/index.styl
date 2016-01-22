@@ -39,11 +39,17 @@
   height 100%;
   margin-left -0.5em
   cursor col-resize
+  transition opacity 0.3s ease-in-out
+
+  &:hover
+  &:active
+    opacity 1
 
 @media(pointer:coarse)
   .splitpane-handle-horizontal
     overflow visible
     &::after
+      opacity 1
       content ''
       width 3em
       margin-left -0.5em
