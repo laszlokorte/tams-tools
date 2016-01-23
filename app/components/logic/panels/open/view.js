@@ -1,4 +1,4 @@
-import {div, h1, h3, ul, li, button, input} from '@cycle/dom';
+import {div, h1, h3, ul, li, button} from '@cycle/dom';
 
 import examples from './examples';
 

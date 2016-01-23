@@ -2,34 +2,13 @@ import {Observable as O} from 'rx';
 
 import {
   div, span, textarea, h2, ul, li,
-  table, tr, th, td, select, option,
+  select, option,
   label, input, button,
 } from '@cycle/dom';
 
+import {expressionToString} from '../lib/expression';
+
 import './index.styl';
-
-const expressionToString = (expression) => {
-  if (expression === null) {
-    return '';
-  }
-
-  switch (expression.node) {
-  case 'binary':
-    return `(${expressionToString(expression.lhs)} ` +
-      `${expression.operator} ` +
-      `${expressionToString(expression.rhs)})`;
-  case 'unary':
-    return `${expression.operator}(${expressionToString(expression.operand)})`;
-  case 'group':
-    return `${expressionToString(expression.content)}`;
-  case 'identifier':
-    return expression.name.toString();
-  case 'constant':
-    return expression.value ? '1' : '0';
-  default:
-    throw new Error(`unknown node: ${expression.node}`);
-  }
-};
 
 const markError = (string, error) => {
   if (!error || !error.location) {
@@ -91,10 +70,14 @@ const render = (state) =>
                 `Auto detect`
               ),
 
-              option({value: 'c', selected: state.lang === 'c'}, 'C'),
-              option({value: 'python', selected: state.lang === 'pyhton'}, 'Python'),
-              option({value: 'math', selected: state.lang === 'math'}, 'Math'),
-              option({value: 'latex', selected: state.lang === 'latex'}, 'Latex'),
+              option({value: 'c',
+                selected: state.lang === 'c'}, 'C'),
+              option({value: 'python',
+                selected: state.lang === 'pyhton'}, 'Python'),
+              option({value: 'math',
+                selected: state.lang === 'math'}, 'Math'),
+              option({value: 'latex',
+                selected: state.lang === 'latex'}, 'Latex'),
             ]),
           ]),
           div('.logic-input', [
@@ -136,38 +119,6 @@ const render = (state) =>
               checked: state.showSubExpressions,
             }),
             'Show sub expressions',
-          ]),
-          div('.table-scroller', [
-            div('.table-scroller-body', [
-              table('.table', [
-                tr('.table-head-row', [
-                  state.identifiers.map(
-                    (identifier) => th('.table-head-cell', identifier.name)
-                  ).toArray(),
-                  state.subExpressions.map(
-                    (expr) => th('.table-head-cell', expressionToString(expr))
-                  ).toArray(),
-                ]),
-                state.table.map(
-                (row, index) => tr('.table-body-row', {
-                  className: state.selectedRow === index ?
-                    'state-selected' : void 0,
-                  attributes: {
-                    'data-index': index,
-                  },
-                }, [
-                  state.identifiers.map(
-                    (identifier, i, all) => td('.table-body-cell' +
-                    (i + 1 === all.size ? '.table-group-end' : ''), [
-                      row.identifierValues.get(identifier) ? '1' : '0',
-                    ])
-                  ).toArray(),
-                  row.values.map((val) =>
-                    td('.table-body-cell', val ? '1' : '0')
-                  ).toArray(),
-                ])).toArray(),
-              ]),
-            ]),
           ]),
         ]),
       ] : null,

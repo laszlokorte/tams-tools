@@ -5,7 +5,6 @@ import {
   expressionFromJson,
   collectIdentifiers,
   collectSubExpressions,
-  evaluateAll,
   evaluateExpression,
 } from '../lib/expression';
 
@@ -148,22 +147,14 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
     (expression) => collectIdentifiers(expression)
   ).toSet().toList();
 
-  const allSubExpressions = expressionList.flatMap(
+  const subExpressions = expressionList.flatMap(
     (expression) => collectSubExpressions(expression)
       .toList()
   );
 
-  const visibleSubExpressions = expressionList.filter(
+  const toplevelExpressions = expressionList.filter(
     (e) => e.node !== 'identifier' && e.node !== 'constant'
   );
-
-  const subExpressions = showSubExpressions ?
-    allSubExpressions : visibleSubExpressions;
-
-  const table = evaluateAll({
-    expressions: subExpressions,
-    identifiers,
-  });
 
   return {
     lang,
@@ -171,10 +162,9 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
     string,
     expressions: expressionList,
     identifiers,
-    table,
     subExpressions,
+    toplevelExpressions,
     showSubExpressions,
-    allSubExpressions,
   };
 };
 
@@ -209,10 +199,9 @@ export default (actions) => {
         detected,
         expressions,
         identifiers,
-        table,
         subExpressions,
         error,
-        allSubExpressions,
+        toplevelExpressions,
       }) => actions.selectRow$
         .startWith(null)
         .scan((prev, val) => prev === val ? null : val)
@@ -226,7 +215,7 @@ export default (actions) => {
               (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
             ));
 
-            subEvalutation = I.Map(allSubExpressions.map((expr) =>
+            subEvalutation = I.Map(toplevelExpressions.map((expr) =>
               [expr, evaluateExpression(expr, identifierMap)]
             )).merge(identifierMap);
           }
@@ -238,12 +227,13 @@ export default (actions) => {
             string,
             expressions,
             identifiers,
-            table,
             subExpressions,
             showSubExpressions,
             error,
             selectedRow,
             subEvalutation,
+            toplevelExpressions,
+            table: I.List(),
           };
         }
       ))

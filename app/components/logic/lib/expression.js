@@ -136,7 +136,7 @@ export const evaluateAll = ({
 };
 
 export const collectSubExpressions = (
-  expression, acc = I.OrderedSet(), collect = true
+  expression, acc = I.OrderedSet(), collect = false
 ) => {
   if (expression === null) {
     return acc;
@@ -178,6 +178,29 @@ export const collectIdentifiers = (expression, acc = I.Set()) => {
     return acc.add(expression);
   case 'constant':
     return acc;
+  default:
+    throw new Error(`unknown node: ${expression.node}`);
+  }
+};
+
+export const expressionToString = (expression) => {
+  if (expression === null) {
+    return '';
+  }
+
+  switch (expression.node) {
+  case 'binary':
+    return `(${expressionToString(expression.lhs)} ` +
+      `${expression.operator} ` +
+      `${expressionToString(expression.rhs)})`;
+  case 'unary':
+    return `${expression.operator}(${expressionToString(expression.operand)})`;
+  case 'group':
+    return `${expressionToString(expression.content)}`;
+  case 'identifier':
+    return expression.name.toString();
+  case 'constant':
+    return expression.value ? '1' : '0';
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }

@@ -1,4 +1,4 @@
-import {Observable as O, ReplaySubject, Subject} from 'rx';
+import {ReplaySubject, Subject} from 'rx';
 import isolate from '@cycle/isolate';
 
 import model from './model';
@@ -6,6 +6,7 @@ import view from './view';
 import intent from './intent';
 
 import toTree from './lib/tree';
+import toTable from './lib/table';
 
 import HelpPanel from './panels/help';
 import OpenPanel from './panels/open';
@@ -55,32 +56,44 @@ export default (responses) => {
   actions.panel$.subscribe(panelSubject);
   state$.subscribe(tableSubject);
 
+  const tree$ = state$.map(
+    (state) => {
+      if (state &&
+        state.expressions &&
+        state.expressions.size > 0
+      ) {
+        if (state.expressions.size === 1) {
+          return toTree(state.expressions.get(0), state.subEvalutation);
+        } else {
+          return {
+            name: 'Expression List',
+            children: state.expressions.map(
+              (e) => toTree(e, state.subEvalutation)
+            ).toArray(),
+            hidden: true,
+          };
+        }
+      } else {
+        return null;
+      }
+    }
+  ).share();
+
+  const table$ = state$.map((state) =>
+    state.error ? null : toTable(
+      state.identifiers,
+      state.toplevelExpressions,
+      state.subExpressions
+    )
+  ).share();
+
+  table$.subscribe(tableSubject);
+
   return {
     DOM: vtree$,
     preventDefault: actions.preventDefault,
     autoResize: actions.autoResize,
     selectAll: savePanel.selectAll,
-    tree$: state$.debounce(200).map(
-      (state) => {
-        if (state &&
-          state.expressions &&
-          state.expressions.size > 0
-        ) {
-          if (state.expressions.size === 1) {
-            return toTree(state.expressions.get(0), state.subEvalutation);
-          } else {
-            return {
-              name: 'Expression List',
-              children: state.expressions.map(
-                (e) => toTree(e, state.subEvalutation)
-              ).toArray(),
-              hidden: true,
-            };
-          }
-        } else {
-          return null;
-        }
-      }
-    ),
+    tree$: tree$.debounce(200),
   };
 };

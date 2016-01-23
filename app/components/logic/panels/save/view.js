@@ -1,4 +1,8 @@
-import {div, h1, h3, textarea} from '@cycle/dom';
+import {
+  div, h1, h3,
+  textarea, select, input,
+  option,
+} from '@cycle/dom';
 
 const render = ({table}) => div([
   h1('.modal-box-title', 'Export...'),
@@ -6,7 +10,16 @@ const render = ({table}) => div([
   div([
     textarea('.export-text', {
       attributes: {readonly: true},
-    }, table.toString()),
+    }, table ? table.toString() : ''),
+  ]),
+  h3('Formular'),
+  div([
+    select('.export-select', [
+      option({value: 'c'}, 'C'),
+      option({value: 'latex'}, 'Latex'),
+      option({value: 'python'}, 'Python'),
+    ]),
+    input('.export-text-single'),
   ]),
 ])
 ;

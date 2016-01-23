@@ -10,7 +10,8 @@ export default () => div([
   h2('Languages'),
   dl([
     helpItem('Auto detection:', [
-      'If the language is set to auto detect a dialect of the logic expression will be guessed.',
+      'If the language is set to auto detect a dialect' +
+      ' of the logic expression will be guessed.',
     ]),
     helpItem('C', [
       'Literals: 1, 0, true, false, W, T, F',
