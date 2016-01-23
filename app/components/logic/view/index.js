@@ -1,3 +1,5 @@
+import {Observable as O} from 'rx';
+
 import {
   div, span, textarea, h2, ul, li,
   table, tr, th, td, select, option,
@@ -173,6 +175,12 @@ const render = (state) =>
   ])
 ;
 
-export default (state$) =>
-  state$.map(render)
+export default (state$, {panel$s}) =>
+  O.combineLatest(state$, ...panel$s,
+    (state, ...panels) =>
+      div([
+        panels,
+        render(state),
+      ])
+  )
 ;

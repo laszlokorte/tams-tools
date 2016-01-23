@@ -1,5 +1,7 @@
 import {Observable as O} from 'rx';
 
+import panelActions from './panels';
+
 export default (DOM/*, keydown*/) => {
   const inputField = DOM.select('.logic-input-field');
   const syntaxtSelector = DOM.select('.syntax-selector');
@@ -10,6 +12,8 @@ export default (DOM/*, keydown*/) => {
   const syntaxChangeEvent$ = syntaxtSelector.events('change');
   const subExprEvent$ = subExpressionCheckbox.events('change');
   const rowEvent$ = tableRow.events('mousedown');
+
+  const panels = panelActions({DOM});
 
   return {
     input$: changeEvent$
@@ -24,7 +28,12 @@ export default (DOM/*, keydown*/) => {
     selectRow$: rowEvent$
       .map((evt) => parseInt(evt.ownerTarget.dataset.index, 10))
       .share(),
-    preventDefault: O.empty(),
+
+    panel$: panels.open$,
+
+    preventDefault: O.merge(
+      panels.preventDefault
+    ),
     autoResize: changeEvent$
       .map((evt) => evt.ownerTarget)
       .share(),

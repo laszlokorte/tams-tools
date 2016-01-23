@@ -58,17 +58,15 @@ export default (responses) => {
     viewSetting$: settingsPanel.viewSetting$,
   });
 
-  const panel$s = [
-    helpPanel.DOM,
-    settingsPanel.DOM,
-    openPanel.DOM,
-    savePanel.DOM,
-  ];
-
   const state$ = model(O.empty(), actions).shareReplay(1);
   const vtree$ = view(
     state$, {
-      panel$s,
+      panel$s: [
+        helpPanel.DOM,
+        settingsPanel.DOM,
+        openPanel.DOM,
+        savePanel.DOM,
+      ],
     }
   );
 

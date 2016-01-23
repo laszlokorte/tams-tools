@@ -47,7 +47,7 @@ const logicApp = (sources) => {
   return {
     DOM: splitComponent.DOM,
     preventDefault: O.merge(
-      logic.preventDefault,
+      logicComponent.preventDefault,
       treeComponent.preventDefault,
       splitComponent.preventDefault
     ),
