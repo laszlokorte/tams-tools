@@ -1,11 +1,7 @@
 export default ({DOM}) => {
-  const openExampleButton = DOM.select('[data-download]');
   const textField = DOM.select('.export-text');
 
-  const finish$ = openExampleButton.events('click').delay(1000);
-
   return {
-    selectAll$: textField.events('click'),
-    finish$,
+    selectAll$: textField.events('click').map((evt) => evt.ownerTarget),
   };
 };

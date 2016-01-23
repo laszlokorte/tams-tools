@@ -4,6 +4,7 @@ import {makeDOMDriver} from '@cycle/dom';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 import {preventDefaultDriver} from './drivers/prevent-default';
 import {keyboardDriver} from './drivers/keyboard';
+import {selectAllDriver} from './drivers/select-all';
 import isolate from '@cycle/isolate';
 
 import kv from './components/kv';
@@ -55,6 +56,9 @@ const kvdApp = (sources) => {
       plaComponent.preventDefault,
       splitComponent.preventDefault
     ),
+    selectAll: O.merge(
+      kvComponent.selectAll
+    ),
   };
 };
 
@@ -63,6 +67,7 @@ const drivers = {
   DOM: makeHammerDriver(makeDOMDriver('#app')),
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
+  selectAll: selectAllDriver,
 };
 
 Cycle.run(kvdApp, drivers);

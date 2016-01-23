@@ -4,10 +4,11 @@ export default (visible$, content$, actions) =>
   O.merge(
     visible$.startWith(false),
     actions.close$.map(() => false)
-  ).map(
-    (visible) => ({
+  ).combineLatest(
+    content$,
+    (visible, content) => ({
       visible,
-      content$,
+      content,
     })
   )
 ;

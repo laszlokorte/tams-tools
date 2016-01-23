@@ -105,7 +105,7 @@ module.exports = {
       chunks: ['logic', 'vendor'],
       template: './app/index.html',
       filename: 'logic.html',
-      favicon: './app/favicon.ico',
+      favicon: './app/logic.ico',
     }),
     new HtmlWebpackPlugin({
       title: 'LED Tester',

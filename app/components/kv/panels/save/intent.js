@@ -5,7 +5,9 @@ export default ({DOM}) => {
   const finish$ = openExampleButton.events('click').delay(1000);
 
   return {
-    selectAll$: textField.events('click'),
+    selectAll$: textField
+      .events('click')
+      .map((evt) => evt.ownerTarget),
     finish$,
   };
 };

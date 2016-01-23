@@ -2,7 +2,7 @@ import {div, button} from '@cycle/dom';
 
 import './index.styl';
 
-const render = ({visible, content$}) =>
+const render = ({visible, content}) =>
 div('.modal-container', {
   className: visible ? 'state-visible' : 'state-hidden',
 }, [
@@ -12,7 +12,7 @@ div('.modal-container', {
       attributes: {'data-modal-close': true},
     }, 'Close'),
     div('.modal-box-body',
-      content$
+      visible ? [content] : null
     ),
   ]),
 ]);

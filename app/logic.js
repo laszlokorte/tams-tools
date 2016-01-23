@@ -6,6 +6,7 @@ import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 import {preventDefaultDriver} from './drivers/prevent-default';
 import {keyboardDriver} from './drivers/keyboard';
 import {autoResizeDriver} from './drivers/textarea-resize';
+import {selectAllDriver} from './drivers/select-all';
 
 import logic from './components/logic';
 import tree from './components/tree';
@@ -17,10 +18,11 @@ const logicApp = (sources) => {
     preventDefault,
     keydown,
     autoResize,
+    selectAll,
   } = sources;
 
   const logicComponent = isolate(logic)({
-    DOM, preventDefault, keydown, autoResize,
+    DOM, preventDefault, keydown, autoResize, selectAll,
   });
 
   const treeComponent = isolate(tree)({
@@ -51,6 +53,7 @@ const logicApp = (sources) => {
       treeComponent.preventDefault,
       splitComponent.preventDefault
     ),
+    selectAll: logicComponent.selectAll,
     autoResize: logicComponent.autoResize,
   };
 };
@@ -60,6 +63,7 @@ const driversSplit = {
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
   autoResize: autoResizeDriver,
+  selectAll: selectAllDriver,
 };
 
 Cycle.run(logicApp, driversSplit);

@@ -14,15 +14,19 @@ export default ({
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
-  const state$ = model(pla$, json$, visible$, actions);
+  const state$ = model(pla$, json$).shareReplay(1);
   const modal = isolate(ModalBox)({
     DOM,
     keydown,
-    props$: state$.map((state) => state.props),
+    props$: O.merge(
+      actions.finish$.map(() => false),
+      visible$
+    ).map((v) => ({visible: v})),
     content$: isolateSink(view(state$), 'modalBody'),
   });
 
   return {
     DOM: modal.DOM.map((e) => div([e])),
+    selectAll: actions.selectAll$,
   };
 };

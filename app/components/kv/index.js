@@ -87,5 +87,6 @@ export default (responses) => {
       actions.preventDefault,
       openPanel.preventDefault
     ).share(),
+    selectAll: savePanel.selectAll,
   };
 };

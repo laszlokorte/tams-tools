@@ -53,11 +53,13 @@ export default (responses) => {
   });
 
   actions.panel$.subscribe(panelSubject);
+  state$.subscribe(tableSubject);
 
   return {
     DOM: vtree$,
     preventDefault: actions.preventDefault,
     autoResize: actions.autoResize,
+    selectAll: savePanel.selectAll,
     tree$: state$.debounce(200).map(
       (state) => {
         if (state &&

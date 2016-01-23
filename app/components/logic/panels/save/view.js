@@ -1,15 +1,13 @@
-import {div, h1, h3, a, textarea} from '@cycle/dom';
-import SelectAllHook from 'select-all-hook';
+import {div, h1, h3, textarea} from '@cycle/dom';
 
-const render = ({table$, json$, props: {visible}}) => div([
+const render = ({table}) => div([
   h1('.modal-box-title', 'Export...'),
   h3('ASCII Table'),
-  div(table$
-    .startWith('')
-    .map((text) => textarea('.export-text', {
-      focus: visible && new SelectAllHook(),
+  div([
+    textarea('.export-text', {
       attributes: {readonly: true},
-    }, text))),
+    }, table.toString()),
+  ]),
 ])
 ;
 
