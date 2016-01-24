@@ -4,31 +4,32 @@ import {evaluateAll, expressionToString} from './expression';
 export default (
   identifiers,
   topLevelExpressions,
-  subExpressions = I.List()
+  subExpressions = I.List(),
+  formatter
 ) => {
   const groups = [
     {
       name: "identifiers",
       columns: identifiers.map(
-        (i) => ({name: expressionToString(i)})
+        (i) => ({name: expressionToString(i, formatter)})
       ).toArray(),
     },
   ];
 
-  if (topLevelExpressions.length) {
+  if (topLevelExpressions.size) {
     groups.push({
       name: "expressions",
       columns: topLevelExpressions.map(
-        (i) => ({name: expressionToString(i)})
+        (i) => ({name: expressionToString(i, formatter)})
       ).toArray(),
     });
   }
 
-  if (subExpressions.length) {
+  if (subExpressions.size) {
     groups.push({
       name: "Sub expressions",
       columns: subExpressions.map(
-        (i) => ({name: expressionToString(i)})
+        (i) => ({name: expressionToString(i, formatter)})
       ).toArray(),
     });
   }

@@ -1,9 +1,10 @@
 export default ({DOM}) => {
   const textField = DOM.select('.export-text, .export-text-single');
 
+  const clickEvent$ = textField.events('click');
+
   return {
-    selectAll$: textField
-      .events('click')
+    selectAll$: clickEvent$
       .map((evt) => evt.ownerTarget)
       .share(),
   };

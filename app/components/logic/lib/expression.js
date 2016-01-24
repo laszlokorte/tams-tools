@@ -185,24 +185,54 @@ export const collectIdentifiers = (expression, acc = I.Set()) => {
   }
 };
 
-export const expressionToString = (expression) => {
+const defaultFormatter = {
+  formatBinary: (op, lhs, rhs/*, depth*/) => {
+    return `(${lhs} ${op} ${rhs})`;
+  },
+  formatUnary: (op, content/*, depth*/) => {
+    return `(${op} ${content})`;
+  },
+  formatGroup: (content/*, depth*/) => {
+    return content;
+  },
+  formatName: (name) => {
+    return name;
+  },
+  formatValue: (value) => {
+    return value;
+  },
+};
+
+export const expressionToString = (
+  expression, formatter = defaultFormatter, depth = 0
+) => {
   if (expression === null) {
     return '';
   }
 
   switch (expression.node) {
   case 'binary':
-    return `(${expressionToString(expression.lhs)} ` +
-      `${expression.operator} ` +
-      `${expressionToString(expression.rhs)})`;
+    return formatter.formatBinary(
+      expression.operator,
+      expressionToString(expression.lhs, formatter, depth + 1),
+      expressionToString(expression.rhs, formatter, depth + 1),
+      depth
+    );
   case 'unary':
-    return `${expression.operator}(${expressionToString(expression.operand)})`;
+    return formatter.formatUnary(
+      expression.operator,
+      expressionToString(expression.operand, formatter, depth + 1),
+      depth
+    );
   case 'group':
-    return `${expressionToString(expression.content)}`;
+    const contentString = expressionToString(
+      expression.content, formatter, depth + 1
+    );
+    return formatter.formatGroup(contentString, depth);
   case 'identifier':
-    return expression.name.toString();
+    return formatter.formatName(expression.name);
   case 'constant':
-    return expression.value ? '1' : '0';
+    return formatter.formatValue(expression.value);
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }

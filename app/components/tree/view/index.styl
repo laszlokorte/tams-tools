@@ -8,8 +8,16 @@
   stroke-width 2px
 
 .tree-node-label
-  fill #111
+  fill #111 !important
   stroke #fff
   stroke-width 5px
   paint-order stroke
   font-size 14px
+
+.tree-faded
+  &.tree-edge
+    stroke #ccc !important
+  &.tree-node-label
+    fill #ccc !important
+  &.tree-node
+    fill #ccc !important

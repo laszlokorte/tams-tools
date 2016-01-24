@@ -10,11 +10,12 @@ import model from './model';
 export default ({
     DOM, keydown, visible$,
     table$ = O.empty(),
+    formular$ = O.empty(),
 }) => {
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
-  const state$ = model(table$, actions).shareReplay(1);
+  const state$ = model(table$, formular$, actions).shareReplay(1);
   const modal = isolate(ModalBox)({
     DOM,
     keydown,

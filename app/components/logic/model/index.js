@@ -183,8 +183,9 @@ export default (actions) => {
   const parsed$ = O.combineLatest(
     actions.input$.startWith(''),
     actions.language$.startWith('auto'),
+    actions.selectFormat$.startWith('math'),
     actions.showSubExpressions$.startWith(true),
-    (string, lang, showSubExpressions) =>
+    (string, lang, outputFormat, showSubExpressions) =>
       O.just({
         string,
         lang,
@@ -194,6 +195,27 @@ export default (actions) => {
       .map(parse)
       .map(analyze)
       .catch(handleError)
+      .map(({
+        detected,
+        error,
+        expressions,
+        formatter,
+        identifiers,
+        subExpressions,
+        toplevelExpressions,
+      }) => ({
+        detected,
+        lang,
+        string,
+        error,
+        expressions,
+        formatter,
+        showSubExpressions,
+        outputFormat,
+        identifiers,
+        subExpressions,
+        toplevelExpressions,
+      }))
   ).switch();
 
   return parsed$.share();

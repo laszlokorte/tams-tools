@@ -1,9 +1,11 @@
 @import '../../../styles/layout'
 
+background-color-table = #fff
+
 .table-scroller
   max-width 100%
   overflow auto
-  background-color #E6E6E6
+  background-color background-color-table
 
 .table-scroller-body
   display flex
@@ -24,26 +26,27 @@
   padding 10px 30px
   background-color #7F7F7F
   color white
-  font-weight 600
-  border-right 2px solid white
+  font-weight normal
+  border-right 2px solid background-color-table
 
 .table-head-cell-small
   white-space pre
   word-wrap none
   padding 0 0 5px
   font-size 13px
-  color black
+  color #7F7F7F
   border-bottom 2px solid #5f5f5f
   font-weight normal
-  border-right 2px solid #E6E6E6
+  border-right 2px solid background-color-table
+  font-weight 600
 
 .table-body-cell
   padding 4px
   text-align center
 
 .table-colgroup
-  border-right 4px solid #E6E6E6
-  border-left 4px solid #E6E6E6
+  border-right 4px solid background-color-table
+  border-left 4px solid background-color-table
 
 .table-group-end
   border-right 1px solid #555
@@ -56,9 +59,9 @@
 .table-body-row
   &:hover
     .table-body-cell
-      background-color #fafafa
+      background-color #eee
       cursor pointer
   &.state-selected
     .table-body-cell
-      background-color #ddd
+      background-color #ccc
       font-weight bold

@@ -2,13 +2,19 @@ import {ReplaySubject, Subject} from 'rx';
 import I from 'immutable';
 import isolate from '@cycle/isolate';
 
-import {evaluateExpression} from './lib/expression';
+import {evaluateExpression, expressionToString} from './lib/expression';
 
 import model from './model';
 import view from './view';
 import intent from './intent';
 import TableComponent from '../table';
 import asciiTable from '../table/lib/format-ascii';
+
+import mathFormatter from './lib/formatter/math';
+import latexFormatter from './lib/formatter/latex';
+import pythonFormatter from './lib/formatter/python';
+import cBitwiseFormatter from './lib/formatter/c-bitwise';
+import cBooleanFormatter from './lib/formatter/c-boolean';
 
 import toTree from './lib/tree';
 import toTable from './lib/table';
@@ -24,6 +30,7 @@ export default (responses) => {
   } = responses;
 
   const tableSubject = new ReplaySubject();
+  const formularSubject = new Subject();
   const panelSubject = new Subject();
 
   const helpPanel = isolate(HelpPanel, 'helpPanel')({
@@ -44,6 +51,7 @@ export default (responses) => {
     DOM,
     keydown,
     table$: tableSubject.map(asciiTable),
+    formular$: formularSubject,
     visible$: panelSubject
       .map((p) => p === 'save'),
   });
@@ -80,7 +88,11 @@ export default (responses) => {
 
               subEvalutation = I.Map(state.toplevelExpressions.map((expr) =>
                 [expr, evaluateExpression(expr, identifierMap)]
-              )).merge(identifierMap);
+              ))
+              .merge(I.Map(state.subExpressions.map((expr) =>
+                [expr, evaluateExpression(expr, identifierMap)]
+              )))
+              .merge(identifierMap);
             }
 
             if (state.expressions.size === 1) {
@@ -101,16 +113,44 @@ export default (responses) => {
     }
   ).share();
 
-  const table$ = state$.map((state) =>
+  const formatters = {
+    math: mathFormatter,
+    latex: latexFormatter,
+    python: pythonFormatter,
+    'c-bitwise': cBitwiseFormatter,
+    'c-boolean': cBooleanFormatter,
+  };
+
+  const formatter$ = actions.selectFormat$
+    .startWith('math')
+    .map((formatName) => {
+      return formatters[formatName] || mathFormatter;
+    })
+    .shareReplay(1);
+
+  const table$ = state$.combineLatest(
+    formatter$,
+    (state, formatter) =>
     state.expressions &&
-    state.expressions.length ? toTable(
+    state.expressions.size ? toTable(
       state.identifiers,
       state.toplevelExpressions,
       state.showSubExpressions ?
-        state.subExpressions : void 0
+        state.subExpressions : void 0,
+      formatter
     ) : null
   ).share();
 
+  const formular$ = state$.combineLatest(
+    formatter$,
+    (state, formatter) => {
+      return state.expressions ? state.expressions.map(
+        (e) => expressionToString(e, formatter)
+      ).join(', ') : '';
+    }
+  ).share();
+
+  formular$.subscribe(formularSubject);
   table$.subscribe(tableSubject);
   actions.panel$.subscribe(panelSubject);
 

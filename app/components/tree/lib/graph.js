@@ -8,6 +8,7 @@ export const graphNode = I.Record({
   labelAnchor: 'middle',
   xOffset: 0,
   color: null,
+  faded: false,
 }, 'graphNode');
 
 export const graphEdge = I.Record({
@@ -17,6 +18,7 @@ export const graphEdge = I.Record({
   toX: 0,
   toY: 0,
   color: null,
+  faded: false,
 }, 'graphEdge');
 
 export const _graph = I.Record({
@@ -50,7 +52,7 @@ const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
       newRel = rel;
     }
     return nodeList(c, prev, newRel);
-  }, layoutNode.node.hidden ? acc : acc.push(graphNode({
+  }, acc.push(graphNode({
     label: layoutNode.node.name,
     x: layoutNode.x,
     y: layoutNode.y,
@@ -58,6 +60,7 @@ const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
     labelAnchor: labelAnchor,
     xOffset: xOffset,
     color: layoutNode.node.color,
+    faded: layoutNode.node.hidden,
   })));
 };
 
@@ -67,12 +70,13 @@ const edgeList = (layoutNode, acc = I.List()) => {
   }
   return layoutNode.children.reduce(
     (prev, c) => edgeList(c, prev)
-  , layoutNode.parent && !layoutNode.parent.node.hidden ? acc.push(graphEdge({
+  , layoutNode.parent ? acc.push(graphEdge({
     fromX: layoutNode.parent.x,
     fromY: layoutNode.parent.y,
     toX: layoutNode.x,
     toY: layoutNode.y,
     color: layoutNode.node.color,
+    faded: layoutNode.parent.node.hidden,
   })) : acc);
 };
 

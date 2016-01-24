@@ -6,10 +6,13 @@ export default (DOM/*, keydown*/) => {
   const inputField = DOM.select('.logic-input-field');
   const syntaxtSelector = DOM.select('.syntax-selector');
   const subExpressionCheckbox = DOM.select('input[name="subexpressions"]');
+  const formatSelect = DOM.select('.format-select');
 
   const changeEvent$ = inputField.events('input');
   const syntaxChangeEvent$ = syntaxtSelector.events('change');
   const subExprEvent$ = subExpressionCheckbox.events('change');
+
+  const selectFormatEvent$ = formatSelect.events('change');
 
   const panels = panelActions({DOM});
 
@@ -25,6 +28,10 @@ export default (DOM/*, keydown*/) => {
       .share(),
 
     panel$: panels.open$,
+
+    selectFormat$: selectFormatEvent$
+      .map((evt) => evt.ownerTarget.value)
+      .share(),
 
     preventDefault: O.merge(
       panels.preventDefault

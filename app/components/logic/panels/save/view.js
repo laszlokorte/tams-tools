@@ -1,10 +1,9 @@
 import {
   div, h1, h3,
-  textarea, select, input,
-  option,
+  textarea, input,
 } from '@cycle/dom';
 
-const render = ({table}) => div([
+const render = ({table, formular}) => div([
   h1('.modal-box-title', 'Export...'),
   h3('ASCII Table'),
   div([
@@ -14,13 +13,9 @@ const render = ({table}) => div([
   ]),
   h3('Formular'),
   div([
-    select('.export-select', [
-      option({value: 'c'}, 'C'),
-      option({value: 'latex'}, 'Latex'),
-      option({value: 'python'}, 'Python'),
-    ]),
     input('.export-text-single', {
       attributes: {readonly: true},
+      value: formular,
     }),
   ]),
 ])

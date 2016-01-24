@@ -11,7 +11,7 @@ const render = (state) =>
         x2: edge.toX * state.scaleX,
         y2: edge.toY * state.scaleY,
         'stroke-width': '2px',
-        class: 'tree-edge',
+        class: 'tree-edge' + (edge.faded ? ' tree-faded' : ''),
         stroke: 'black',
         style: {
           stroke: edge.color || void 0,
@@ -23,7 +23,7 @@ const render = (state) =>
         cx: node.x * state.scaleX,
         cy: node.y * state.scaleY,
         r: 5,
-        class: 'tree-node',
+        class: 'tree-node' + (node.faded ? ' tree-faded' : ''),
         fill: 'black',
         style: {
           fill: node.color || void 0,
@@ -34,9 +34,9 @@ const render = (state) =>
         y: node.y * state.scaleY + (node.leaf ? 16 : -10),
         'text-anchor': node.leaf ? 'middle' : node.labelAnchor,
         'alignment-baseline': 'middle',
-        class: 'tree-node-label',
+        class: 'tree-node-label' + (node.faded ? ' tree-faded' : ''),
         style: {
-          fill: node.color || 'black',
+          fill: node.color || void 0,
         },
       }, node.label),
     ]).toArray(),

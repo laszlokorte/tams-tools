@@ -102,6 +102,30 @@ const render = (state, table) =>
       state && state.expressions && state.expressions.size ? [
         div([
           h2('Table'),
+
+          select('.format-select', [
+            option({
+              value: 'math',
+              selected: state.outputFormat === 'math',
+            }, 'Math'),
+            option({
+              value: 'latex',
+              selected: state.outputFormat === 'latex',
+            }, 'Latex'),
+            option({
+              value: 'python',
+              selected: state.outputFormat === 'python',
+            }, 'Python'),
+            option({
+              value: 'c-bitwise',
+              selected: state.outputFormat === 'c-bitwise',
+            }, 'C (Bitwise)'),
+            option({
+              value: 'c-boolean',
+              selected: state.outputFormat === 'c-boolean',
+            }, 'C (Boolean)'),
+          ]),
+
           label([
             input({
               type: 'checkbox',
