@@ -30,7 +30,7 @@ export default (responses) => {
   } = responses;
 
   const tableSubject = new ReplaySubject();
-  const formularSubject = new Subject();
+  const formulaSubject = new Subject();
   const panelSubject = new Subject();
 
   const helpPanel = isolate(HelpPanel, 'helpPanel')({
@@ -51,7 +51,7 @@ export default (responses) => {
     DOM,
     keydown,
     table$: tableSubject.map(asciiTable),
-    formular$: formularSubject,
+    formula$: formulaSubject,
     visible$: panelSubject
       .map((p) => p === 'save'),
   });
@@ -141,7 +141,7 @@ export default (responses) => {
     ) : null
   ).share();
 
-  const formular$ = state$.combineLatest(
+  const formula$ = state$.combineLatest(
     formatter$,
     (state, formatter) => {
       return state.expressions ? state.expressions.map(
@@ -150,7 +150,7 @@ export default (responses) => {
     }
   ).share();
 
-  formular$.subscribe(formularSubject);
+  formula$.subscribe(formulaSubject);
   table$.subscribe(tableSubject);
   actions.panel$.subscribe(panelSubject);
 
