@@ -2,14 +2,15 @@ import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
-import {preventDefaultDriver} from './drivers/prevent-default';
-import {keyboardDriver} from './drivers/keyboard';
-import {selectAllDriver} from './drivers/select-all';
 import isolate from '@cycle/isolate';
 
-import kv from './components/kv';
-import pla from './components/pla';
-import splitPane from './components/splitpane';
+import {preventDefaultDriver} from '../../drivers/prevent-default';
+import {keyboardDriver} from '../../drivers/keyboard';
+import {selectAllDriver} from '../../drivers/select-all';
+
+import kv from '../../components/kv';
+import pla from '../../components/pla';
+import splitPane from '../../components/splitpane';
 
 /*
   This file is the entry point for the application

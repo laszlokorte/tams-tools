@@ -1,5 +1,6 @@
 import merge from 'webpack-merge';
 
+import path from 'path';
 import webpack from 'webpack';
 import CompressionPlugin from 'compression-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -28,7 +29,7 @@ module.exports = merge(commonConfig, {
   },
 
   plugins: [
-    new CleanPlugin(["build"]),
+    new CleanPlugin(['build'], {root: path.resolve(__dirname, '../')}),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       "process.env": {

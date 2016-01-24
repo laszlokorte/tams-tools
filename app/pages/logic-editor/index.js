@@ -3,14 +3,15 @@ import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
-import {preventDefaultDriver} from './drivers/prevent-default';
-import {keyboardDriver} from './drivers/keyboard';
-import {autoResizeDriver} from './drivers/textarea-resize';
-import {selectAllDriver} from './drivers/select-all';
 
-import logic from './components/logic';
-import tree from './components/tree';
-import splitPane from './components/splitpane';
+import {preventDefaultDriver} from '../../drivers/prevent-default';
+import {keyboardDriver} from '../../drivers/keyboard';
+import {autoResizeDriver} from '../../drivers/textarea-resize';
+import {selectAllDriver} from '../../drivers/select-all';
+
+import logic from '../../components/logic';
+import tree from '../../components/tree';
+import splitPane from '../../components/splitpane';
 
 const logicApp = (sources) => {
   const {
