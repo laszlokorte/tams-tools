@@ -51,8 +51,8 @@ charEscapeSequence
     / '\\"'   { return '"';  }
 
 literalValue
-  = logicTop
-  / logicBottom
+  = logicTop { return true; }
+  / logicBottom { return false; }
 
 
 parentheses
