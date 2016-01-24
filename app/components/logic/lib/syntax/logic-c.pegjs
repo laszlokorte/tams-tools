@@ -11,8 +11,8 @@ logicOr = "||" / "|"
 logicXor = "^"
 logicNot = "!" / "~"
 
-logicTop = "true" / "1" / "T" / "W"
-logicBottom = "false" / "0" / "F"
+logicTop = "true" / "1"
+logicBottom = "false" / "0"
 
 operatorMul "binary operator"
   = logicAnd { return "AND"; }

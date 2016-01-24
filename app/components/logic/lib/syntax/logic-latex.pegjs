@@ -6,13 +6,13 @@ start
     return []
   }
 
-logicAnd = "&&" / "&" / "*" / "\\wedge" / ""
-logicOr = "||" / "|" / "+" / "\\vee"
-logicXor = "^" / "\\oplus"
-logicNot = "!" / "~" / "-" / "\\neg" / "\\overline"
+logicAnd = "&&" / "&" / "*" / "∧" / "\\wedge" / ""
+logicOr = "||" / "|" / "+" / "∨" / "\\vee"
+logicXor = "^" / "⊕" / "\\oplus"
+logicNot = "!" / "~" / "-" / "¬" / "\\neg" / "\\overline"
 
-logicTop = "true" / "1" / "T" / "W" / "\\top"
-logicBottom = "false" / "0" / "F" / "\\bot"
+logicTop = "true" / "1" / "T" / "W" / "⊤" / "\\top"
+logicBottom = "false" / "0" / "F" / "⊥" / "\\bot"
 
 operatorMul "binary operator"
   = logicAnd { return "AND"; }
