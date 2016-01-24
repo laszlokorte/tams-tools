@@ -7,14 +7,16 @@ export default (
   subExpressions = I.List(),
   formatter
 ) => {
-  const groups = [
-    {
+  const groups = [];
+
+  if (identifiers.size) {
+    groups.push({
       name: "identifiers",
       columns: identifiers.map(
         (i) => ({name: expressionToString(i, formatter)})
       ).toArray(),
-    },
-  ];
+    });
+  }
 
   if (topLevelExpressions.size) {
     groups.push({

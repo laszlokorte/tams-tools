@@ -153,7 +153,7 @@ export const collectSubExpressions = (
   case 'unary':
     return collectSubExpressions(expression.operand, newAcc, true);
   case 'group':
-    return collectSubExpressions(expression.content, acc, true);
+    return collectSubExpressions(expression.content, acc, collect);
   case 'identifier':
     return acc;
   case 'constant':

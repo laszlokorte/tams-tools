@@ -152,7 +152,7 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
   );
 
   const toplevelExpressions = expressionList.filter(
-    (e) => e.node !== 'identifier' && e.node !== 'constant'
+    (e) => e.node !== 'identifier'
   );
 
   return {
