@@ -1,12 +1,10 @@
 import {Observable as O} from 'rx';
 
 import {
-  div, span, textarea, h2, ul, li,
+  div, span, textarea, h2,
   select, option,
   label, input, button,
 } from '@cycle/dom';
-
-import {expressionToString} from '../lib/expression';
 
 import './index.styl';
 

@@ -19,7 +19,9 @@ const render = ({table}) => div([
       option({value: 'latex'}, 'Latex'),
       option({value: 'python'}, 'Python'),
     ]),
-    input('.export-text-single'),
+    input('.export-text-single', {
+      attributes: {readonly: true},
+    }),
   ]),
 ])
 ;

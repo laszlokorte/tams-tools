@@ -102,12 +102,13 @@ export default (responses) => {
   ).share();
 
   const table$ = state$.map((state) =>
-    state.error ? null : toTable(
+    state.expressions &&
+    state.expressions.length ? toTable(
       state.identifiers,
       state.toplevelExpressions,
       state.showSubExpressions ?
         state.subExpressions : void 0
-    )
+    ) : null
   ).share();
 
   table$.subscribe(tableSubject);
