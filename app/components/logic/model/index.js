@@ -184,7 +184,7 @@ export default (actions) => {
     actions.input$.startWith(''),
     actions.language$.startWith('auto'),
     actions.selectFormat$.startWith('math'),
-    actions.showSubExpressions$.startWith(true),
+    actions.showSubExpressions$.startWith(false),
     (string, lang, outputFormat, showSubExpressions) =>
       O.just({
         string,
