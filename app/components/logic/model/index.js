@@ -5,7 +5,6 @@ import {
   expressionFromJson,
   collectIdentifiers,
   collectSubExpressions,
-  evaluateExpression,
 } from '../lib/expression';
 
 import cParser from '../lib/syntax/logic-c.pegjs';
@@ -195,48 +194,6 @@ export default (actions) => {
       .map(parse)
       .map(analyze)
       .catch(handleError)
-      .flatMap(({
-        detected,
-        expressions,
-        identifiers,
-        subExpressions,
-        error,
-        toplevelExpressions,
-      }) => actions.selectRow$
-        .startWith(null)
-        .scan((prev, val) => prev === val ? null : val)
-        .map(
-        (selectedRow) => {
-          let subEvalutation = null;
-
-          /*eslint-disable max-nested-callbacks*/
-          if (selectedRow !== null) {
-            const identifierMap = I.Map(identifiers.map(
-              (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
-            ));
-
-            subEvalutation = I.Map(toplevelExpressions.map((expr) =>
-              [expr, evaluateExpression(expr, identifierMap)]
-            )).merge(identifierMap);
-          }
-          /*eslint-enable max-nested-callbacks*/
-
-          return {
-            lang,
-            detected,
-            string,
-            expressions,
-            identifiers,
-            subExpressions,
-            showSubExpressions,
-            error,
-            selectedRow,
-            subEvalutation,
-            toplevelExpressions,
-            table: I.List(),
-          };
-        }
-      ))
   ).switch();
 
   return parsed$.share();

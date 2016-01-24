@@ -6,12 +6,10 @@ export default (DOM/*, keydown*/) => {
   const inputField = DOM.select('.logic-input-field');
   const syntaxtSelector = DOM.select('.syntax-selector');
   const subExpressionCheckbox = DOM.select('input[name="subexpressions"]');
-  const tableRow = DOM.select('tr[data-index]');
 
   const changeEvent$ = inputField.events('input');
   const syntaxChangeEvent$ = syntaxtSelector.events('change');
   const subExprEvent$ = subExpressionCheckbox.events('change');
-  const rowEvent$ = tableRow.events('mousedown');
 
   const panels = panelActions({DOM});
 
@@ -24,9 +22,6 @@ export default (DOM/*, keydown*/) => {
       .share(),
     showSubExpressions$: subExprEvent$
       .map((evt) => evt.ownerTarget.checked)
-      .share(),
-    selectRow$: rowEvent$
-      .map((evt) => parseInt(evt.ownerTarget.dataset.index, 10))
       .share(),
 
     panel$: panels.open$,

@@ -28,7 +28,7 @@ const markError = (string, error) => {
   }
 };
 
-const render = (state) =>
+const render = (state, table) =>
   div('.app', [
     div('.app-head', [
       div('.action-panel', [
@@ -103,14 +103,6 @@ const render = (state) =>
     div('.app-body', [
       state && state.expressions && state.expressions.size ? [
         div([
-          h2('Expressions'),
-          ul('.expression-list', state.expressions.map((expr) =>
-            li('.expression-list-item', expressionToString(expr))
-          ).toArray()),
-          h2('Variables'),
-          ul('.variable-list', state.identifiers.map(
-            (identifier) => li('.variable-list-item', identifier.name)
-          ).toArray()),
           h2('Table'),
           label([
             input({
@@ -120,18 +112,19 @@ const render = (state) =>
             }),
             'Show sub expressions',
           ]),
+          table,
         ]),
       ] : null,
     ]),
   ])
 ;
 
-export default (state$, {panel$s}) =>
-  O.combineLatest(state$, ...panel$s,
-    (state, ...panels) =>
+export default (state$, table$, {panel$s}) =>
+  O.combineLatest(state$, table$, ...panel$s,
+    (state, table, ...panels) =>
       div([
         panels,
-        render(state),
+        render(state, table),
       ])
   )
 ;

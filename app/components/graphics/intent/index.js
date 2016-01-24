@@ -57,7 +57,7 @@ export default (DOM) => {
       x: evt.deltaX,
       y: evt.deltaY,
     }, evt))
-    .flatMap((start) =>
+    .flatMapLatest((start) =>
       panMove$
       .map((evt) => svgEventPosition({
         x: evt.deltaX,
@@ -71,7 +71,7 @@ export default (DOM) => {
     ),
     pinchStart$
     .map(hammerEventPosition)
-    .flatMap((start) =>
+    .flatMapLatest((start) =>
       pinchMove$
       .map(hammerEventPosition)
       .map((target) => ({
@@ -102,7 +102,7 @@ export default (DOM) => {
       };
     }).share(),
     pinchStart$
-    .flatMap((startEvt) =>
+    .flatMapLatest((startEvt) =>
       pinchMove$
       .map((moveEvt) =>
       ({

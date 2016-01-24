@@ -20,7 +20,7 @@ export default (DOM) => {
     .events('panend pancancel');
 
   const resize$ = handle.observable.skip(1).take(1).flatMap(() => panStart$
-    .flatMap(() =>
+    .flatMapLatest(() =>
       panMove$
       .map((evt) => evt.center.x / evt.target.parentNode.clientWidth)
       .takeUntil(panEnd$)

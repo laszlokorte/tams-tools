@@ -1,0 +1,64 @@
+@import '../../../styles/layout'
+
+.table-scroller
+  max-width 100%
+  overflow auto
+  background-color #E6E6E6
+
+.table-scroller-body
+  display flex
+  align-items center
+  justify-content center
+  min-width min-content
+  min-height min-content
+  padding space(2) 0
+
+.table
+  border-spacing 0
+  border-collapse collapse
+  margin 10px
+
+.table-head-cell
+  white-space pre
+  word-wrap none
+  padding 10px 30px
+  background-color #7F7F7F
+  color white
+  font-weight 600
+  border-right 2px solid white
+
+.table-head-cell-small
+  white-space pre
+  word-wrap none
+  padding 0 0 5px
+  font-size 13px
+  color black
+  border-bottom 2px solid #5f5f5f
+  font-weight normal
+  border-right 2px solid #E6E6E6
+
+.table-body-cell
+  padding 4px
+  text-align center
+
+.table-colgroup
+  border-right 4px solid #E6E6E6
+  border-left 4px solid #E6E6E6
+
+.table-group-end
+  border-right 1px solid #555
+  &:last-child
+    border-right none
+
+.table-body-cell
+  transition background-color 0.1s ease-in-out
+
+.table-body-row
+  &:hover
+    .table-body-cell
+      background-color #fafafa
+      cursor pointer
+  &.state-selected
+    .table-body-cell
+      background-color #ddd
+      font-weight bold

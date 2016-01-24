@@ -116,23 +116,25 @@ export const evaluateAll = ({
 }) => {
   if (counter < 0) {
     return acc.reverse();
-  }
+  } else {
+    const identifierMap = I.Map(identifiers.map(
+      (name, i) => [name, !!(Math.pow(2, i) & counter)]
+    ));
 
-  const identifierMap = I.Map(identifiers.map(
-    (name, i) => [name, !!(Math.pow(2, i) & counter)]
-  ));
-
-  return evaluateAll({
-    expressions,
-    identifiers,
-    acc: acc.push(row({
+    const newAcc = acc.push(row({
       identifierValues: identifierMap,
       values: expressions.map((expr) =>
         evaluateExpression(expr, identifierMap)
       ).toList(),
-    })),
-    counter: counter - 1,
-  });
+    }));
+
+    return evaluateAll({
+      expressions,
+      identifiers,
+      acc: newAcc,
+      counter: counter - 1,
+    });
+  }
 };
 
 export const collectSubExpressions = (
