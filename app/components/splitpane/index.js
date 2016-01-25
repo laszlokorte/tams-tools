@@ -16,6 +16,7 @@ export default (responses) => {
     firstChild$: firstChild$,
     secondChild$: secondChild$,
   }, actions);
+
   const vtree$ = view(state$);
 
   return {

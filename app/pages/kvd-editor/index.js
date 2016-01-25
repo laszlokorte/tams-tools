@@ -35,8 +35,8 @@ const kvdApp = (sources) => {
     props$: O.just({}),
   });
 
-  const kvDOM = kvComponent.DOM.shareReplay(1);
-  const plaDOM = plaComponent.DOM.shareReplay(1);
+  const kvDOM = kvComponent.DOM;
+  const plaDOM = plaComponent.DOM;
 
   const splitComponent = isolate(splitPane)({
     DOM,
@@ -46,9 +46,6 @@ const kvdApp = (sources) => {
     firstChild$: kvDOM,
     secondChild$: plaDOM,
   });
-
-  kvDOM.subscribe();
-  plaDOM.subscribe();
 
   return {
     DOM: splitComponent.DOM,

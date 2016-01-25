@@ -116,7 +116,6 @@ const Drawing = ({DOM}) => {
     isolateSource(DOM, 'moreIsolation'));
   const state$ = model(O.just({x: 23, y: 42}), actions).shareReplay(1);
   const innerVTree$ = view(state$);
-  state$.subscribe();
 
   const outerVTree$ = isolate(Canvas, 'myCanvas')({
     DOM,

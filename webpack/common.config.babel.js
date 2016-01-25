@@ -9,7 +9,7 @@ import _svgStylus from 'svg-stylus/svg';
 import rework from 'rework';
 
 function svgStylus(options) {
-  return function callback(style) {
+  return function callback() {
     this.on('end', (err, css) => {
       const cssObj = rework(css);
       cssObj.use(_svgStylus(options));
@@ -45,6 +45,7 @@ module.exports = {
     debug: "./app/pages/debug/index.js",
     logicEditor: "./app/pages/logic-editor/index.js",
     ledEditor: "./app/pages/led-editor/index.js",
+    fsmEditor: "./app/pages/fsm-editor/index.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -123,6 +124,14 @@ module.exports = {
       template: './app/index.html',
       filename: 'led-editor.html',
       favicon: './app/pages/led-editor/led.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'FSM Editor',
+      minify: htmlMinifyOptions,
+      chunks: ['fsmEditor', 'vendor'],
+      template: './app/index.html',
+      filename: 'fsm-editor.html',
+      favicon: './app/pages/fsm-editor/fsm.ico',
     }),
     new HtmlWebpackPlugin({
       title: 'Debug',

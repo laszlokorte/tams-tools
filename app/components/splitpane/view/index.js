@@ -7,11 +7,11 @@ const render = (state) =>
     div('.splitpane-body.splitpane-body-left', {
       key: 'left-pane',
       style: {width: `${state.proportion * 100}%`},
-    }, state.firstChild$),
+    }, state.firstChild),
     div('.splitpane-body.splitpane-body-right', {
       key: 'right-pane',
       style: {width: `${100 - state.proportion * 100}%`},
-    }, state.secondChild$),
+    }, state.secondChild),
     div('.splitpane-handle.splitpane-handle-horizontal', {
       key: 'handle',
       style: {left: `${state.proportion * 100}%`},

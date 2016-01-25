@@ -6,5 +6,5 @@ export default (initial$, actions) => {
     actions.check$
   ).map((checked) => ({
     view: checked,
-  })).shareReplay(1);
+  }));
 };

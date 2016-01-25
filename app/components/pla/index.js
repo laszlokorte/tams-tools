@@ -21,8 +21,8 @@ export default (responses) => {
   const pla$ = data$.map(plaFromJson);
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'));
-  const state$ = model(props$, pla$, actions);
-  const vtree$ = view(state$).shareReplay(1);
+  const state$ = model(props$, pla$, actions).shareReplay(1);
+  const vtree$ = view(state$);
 
   const stage = isolate(graphics, 'mygraphics')({
     DOM,

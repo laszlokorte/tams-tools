@@ -15,7 +15,7 @@ export default ({
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
-  const state$ = model(table$, formula$, actions).shareReplay(1);
+  const state$ = model(table$, formula$, actions);
   const modal = isolate(ModalBox)({
     DOM,
     keydown,
