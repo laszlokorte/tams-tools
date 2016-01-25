@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
-import {makeDOMDriver, div} from '@cycle/dom';
+import {makeDOMDriver} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 
@@ -18,6 +18,8 @@ const fsmEditor = (sources) => {
     preventDefault,
     keydown,
   } = sources;
+
+  /*eslint-disable max-len*/
 
   const leftComponent = isolate(LedComponent)({
     DOM,
