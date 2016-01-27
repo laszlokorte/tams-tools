@@ -5,8 +5,8 @@ import './index.styl';
 const render = (state) =>
   svg('g',[
     svg('circle', {
-      cx: 20,
-      cy: 20,
+      cx: 0,
+      cy: 0,
       r: 20,
       fill: 'black',
     }),
