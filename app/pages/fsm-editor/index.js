@@ -9,6 +9,8 @@ import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
 
+import FSMComponent from '../../components/fsm';
+import GraphComponent from '../../components/graph';
 import splitPane from '../../components/splitpane';
 
 const fsmEditor = (sources) => {
@@ -18,8 +20,19 @@ const fsmEditor = (sources) => {
     keydown,
   } = sources;
 
-  const leftDOM = O.just(div());
-  const rightDOM = O.just(div());
+  const fsmComponent = isolate(FSMComponent)({
+    DOM,
+    keydown,
+  });
+
+  const graphComponent = isolate(GraphComponent)({
+    DOM,
+    keydown,
+    data$: fsmComponent.graph$,
+  });
+
+  const leftDOM = fsmComponent.DOM;
+  const rightDOM = graphComponent.DOM;
 
   const splitComponent = isolate(splitPane)({
     DOM,
@@ -33,6 +46,8 @@ const fsmEditor = (sources) => {
   return {
     DOM: splitComponent.DOM,
     preventDefault: O.merge(
+      fsmComponent.preventDefault,
+      graphComponent.preventDefault,
       splitComponent.preventDefault
     ),
     selectAll: O.empty(),
