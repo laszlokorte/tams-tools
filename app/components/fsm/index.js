@@ -1,5 +1,4 @@
-import {Observable as O} from 'rx';
-
+import toGraph from './lib/graph';
 import intent from './intent';
 import model from './model';
 import view from './view';
@@ -17,6 +16,8 @@ export default (sources) => {
   return {
     DOM: vtree$,
     preventDefault: actions.preventDefault,
-    graph$: state$.map(() => {}),
+    graph$: state$.map((fsmViewState) => {
+      return toGraph(fsmViewState.fsm);
+    }),
   };
 };
