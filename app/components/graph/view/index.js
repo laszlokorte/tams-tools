@@ -62,7 +62,11 @@ const render = (state) =>
       }),
     ])).toArray(),
 
-    state.graph.nodes.map((n) => svg('g', [
+    state.graph.nodes.map((n, i) => svg('g', {
+      attributes: {
+        'data-node-index': i,
+      },
+    }, [
       svg('circle', {
         cx: n.x,
         cy: n.y,
