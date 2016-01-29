@@ -1,11 +1,38 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
+import {newMachine} from '../lib/state-machine';
+import {newSimulation} from '../lib/simulation';
+
 const fsmViewState = I.Record({
-  fsm: null,
-  simulation: null,
+  fsm: newMachine(),
+  simulation: newSimulation(),
 }, 'fsmViewState');
 
-export default ({props$}, actions) => {
-  return O.just(fsmViewState());
+const modifiers = () => {
+  return O.empty();
 };
+
+const initialState = fsmViewState();
+
+const stateFromJson = (json) =>
+  fsmViewState()
+;
+
+const applyModification = (prev, modfn) => {
+  return modfn(prev);
+};
+
+export default (initial$, actions) =>
+    O.merge(
+      initial$
+      .map(stateFromJson)
+      .startWith(initialState)
+      .map((kv) => () => kv),
+      modifiers(actions)
+    ).scan(applyModification, null)
+    .distinctUntilChanged(
+      (s) => s,
+      (a, b) => a === b
+    )
+;

@@ -40,3 +40,7 @@ export const _transition = I.Record({
   target: null,
   condition: null,
 }, 'transition');
+
+export const newMachine = () => {
+  return _stateMachine();
+};

@@ -5,3 +5,7 @@ export const _simulation = I.Record({
   inputValues: I.List(),
   outputValues: I.List(),
 }, 'simulation');
+
+export const newSimulation = () => {
+  return _simulation();
+};

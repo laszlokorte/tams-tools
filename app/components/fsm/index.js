@@ -1,3 +1,4 @@
+import {Observable as O} from 'rx';
 import toGraph from './lib/graph';
 import intent from './intent';
 import model from './model';
@@ -7,10 +8,11 @@ export default (sources) => {
   const {
     DOM,
     props$,
+    inital$ = O.empty(),
   } = sources;
 
   const actions = intent(DOM);
-  const state$ = model({props$}, actions).shareReplay(1);
+  const state$ = model(inital$, actions).shareReplay(1);
   const vtree$ = view(state$);
 
   return {
