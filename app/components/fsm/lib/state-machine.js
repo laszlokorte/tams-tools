@@ -40,4 +40,3 @@ export const _transition = I.Record({
   target: null,
   condition: null,
 }, 'transition');
-

@@ -4,7 +4,7 @@ export const graphNode = I.Record({
   label: null,
   x: 0,
   y: 0,
-  radius: 20,
+  radius: 70,
 }, 'graphNode');
 
 export const graphEdge = I.Record({

@@ -8,19 +8,19 @@ export default (stateMachine) => {
       },
       {
         label: 'B',
-        x: 100,
-        y: 50,
+        x: 500,
+        y: 250,
       },{
         label: 'C',
-        x: 100,
-        y: -150,
+        x: 500,
+        y: -750,
       },
     ],
     edges: [
       {from: 0, to: 1},
-      {from: 1, to: 2},
-      {from: 2, to: 0},
+      {from: 0, to: 2},
       {from: 0, to: 0},
+      {from: 1, to: 1},
       {from: 1, to: 0},
     ],
   };
