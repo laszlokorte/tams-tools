@@ -5,6 +5,7 @@ import isolate from '@cycle/isolate';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
+import {stopPropagationDriver} from '../../drivers/stop-propagation';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
@@ -50,6 +51,7 @@ const fsmEditor = (sources) => {
       graphComponent.preventDefault,
       splitComponent.preventDefault
     ),
+    stopPropagation: graphComponent.stopPropagation,
     selectAll: O.empty(),
     autoResize: O.empty(),
   };
@@ -58,6 +60,7 @@ const fsmEditor = (sources) => {
 const drivers = {
   DOM: makeHammerDriver(makeDOMDriver('#app')),
   preventDefault: preventDefaultDriver,
+  stopPropagation: stopPropagationDriver,
   keydown: keyboardDriver,
   autoResize: autoResizeDriver,
   selectAll: selectAllDriver,

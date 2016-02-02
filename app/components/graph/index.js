@@ -44,5 +44,6 @@ export default (responses) => {
       actions.preventDefault,
       stage.preventDefault
     ),
+    stopPropagation: actions.stopPropagation,
   };
 };
