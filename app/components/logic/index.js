@@ -91,12 +91,13 @@ export default (responses) => {
                 (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
               ));
 
-              subEvalutation = I.Map(state.toplevelExpressions.map((expr) =>
+              const evaluate = (expr) =>
+                expr.node === 'group' ? evaluate(expr.content) :
                 [expr, evaluateExpression(expr, identifierMap)]
-              ))
-              .merge(I.Map(state.subExpressions.map((expr) =>
-                [expr, evaluateExpression(expr, identifierMap)]
-              )))
+              ;
+
+              subEvalutation = I.Map(state.toplevelExpressions.map(evaluate))
+              .merge(I.Map(state.subExpressions.map(evaluate)))
               .merge(identifierMap);
             }
 
