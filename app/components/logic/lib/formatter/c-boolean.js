@@ -18,7 +18,7 @@ export default {
     return `(${lhs} ${tryFetch(operators, op)} ${rhs})`;
   },
   formatUnary: (op, content/*, depth*/) => {
-    return `(${tryFetch(operators, op)} ${content})`;
+    return `(${tryFetch(operators, op)}${content})`;
   },
   formatGroup: (content/*, depth*/) => {
     return content;
