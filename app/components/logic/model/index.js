@@ -20,12 +20,12 @@ function ParseError({lang, string, message, location, detected = null}) {
   this.detected = detected;
 };
 
-const language = I.Record({
+const _language = I.Record({
   name: null,
   parse: () => { throw new Error("not implemented"); },
 });
 
-const cLang = language({
+const cLang = _language({
   name: 'C',
   parse: (string) => {
     return {
@@ -35,7 +35,7 @@ const cLang = language({
   },
 });
 
-const latexLang = language({
+const latexLang = _language({
   name: 'Latex',
   parse: (string) => {
     return {
@@ -45,7 +45,7 @@ const latexLang = language({
   },
 });
 
-const pythonLang = language({
+const pythonLang = _language({
   name: 'Python',
   parse: (string) => {
     return {
@@ -55,7 +55,7 @@ const pythonLang = language({
   },
 });
 
-const mathLang = language({
+const mathLang = _language({
   name: 'Math',
   parse: (string) => {
     return {
@@ -72,7 +72,7 @@ const allLanguages = [
   mathLang,
 ];
 
-const autoLang = language({
+const autoLang = _language({
   name: 'Auto detect',
   parse: (string) => {
     let error = null;
@@ -180,43 +180,51 @@ const handleError = (error) =>
 ;
 
 export default (actions) => {
-  const parsed$ = O.combineLatest(
-    actions.input$.startWith(''),
-    actions.language$.startWith('auto'),
-    actions.selectFormat$.startWith('math'),
-    actions.showSubExpressions$.startWith(false),
-    (string, lang, outputFormat, showSubExpressions) =>
-      O.just({
-        string,
-        lang,
-        detected: null,
-        showSubExpressions,
-      })
-      .map(parse)
-      .map(analyze)
-      .catch(handleError)
-      .map(({
-        detected,
-        error,
-        expressions,
-        formatter,
-        identifiers,
-        subExpressions,
-        toplevelExpressions,
-      }) => ({
-        detected,
-        lang,
-        string,
-        error,
-        expressions,
-        formatter,
-        showSubExpressions,
-        outputFormat,
-        identifiers,
-        subExpressions,
-        toplevelExpressions,
-      }))
-  ).switch();
+  const parsed$ = actions.openExpression$
+  .map((string) => JSON.parse(string))
+  .startWith({
+    language: 'auto',
+    term: '',
+  })
+  .flatMapLatest(({language, term}) =>
+    O.combineLatest(
+      actions.input$.startWith(term),
+      actions.language$.startWith(language),
+      actions.selectFormat$.startWith('math'),
+      actions.showSubExpressions$.startWith(false),
+      (string, lang, outputFormat, showSubExpressions) =>
+        O.just({
+          string,
+          lang,
+          detected: null,
+          showSubExpressions,
+        })
+        .map(parse)
+        .map(analyze)
+        .catch(handleError)
+        .map(({
+          detected,
+          error,
+          expressions,
+          formatter,
+          identifiers,
+          subExpressions,
+          toplevelExpressions,
+        }) => ({
+          detected,
+          lang,
+          string,
+          error,
+          expressions,
+          formatter,
+          showSubExpressions,
+          outputFormat,
+          identifiers,
+          subExpressions,
+          toplevelExpressions,
+        }))
+    ).switch()
+  );
 
   return parsed$.share();
 }

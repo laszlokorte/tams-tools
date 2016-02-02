@@ -2,7 +2,7 @@ import {Observable as O} from 'rx';
 
 import panelActions from './panels';
 
-export default (DOM/*, keydown*/) => {
+export default ({DOM, openData$/*, keydown*/}) => {
   const inputField = DOM.select('.logic-input-field');
   const syntaxtSelector = DOM.select('.syntax-selector');
   const subExpressionCheckbox = DOM.select('input[name="subexpressions"]');
@@ -28,6 +28,8 @@ export default (DOM/*, keydown*/) => {
       .share(),
 
     panel$: panels.open$,
+
+    openExpression$: openData$,
 
     selectFormat$: selectFormatEvent$
       .map((evt) => evt.ownerTarget.value)

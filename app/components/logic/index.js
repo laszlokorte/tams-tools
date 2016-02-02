@@ -61,7 +61,12 @@ export default (responses) => {
     table$: tableSubject,
   });
 
-  const actions = intent(DOM, keydown);
+  const actions = intent({
+    DOM,
+    keydown,
+    openData$: openPanel.data$,
+  });
+
   const state$ = model(actions).shareReplay(1);
   const vtree$ = view(state$, tableComponent.DOM, {
     panel$s: [

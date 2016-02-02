@@ -80,6 +80,7 @@ const render = (state, table) =>
           ]),
           div('.logic-input', [
             textarea('.logic-input-field', {
+              value: state.string,
               placeholder: 'Enter some logic expression...',
             }),
             div('.logic-input-overlay', [
