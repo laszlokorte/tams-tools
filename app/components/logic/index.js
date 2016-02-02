@@ -29,7 +29,7 @@ export default (responses) => {
     keydown,
   } = responses;
 
-  const tableSubject = new ReplaySubject();
+  const tableSubject = new ReplaySubject(1);
   const formulaSubject = new Subject();
   const panelSubject = new Subject();
 

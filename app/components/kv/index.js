@@ -17,8 +17,8 @@ export default (responses) => {
     keydown,
   } = responses;
 
-  const plaSubject = new ReplaySubject();
-  const jsonSubject = new ReplaySubject();
+  const plaSubject = new ReplaySubject(1);
+  const jsonSubject = new ReplaySubject(1);
   const panelSubject = new Subject();
 
   const helpPanel = isolate(HelpPanel, 'helpPanel')({

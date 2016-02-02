@@ -13,8 +13,10 @@ const toggleSwitch = (state, switchId) => {
 
 const cycleOutput = (state, ledId) => {
   const index = tableIndex(...state.switches.map(({enabled}) => enabled));
+  const oldVal = state.leds[ledId].functionTable[index];
   state.leds[ledId].functionTable[index] =
-    !state.leds[ledId].functionTable[index];
+    !oldVal;
+
   return state;
 };
 
@@ -40,12 +42,7 @@ export default (data$, actions) =>
       ),
       actions.decimalInput$.map((decimal) => (state) =>
         decimaleInput(state, decimal)
-      ),
-      actions.export$.map(() => (state) => {
-        console.log(state);
-        console.log(JSON.stringify(state));
-        return state;
-      })
+      )
     ).startWith({
       switches: switches.map((name) => ({
         name,
@@ -65,6 +62,7 @@ export default (data$, actions) =>
       ))),
       leds: data.leds.map((led) => ({
         path: led.path,
+        functionTable: led.functionTable,
         enabled: led.functionTable[
           tableIndex(...(data.switches.map(
             ({enabled}) => enabled

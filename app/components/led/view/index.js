@@ -1,3 +1,4 @@
+import {Observable as O} from 'rx';
 import {div, svg, input, button} from '@cycle/dom';
 
 import './index.styl';
@@ -12,7 +13,7 @@ const signaleAsString = (state) => {
   }
 };
 
-const render = (state) =>
+const render = (state, table) =>
   div([
     input('.number-field', {
       placeholder: 'Decimal',
@@ -68,9 +69,10 @@ const render = (state) =>
         ),
       ]),
     ]),
+    table,
   ])
 ;
 
-export default (state$) =>
-  state$.map(render)
+export default (state$, table$) =>
+  O.combineLatest(state$, table$, render)
 ;

@@ -5,7 +5,7 @@ export default (table$, actions) => {
     .map(fromJSON)
     .flatMapLatest((table) => {
       return actions.selectRow$
-        .startWith(null)
+        .startWith(table ? table.selectedRow : null)
         .scan((prev, val) => prev === val ? null : val)
         .map((index) => ({
           table,
