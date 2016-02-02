@@ -96,7 +96,13 @@ const calculateNodeLayout = (graph) => {
   });
 };
 
-const calculateConnectionPath = (from, to, offset, preferredAngle = Math.PI, streight = false) => {
+const calculateConnectionPath = ({
+  from,
+  to,
+  offset,
+  preferredAngle = Math.PI,
+  streight = false,
+}) => {
   let deltaX = to.x - from.x;
   let deltaY = to.y - from.y;
   let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -197,11 +203,13 @@ const calculateEdgeLayout = (graph, layoutedNodes) => {
     const endNode = layoutedNodes.get(e.toIndex);
     return layoutedEdge({
       label: e.label,
-      path: calculateConnectionPath(
-        startNode, endNode,
-        startNode.radius,
-        startNode.pivotAngle + Math.PI,
-        false),
+      path: calculateConnectionPath({
+        from: startNode,
+        to: endNode,
+        offset: startNode.radius,
+        preferredAngle: startNode.pivotAngle + Math.PI,
+        streight: false,
+      }),
     });
   }
   );
