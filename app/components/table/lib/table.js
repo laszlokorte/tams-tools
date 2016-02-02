@@ -20,6 +20,10 @@ const table = I.Record({
 }, 'table');
 
 export const fromJSON = (data) => {
+  const selectedRow =
+    (data && data.selectedRow !== void 0) ?
+    data.selectedRow : null;
+
   return data ? table({
     columnGroups: I.List(data.columnGroups).map(
       (group) => columnGroup({
@@ -28,6 +32,6 @@ export const fromJSON = (data) => {
       })
     ),
     rows: I.List(data.rows).map(row),
-    selectedRow: data.selectedRow,
+    selectedRow,
   }) : null;
 };
