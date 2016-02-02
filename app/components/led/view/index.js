@@ -22,7 +22,6 @@ const render = (state, table) =>
       min: 0,
       max: Math.pow(2, state.switches.length) - 1,
     }),
-    button('.export', 'Export'),
     div([
       svg('svg', {
         attributes: {
