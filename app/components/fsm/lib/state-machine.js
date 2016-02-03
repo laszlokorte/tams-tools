@@ -41,6 +41,26 @@ export const _transition = I.Record({
   condition: null,
 }, 'transition');
 
+export const addInput = (name, machine) =>
+  machine.update('inputs', (inputs) =>
+    inputs.push(_input({name}))
+  )
+;
+
+export const addOutput = (name, machine) =>
+  machine.update('outputs', (outputs) =>
+    outputs.push(_output({name}))
+  )
+;
+
+export const removeInput = (machine, inputIndex) =>
+  machine.deleteIn(['inputs', inputIndex])
+;
+
+export const removeOutput = (machine, outputIndex) =>
+  machine.deleteIn(['outputs', outputIndex])
+;
+
 export const newMachine = () => {
   return _stateMachine();
 };
