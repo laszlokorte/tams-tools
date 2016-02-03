@@ -50,6 +50,13 @@ const removeOutput = (state, outputIndex) =>
   )
 ;
 
+const setType = (state, type) =>
+  resetSimulation(state)
+  .update('fsm', (fsm) =>
+    FSM.setType(fsm, FSM.typeFromString(type))
+  )
+;
+
 const switchEditMode = (state, mode) =>
   state.set('currentEditMode', mode)
 ;
@@ -70,6 +77,9 @@ const modifiers = (actions) => {
     }),
     actions.switchEditMode$.map((mode) => (state) => {
       return switchEditMode(state, mode);
+    }),
+    actions.setType$.map((type) => (state) => {
+      return setType(state, type);
     }),
   ]);
 };

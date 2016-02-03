@@ -1,19 +1,19 @@
 import I from 'immutable';
 
-export const _stateMachine = I.Record({
-  type: null,
-  inputs: I.List(),
-  outputs: I.List(),
-  states: I.List(),
-  initialState: null,
-}, 'stateMachine');
-
 const _type = I.Record({
   name: null,
 }, 'type');
 
 export const TYPE_MOORE = _type({name: "moore"});
 export const TYPE_MEALY = _type({name: "mealy"});
+
+export const _stateMachine = I.Record({
+  type: TYPE_MOORE,
+  inputs: I.List(),
+  outputs: I.List(),
+  states: I.List(),
+  initialState: null,
+}, 'stateMachine');
 
 export const _input = I.Record({
   name: "",
@@ -40,6 +40,20 @@ export const _transition = I.Record({
   target: null,
   condition: null,
 }, 'transition');
+
+export const typeFromString = (string) => {
+  if (string === TYPE_MOORE.name) {
+    return TYPE_MOORE;
+  } else if (string === TYPE_MEALY.name) {
+    return TYPE_MEALY;
+  } else {
+    return null;
+  }
+};
+
+export const setType = (machine, type) =>
+  machine.set('type', type)
+;
 
 export const addInput = (name, machine) =>
   machine.update('inputs', (inputs) =>

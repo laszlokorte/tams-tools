@@ -13,6 +13,7 @@ export default (DOM) => {
     addInput$: editActions.addInput$,
     removeOutput$: editActions.removeOutput$,
     removeInput$: editActions.removeInput$,
+    setType$: editActions.setType$,
 
     switchEditMode$: editModeEvent$
       .map((evt) => evt.ownerTarget.dataset.editMode)

@@ -7,11 +7,15 @@ export default (DOM) => {
   const removeInputButton = DOM.select('[data-fsm-remove-input]');
   const removeOutputButton = DOM.select('[data-fsm-remove-output]');
 
+  const setTypeButton = DOM.select('[data-fsm-type]');
+
   const addInputEvent$ = addInputButton.events('click');
   const addOutputEvent$ = addOutputButton.events('click');
 
   const removeInputEvent$ = removeInputButton.events('click');
   const removeOutputEvent$ = removeOutputButton.events('click');
+
+  const setTypeEvent$ = setTypeButton.events('click');
 
   return {
     addInput$: addInputEvent$
@@ -28,11 +32,16 @@ export default (DOM) => {
       .map((evt) => parseInt(evt.ownerTarget.dataset.fsmRemoveOutput, 10))
       .share(),
 
+    setType$: setTypeEvent$
+      .map((evt) => evt.ownerTarget.dataset.fsmType)
+      .share(),
+
     preventDefault: O.merge([
       removeInputButton.events('mousedown'),
       removeOutputButton.events('mousedown'),
       addInputButton.events('mousedown'),
       addOutputButton.events('mousedown'),
+      setTypeButton.events('mousedown'),
     ]),
   };
 };

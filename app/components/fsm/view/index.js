@@ -1,5 +1,7 @@
 import {div, span, ul, li, h3, button} from '@cycle/dom';
 
+import {TYPE_MOORE, TYPE_MEALY} from '../lib/state-machine';
+
 import './index.styl';
 
 const renderInput = (input, index, editable) =>
@@ -39,6 +41,27 @@ const render = (state) => div([
       }, 'Simulate'),
     ]),
   ]),
+
+  state.currentEditMode === 'edit' ?
+  ul([
+    li([
+      button({
+        attributes: {
+          disabled: state.fsm.type === TYPE_MOORE || void 0,
+          'data-fsm-type': 'moore',
+        },
+      }, 'Moore'),
+    ]),
+    li([
+      button({
+        attributes: {
+          disabled: state.fsm.type === TYPE_MEALY || void 0,
+          'data-fsm-type': 'mealy',
+        },
+      }, 'Mealy'),
+    ]),
+  ]) : void 0,
+
   h3('Inputs'),
   state.currentEditMode === 'edit' ? button({
     attributes: {
