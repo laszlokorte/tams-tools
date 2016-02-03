@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
-import {makeDOMDriver, div} from '@cycle/dom';
+import {makeDOMDriver} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 
@@ -46,11 +46,11 @@ const fsmEditor = (sources) => {
 
   return {
     DOM: splitComponent.DOM,
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       fsmComponent.preventDefault,
       graphComponent.preventDefault,
-      splitComponent.preventDefault
-    ),
+      splitComponent.preventDefault,
+    ]),
     stopPropagation: graphComponent.stopPropagation,
     selectAll: O.empty(),
     autoResize: O.empty(),

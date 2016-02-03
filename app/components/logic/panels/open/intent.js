@@ -5,16 +5,16 @@ export default ({DOM}) => {
   const openExampleEvent$ = openExampleButton
     .events('click');
 
-  const open$ = O.merge(
+  const open$ = O.merge([
     openExampleEvent$
-          .map((evt) => evt.ownerTarget.dataset.openJson)
-  );
+      .map((evt) => evt.ownerTarget.dataset.openJson),
+  ]);
 
   return {
     open$: open$.share(),
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       openExampleEvent$,
-      openExampleButton.events('mousedown')
-    ),
+      openExampleButton.events('mousedown'),
+    ]),
   };
 };

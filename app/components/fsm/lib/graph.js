@@ -1,4 +1,4 @@
-export default (stateMachine) => {
+export default () => {
   return {
     nodes: [
       {

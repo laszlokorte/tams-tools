@@ -49,14 +49,14 @@ const kvdApp = (sources) => {
 
   return {
     DOM: splitComponent.DOM,
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       kvComponent.preventDefault,
       plaComponent.preventDefault,
-      splitComponent.preventDefault
-    ),
-    selectAll: O.merge(
-      kvComponent.selectAll
-    ),
+      splitComponent.preventDefault,
+    ]),
+    selectAll: O.merge([
+      kvComponent.selectAll,
+    ]),
   };
 };
 

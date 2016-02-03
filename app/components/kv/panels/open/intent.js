@@ -11,17 +11,17 @@ export default ({DOM}) => {
 
   const openFileEvent$ = fileInput.events('change');
 
-  const open$ = O.merge(
+  const open$ = O.merge([
     openExampleEvent$
-          .map((evt) => evt.ownerTarget.dataset.openJson),
+      .map((evt) => evt.ownerTarget.dataset.openJson),
 
     openFileEvent$
-          .flatMapLatest((evt) => {
-            const file = evt.ownerTarget.files[0];
+      .flatMapLatest((evt) => {
+        const file = evt.ownerTarget.files[0];
 
-            return fileReader(file);
-          })
-  );
+        return fileReader(file);
+      }),
+  ]);
 
   return {
     open$: open$.share(),

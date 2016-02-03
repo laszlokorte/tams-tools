@@ -60,7 +60,12 @@ const render = (state) => div([
         },
       }, 'Mealy'),
     ]),
-  ]) : void 0,
+  ]) :
+  button({
+    attributes: {
+      'data-fsm-action': 'tick',
+    },
+  }, 'Tick'),
 
   h3('Inputs'),
   state.currentEditMode === 'edit' ? button({

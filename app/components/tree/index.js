@@ -33,9 +33,9 @@ export default (responses) => {
 
   return {
     DOM: stage.DOM.map((e) => div([e])),
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       actions.preventDefault,
-      stage.preventDefault
-    ),
+      stage.preventDefault,
+    ]),
   };
 };

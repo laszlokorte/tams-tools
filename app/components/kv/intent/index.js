@@ -71,14 +71,14 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
     removeOutput$: functions.removeOutput$,
     removeLastOutput$: functions.removeLastOutput$,
     startRename$: functions.startRename$,
-    cancelRename$: O.merge(
+    cancelRename$: O.merge([
       functions.cancelRename$,
-      panels.open$
-    ).share(),
+      panels.open$,
+    ]).share(),
     tryOutputName$: functions.tryOutputName$,
     confirmOutputName$: functions.confirmOutputName$,
 
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       panels.preventDefault,
       functions.preventDefault,
       loops.preventDefault,
@@ -88,7 +88,7 @@ export default ({DOM, keydown, openData$, viewSetting$}) => {
       switchKvModeEvent$,
       kvModeButton.events('mousedown'),
       switchEditModeEvent$,
-      editModeButton.events('mousedown')
-    ).share(),
+      editModeButton.events('mousedown'),
+    ]).share(),
   };
 };

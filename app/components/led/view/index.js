@@ -1,5 +1,5 @@
 import {Observable as O} from 'rx';
-import {div, svg, input, button} from '@cycle/dom';
+import {div, svg, input} from '@cycle/dom';
 
 import './index.styl';
 

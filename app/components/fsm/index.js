@@ -7,7 +7,6 @@ import view from './view';
 export default (sources) => {
   const {
     DOM,
-    props$,
     inital$ = O.empty(),
   } = sources;
 

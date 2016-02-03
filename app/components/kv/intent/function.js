@@ -31,10 +31,10 @@ export default ({DOM}) => {
   const addOutputButton = DOM
     .select('[data-kv-add-output]');
 
-  const addOutputEvent$ = O.merge(
+  const addOutputEvent$ = O.merge([
     addOutputButton.events('click'),
-    incrementOutputsButton.events('click')
-  );
+    incrementOutputsButton.events('click'),
+  ]);
 
   const removeOutputEvent$ = DOM
     .select('[data-kv-remove-output]')
@@ -71,13 +71,13 @@ export default ({DOM}) => {
     .events('keydown')
     .filter((e) => e.keyCode === 27);
 
-  const confirmOutputNameEvent$ = O.merge(
+  const confirmOutputNameEvent$ = O.merge([
     outputEditLabel
       .events('keydown')
       .filter((e) => e.keyCode === 13),
     outputEditLabel
-        .events('focusout')
-  ).share();
+        .events('focusout'),
+  ]).share();
 
   return {
     addInput$:
@@ -140,7 +140,7 @@ export default ({DOM}) => {
         .map(() => true)
         .share(),
 
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       incrementInputsEvent$,
       decrementInputsEvent$,
       incrementInputsButton.events('mousedown'),
@@ -153,7 +153,7 @@ export default ({DOM}) => {
       confirmOutputNameEvent$,
       addOutputEvent$,
       addOutputButton.events('mousedown'),
-      removeOutputEvent$
-    ),
+      removeOutputEvent$,
+    ]),
   };
 };

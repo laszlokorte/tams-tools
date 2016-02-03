@@ -44,9 +44,9 @@ export default (responses) => {
         stageEl,
       ])
     ),
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       actions.preventDefault,
-      stage.preventDefault
-    ),
+      stage.preventDefault,
+    ]),
   };
 };

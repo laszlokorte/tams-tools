@@ -9,12 +9,12 @@ const bezierString = (path) =>
     `${path.toX},${path.toY} `
 ;
 
-const interpCubic = (t, s, c1, c2, e) => {
+const interpCubic = ({t, start, ctrl1, ctrl2, end}) => {
   const tInv = (1 - t);
-  return tInv * tInv * tInv * s +
-    3 * tInv * tInv * t * c1 +
-    3 * tInv * t * t * c2 +
-    t * t * t * e;
+  return tInv * tInv * tInv * start +
+    3 * tInv * tInv * t * ctrl1 +
+    3 * tInv * t * t * ctrl2 +
+    t * t * t * end;
 };
 
 const arrowHeadString = (path, length) => {
@@ -26,8 +26,16 @@ const arrowHeadString = (path, length) => {
   const realLength = totalLength < length * 1.3 * 1.3 ?
   length / 1.3 : length;
 
-  const cx = interpCubic(0.9, 0, path.c1X, path.c2X, path.toX);
-  const cy = interpCubic(0.9, 0, path.c1Y, path.c2Y, path.toY);
+  const cx = interpCubic({
+    t: 0.9, start: 0,
+    ctrl1: path.c1X, ctrl2: path.c2X,
+    end: path.toX,
+  });
+  const cy = interpCubic({
+    t: 0.9, start: 0,
+    ctrl1: path.c1Y, ctrl2: path.c2Y,
+    end: path.toY,
+  });
 
   const angle = Math.atan2(path.toY - cy, path.toX - cx);
   const extend = Math.PI / 4;

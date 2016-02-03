@@ -18,10 +18,10 @@ export default ({
   const modal = isolate(ModalBox)({
     DOM,
     keydown,
-    props$: O.merge(
+    props$: O.merge([
       actions.finish$.map(() => false),
-      visible$
-    ).map((v) => ({visible: v})),
+      visible$,
+    ]).map((v) => ({visible: v})),
     content$: isolateSink(view(state$), 'modalBody'),
   });
 

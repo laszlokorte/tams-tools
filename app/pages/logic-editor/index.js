@@ -46,11 +46,11 @@ const logicApp = (sources) => {
 
   return {
     DOM: splitComponent.DOM,
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       logicComponent.preventDefault,
       treeComponent.preventDefault,
-      splitComponent.preventDefault
-    ),
+      splitComponent.preventDefault,
+    ]),
     selectAll: logicComponent.selectAll,
     autoResize: logicComponent.autoResize,
   };

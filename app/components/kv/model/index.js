@@ -313,7 +313,7 @@ const setViewSetting = (state, viewSetting) =>
 ;
 
 const modifiers = (actions) => {
-  return O.merge(
+  return O.merge([
     actions.addInput$.map(() =>
       compose(cancelRename, addInput)
     ),
@@ -380,8 +380,8 @@ const modifiers = (actions) => {
     }),
     actions.setViewSetting$.map((viewSetting) => (state) => {
       return setViewSetting(cancelRename(state), viewSetting);
-    })
-  );
+    }),
+  ]);
 };
 
 const initialState = kvState();

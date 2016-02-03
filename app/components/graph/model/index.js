@@ -1,4 +1,3 @@
-import {Observable as O} from 'rx';
 import I from 'immutable';
 
 import bounds from '../../graphics/lib/bounds';
@@ -9,7 +8,7 @@ const graphUiState = I.Record({
   bounds: bounds(),
 }, 'treeUiState');
 
-export default (props$, graph$, actions) => {
+export default (props$, graph$) => {
   return graph$.map((graph) =>
     graphUiState(layoutGraph(graph))
   );

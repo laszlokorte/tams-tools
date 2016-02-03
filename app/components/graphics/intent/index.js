@@ -51,7 +51,7 @@ export default (DOM) => {
     .filter((evt) => !evt.altKey)
     .share();
 
-  const pan$ = O.merge(
+  const pan$ = O.merge([
     panStart$
     .map((evt) => svgEventPosition({
       x: evt.deltaX,
@@ -79,10 +79,10 @@ export default (DOM) => {
         y: target.y - start.y,
       }))
       .takeUntil(pinchEnd$)
-    )
-  ).share();
+    ),
+  ]).share();
 
-  const zoom$ = O.merge(
+  const zoom$ = O.merge([
     wheel$
     .map((evt) => {
       const pivot = svgEventPosition({
@@ -122,8 +122,8 @@ export default (DOM) => {
         }
       )
       .takeUntil(pinchEnd$)
-    )
-  ).share();
+    ),
+  ]).share();
 
   return {
     zoom$,

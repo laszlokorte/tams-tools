@@ -16,12 +16,12 @@ export default ({DOM, selectIndex$}) => {
     cycleOutput$: ledEvent$.map(
       (evt) => parseInt(evt.ownerTarget.getAttribute('data-led'), 10)
     ).share(),
-    decimalInput$: O.merge(
+    decimalInput$: O.merge([
       inputEvent$.map(
         (evt) => parseInt(evt.ownerTarget.value, 10)
       ),
-      selectIndex$.filter((i) => i !== null)
-    ).distinctUntilChanged().share(),
+      selectIndex$.filter((i) => i !== null),
+    ]).distinctUntilChanged().share(),
     preventDefault: O.empty(),
   };
 };

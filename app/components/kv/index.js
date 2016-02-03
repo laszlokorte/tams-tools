@@ -83,10 +83,10 @@ export default (responses) => {
   return {
     DOM: vtree$,
     plaData$,
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       actions.preventDefault,
-      openPanel.preventDefault
-    ).share(),
+      openPanel.preventDefault,
+    ]).share(),
     selectAll: savePanel.selectAll,
   };
 };

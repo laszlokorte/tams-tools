@@ -26,7 +26,7 @@ export default ({DOM, cancel$}) => {
     .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
     .events('touchmove');
 
-  const pointerEnter$ = O.merge(
+  const pointerEnter$ = O.merge([
     mouseEnterEvent$
       .map((evt) => ({
         cell: BitSet(evt.ownerTarget.dataset.kvCell),
@@ -39,17 +39,17 @@ export default ({DOM, cancel$}) => {
           cell: element && element.dataset.hasOwnProperty('kvCell') ?
             BitSet(element.dataset.kvCell) : null,
         };
-      })
-  ).share();
+      }),
+  ]).share();
 
-  const pointerDownEvent$ = O.merge(
-      DOM
-        .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
-        .events('touchstart'),
-      DOM
-        .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
-        .events('mousedown')
-    ).share();
+  const pointerDownEvent$ = O.merge([
+    DOM
+      .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
+      .events('touchstart'),
+    DOM
+      .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')
+      .events('mousedown'),
+  ]).share();
 
   const pointerDown$ = pointerDownEvent$
     .map((evt) => ({
@@ -60,10 +60,10 @@ export default ({DOM, cancel$}) => {
     .filter(({cell}) => cell !== null)
     ;
 
-  const pointerUp$ = O.merge(
+  const pointerUp$ = O.merge([
     touchEnd$,
-    mouseUp$
-  );
+    mouseUp$,
+  ]);
 
   const drag$ = pointerDown$
     .map(({cell, output, allOutputs}) =>
@@ -97,10 +97,10 @@ export default ({DOM, cancel$}) => {
 
   const dragEnd$ = drag$
     .sample(
-      O.merge(
+      O.merge([
         pointerDown$.map(() => pointerUp$),
-        cancel$.map(() => O.empty())
-      ).switch()
+        cancel$.map(() => O.empty()),
+      ]).switch()
     ).share();
 
   return {
@@ -114,18 +114,21 @@ export default ({DOM, cancel$}) => {
     tryLoop$:
       drag$,
     stopTryLoop$:
-      O.merge(dragEnd$, cancel$)
+      O.merge([
+        dragEnd$,
+        cancel$,
+      ])
         .map(() => true)
         .share(),
     addLoop$:
       dragEnd$,
 
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       removeLoopEvent$,
       removeLoopButton.events('mousedown'),
       mouseEnterEvent$,
       touchMoveEvent$,
-      pointerDownEvent$
-    ).share(),
+      pointerDownEvent$,
+    ]).share(),
   };
 };

@@ -15,7 +15,7 @@ export default (DOM) => {
 
   const dragMove$ = O.fromEvent(document, 'mousemove');
 
-  const drag$ = dragStart$.map((startEvt) => {
+  const drag$ = dragStart$.map(() => {
     return dragMove$.takeUntil(dragEnd$);
   }).mergeAll();
 

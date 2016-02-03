@@ -9,9 +9,9 @@ export default ({DOM}) => {
     open$: event$
       .map((evt) => evt.ownerTarget.dataset.panel)
       .share(),
-    preventDefault: O.merge(
+    preventDefault: O.merge([
       event$,
-      actionButton.events('mousedown')
-    ).share(),
+      actionButton.events('mousedown'),
+    ]).share(),
   };
 };

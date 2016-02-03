@@ -67,12 +67,11 @@ export default ({props$, camera$, bounds$, content$}, actions) => {
     (props, initCamera) =>
       distinctBounds$
       .flatMapLatest((bounds) =>
-        O.merge(
+        O.merge([
           actions.zoom$.map(zoomModifier(0.2, 5)),
           actions.pan$.map(panModifier),
-          distinctBounds$
-          .map(autoCenterModifier(props))
-        ).map((mod) => clampPosition(mod, bounds))
+          distinctBounds$.map(autoCenterModifier(props)),
+        ]).map((mod) => clampPosition(mod, bounds))
         .startWith(({x, y, zoom}) => ({
           zoom,
           x: clamp(x, bounds.minX, bounds.maxX),

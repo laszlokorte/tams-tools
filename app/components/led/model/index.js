@@ -33,7 +33,7 @@ const decimaleInput = (state, decimal) => {
 
 export default (data$, actions) =>
   data$.flatMapLatest(({switches, leds}) => {
-    return O.merge(
+    return O.merge([
       actions.toggleSwitch$.map((switchIndex) => (state) =>
         toggleSwitch(state, switchIndex)
       ),
@@ -42,8 +42,8 @@ export default (data$, actions) =>
       ),
       actions.decimalInput$.map((decimal) => (state) =>
         decimaleInput(state, decimal)
-      )
-    ).startWith({
+      ),
+    ]).startWith({
       switches: switches.map((name) => ({
         name,
         enabled: false,

@@ -86,7 +86,7 @@ const modifiers = (actions) => {
 
 const initialState = fsmViewState();
 
-const stateFromJson = (json) =>
+const stateFromJson = () =>
   fsmViewState()
 ;
 
@@ -95,13 +95,13 @@ const applyModification = (prev, modfn) => {
 };
 
 export default (initial$, actions) =>
-    O.merge(
+    O.merge([
       initial$
       .map(stateFromJson)
       .startWith(initialState)
       .map((kv) => () => kv),
-      modifiers(actions)
-    ).scan(applyModification, null)
+      modifiers(actions),
+    ]).scan(applyModification, null)
     .distinctUntilChanged(
       (s) => s,
       (a, b) => a === b
