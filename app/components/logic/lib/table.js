@@ -39,7 +39,7 @@ export default (
   return {
     columnGroups: groups,
 
-    rows: evaluateAll({
+    rows: identifiers.size < 9 ? evaluateAll({
       expressions: identifiers
         .concat(topLevelExpressions)
         .concat(subExpressions).toList(),
@@ -48,6 +48,9 @@ export default (
       values: row.values.map(
         (v) => v ? '1' : '0'
       ).toArray(),
-    })).toArray(),
+    })).toArray() : [],
+
+    error: identifiers.size < 9 ? null :
+      "Two many variables",
   };
 };

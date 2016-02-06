@@ -4,7 +4,15 @@ import {
   colgroup, col,
 } from '@cycle/dom';
 
+import {ContentThunk} from '../../../lib/contentThunk';
+
 import './index.styl';
+
+const columnCount = (tableData) =>
+  tableData.columnGroups.reduce(
+    (sum, group) => sum + group.columns.size, 0
+  )
+;
 
 const renderTable = (tableData, selectedIndex) =>
   table('.table', [
@@ -29,6 +37,11 @@ const renderTable = (tableData, selectedIndex) =>
         )
       ).toArray()
     ),
+    tableData.error ?
+    tr('.table-error-row', [td('.table-error-cell', {
+      colSpan: columnCount(tableData),
+    }, tableData.error
+    )]) : void 0,
     tableData.rows.map(
       (row, i) => tr('.table-body-row', {
         className: selectedIndex === i ? 'state-selected' : void 0,
@@ -43,11 +56,11 @@ const renderTable = (tableData, selectedIndex) =>
   ])
 ;
 
-const render = ({table: tableData, selectedIndex}) =>
+const render = ({table: tableData, selectedIndex}, index) =>
   div('.table-scroller', [
     div('.table-scroller-body', [
       tableData === null ? null :
-      renderTable(tableData, selectedIndex),
+      new ContentThunk(renderTable(tableData, selectedIndex), index % 2),
     ]),
   ])
 ;

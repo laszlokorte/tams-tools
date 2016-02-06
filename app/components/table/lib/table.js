@@ -17,6 +17,7 @@ const table = I.Record({
   columnGroups: I.List(),
   rows: I.List(),
   selectedRow: null,
+  error: null,
 }, 'table');
 
 export const fromJSON = (data) => {
@@ -33,5 +34,6 @@ export const fromJSON = (data) => {
     ),
     rows: I.List(data.rows).map(row),
     selectedRow,
+    error: data.error,
   }) : null;
 };
