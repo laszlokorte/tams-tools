@@ -82,6 +82,10 @@ const render = (state, table) =>
             textarea('.logic-input-field', {
               value: state.string,
               placeholder: 'Enter some logic expression...',
+              autocomplete: 'off',
+              autocorrect: 'off',
+              autocapitalize: 'off',
+              spellcheck: false,
             }),
             div('.logic-input-overlay', [
               state ? markError(state.string, state.error) : '',
