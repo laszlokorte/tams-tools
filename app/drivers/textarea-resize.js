@@ -1,3 +1,5 @@
+import requestAnimationFrame from 'raf';
+
 // This driver consumes an Observable of dom elements
 // and adjusts it's height to remove vertical scrollbars.
 export const autoResizeDriver = (event$) => {
@@ -6,7 +8,7 @@ export const autoResizeDriver = (event$) => {
     if (animating) {
       return;
     }
-    animating = window.requestAnimationFrame(() => {
+    animating = requestAnimationFrame(() => {
       animating = null;
       element.style.height = '0px';
       element.style.height = element.scrollHeight + 'px';
