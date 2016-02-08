@@ -96,8 +96,12 @@ export default (responses) => {
                 [expr, evaluateExpression(expr, identifierMap)]
               ;
 
-              subEvalutation = I.Map(state.toplevelExpressions.map((e) => evaluate(e.content)))
-              .merge(I.Map(state.subExpressions.map(evaluate)))
+              subEvalutation = I.Map(state.toplevelExpressions.map(
+                (e) => evaluate(e.content))
+              )
+              .merge(
+                I.Map(state.subExpressions.map(evaluate))
+              )
               .merge(identifierMap);
             }
 

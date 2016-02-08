@@ -142,9 +142,16 @@ const parse = ({string, lang, showSubExpressions}) => {
 const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
   const expressionList = I.List(expressions);
 
+  const declaredIds = expressionList
+    .map((e) => e.name)
+    .filter((name) => name !== null)
+    .toSet();
+
   const identifiers = expressionList.flatMap(
     (expression) => collectIdentifiers(expression.content)
-  ).toSet().toList();
+  ).toSet()
+  .filter((i) => !declaredIds.contains(i.name))
+  .toList();
 
   const subExpressions = expressionList.flatMap(
     (expression) => collectSubExpressions(expression.content)

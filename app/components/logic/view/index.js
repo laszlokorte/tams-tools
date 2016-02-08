@@ -6,6 +6,8 @@ import {
   label, input, button,
 } from '@cycle/dom';
 
+import {expressionToString} from '../lib/expression';
+
 import './index.styl';
 
 const markError = (string, error) => {
@@ -104,44 +106,71 @@ const render = (state, table) =>
       ]),
     ]),
     div('.app-body', [
-      state && state.expressions && state.expressions.size ? [
-        div([
-          h2('Table'),
+      state && state.expressions && state.expressions.size > 1 ?
+      div([
+        h2('Compare expressions'),
 
-          select('.format-select', [
-            option({
-              value: 'math',
-              selected: state.outputFormat === 'math',
-            }, 'Math'),
-            option({
-              value: 'latex',
-              selected: state.outputFormat === 'latex',
-            }, 'Latex'),
-            option({
-              value: 'python',
-              selected: state.outputFormat === 'python',
-            }, 'Python'),
-            option({
-              value: 'c-bitwise',
-              selected: state.outputFormat === 'c-bitwise',
-            }, 'C (Bitwise)'),
-            option({
-              value: 'c-boolean',
-              selected: state.outputFormat === 'c-boolean',
-            }, 'C (Boolean)'),
+        div('.comparator', [
+          select('.compare-selection', {
+            size: Math.min(3, state.expressions.size + 1),
+          }, [
+            option({value: '', selected: true}, '---'),
+            state.expressions.map(
+              (e,value) => option({value},
+                e.name || expressionToString(e.content)
+              )
+            ).toArray(),
           ]),
-
-          label([
-            input({
-              type: 'checkbox',
-              name: 'subexpressions',
-              checked: state.showSubExpressions,
-            }),
-            'Show sub expressions',
+          select('.compare-selection', {
+            size: Math.min(3, state.expressions.size + 1),
+          }, [
+            option({value: '', selected: true}, '---'),
+            state.expressions.map(
+              (e, value) => option({value},
+                e.name || expressionToString(e.content)
+              )
+            ).toArray(),
           ]),
-          table,
         ]),
-      ] : null,
+      ]) : void 0,
+
+      state && state.expressions && state.expressions.size ?
+      div([
+        h2('Table'),
+
+        select('.format-select', [
+          option({
+            value: 'math',
+            selected: state.outputFormat === 'math',
+          }, 'Math'),
+          option({
+            value: 'latex',
+            selected: state.outputFormat === 'latex',
+          }, 'Latex'),
+          option({
+            value: 'python',
+            selected: state.outputFormat === 'python',
+          }, 'Python'),
+          option({
+            value: 'c-bitwise',
+            selected: state.outputFormat === 'c-bitwise',
+          }, 'C (Bitwise)'),
+          option({
+            value: 'c-boolean',
+            selected: state.outputFormat === 'c-boolean',
+          }, 'C (Boolean)'),
+        ]),
+
+        label([
+          input({
+            type: 'checkbox',
+            name: 'subexpressions',
+            checked: state.showSubExpressions,
+          }),
+          'Show sub expressions',
+        ]),
+        table,
+      ]) : null,
     ]),
   ])
 ;
