@@ -22,7 +22,7 @@ export default (
     groups.push({
       name: "expressions",
       columns: topLevelExpressions.map(
-        (e) => ({name: expressionToString(e.content, formatter)})
+        (e) => ({name: e.name || expressionToString(e.content, formatter)})
       ).toArray(),
     });
   }
