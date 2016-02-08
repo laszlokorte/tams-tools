@@ -6,6 +6,9 @@ start
     return []
   }
 
+labelOperator "labelOperator"
+  = "="
+
 logicAnd = "and"
 logicOr = "or"
 logicXor = "xor"
@@ -48,11 +51,30 @@ _ "whitespace"
   = [ \t\n\r]*
 
 expressions
-  = head:expression tail:(expressionSeparator expression)+ {
+  = head:labeledExpression tail:(expressionSeparator labeledExpression)+ {
     return [head, ...tail.map((t) => t[1])];
   }
-  / head:expression {
+  / head:labeledExpression {
     return [head];
+  }
+
+label "expressionLabel"
+  = identifierName
+
+labeledExpression
+  = name:label _ labelOperator _ content:expression {
+    return {
+      node: 'label',
+      name: name,
+      content: content,
+    };
+  }
+  / content:expression {
+    return {
+      node: 'label',
+      name: null,
+      content: content,
+    };
   }
 
 expression = additive

@@ -60,7 +60,7 @@ const render = ({table: tableData, selectedIndex}, index) =>
   div('.table-scroller', [
     div('.table-scroller-body', [
       tableData === null ? null :
-      new ContentThunk(renderTable(tableData, selectedIndex), index % 2),
+      renderTable(tableData, selectedIndex),
     ]),
   ])
 ;

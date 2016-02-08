@@ -5,6 +5,11 @@ const row = I.Record({
   values: I.List(),
 });
 
+const labeledExpression = I.Record({
+  name: null,
+  content: null,
+}, 'labeledExpression');
+
 const expressionUnion = I.Record({
   node: null,
   operator: null,
@@ -15,13 +20,18 @@ const expressionUnion = I.Record({
   name: null,
   style: null,
   value: null,
-});
+}, 'expressionUnion');
 
 export const expressionFromJson = (data) => {
   if (data === null) {
     return null;
   }
   switch (data.node) {
+  case 'label':
+    return labeledExpression({
+      name: data.name,
+      content: expressionFromJson(data.content),
+    });
   case 'binary':
     return expressionUnion({
       node: data.node.toString(),

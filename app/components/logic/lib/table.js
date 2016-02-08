@@ -22,7 +22,7 @@ export default (
     groups.push({
       name: "expressions",
       columns: topLevelExpressions.map(
-        (i) => ({name: expressionToString(i, formatter)})
+        (e) => ({name: expressionToString(e.content, formatter)})
       ).toArray(),
     });
   }
@@ -31,17 +31,16 @@ export default (
     groups.push({
       name: "Sub expressions",
       columns: subExpressions.map(
-        (i) => ({name: expressionToString(i, formatter)})
+        (e) => ({name: expressionToString(e, formatter)})
       ).toArray(),
     });
   }
-
   return {
     columnGroups: groups,
 
     rows: identifiers.size < 9 ? evaluateAll({
       expressions: identifiers
-        .concat(topLevelExpressions)
+        .concat(topLevelExpressions.map((e) => e.content))
         .concat(subExpressions).toList(),
       identifiers,
     }).map((row) => ({

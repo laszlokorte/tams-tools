@@ -143,16 +143,16 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
   const expressionList = I.List(expressions);
 
   const identifiers = expressionList.flatMap(
-    (expression) => collectIdentifiers(expression)
+    (expression) => collectIdentifiers(expression.content)
   ).toSet().toList();
 
   const subExpressions = expressionList.flatMap(
-    (expression) => collectSubExpressions(expression)
+    (expression) => collectSubExpressions(expression.content)
       .toList()
   );
 
   const toplevelExpressions = expressionList.filter(
-    (e) => e.node !== 'identifier'
+    (e) => e.content.node !== 'identifier'
   );
 
   return {

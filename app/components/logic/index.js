@@ -96,18 +96,18 @@ export default (responses) => {
                 [expr, evaluateExpression(expr, identifierMap)]
               ;
 
-              subEvalutation = I.Map(state.toplevelExpressions.map(evaluate))
+              subEvalutation = I.Map(state.toplevelExpressions.map((e) => evaluate(e.content)))
               .merge(I.Map(state.subExpressions.map(evaluate)))
               .merge(identifierMap);
             }
 
             if (state.expressions.size === 1) {
-              return toTree(state.expressions.get(0), subEvalutation);
+              return toTree(state.expressions.get(0).content, subEvalutation);
             } else {
               return {
                 name: 'Expression List',
                 children: state.expressions.map(
-                  (e) => toTree(e, subEvalutation)
+                  (e) => toTree(e.content, subEvalutation)
                 ).toArray(),
                 hidden: true,
               };
@@ -151,7 +151,7 @@ export default (responses) => {
     formatter$,
     (state, formatter) => {
       return state.expressions ? state.expressions.map(
-        (e) => expressionToString(e, formatter)
+        (e) => expressionToString(e.content, formatter)
       ).join(', ') : '';
     }
   ).share();
