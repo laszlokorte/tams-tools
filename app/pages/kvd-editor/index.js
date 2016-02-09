@@ -7,6 +7,7 @@ import isolate from '@cycle/isolate';
 import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {selectAllDriver} from '../../drivers/select-all';
+import {globalEventDriver} from '../../drivers/global-events';
 
 import kv from '../../components/kv';
 import pla from '../../components/pla';
@@ -23,6 +24,7 @@ const kvdApp = (sources) => {
     DOM,
     preventDefault,
     keydown,
+    globalEvents,
   } = sources;
 
   const kvComponent = isolate(kv)({
@@ -31,6 +33,7 @@ const kvdApp = (sources) => {
 
   const plaComponent = isolate(pla)({
     DOM, preventDefault, keydown,
+    globalEvents,
     data$: kvComponent.plaData$,
     props$: O.just({}),
   });
@@ -42,6 +45,7 @@ const kvdApp = (sources) => {
     DOM,
     preventDefault,
     keydown,
+    globalEvents,
     props$: O.just({proportion: 0.65}),
     firstChild$: kvDOM,
     secondChild$: plaDOM,
@@ -66,6 +70,7 @@ const drivers = {
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
   selectAll: selectAllDriver,
+  globalEvents: globalEventDriver,
 };
 
 Cycle.run(kvdApp, drivers);

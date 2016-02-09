@@ -8,6 +8,7 @@ import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
+import {globalEventDriver} from '../../drivers/global-events';
 
 import LedComponent from '../../components/led';
 import splitPane from '../../components/splitpane';
@@ -17,6 +18,7 @@ const fsmEditor = (sources) => {
     DOM,
     preventDefault,
     keydown,
+    globalEvents,
   } = sources;
 
   /*eslint-disable max-len*/
@@ -161,6 +163,7 @@ const fsmEditor = (sources) => {
     DOM,
     preventDefault,
     keydown,
+    globalEvents,
     props$: O.just({proportion: 0.50}),
     firstChild$: leftDOM,
     secondChild$: rightDOM,
@@ -182,6 +185,7 @@ const drivers = {
   keydown: keyboardDriver,
   autoResize: autoResizeDriver,
   selectAll: selectAllDriver,
+  globalEvents: globalEventDriver,
 };
 
 Cycle.run(fsmEditor, drivers);

@@ -15,6 +15,7 @@ export default (responses) => {
     DOM,
     props$,
     data$,
+    globalEvents,
   } = responses;
 
   const graph$ = data$.map(graphFromJson);
@@ -25,6 +26,7 @@ export default (responses) => {
 
   const stage = isolate(graphics, 'mygraphics')({
     DOM,
+    globalEvents,
     props$: O.just({
       width: 1200,
       height: 600,

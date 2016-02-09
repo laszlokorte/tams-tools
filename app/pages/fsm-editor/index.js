@@ -9,6 +9,7 @@ import {stopPropagationDriver} from '../../drivers/stop-propagation';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
+import {globalEventDriver} from '../../drivers/global-events';
 
 import FSMComponent from '../../components/fsm';
 import GraphComponent from '../../components/graph';
@@ -19,6 +20,7 @@ const fsmEditor = (sources) => {
     DOM,
     preventDefault,
     keydown,
+    globalEvents,
   } = sources;
 
   const fsmComponent = isolate(FSMComponent)({
@@ -29,6 +31,7 @@ const fsmEditor = (sources) => {
   const graphComponent = isolate(GraphComponent)({
     DOM,
     keydown,
+    globalEvents,
     data$: fsmComponent.graph$,
   });
 
@@ -39,6 +42,7 @@ const fsmEditor = (sources) => {
     DOM,
     preventDefault,
     keydown,
+    globalEvents,
     props$: O.just({proportion: 0.65}),
     firstChild$: leftDOM,
     secondChild$: rightDOM,
@@ -64,6 +68,7 @@ const drivers = {
   keydown: keyboardDriver,
   autoResize: autoResizeDriver,
   selectAll: selectAllDriver,
+  globalEvents: globalEventDriver,
 };
 
 Cycle.run(fsmEditor, drivers);

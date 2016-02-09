@@ -5,12 +5,13 @@ import intent from './intent';
 export default (responses) => {
   const {
     DOM,
+    globalEvents,
     props$,
     firstChild$,
     secondChild$,
   } = responses;
 
-  const actions = intent(DOM);
+  const actions = intent(DOM, globalEvents);
   const state$ = model({
     props$,
     firstChild$: firstChild$,

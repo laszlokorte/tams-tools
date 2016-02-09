@@ -14,6 +14,7 @@ import intent from './intent';
 export default (responses) => {
   const {
     DOM,
+    globalEvents,
     props$,
     data$,
   } = responses;
@@ -26,6 +27,7 @@ export default (responses) => {
 
   const stage = isolate(graphics, 'mygraphics')({
     DOM,
+    globalEvents,
     props$: O.just({
       width: 1200,
       height: 600,
