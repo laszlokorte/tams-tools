@@ -97,7 +97,7 @@ module.exports = {
       title: 'Home',
       minify: htmlMinifyOptions,
       chunks: ['home', 'vendor'],
-      template: './app/pages/home/index.html',
+      template: './app/index.html',
       filename: 'index.html',
       favicon: './app/pages/home/home.ico',
     }),
