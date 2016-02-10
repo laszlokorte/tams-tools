@@ -8,15 +8,15 @@ const touchTarget = (evt) =>
   )
 ;
 
-export default ({DOM, cancel$}) => {
+export default ({DOM, globalEvents, cancel$}) => {
   const removeLoopButton = DOM
     .select('[data-loop-index]');
 
   const removeLoopEvent$ = removeLoopButton
     .events('click');
 
-  const touchEnd$ = O.fromEvent(document, 'touchend');
-  const mouseUp$ = O.fromEvent(document, 'mouseup');
+  const touchEnd$ = globalEvents.events('touchend');
+  const mouseUp$ = globalEvents.events('mouseup');
 
   const mouseEnterEvent$ = DOM
     .select('.kv-cell-atom[data-edit="loops"][data-kv-cell]')

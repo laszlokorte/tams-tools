@@ -15,6 +15,7 @@ export default (responses) => {
   const {
     DOM,
     keydown,
+    globalEvents,
   } = responses;
 
   const plaSubject = new ReplaySubject(1);
@@ -53,7 +54,7 @@ export default (responses) => {
   });
 
   const actions = intent({
-    DOM, keydown,
+    DOM, globalEvents, keydown,
     openData$: openPanel.data$,
     viewSetting$: settingsPanel.viewSetting$,
   });

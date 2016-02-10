@@ -12,12 +12,12 @@ const isNoInput = (evt) => {
     evt.target.contentEditable !== "true";
 };
 
-export default ({DOM, keydown, openData$, viewSetting$}) => {
+export default ({DOM, globalEvents, keydown, openData$, viewSetting$}) => {
   const cancel$ = keydown
     .filter((evt) => evt.keyCode === 27)
     .share();
 
-  const loops = loopActions({DOM, cancel$});
+  const loops = loopActions({DOM, globalEvents, cancel$});
   const functions = functionActions({DOM});
   const panels = panelActions({DOM});
 

@@ -27,7 +27,7 @@ const kvdApp = (sources) => {
   } = sources;
 
   const kvComponent = isolate(kv)({
-    DOM, preventDefault, keydown,
+    DOM, globalEvents, preventDefault, keydown,
   });
 
   const plaComponent = isolate(pla)({
