@@ -33,8 +33,10 @@ export default (DOM, globalEvents) => {
   const panStart$ = O.amb(
     rootElement.events('mousedown')
       .map((evt) => ({pos: {x: evt.pageX, y: evt.pageY}, event: evt})),
-    rootElement.events('touchstart')
-      .map((evt) => ({pos: touchCenter(evt), event: evt}))
+    O.merge([
+      rootElement.events('touchstart'),
+      rootElement.events('touchend').filter((evt) => evt.touches.length > 0),
+    ]).map((evt) => ({pos: touchCenter(evt), event: evt}))
   );
   const panMove$ = O.amb(
     globalEvents.events('mousemove').map((evt) => ({
@@ -61,7 +63,7 @@ export default (DOM, globalEvents) => {
 
   const pinchStart$ = rootElement
     .events('touchstart')
-    .filter((evt) => evt.touches && evt.touches.length === 2);
+    .filter((evt) => evt.touches.length === 2);
   const pinchMove$ = globalEvents
     .events('touchmove');
   const pinchEnd$ = O.merge(
