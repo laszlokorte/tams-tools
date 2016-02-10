@@ -4,8 +4,6 @@ import {
   colgroup, col,
 } from '@cycle/dom';
 
-import {ContentThunk} from '../../../lib/contentThunk';
-
 import './index.styl';
 
 const columnCount = (tableData) =>
@@ -56,7 +54,7 @@ const renderTable = (tableData, selectedIndex) =>
   ])
 ;
 
-const render = ({table: tableData, selectedIndex}, index) =>
+const render = ({table: tableData, selectedIndex}) =>
   div('.table-scroller', [
     div('.table-scroller-body', [
       tableData === null ? null :
