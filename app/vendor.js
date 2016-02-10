@@ -9,7 +9,6 @@ module.exports = [
   "@cycle/dom",
   "@cycle/isolate",
   "@cycle/storage",
-  "@cyclic/cycle-hammer-driver",
   "immutable",
   "rx",
   "virtual-dom",

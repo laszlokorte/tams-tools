@@ -1,7 +1,6 @@
 import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
-import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
@@ -66,7 +65,7 @@ const kvdApp = (sources) => {
 
 // The drivers for the kv editor
 const drivers = {
-  DOM: makeHammerDriver(makeDOMDriver('#app')),
+  DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
   selectAll: selectAllDriver,

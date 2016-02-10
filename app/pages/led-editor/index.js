@@ -2,7 +2,6 @@ import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
@@ -180,7 +179,7 @@ const fsmEditor = (sources) => {
 };
 
 const drivers = {
-  DOM: makeHammerDriver(makeDOMDriver('#app')),
+  DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
   keydown: keyboardDriver,
   autoResize: autoResizeDriver,

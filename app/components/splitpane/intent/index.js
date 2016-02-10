@@ -17,8 +17,19 @@ export default (DOM, globalEvents) => {
     handle.events('touchstart')
   );
   const panMove$ = O.amb(
-    globalEvents.events('mousemove').map(({pageX: x, pageY: y}) => ({x, y})),
-    globalEvents.events('touchmove').map((evt) => touchCenter(evt))
+    globalEvents.events('mousemove').map((evt) => ({
+      x: evt.pageX,
+      y: evt.pageY,
+      event: evt,
+    })),
+    globalEvents.events('touchmove').map((evt) => {
+      const center = touchCenter(evt);
+      return {
+        x: center.x,
+        y: center.y,
+        event: evt,
+      };
+    })
   );
   const panEnd$ = O.amb(
     globalEvents.events('mouseup'),
@@ -39,6 +50,10 @@ export default (DOM, globalEvents) => {
   return {
     resize$,
 
-    preventDefault: O.empty(),
+    preventDefault: panStart$.flatMapLatest(() =>
+      panMove$
+      .map((move) => move.event)
+      .takeUntil(panEnd$)
+    ).share(),
   };
 };

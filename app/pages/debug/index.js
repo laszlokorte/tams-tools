@@ -1,7 +1,6 @@
 import Cycle from '@cycle/core';
 import isolate from '@cycle/isolate';
 import {makeDOMDriver, div} from '@cycle/dom';
-import {makeHammerDriver} from '@cyclic/cycle-hammer-driver';
 import {Observable as O} from 'rx';
 
 /*
@@ -10,10 +9,6 @@ import {Observable as O} from 'rx';
   the application
 */
 
-const hammerPanOptions = (manager, Hammer) => {
-  const pan = new Hammer.Tap();
-  manager.add(pan);
-};
 
 const Canvas = ({DOM, content$}) => {
   const intent = (D) => {
@@ -21,7 +16,7 @@ const Canvas = ({DOM, content$}) => {
 
     return ({
       toggle$: el
-        .events('tap', hammerPanOptions)
+        .events('click')
         .map(() => true),
     });
   }
@@ -71,7 +66,7 @@ const Drawing = ({DOM}) => {
 
     return ({
       toggle$: el
-        .events('tap', hammerPanOptions)
+        .events('click')
         // we can stop the propagation to prevent
         // the Canvas(outer) from getting click events
         // which happen in the inner:
@@ -144,7 +139,7 @@ const main = ({DOM}) => {
 };
 
 const drivers = {
-  DOM: makeHammerDriver(makeDOMDriver('#app')),
+  DOM: makeDOMDriver('#app'),
 };
 
 Cycle.run(main, drivers);
