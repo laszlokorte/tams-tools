@@ -134,24 +134,24 @@ export const evaluateAll = ({
   expressions, identifiers,
   acc = I.List(), counter = Math.pow(2, identifiers.size) - 1,
 }) => {
-  if (counter < 0) {
-    return acc.reverse();
-  } else {
-    let mutCounter = counter;
-    let mutAcc = acc;
-    while (mutCounter >= 0) {
-      const identifierMap = makeIdentifierMap(identifiers, mutCounter);
-      const evaluator = makeEvaluator(identifierMap);
+  // if (counter < 0) {
+  //   return acc.reverse();
+  // } else {
+  let mutCounter = counter;
+  let mutAcc = acc;
+  while (mutCounter >= 0) {
+    const identifierMap = makeIdentifierMap(identifiers, mutCounter);
+    const evaluator = makeEvaluator(identifierMap);
 
-      mutAcc = mutAcc.push(row({
-        identifierValues: identifierMap,
-        values: expressions.map(evaluator).toList(),
-      }));
+    mutAcc = mutAcc.push(row({
+      identifierValues: identifierMap,
+      values: expressions.map(evaluator).toList(),
+    }));
 
-      mutCounter--;
-    }
+    mutCounter--;
+  }
 
-    return mutAcc;
+  return mutAcc.reverse();
 /*
     const identifierMap = I.Map(identifiers.map(
       (name, i) => [name, !!(Math.pow(2, i) & counter)]
@@ -170,8 +170,8 @@ export const evaluateAll = ({
       acc: newAcc,
       counter: counter - 1,
     });
-    */
   }
+    */
 };
 
 export const collectSubExpressions = (
