@@ -1,5 +1,5 @@
 start
-  = list:EOF {
+  = list:expressions EOF {
     return list;
   }
   / _ EOF {
