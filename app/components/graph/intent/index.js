@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 
-export default (DOM) => {
+export default (DOM, globalEvents) => {
   const node = DOM.select('[data-node-index]');
 
   const dragStart$ = O.amb(
@@ -9,20 +9,21 @@ export default (DOM) => {
   );
 
   const dragEnd$ = O.amb(
-    O.fromEvent(document, 'mouseup'),
-    O.fromEvent(document, 'touchend')
+    globalEvents.events('mouseup'),
+    globalEvents.events('touchend')
   );
 
-  const dragMove$ = O.fromEvent(document, 'mousemove');
+  const dragMove$ = O.amb(
+    globalEvents.events('mousemove'),
+    globalEvents.events('touchmove')
+  );
 
   const drag$ = dragStart$.map(() => {
     return dragMove$.takeUntil(dragEnd$);
   }).mergeAll();
 
-  drag$.subscribe((e) => console.log(e));
-
   return {
-    preventDefault: O.empty(),
+    preventDefault: drag$,
     stopPropagation: O.merge(
       dragStart$
     ),
