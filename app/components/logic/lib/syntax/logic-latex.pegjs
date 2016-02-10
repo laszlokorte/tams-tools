@@ -131,8 +131,8 @@ _ "whitespace"
   = [ \t\n\r]*
 
 expressions
-  = head:labeledExpression tail:(expressionSeparator labeledExpression)+ {
-    return [head, ...tail.map((t) => t[1])];
+  = head:labeledExpression _ tail:(expressionSeparator _ labeledExpression)+ {
+    return [head, ...tail.map((t) => t[2])];
   }
   / head:labeledExpression {
     return [head];
