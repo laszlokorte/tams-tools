@@ -170,5 +170,6 @@ export default (responses) => {
     autoResize: actions.autoResize,
     selectAll: savePanel.selectAll,
     tree$: tree$,
+    insertString: actions.insertString$,
   };
 };

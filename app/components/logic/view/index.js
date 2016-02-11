@@ -79,6 +79,41 @@ const render = (state, table) =>
               option({value: 'latex',
                 selected: state.lang === 'latex'}, 'Latex'),
             ]),
+
+            button({
+              title: 'XOR',
+              attributes: {
+                'data-action-insert': '⊕',
+              },
+            }, '⊕'),
+
+            button({
+              title: 'AND',
+              attributes: {
+                'data-action-insert': '∧',
+              },
+            }, '∧'),
+
+            button({
+              title: 'OR',
+              attributes: {
+                'data-action-insert': '∨',
+              },
+            }, '∨'),
+
+            button({
+              title: 'Top',
+              attributes: {
+                'data-action-insert': '⊤',
+              },
+            }, '⊤'),
+
+            button({
+              title: 'Bottom',
+              attributes: {
+                'data-action-insert': '⊥',
+              },
+            }, '⊥'),
           ]),
           div('.logic-input', [
             textarea('.logic-input-field', {

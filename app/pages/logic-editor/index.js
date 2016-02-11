@@ -8,6 +8,7 @@ import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
 import {globalEventDriver} from '../../drivers/global-events';
+import {insertStringDriver} from '../../drivers/rangy';
 
 import logic from '../../components/logic';
 import tree from '../../components/tree';
@@ -55,6 +56,7 @@ const logicApp = (sources) => {
     ]),
     selectAll: logicComponent.selectAll,
     autoResize: logicComponent.autoResize,
+    insertString: logicComponent.insertString,
   };
 };
 
@@ -65,6 +67,7 @@ const drivers = {
   autoResize: autoResizeDriver,
   selectAll: selectAllDriver,
   globalEvents: globalEventDriver,
+  insertString: insertStringDriver,
 };
 
 Cycle.run(logicApp, drivers);
