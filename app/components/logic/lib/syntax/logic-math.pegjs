@@ -9,7 +9,7 @@ start
 labelOperator "labelOperator"
   = "="
 
-logicAnd = "&&" / "&" / "*" / "∧" / ""
+logicAnd = "&&" / "&" / "*" / "∧"
 logicOr = "||" / "|" / "+" / "∨"
 logicXor = "^" / "⊕"
 logicNot = "!" / "~" / "-" / "¬"
@@ -110,9 +110,9 @@ additive
   / multiplicative
 
 multiplicative
-  = first:primary _ rest:(operatorMul _ primary)+ {
+  = first:primary _ rest:(operatorMul? _ primary)+ {
     return rest.reduce(function(memo, curr) {
-      return {node: 'binary', operator: curr[0], lhs: memo, rhs: curr[2]};
+      return {node: 'binary', operator: curr[0] || "AND", lhs: memo, rhs: curr[2]};
     }, first);
   }
   / primary
