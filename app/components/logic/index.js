@@ -138,7 +138,7 @@ export default (responses) => {
     })
     .shareReplay(1);
 
-  const table$ = state$.combineLatest(
+  const table$ = state$.debounce(300).combineLatest(
     formatter$,
     (state, formatter) =>
     state.expressions &&
