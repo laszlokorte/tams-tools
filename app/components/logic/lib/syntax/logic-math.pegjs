@@ -41,12 +41,10 @@ identifierName
 
 charNoDoubleQuote
   = charEscapeSequence
-    / '""' { return '"'; }
     / [^"]
 
 charNoSingleQuote
   = charEscapeSequence
-    / "''" { return "'"; }
     / [^']
 
 charEscapeSequence
