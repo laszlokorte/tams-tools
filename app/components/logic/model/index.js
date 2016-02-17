@@ -12,6 +12,13 @@ import latexParser from '../lib/syntax/logic-latex.pegjs';
 import mathParser from '../lib/syntax/logic-math.pegjs';
 import pythonParser from '../lib/syntax/logic-python.pegjs';
 
+const completions = {
+  c: ['&','|','^','~','1','0'],
+  python: ['and','or','xor','not','true','false'],
+  latex: ['\\wedge','\\vee','\\oplus','\\neg','\\top','\\bot'],
+  math: ['∧','∨','⊕','¬','⊤','⊥'],
+};
+
 function ParseError({lang, string, message, location, detected = null}) {
   this.lang = lang;
   this.string = string;
@@ -229,6 +236,9 @@ export default (actions) => {
           identifiers,
           subExpressions,
           toplevelExpressions,
+          completions: completions[
+            (detected && detected.toLowerCase()) || lang
+          ] || [],
         }))
     ).switch()
   );

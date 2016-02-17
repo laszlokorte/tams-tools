@@ -79,42 +79,17 @@ const render = (state, table) =>
               option({value: 'latex',
                 selected: state.lang === 'latex'}, 'Latex'),
             ]),
-
-            button({
-              title: 'XOR',
-              attributes: {
-                'data-action-insert': '⊕',
-              },
-            }, '⊕'),
-
-            button({
-              title: 'AND',
-              attributes: {
-                'data-action-insert': '∧',
-              },
-            }, '∧'),
-
-            button({
-              title: 'OR',
-              attributes: {
-                'data-action-insert': '∨',
-              },
-            }, '∨'),
-
-            button({
-              title: 'Top',
-              attributes: {
-                'data-action-insert': '⊤',
-              },
-            }, '⊤'),
-
-            button({
-              title: 'Bottom',
-              attributes: {
-                'data-action-insert': '⊥',
-              },
-            }, '⊥'),
           ]),
+          div('.complete-panel',
+            state.completions.map((c) =>
+              button('.completion-button', {
+                title: 'Bottom',
+                attributes: {
+                  'data-action-insert': c,
+                },
+              }, c)
+            )
+          ),
           div('.logic-input', [
             textarea('.logic-input-field', {
               value: state.string,

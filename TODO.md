@@ -1,12 +1,23 @@
 # Todo
 
+## KV Diagrams
+
 * Input Renaming
 * Allow editing of existing loops
 
-## performance
+### performance
 
 * make more use of virtual-dom thunk
 
-## cleanup
+### cleanup
 
 * refactor css definitions
+
+
+## Logic Expressions
+
+* Context
+* Topological Sort
+* Table Syntax
+* Buttons
+* Button-Up-Evaluation
