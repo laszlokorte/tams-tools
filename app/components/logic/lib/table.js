@@ -50,6 +50,6 @@ export default (
     })).toArray() : [],
 
     error: identifiers.size < 9 ? null :
-      "Two many variables",
+      "Too many variables",
   };
 };
