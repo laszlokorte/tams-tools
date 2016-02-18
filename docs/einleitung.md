@@ -201,26 +201,137 @@ Theoretisch kann Webpack mit dem Shellbefehl `./node_modules/.bin/webpack` ausge
 Darum wird in diesem Projekt NPM als Proxy zum ausführen von Shellbefehlen verwendet:
 In der package.json Datei sind unter dem Abschnitt `scripts` eine Reihe von Shellbefehlen definiert, die mit Hilfe von NPM ausgeführt werden können. NPM kümmert sich dabei darum, dass alle Umgebungsvariablen richtig gesetzt werden, sodass alle Dateipfade richtig aufgelöst werden können.
 Beispielsweise ist in der der package.json Datei folgender `script` Eintrag definiert:
+
 ```json
 {
 ...
 "start": "webpack-dev-server --config webpack/dev.config.babel.js --progress --inline --hot --host 0.0.0.0",
 }
 ```
+
 Mit dieser Zeile wird ein Scriptmit dem Namen `start` definiert, welches den Befehl `webpack-dev-server` ausführen und eine Reihe an Parametern mitgeben soll. `webpack-dev-server` ist die ausführbare Datei des Webpack-Plugins, welches eine Webserver mit automatischer Code-Regenerierung bereitstellt. `webpack-dev-server` liegt entspreched ebenfalls innerhalb des `node_modules` Ordners und wird von NPM automatisch gefunden.
 `webpack-dev-server` ohne NPM und ohne vollständigen Pfad in der Shell auszuführen ist nicht möglich, da die Shell ohne NPM nicht weiss wo `webpack-dev-server` zu finden ist.
 
 Alle Shellbefehle, die in diesem Projekt benötigt werden, sind also in der package.json definiert.
 
 Die in der package.json definierten Befehle können auf der Shell mithilfe von NPM ausgeführt werden:
+
 ```shell
 $ npm run [Name des Befehls]
 ```
+
 Beispielweise, um den Development-Server zu starten:
+
 ```shell
 $ npm run start
 ```
+
 oder um das Projekt in komprimierte Dateien zu kompilieren:
+
 ```shell
 $ npm run compile
 ```
+
+### Projekt Compilieren
+
+`npm run compile` compiliert das Projekt und legt das Ergebnis im /build/ Ordner ab.
+Die hiermit erzeugten HTML, CSS und JavaScript Dateien sind alleine lauffähig, benötigen also kein NodeJS oder NPM mehr um ausgeführt zu werden und sind auch auf keine installierten Abhängigkeiten mehr angewiesen.
+Der Inhalt des /build/ Ordners kann also auf einen Webserver hochgeladen oder andersweitig verbreitet werden oder lässt sich auch lokal im Browser öffnen.
+
+
+Neue Seite erstellen
+--------------------
+
+Mit einer Seite ist eine HTML-Seite genannt, die vom Benutzer explizit aufgerufen werden und benutzt werden kann - also ein Einsteigspunkt (entry) in die Application, vergleichbar mit der `main` Funktion eines Java oder C Programms.
+
+Um eine neue Seite zu erzeugen sind zwei Schritte notwending:
+
+1. eine neue JavaScript-Datei anlegen
+2. diese JavaScript-Datei in Webpack als Einstiegspunkt definieren
+
+### 1. JavaScrit-Datei anlegen
+
+Theoretisch ist es egal, wo diese JavaScript-Datei innerhalb des Projektes angelegt wird.
+Der Übersichtlichkeit liegen in diesem Projekt aber alle Einstiegspunkte im `/app/pages/` Ordner. Auch zukünftigte Seiten sollten entsprechend dort angelegt werden.
+Jeder Einstiegspunkt bekommt einen eigenen Unterordner in dem eine `index.js` enthalten ist. Die index.js kann zu Beginn leer sein.
+
+Um Beispielsweise eine neue Seite namens "Tutorial" anzulegen, wird im `/app/pages/` Ordner ein neuer Ordner `tutorials` erzeugt und darin eine Datei mit dem Namen `index.js` angelegt.
+(`/app/pages/tutorials/index.js`)
+
+### 3. Einstiegspunkt in Webpack konfigurieren
+
+Um die neue JavaScript-Datei nun in Webpack als Einstiegspunkt zu definieren, muss die /webpack/common.config.babel.js Datei bearbeitet werden. 
+In dieser Datei ist unter dem Schlüssel `"entry"` eine Map mit Einsteigspunkten definiert (Zeile 40):
+
+```json
+...
+entry: {
+  home: "./app/pages/home/index.js",
+  kvdEditor: "./app/pages/kvd-editor/index.js",
+  debug: "./app/pages/debug/index.js",
+  logicEditor: "./app/pages/logic-editor/index.js",
+  ...
+},
+...
+```
+
+Um für die neue Tutorial-Seite einen Einstiegspunkt zu definieren, muss dieser Map ein neuer Eintrag hinzugefügt werden:
+
+```json
+tutorial: "./app/pages/tutorial/index.js",
+```
+
+Damit dieser Einstiegspunkt von einem Benutzer mit einem Browser auch aufgerufen werden kann, wird noch eine dazugehörigen HTML-Seite benötigt, in der dieser Einstiegspunkt per `<script>`-Tag eingebunden wird.
+
+Da der gesamte DOM sowieso per JavaScript erzeugt und manipuliert wird, genügt eine sehr einfache HTML-Seite die nur aus einem minimalen Grundgerüst besteht.
+In /app/index.html ist eine solche Seite definiert. Diese Seite kann von allen Einstiegspunkten verwendet werden, sodass nicht jeder Einstiegspunkt seine eigene HTML-Seite definieren muss.
+
+Webpack muss nur noch mit mitgeteilt bekommen, dass auch für den neuen Einstiegspunkt "tutorial" diese HTML-Seite verwendet werden soll.
+Hierfür muss nur dem `"plugins"` Array weiter unten in der `/webpack/common.config.babel.js` ein Eintrag hinzugefügt werden:
+
+```javascript
+new HtmlWebpackPlugin({
+  // Der Titel der Seite:
+  title: 'Tutorial', 
+
+  // Komprimierungsoptionen, die weiter oben definiert sind:
+  minify: htmlMinifyOptions,
+  
+  // Die Namen der Einstiegspunkt, die verwendet werden sollen. 'tutorial' ist der neu definierte Einstiegspunkt. 'vendor' läd Zusätzliche Bibliotheken, wie RxJS und CycleJS hinzu:
+  chunks: ['tutorial', 'vendor'], 
+  
+  // Der Pfad zu der HTML Datei, die verwendet werden soll:
+  template: './app/index.html', 
+  
+  // Der Name der HTML-Datei, die vom Benutzer aufgerufen werden kann, um diesen Einstiegspunkt zu öffnen:
+  filename: 'tutorial.html',
+}),
+```
+
+Nachdem diese beide Änderung an der Webpack-Konfiguration vorgenommen wurden, muss der Webpack-Development-Server, falls er schon gestartet war, einmal neugestartet werden, weil Änderungen an der Konfiguration nicht automatisch übernommen werden.
+
+Danach ist die neue Seite unter `http://localhost:3000/tutorial.html` erreichbar und Änderungen an der `/app/pages/tutorial/index.js` werden live übernommen, solange der Development-Server läuft.
+
+
+Eine einfache CycleJS-Anwendung bauen
+-------------------------------------
+
+Wie weiter oben erklärt, wird in diesem Projekt starker Gebrauch der RxJS Bibliothek, dem `Observable` Datentyp dem von CycleJS beschriebenen Entwurfsmuster MVI (Model-View-Intent) gemacht.
+
+CycleJS und das MVI Entwurfsmuster sind auf der [Homepage von CycleJS](http://cycle.js.org/getting-started.html) sehr gut dokumentiert.
+Die anfänglich größte Hürde bei der Arbeit mit CycleJS und RxJS stellt das Verständnis des Observable Datentyps dar.
+Die [ReactiveX Homepage](http://reactivex.io/) bietet eine sehr gute Einleitung zu der Idee des Observable Typs.
+Auf der http://rxmarbles.com/ kann man interaktiv mit den verschiedenen Stream-Operatoren experimentieren um ein besseres Verständnis zu bekommen.
+
+In diesem Abschnitt soll anhand eines einfachen Beispiels gezeigt und erklärt werden, wie sich mit Hilfe des Observable Typs sehr einfach interaktive Anwendungen zusammen bauen lassen.
+
+### Immutable Data Structures
+
+Wichtig ist, dass RxJS und CycleJS auf Ideen der Funktionalen Programmierung aufbaut.
+Das bedeutet, die Anwendungen wird nur aus Funktionen zusammengebaut, es werden keine Klassen verwendet. Datenstrukturen wie Beispielsweise Listen oder HashMaps werden nicht veändert/mutiert. Für jeden neuen Zustand der Anwendung, der repräsentiert werden soll und für jede Änderung die zur Laufzeit der Anwendung passiert, werden neue Datensätze erzeugt, die den jeweiligen Zustand repräsentieren. 
+In einer Anwendung, die das hinzufügen und löschen von Einträgen einer Liste erlaubt, gibt es nicht nur eine einzige Liste mit Einträgen die der Benutzer durch seine Interaktionen bearbeitet, sondern jede Benutzerinteraktion führt zur Erzugung einer Komplett neuen Liste die den jeweils aktuellen Zustand in Folge der Interaktion darstellt.
+Wenn der Benutzer einen Eintrag löscht, wird eine neue Liste erzeugt, die einen Eintrag weniger enthält als die vorherige Liste.
+
+Ein immenser Vorteil dieses Funktionalen Ansatzes ist, dass die komplexität der Anwendungslogik dadurch reduziert wird, dass mehrere ändernde Operationen nicht in die Quere kommen können.
+Es kann nicht passieren, dass ein Teil der Anwendung Datensätze ändert, die ein anderer Teil der Anwendung schon begonnen hat zu bearbeiten.
+Dadurch, dass Datensätze nicht verändert werden können, sondern ständig neu erzeugt werden müssen, lassen sich Fehler auch viel einfacher aufspüren, weil von Haus aus alle zur Laufzeit durchlaufenden Zustände der Anwendung bei bedarf mitgeschrieben und nachträglich nachvollzogen werden können.
