@@ -1,12 +1,17 @@
-import {div, span, ul, li, h3, button} from '@cycle/dom';
+import {div, span, ul, li, h3, button, input as inputElement} from '@cycle/dom';
 
 import {TYPE_MOORE, TYPE_MEALY} from '../lib/state-machine';
+
+import renderMachine from './machine';
 
 import './index.styl';
 
 const renderInput = (input, index, editable) =>
   li([
-    span(`${input.name} (${input.initialValue})`),
+    [
+      inputElement({type: 'checkbox', checked: input.initialValue})
+    ],
+    span(`${input.name}`),
     editable ? button({attributes: {
       'data-fsm-remove-input': index,
     }}, 'Delete') : void 0,
@@ -91,6 +96,7 @@ const render = (state) => div([
       state.currentEditMode === 'edit'
     )
   ).toArray()),
+  renderMachine(state.fsm),
 ])
 ;
 

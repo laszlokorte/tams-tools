@@ -75,6 +75,12 @@ export const removeOutput = (machine, outputIndex) =>
   machine.deleteIn(['outputs', outputIndex])
 ;
 
+export const setInitialValue = (machine, inputIndex, value) =>
+  machine.updateIn(['inputs', inputIndex], (input) =>
+    input.set('initialValue', value)
+  )
+;
+
 export const newMachine = () => {
   return _stateMachine();
 };

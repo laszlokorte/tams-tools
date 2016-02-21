@@ -9,7 +9,6 @@ import {Observable as O} from 'rx';
   the application
 */
 
-
 const Canvas = ({DOM, content$}) => {
   const intent = (D) => {
     const el = D.select('.clickableBackground');
