@@ -219,7 +219,7 @@ export const collectSubExpressions = (
   case 'constant':
     return acc;
   case 'vector':
-    return acc;
+    return newAcc;
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }

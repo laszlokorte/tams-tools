@@ -135,7 +135,9 @@ export default (machine, editable) => {
       }),
       svg('text', {
         class: 'fsm-block-label',
-        transform: `translate(14, ${lambdaNetworkHeight/2}) rotate(-90)`,
+        transform: `translate(14, ${
+          lambdaNetworkHeight / 2
+        }) rotate(-90)`,
         x: 0,
         y: 0,
         'text-anchor': 'middle',
@@ -165,7 +167,11 @@ export default (machine, editable) => {
     }),
 
     svg('path', {
-      d: `M45,${deltaNetworkHeight + 75} L20,${deltaNetworkHeight + 75} L20,38 L180,38`,
+      d: `M45,${
+        deltaNetworkHeight + 75
+      } L20,${
+        deltaNetworkHeight + 75
+      } L20,38 L180,38`,
       class: 'arrow-line',
       style: {
         fill: 'none',

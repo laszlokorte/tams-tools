@@ -39,6 +39,12 @@ export default () => div([
       'Identifiers can be quoted',
       'adjacent get ANDed automatically',
     ]),
+    helpItem('Table/Vector literal', [
+      'In all languages a vector of truth values can be',
+      'expressed via for example: [P,Q:0110]',
+      'In which case P and Q are identfiers and 0110 is',
+      'a sequence of value of the table\'s column.',
+    ]),
   ]),
   h2('Truth table'),
   dl([
