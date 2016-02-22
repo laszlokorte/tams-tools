@@ -26,10 +26,10 @@ export default (DOM) => {
       .share(),
 
     removeInput$: removeInputEvent$
-      .map((evt) => parseInt(evt.ownerTarget.dataset.fsmRemoveInput, 10))
+      .map((evt) => parseInt(evt.ownerTarget.getAttribute('data-fsm-remove-input'), 10))
       .share(),
     removeOutput$: removeOutputEvent$
-      .map((evt) => parseInt(evt.ownerTarget.dataset.fsmRemoveOutput, 10))
+      .map((evt) => parseInt(evt.ownerTarget.getAttribute('data-fsm-remove-output'), 10))
       .share(),
 
     setType$: setTypeEvent$

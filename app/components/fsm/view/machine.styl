@@ -7,6 +7,51 @@
 .fsm-block-label
   font-size 6pt
 
+.fsm-button
+  cursor pointer
+
+  &:active
+    .fsm-button-background
+      fill #c0c0c0
+
+.fsm-port-label
+  font-size 6pt
+
+.fsm-button-background
+  fill #ccc
+  stroke #DDDDDD
+  stroke-width 2px
+
+.fsm-button-label
+  fill black
+  font-size 6pt
+
+.fsm-button-tick
+  cursor pointer
+  .fsm-button-background
+    fill green
+  &:active
+    .fsm-button-background
+      fill darken(green, 5%)
+
+.fsm-port-button-remove
+  fill darkred
+  cursor pointer
+
+.fsm-port-input
+  fill #777777
+  stroke #777777
+
+.fsm-port-input-wire
+  stroke-width 3px
+
+.fsm-port-output
+  fill #777777
+  stroke #777777
+
+.fsm-port-output-wire
+  stroke-width 3px
+
 .arrow-line
   stroke #AFAFAF
   stroke-width 5px

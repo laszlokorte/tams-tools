@@ -20,7 +20,7 @@ const addInput = (state) =>
   resetSimulation(state)
   .update('fsm', (fsm) =>
     FSM.addInput(
-      "Input X",
+      "Input " + (fsm.inputs.size + 1),
       fsm
     )
   )
@@ -30,7 +30,7 @@ const addOutput = (state) =>
   resetSimulation(state)
   .update('fsm', (fsm) =>
     FSM.addOutput(
-      "Output X",
+      "Output " + (fsm.outputs.size + 1),
       fsm
     )
   )
