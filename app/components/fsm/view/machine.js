@@ -2,6 +2,7 @@ import {svg} from '@cycle/dom';
 
 import './machine.styl';
 import {TYPE_MEALY} from '../lib/state-machine';
+import {IF} from '../../../lib/h-helper';
 
 const PORT_HEIGHT = 18;
 
@@ -92,31 +93,32 @@ export default (machine, editable) => {
         fill: 'white',
       }, 'Taktglied'),
 
-      editable ? void 0 :
-      svg('g', {
-        class: 'fsm-button-tick',
-        'data-fsm-action': 'tick',
-      }, [
-        svg('rect', {
-          attributes: {
+      IF(!editable, () =>
+        svg('g', {
+          class: 'fsm-button-tick',
+          'data-fsm-action': 'tick',
+        }, [
+          svg('rect', {
+            attributes: {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 30,
+              class: 'fsm-button-background',
+            },
+          }),
+
+          svg('text', {
+            class: 'fsm-block-label',
+            transform: 'translate(50, 15)',
             x: 0,
             y: 0,
-            width: 100,
-            height: 30,
-            class: 'fsm-button-background',
-          },
-        }),
-
-        svg('text', {
-          class: 'fsm-block-label',
-          transform: 'translate(50, 15)',
-          x: 0,
-          y: 0,
-          'text-anchor': 'middle',
-          'dominant-baseline': 'central',
-          fill: 'white',
-        }, 'Takt!'),
-      ]),
+            'text-anchor': 'middle',
+            'dominant-baseline': 'central',
+            fill: 'white',
+          }, 'Takt!'),
+        ])
+      ),
     ]),
 
     svg('g', {
@@ -171,15 +173,16 @@ export default (machine, editable) => {
       },
     }),
 
-    machine.type === TYPE_MEALY ?
-    svg('path', {
-      d: `M0,${deltaNetworkHeight + 75} L0,15 L180,15`,
-      class: 'arrow-line',
-      style: {
-        fill: 'none',
-        markerEnd: 'url(#markerArrow)',
-      },
-    }) : void 0,
+    IF(machine.type === TYPE_MEALY, () =>
+      svg('path', {
+        d: `M0,${deltaNetworkHeight + 75} L0,15 L180,15`,
+        class: 'arrow-line',
+        style: {
+          fill: 'none',
+          markerEnd: 'url(#markerArrow)',
+        },
+      })
+    ),
 
     machine.inputs.map((input, i) =>
       svg('g', {
@@ -200,15 +203,17 @@ export default (machine, editable) => {
             r: 4,
           }),
 
-          editable ? svg('circle', {
-            attributes: {
-              'data-fsm-remove-input': i,
-            },
-            class: 'fsm-port-button-remove',
-            cx: 0,
-            cy: 0,
-            r: 7,
-          }) : void 0,
+          IF(editable, () =>
+            svg('circle', {
+              attributes: {
+                'data-fsm-remove-input': i,
+              },
+              class: 'fsm-port-button-remove',
+              cx: 0,
+              cy: 0,
+              r: 7,
+            })
+          ),
         ]),
 
         svg('text', {
@@ -221,30 +226,32 @@ export default (machine, editable) => {
       ])
     ).toArray(),
 
-    editable ? svg('g', {
-      attributes: {
-        'data-fsm-action': 'add-input',
-      },
-      transform: `translate(0, ${65 + PORT_HEIGHT * machine.inputs.size})`,
-      class: 'fsm-button',
-    }, [
-      svg('rect', {
-        class: 'fsm-button-background',
-        x: -60,
-        y: -PORT_HEIGHT / 2,
-        width: 70,
-        height: PORT_HEIGHT,
-        rx: 5,
-        ry: 5,
-      }),
-      svg('text', {
-        class: 'fsm-button-label',
-        x: -14,
-        y: 1,
-        'text-anchor': 'end',
-        'dominant-baseline': 'middle',
-      }, 'Add Input'),
-    ]) : void 0,
+    IF(editable, () =>
+      svg('g', {
+        attributes: {
+          'data-fsm-action': 'add-input',
+        },
+        transform: `translate(0, ${65 + PORT_HEIGHT * machine.inputs.size})`,
+        class: 'fsm-button',
+      }, [
+        svg('rect', {
+          class: 'fsm-button-background',
+          x: -60,
+          y: -PORT_HEIGHT / 2,
+          width: 70,
+          height: PORT_HEIGHT,
+          rx: 5,
+          ry: 5,
+        }),
+        svg('text', {
+          class: 'fsm-button-label',
+          x: -14,
+          y: 1,
+          'text-anchor': 'end',
+          'dominant-baseline': 'middle',
+        }, 'Add Input'),
+      ])
+    ),
 
     machine.outputs.map((output, i) =>
       svg('g', {
@@ -265,15 +272,17 @@ export default (machine, editable) => {
             r: 4,
           }),
 
-          editable ? svg('circle', {
-            attributes: {
-              'data-fsm-remove-output': i,
-            },
-            class: 'fsm-port-button-remove',
-            cx: 20,
-            cy: 0,
-            r: 7,
-          }) : void 0,
+          IF(editable, () =>
+            svg('circle', {
+              attributes: {
+                'data-fsm-remove-output': i,
+              },
+              class: 'fsm-port-button-remove',
+              cx: 20,
+              cy: 0,
+              r: 7,
+            })
+          ),
         ]),
 
         svg('text', {
@@ -286,30 +295,32 @@ export default (machine, editable) => {
       ])
     ).toArray(),
 
-    editable ? svg('g', {
-      attributes: {
-        'data-fsm-action': 'add-output',
-      },
-      transform: `translate(220, ${25 + PORT_HEIGHT * machine.outputs.size})`,
-      class: 'fsm-button',
-    }, [
-      svg('rect', {
-        class: 'fsm-button-background',
-        x: 10,
-        y: -PORT_HEIGHT / 2,
-        width: 73,
-        height: PORT_HEIGHT,
-        rx: 5,
-        ry: 5,
-      }),
-      svg('text', {
-        class: 'fsm-button-label',
-        x: 30,
-        y: 1,
-        'text-anchor': 'start',
-        'dominant-baseline': 'middle',
-      }, 'Add Output'),
-    ]) : void 0,
+    IF(editable, () =>
+      svg('g', {
+        attributes: {
+          'data-fsm-action': 'add-output',
+        },
+        transform: `translate(220, ${25 + PORT_HEIGHT * machine.outputs.size})`,
+        class: 'fsm-button',
+      }, [
+        svg('rect', {
+          class: 'fsm-button-background',
+          x: 10,
+          y: -PORT_HEIGHT / 2,
+          width: 73,
+          height: PORT_HEIGHT,
+          rx: 5,
+          ry: 5,
+        }),
+        svg('text', {
+          class: 'fsm-button-label',
+          x: 30,
+          y: 1,
+          'text-anchor': 'start',
+          'dominant-baseline': 'middle',
+        }, 'Add Output'),
+      ])
+    ),
   ]);
 }
 ;

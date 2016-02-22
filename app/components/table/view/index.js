@@ -4,6 +4,8 @@ import {
   colgroup, col,
 } from '@cycle/dom';
 
+import {IF} from '../../../lib/h-helper';
+
 import './index.styl';
 
 const columnCount = (tableData) =>
@@ -35,14 +37,15 @@ const renderTable = (tableData, selectedIndex) =>
         )
       ).toArray()
     ),
-    tableData.error ?
-    tr('.table-error-row', [td('.table-error-cell', {
-      colSpan: columnCount(tableData),
-    }, tableData.error
-    )]) : void 0,
+    IF(tableData.error, () =>
+      tr('.table-error-row', [td('.table-error-cell', {
+        colSpan: columnCount(tableData),
+      }, tableData.error
+      )])
+    ),
     tableData.rows.map(
       (row, i) => tr('.table-body-row', {
-        className: selectedIndex === i ? 'state-selected' : void 0,
+        className: IF(selectedIndex === i, () => 'state-selected'),
         attributes: {
           'data-index': i,
         },

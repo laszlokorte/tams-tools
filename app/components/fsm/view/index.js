@@ -1,6 +1,7 @@
-import {div, span, ul, li, h3, button, input as inputElement} from '@cycle/dom';
+import {div, ul, li, button} from '@cycle/dom';
 
 import {TYPE_MOORE, TYPE_MEALY} from '../lib/state-machine';
+import {attrBool} from '../../../lib/h-helper';
 
 import renderMachine from './machine';
 
@@ -10,7 +11,7 @@ const render = (state) => div([
     li([
       button({
         attributes: {
-          disabled: state.currentEditMode === 'edit' || void 0,
+          disabled: attrBool(state.currentEditMode === 'edit'),
           'data-edit-mode': 'edit',
         },
       }, 'Edit'),
@@ -18,7 +19,7 @@ const render = (state) => div([
     li([
       button({
         attributes: {
-          disabled: state.currentEditMode === 'simulate' || void 0,
+          disabled: attrBool(state.currentEditMode === 'simulate'),
           'data-edit-mode': 'simulate',
         },
       }, 'Simulate'),
@@ -30,13 +31,13 @@ const render = (state) => div([
     li([
       button({
         attributes: {
-          disabled: state.fsm.type === TYPE_MOORE || void 0,
+          disabled: attrBool(state.fsm.type === TYPE_MOORE),
           'data-fsm-type': 'moore',
         },
       }, 'Moore'),
       button({
         attributes: {
-          disabled: state.fsm.type === TYPE_MEALY || void 0,
+          disabled: attrBool(state.fsm.type === TYPE_MEALY),
           'data-fsm-type': 'mealy',
         },
       }, 'Mealy'),

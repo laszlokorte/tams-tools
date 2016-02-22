@@ -1,5 +1,7 @@
 import {svg} from '@cycle/dom';
 
+import {attrBool} from '../../../lib/h-helper';
+
 import {Rotation} from '../lib/layout';
 
 import './gates.styl';
@@ -175,7 +177,7 @@ const negatorFeature = (color) =>
       cy: 0,
       r: 8,
       class: 'gate-body',
-      stroke: color || void 0,
+      stroke: attrBool(color),
     },
   })
 ;
@@ -189,7 +191,7 @@ const exclusionFeature = (color) =>
       c0,0 17.5,-3 17.5,-35
       c0,-32.5 -17.5,-35 -17.5,-35`,
       class: 'gate-body-extra',
-      stroke: color || void 0,
+      stroke: attrBool(color),
     },
   })
 ;
@@ -216,7 +218,7 @@ const orBodyFeature = (color) =>
       c27.5,3 45,0 65,35
       c-15,32 -32.5,32.5 -65,35Z`,
       class: 'gate-body',
-      stroke: color || void 0,
+      stroke: attrBool(color),
     },
   })
 ;
@@ -231,7 +233,7 @@ const andBodyFeature = (color) =>
       c15,0 30,15 30,35
       c0,20 -15,35 -30,35Z`,
       class: 'gate-body',
-      stroke: color || void 0,
+      stroke: attrBool(color),
     },
   })
 ;
@@ -244,7 +246,7 @@ const bufferBodyFeature = (color) =>
       l35,25
       l-35,25Z`,
       class: 'gate-body',
-      stroke: color || void 0,
+      stroke: attrBool(color),
     },
   })
 ;

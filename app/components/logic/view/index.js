@@ -6,6 +6,8 @@ import {
   label, input, button,
 } from '@cycle/dom';
 
+import {IF} from '../../../lib/h-helper';
+
 import {expressionToString} from '../lib/expression';
 
 import './index.styl';
@@ -116,33 +118,34 @@ const render = (state, table) =>
       ]),
     ]),
     div('.app-body', [
-      state && state.expressions && state.expressions.size > 1 ?
-      div([
-        h2('Compare expressions'),
+      IF(state && state.expressions && state.expressions.size > 1, () =>
+        div([
+          h2('Compare expressions'),
 
-        div('.comparator', [
-          select('.compare-selection', {
-            size: Math.min(3, state.expressions.size + 1),
-          }, [
-            option({value: '', selected: true}, '---'),
-            state.expressions.map(
-              (e,value) => option({value},
-                e.name || expressionToString(e.content)
-              )
-            ).toArray(),
+          div('.comparator', [
+            select('.compare-selection', {
+              size: Math.min(3, state.expressions.size + 1),
+            }, [
+              option({value: '', selected: true}, '---'),
+              state.expressions.map(
+                (e,value) => option({value},
+                  e.name || expressionToString(e.content)
+                )
+              ).toArray(),
+            ]),
+            select('.compare-selection', {
+              size: Math.min(3, state.expressions.size + 1),
+            }, [
+              option({value: '', selected: true}, '---'),
+              state.expressions.map(
+                (e, value) => option({value},
+                  e.name || expressionToString(e.content)
+                )
+              ).toArray(),
+            ]),
           ]),
-          select('.compare-selection', {
-            size: Math.min(3, state.expressions.size + 1),
-          }, [
-            option({value: '', selected: true}, '---'),
-            state.expressions.map(
-              (e, value) => option({value},
-                e.name || expressionToString(e.content)
-              )
-            ).toArray(),
-          ]),
-        ]),
-      ]) : void 0,
+        ])
+      ),
 
       state && state.expressions && state.expressions.size ?
       div([

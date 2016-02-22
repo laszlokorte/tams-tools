@@ -1,5 +1,7 @@
 import {svg} from '@cycle/dom';
 
+import {attrBool} from '../../../lib/h-helper';
+
 import './index.styl';
 
 const render = (state) =>
@@ -14,7 +16,7 @@ const render = (state) =>
         class: 'tree-edge' + (edge.faded ? ' tree-faded' : ''),
         stroke: 'black',
         style: {
-          stroke: edge.color || void 0,
+          stroke: attrBool(edge.color),
         },
       })
     ).toArray(),
@@ -26,7 +28,7 @@ const render = (state) =>
         class: 'tree-node' + (node.faded ? ' tree-faded' : ''),
         fill: 'black',
         style: {
-          fill: node.color || void 0,
+          fill: attrBool(node.color),
         },
       }),
       svg('text', {
@@ -36,7 +38,7 @@ const render = (state) =>
         'alignment-baseline': 'middle',
         class: 'tree-node-label' + (node.faded ? ' tree-faded' : ''),
         style: {
-          fill: node.color || void 0,
+          fill: attrBool(node.color),
         },
       }, node.label),
     ]).toArray(),
