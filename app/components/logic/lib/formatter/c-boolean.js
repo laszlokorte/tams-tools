@@ -29,4 +29,14 @@ export default {
   formatValue: (value) => {
     return value ? 'true' : 'false';
   },
+  formatVector: (identifiers, values) => {
+    return "[VECTOR]";
+  },
+  formatVector: (identifiers, values) => {
+    return `[${
+      identifiers.map((i) => sanitizeName(i.name)).join(',')
+    }:${
+      values.map((v) => v ? '1' : '0').join('')
+    }]`;
+  },
 };

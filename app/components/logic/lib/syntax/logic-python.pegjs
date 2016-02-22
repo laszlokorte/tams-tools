@@ -36,6 +36,33 @@ literalValue
   = logicTop { return true; }
   / logicBottom { return false; }
 
+vectorHead
+  = head:identifier _ tail:(expressionSeparator _ identifier)+ {
+    return [head, ...tail.map((t) => t[2])];
+  }
+  / head:identifier {
+    return [head];
+  }
+
+vectorBody "vectorBody"
+  = values:(_ ("1"/"0"))* {
+    return values.map((t) => t[1] === "1");
+  }
+
+literalVector
+  = "[" _ head:vectorHead _ ":" _ body:vectorBody _ "]" {
+    var idCount = head.length;
+    var expectedSize = Math.pow(2,idCount);
+    if(expectedSize !== body.length) {
+      expected("Vector with "+idCount+" identifers to have " + expectedSize + " values.", "x");
+    }
+
+    return {
+      identifiers: head,
+      values: body
+    };
+  }
+
 parentheses
   = "(" _ content:additive _ ")" {
     return {content: content, style: 1}
@@ -119,4 +146,7 @@ identifier "identifier"
 literal "literal"
   = value:literalValue {
     return {node: 'constant', value: value};
+  }
+  / vector:literalVector {
+    return {node: 'vector', vector: vector};
   }

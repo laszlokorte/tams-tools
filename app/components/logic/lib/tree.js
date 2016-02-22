@@ -12,6 +12,8 @@ const children = (expression) => {
   case 'identifier':
   case 'constant':
     return [];
+  case 'vector':
+    return expression.vectorIdentifiers;
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
@@ -29,6 +31,8 @@ const name = (expression) => {
     return expression.name.toString();
   case 'constant':
     return expression.value ? '1' : '0';
+  case 'vector':
+    return 'Vector[...]';
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
@@ -40,6 +44,7 @@ const color = (expression, evalutationMap) => {
   case 'unary':
   case 'group':
   case 'identifier':
+  case 'vector':
     return evalutationMap.get(expression) ? greenColor : redColor;
   case 'constant':
     return expression.value ? greenColor : redColor;

@@ -20,12 +20,15 @@ const expressionUnion = I.Record({
   name: null,
   style: null,
   value: null,
+  vectorIdentifiers: null,
+  vectorValues: null,
 }, 'expressionUnion');
 
 export const expressionFromJson = (data) => {
   if (data === null) {
     return null;
   }
+
   switch (data.node) {
   case 'label':
     return labeledExpression({
@@ -61,6 +64,12 @@ export const expressionFromJson = (data) => {
       node: data.node.toString(),
       value: data.value,
     });
+  case 'vector':
+    return expressionUnion({
+      node: data.node.toString(),
+      vectorIdentifiers: data.vector.identifiers.map(expressionFromJson),
+      vectorValues: I.List(data.vector.values),
+    });
   default:
     throw new Error(`unknown node: ${data}`);
   }
@@ -83,6 +92,15 @@ export const evalBinary = (expression, identifierMap, evalExpr) => {
   default:
     throw new Error(`unknown operator: ${expression.operator}`);
   }
+};
+
+export const evalVector = (identifiers, values, identifierMap) => {
+  const index = identifiers.reduce((acc, id, idx) => {
+    console.log(idx);
+    return acc + (identifierMap.get(id) ? Math.pow(2, idx) : 0);
+  }, 0);
+
+  return values.get(index);
 };
 
 export const evalUnary = (expression, identifierMap, evalExpr) => {
@@ -113,6 +131,11 @@ export const evaluateExpression = (expression, identifierMap) => {
     );
   case 'identifier':
     return !!identifierMap.get(expression);
+  case 'vector':
+    return evalVector(
+      expression.vectorIdentifiers, expression.vectorValues,
+      identifierMap
+    );
   case 'constant':
     return expression.value;
   default:
@@ -195,6 +218,8 @@ export const collectSubExpressions = (
     return acc;
   case 'constant':
     return acc;
+  case 'vector':
+    return acc;
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
@@ -217,6 +242,8 @@ export const collectIdentifiers = (expression, acc = I.Set()) => {
     return acc.add(expression);
   case 'constant':
     return acc;
+  case 'vector':
+    return acc.union(expression.vectorIdentifiers);
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }
@@ -270,6 +297,10 @@ export const expressionToString = (
     return formatter.formatName(expression.name);
   case 'constant':
     return formatter.formatValue(expression.value);
+  case 'vector':
+    return formatter.formatVector(
+      expression.vectorIdentifiers, expression.vectorValues
+    );
   default:
     throw new Error(`unknown node: ${expression.node}`);
   }

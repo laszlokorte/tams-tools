@@ -25,4 +25,11 @@ export default {
   formatValue: (value) => {
     return value ? '\\top' : '\\bot';
   },
+  formatVector: (identifiers, values) => {
+    return `[${
+      identifiers.map((i) => i.name).join(',')
+    }:${
+      values.map((v) => v ? '1' : '0').join('')
+    }]`;
+  },
 };
