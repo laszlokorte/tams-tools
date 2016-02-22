@@ -1,7 +1,7 @@
 import {svg} from '@cycle/dom';
 
 import './machine.styl';
-import {TYPE_MOORE} from '../lib/state-machine';
+import {TYPE_MEALY} from '../lib/state-machine';
 
 const PORT_HEIGHT = 18;
 
@@ -171,7 +171,7 @@ export default (machine, editable) => {
       },
     }),
 
-    machine.type === TYPE_MOORE ?
+    machine.type === TYPE_MEALY ?
     svg('path', {
       d: `M0,${deltaNetworkHeight + 75} L0,15 L180,15`,
       class: 'arrow-line',

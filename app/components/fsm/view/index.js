@@ -25,8 +25,8 @@ const render = (state) => div([
     ]),
   ]),
 
-  state.currentEditMode === 'edit' ?
   ul([
+    state.currentEditMode === 'edit' ?
     li([
       button({
         attributes: {
@@ -34,16 +34,15 @@ const render = (state) => div([
           'data-fsm-type': 'moore',
         },
       }, 'Moore'),
-    ]),
-    li([
       button({
         attributes: {
           disabled: state.fsm.type === TYPE_MEALY || void 0,
           'data-fsm-type': 'mealy',
         },
       }, 'Mealy'),
-    ]),
-  ]) : void 0,
+    ]) :
+    li(state.fsm.type.name),
+  ]),
 
   renderMachine(state.fsm, state.currentEditMode === 'edit'),
 ])
