@@ -30,10 +30,10 @@ export default {
     return value ? 'true' : 'false';
   },
   formatVector: (identifiers, values) => {
-    return `[${
+    return `<${
       identifiers.map((i) => sanitizeName(i.name)).join(',')
     }:${
       values.map((v) => v ? '1' : '0').join('')
-    }]`;
+    }>`;
   },
 };

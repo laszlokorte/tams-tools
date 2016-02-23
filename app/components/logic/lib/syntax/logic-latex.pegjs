@@ -17,6 +17,9 @@ logicNot = "!" / "~" / "-" / "¬" / "\\neg" / "\\overline"
 logicTop = "true" / "1" / "T" / "W" / "⊤" / "\\top"
 logicBottom = "false" / "0" / "F" / "⊥" / "\\bot"
 
+vectorStart = "<"
+vectorEnd = ">"
+
 operatorMul "binary operator"
   = logicAnd { return "AND"; }
   / logicXor { return "XOR"; }
@@ -63,13 +66,15 @@ vectorHead
     return [head];
   }
 
+vectorValue
+  = "1" { return true; }
+  / "0" { return false; }
+
 vectorBody "vectorBody"
-  = values:(_ ("1"/"0"))* {
-    return values.map((t) => t[1] === "1");
-  }
+  = values:vectorValue*
 
 literalVector
-  = "[" _ head:vectorHead _ ":" _ body:vectorBody _ "]" {
+  = vectorStart _ head:vectorHead _ ":" _ body:vectorBody _ vectorEnd {
     var idCount = head.length;
     var expectedSize = Math.pow(2,idCount);
     if(expectedSize !== body.length) {

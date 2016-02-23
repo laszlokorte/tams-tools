@@ -26,10 +26,10 @@ export default {
     return value ? '⊤' : '⊥';
   },
   formatVector: (identifiers, values) => {
-    return `[${
+    return `<${
       identifiers.map((i) => i.name).join(',')
     }:${
       values.map((v) => v ? '1' : '0').join('')
-    }]`;
+    }>`;
   },
 };
