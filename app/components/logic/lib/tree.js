@@ -31,7 +31,7 @@ const name = (expression) => {
   case 'identifier':
     return expression.name.toString();
   case 'constant':
-    if(expression.value === null) {
+    if (expression.value === null) {
       return '*';
     }
     return expression.value ? '1' : '0';

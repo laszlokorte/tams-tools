@@ -16,9 +16,9 @@ logicOr = "||" / "|" / "+" / "∨"
 logicXor = "^" / "⊕"
 logicNot = "!" / "~" / "-" / "¬"
 
-logicTop = "true"&noChar / "1" / "T"&noChar / "W"&noChar / "⊤"
-logicBottom = "false"&noChar / "0" / "F"&noChar / "⊥"
-logicUndefined = "undefined" / "Ø"
+logicTop = "true" & noChar / "1" / "T" & noChar / "W" & noChar / "⊤"
+logicBottom = "false" & noChar / "0" / "F" & noChar / "⊥"
+logicUndefined = "undefined" & noChar / "Ø"
 
 vectorStart = "<"
 vectorEnd = ">"

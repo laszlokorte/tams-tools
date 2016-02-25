@@ -16,8 +16,8 @@ logicOr = "||" / "|" / "+" / "∨" / "\\vee"
 logicXor = "^" / "⊕" / "\\oplus"
 logicNot = "!" / "~" / "-" / "¬" / "\\neg" / "\\overline"
 
-logicTop = "true"&noChar / "1" / "T"&noChar / "W"&noChar / "⊤" / "\\top"
-logicBottom = "false"&noChar / "0" / "F"&noChar / "⊥" / "\\bot"
+logicTop = "true" & noChar / "1" / "T" & noChar / "W" & noChar / "⊤" / "\\top"
+logicBottom = "false" & noChar / "0" / "F" & noChar / "⊥" / "\\bot"
 logicUndefined = "\\nothing"
 
 vectorStart = "<"

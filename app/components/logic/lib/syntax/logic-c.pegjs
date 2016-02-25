@@ -9,14 +9,16 @@ start
 labelOperator "labelOperator"
   = "="
 
+noChar = [^0-9A-Za-z_-] / EOF
+
 logicAnd = "&&" / "&"
 logicOr = "||" / "|"
 logicXor = "^"
 logicNot = "!" / "~"
 
-logicTop = "true" / "1"
-logicBottom = "false" / "0"
-logicUndefined = "void"
+logicTop = "true"&noChar / "1"
+logicBottom = "false"&noChar / "0"
+logicUndefined = "void"&noChar
 
 vectorStart = "<"
 vectorEnd = ">"
