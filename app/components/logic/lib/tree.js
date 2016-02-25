@@ -45,7 +45,8 @@ const color = (expression, evalutationMap) => {
   case 'group':
   case 'identifier':
   case 'vector':
-    return evalutationMap.get(expression) ? greenColor : redColor;
+    const value = evalutationMap.get(expression);
+    return value ? greenColor : redColor;
   case 'constant':
     return expression.value ? greenColor : redColor;
   default:
@@ -60,6 +61,16 @@ const toTree = (expression, evalutationMap) => {
 
   if (expression.node === 'group') {
     return toTree(expression.content, evalutationMap);
+  } else if (expression._name === 'labeledExpression') {
+    if (expression.name === null) {
+      return toTree(expression.content, evalutationMap);
+    } else {
+      return {
+        name: expression.name.toString() + ' =',
+        children: [toTree(expression.content, evalutationMap)],
+        color: evalutationMap && color(expression.content, evalutationMap),
+      };
+    }
   }
 
   return {

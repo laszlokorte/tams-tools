@@ -1,9 +1,18 @@
+/* eslint-disable no-class/no-class */
+export class Node {
+  constructor(data, outgoing = new Set(), incomingCount = 0) {
+    this.data = data;
+    this.outgoing = outgoing;
+    this.incomingCount = incomingCount;
+  };
+};
+/* eslint-enable no-class/no-class */
 
 const incomingCountIsEmpty = (node) =>
   node.incomingCount === 0
 ;
 
-export default (nodes) => {
+export const sort = (nodes) => {
   let result = [];
 
   nodes.forEach((node) => {
@@ -29,7 +38,7 @@ export default (nodes) => {
     }
   }
 
-  const cycle = nodes.filter((n) => n.incomingCount > 0);
+  const cycle = nodes.filter((node) => !incomingCountIsEmpty(node));
   if (cycle.length) {
     const error = new Error("Cyclic dependency");
     error.cycle = cycle;

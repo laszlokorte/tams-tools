@@ -2,7 +2,8 @@ import {ReplaySubject, Subject} from 'rx';
 import I from 'immutable';
 import isolate from '@cycle/isolate';
 
-import {evaluateExpression, expressionToString} from './lib/expression';
+import {expressionToString} from './lib/formatter';
+import {evaluateExpression} from './lib/evaluation';
 
 import model from './model';
 import view from './view';
@@ -82,8 +83,8 @@ export default (responses) => {
         .startWith(null)
         .map((selectedRow) => {
           if (state &&
-            state.expressions &&
-            state.expressions.size > 0
+            state.context &&
+            state.context.expressions.size > 0
           ) {
             let subEvalutation = null;
             if (selectedRow !== null) {
@@ -96,22 +97,22 @@ export default (responses) => {
                 [expr, evaluateExpression(expr, identifierMap)]
               ;
 
-              subEvalutation = I.Map(state.toplevelExpressions.map(
+              subEvalutation = I.Map(state.context.toplevelExpressions.map(
                 (e) => evaluate(e.content))
               )
               .merge(
-                I.Map(state.subExpressions.map(evaluate))
+                I.Map(state.context.subExpressions.map(evaluate))
               )
               .merge(identifierMap);
             }
 
-            if (state.expressions.size === 1) {
-              return toTree(state.expressions.get(0).content, subEvalutation);
+            if (state.context.expressions.size === 1) {
+              return toTree(state.context.expressions.get(0), subEvalutation);
             } else {
               return {
                 name: 'Expression List',
-                children: state.expressions.map(
-                  (e) => toTree(e.content, subEvalutation)
+                children: state.context.expressions.map(
+                  (e) => toTree(e, subEvalutation)
                 ).toArray(),
                 hidden: true,
               };
@@ -152,7 +153,7 @@ export default (responses) => {
   const formula$ = state$.combineLatest(
     formatter$,
     (state, formatter) => {
-      return state.expressions ? state.expressions.map(
+      return state.context ? state.context.expressions.map(
         (e) => expressionToString(e.content, formatter)
       ).join(', ') : '';
     }

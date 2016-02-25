@@ -3,8 +3,6 @@ import I from 'immutable';
 
 import {
   expressionFromJson,
-  collectIdentifiers,
-  collectSubExpressions,
 } from '../lib/expression';
 
 import {

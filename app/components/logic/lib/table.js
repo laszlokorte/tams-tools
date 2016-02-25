@@ -1,5 +1,5 @@
-import I from 'immutable';
-import {evaluateAll, expressionToString} from './expression';
+import {expressionToString} from './formatter';
+import {evaluateAll} from './evaluation';
 
 export default (
   context,

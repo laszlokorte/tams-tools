@@ -8,7 +8,7 @@ import {
 
 import {IF} from '../../../lib/h-helper';
 
-import {expressionToString} from '../lib/expression';
+import {expressionToString} from '../lib/formatter';
 
 import './index.styl';
 

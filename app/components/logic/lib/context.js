@@ -3,9 +3,9 @@ import I from 'immutable';
 import {
   collectIdentifiers,
   collectSubExpressions,
-} from './expression';
+} from './analyze';
 
-import sortTopological from './topological-sort';
+import {sort, Node} from './topological-sort';
 
 const context = I.Record({
   freeIdentifiers: I.Set(),
@@ -16,56 +16,36 @@ const context = I.Record({
   subExpressions: I.List(),
 }, 'context');
 
-export const contextFromLabeledExpression = (expressions) => {
-  const expressionList = I.List(expressions);
-  const declaredIdentifiers = expressionList
-    .filter((id) => id.name !== null);
+const buildDependencyGraph = (expressionList) => {
+  const declaredIdentifiers = new Set(
+    expressionList
+      .filter((id) => id.name !== null)
+      .map((id) => id.name)
+      .toArray()
+  );
 
-  const deduplicatedIds = new Set();
-
-  for (let decl of declaredIdentifiers) {
-    if (deduplicatedIds.has(decl.name)) {
-      let error = new Error("Duplicate declaration of " + decl.name);
-      error.location = decl.location;
-      throw error;
-    } else {
-      deduplicatedIds.add(decl.name);
-    }
-  }
-
-  const freeIdentifiers = expressionList.flatMap(
-    (expression) => collectIdentifiers(expression.content)
-  ).toSet()
-  .filter((i) => !deduplicatedIds.has(i.name))
-  .toList();
-
-  const nodeMap = {};
-  const nodeList = [];
-  const duplicates = new Set();
-
-  expressionList.forEach((e) => {
-    const node = {
-      data: e,
-      outgoing: new Set(),
-      incomingCount: 0,
-    };
-    nodeList.push(node);
+  const {
+    list: nodeList,
+    map: nodeMap,
+  } = expressionList.reduce(({map, list}, e) => {
+    const node = new Node(e);
+    const newList = list.push(node);
 
     if (e.name === null) {
-      return;
-    } else if (nodeMap.hasOwnProperty(e.name)) {
-      duplicates.add(e.name);
+      return {map, list: newList};
     } else {
-      nodeMap[e.name] = node;
+      return {
+        map: map.set(e.name, node),
+        list: newList,
+      };
     }
-  });
+  }, {map: new I.Map(), list: new I.List()});
 
-  const nodeFromMap = (name) => nodeMap[name];
   for (let node of nodeList) {
     let dependencies = collectIdentifiers(node.data.content)
       .map((id) => id.name)
-      .filter(::deduplicatedIds.has)
-      .map(nodeFromMap)
+      .filter(::declaredIdentifiers.has)
+      .map(::nodeMap.get)
       .toArray();
 
     for (let d of dependencies) {
@@ -73,8 +53,51 @@ export const contextFromLabeledExpression = (expressions) => {
     }
   }
 
+  return nodeList;
+};
+
+const errorAtLocation = (msg, location) => {
+  const error = new Error(msg);
+  error.location = location;
+  return error;
+};
+
+const deduplicateDeclarations = (declaredIdentifiers) => {
+  const deduplicatedIds = new Set();
+
+  for (let decl of declaredIdentifiers) {
+    if (deduplicatedIds.has(decl.name)) {
+      throw errorAtLocation(
+        "Duplicate declaration of " + decl.name,
+        decl.location
+      );
+    } else {
+      deduplicatedIds.add(decl.name);
+    }
+  }
+
+  return deduplicatedIds;
+};
+
+export const contextFromLabeledExpression = (expressions) => {
+  const expressionList = I.List(expressions);
+  const declaredIdentifiers = expressionList
+    .filter((id) => id.name !== null);
+
+  const declaredNames = deduplicateDeclarations(declaredIdentifiers);
+
+  const freeIdentifiers = expressionList
+  .flatMap(
+    (expression) => collectIdentifiers(expression.content)
+  )
+  .toSet()
+  .filter((i) => !declaredNames.has(i.name))
+  .toList();
+
+  const nodeList = buildDependencyGraph(expressionList);
+
   try {
-    const sortedExpressions = sortTopological(nodeList).map((node) =>
+    const sortedExpressions = sort(nodeList).map((node) =>
       node.data
     );
 
@@ -98,10 +121,10 @@ export const contextFromLabeledExpression = (expressions) => {
   } catch (error) {
     if (error.cycle) {
       const steps = error.cycle.map((node) => node.data.name);
-      const msg = `Cyclic dependency between: ${steps.join(', ')}`;
-      const cycleError = new Error(msg);
-      cycleError.location = error.cycle[error.cycle.length - 1].data.location;
-      throw cycleError;
+      throw errorAtLocation(
+        `Cyclic dependency between: ${steps.join(', ')}`,
+        error.cycle.get(error.cycle.length - 1).data.location
+      );
     } else {
       throw error;
     }
