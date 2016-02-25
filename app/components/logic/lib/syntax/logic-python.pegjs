@@ -91,11 +91,14 @@ expressions
   }
 
 label "expressionLabel"
-  = identifierName
+  = _ name:identifierName _ {
+    return name;
+  }
 
 labeledExpression
   = name:label _ labelOperator _ content:expression {
     return {
+      location: location(),
       node: 'label',
       name: name,
       content: content,
@@ -103,6 +106,7 @@ labeledExpression
   }
   / content:expression {
     return {
+      location: location(),
       node: 'label',
       name: null,
       content: content,

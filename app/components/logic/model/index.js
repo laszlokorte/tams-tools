@@ -7,6 +7,10 @@ import {
   collectSubExpressions,
 } from '../lib/expression';
 
+import {
+  contextFromLabeledExpression,
+} from '../lib/context';
+
 import cParser from '../lib/syntax/logic-c.pegjs';
 import latexParser from '../lib/syntax/logic-latex.pegjs';
 import mathParser from '../lib/syntax/logic-math.pegjs';
@@ -147,36 +151,13 @@ const parse = ({string, lang, showSubExpressions}) => {
 };
 
 const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
-  const expressionList = I.List(expressions);
-
-  const declaredIds = expressionList
-    .map((e) => e.name)
-    .filter((name) => name !== null)
-    .toSet();
-
-  const identifiers = expressionList.flatMap(
-    (expression) => collectIdentifiers(expression.content)
-  ).toSet()
-  .filter((i) => !declaredIds.contains(i.name))
-  .toList();
-
-  const subExpressions = expressionList.flatMap(
-    (expression) => collectSubExpressions(expression.content)
-      .toList()
-  );
-
-  const toplevelExpressions = expressionList.filter(
-    (e) => e.content.node !== 'identifier'
-  );
+  const context = contextFromLabeledExpression(expressions);
 
   return {
     lang,
     detected,
     string,
-    expressions: expressionList,
-    identifiers,
-    subExpressions,
-    toplevelExpressions,
+    context,
     showSubExpressions,
   };
 };
@@ -219,23 +200,17 @@ export default (actions) => {
         .map(({
           detected,
           error,
-          expressions,
           formatter,
-          identifiers,
-          subExpressions,
-          toplevelExpressions,
+          context,
         }) => ({
           detected,
           lang,
           string,
           error,
-          expressions,
+          context,
           formatter,
           showSubExpressions,
           outputFormat,
-          identifiers,
-          subExpressions,
-          toplevelExpressions,
           completions: completions[
             (detected && detected.toLowerCase()) || lang
           ] || [],

@@ -6,6 +6,7 @@ const row = I.Record({
 });
 
 const labeledExpression = I.Record({
+  location: null,
   name: null,
   content: null,
 }, 'labeledExpression');
@@ -32,6 +33,7 @@ export const expressionFromJson = (data) => {
   switch (data.node) {
   case 'label':
     return labeledExpression({
+      location: data.location,
       name: data.name,
       content: expressionFromJson(data.content),
     });
@@ -96,7 +98,6 @@ export const evalBinary = (expression, identifierMap, evalExpr) => {
 
 export const evalVector = (identifiers, values, identifierMap) => {
   const index = identifiers.reduce((acc, id, idx) => {
-    console.log(idx);
     return acc + (identifierMap.get(id) ? Math.pow(2, idx) : 0);
   }, 0);
 

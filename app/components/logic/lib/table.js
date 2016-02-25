@@ -2,35 +2,34 @@ import I from 'immutable';
 import {evaluateAll, expressionToString} from './expression';
 
 export default (
-  identifiers,
-  topLevelExpressions,
-  subExpressions = I.List(),
+  context,
+  showSubExpressions,
   formatter
 ) => {
   const groups = [];
 
-  if (identifiers.size) {
+  if (context.freeIdentifiers.size) {
     groups.push({
       name: "identifiers",
-      columns: identifiers.map(
+      columns: context.freeIdentifiers.map(
         (i) => ({name: expressionToString(i, formatter)})
       ).toArray(),
     });
   }
 
-  if (topLevelExpressions.size) {
+  if (context.toplevelExpressions.size) {
     groups.push({
       name: "expressions",
-      columns: topLevelExpressions.map(
+      columns: context.toplevelExpressions.map(
         (e) => ({name: e.name || expressionToString(e.content, formatter)})
       ).toArray(),
     });
   }
 
-  if (subExpressions.size) {
+  if (showSubExpressions) {
     groups.push({
       name: "Sub expressions",
-      columns: subExpressions.map(
+      columns: context.subExpressions.map(
         (e) => ({name: expressionToString(e, formatter)})
       ).toArray(),
     });
@@ -38,18 +37,18 @@ export default (
   return {
     columnGroups: groups,
 
-    rows: identifiers.size < 9 ? evaluateAll({
-      expressions: identifiers
-        .concat(topLevelExpressions.map((e) => e.content))
-        .concat(subExpressions).toList(),
-      identifiers,
+    rows: context.freeIdentifiers.size < 9 ? evaluateAll({
+      expressions: context.freeIdentifiers
+        .concat(context.toplevelExpressions.map((e) => e.content))
+        .concat(showSubExpressions ? context.subExpressions : []).toList(),
+      identifiers: context.freeIdentifiers,
     }).map((row) => ({
       values: row.values.map(
         (v) => v ? '1' : '0'
       ).toArray(),
     })).toArray() : [],
 
-    error: identifiers.size < 9 ? null :
+    error: context.freeIdentifiers.size < 9 ? null :
       "Too many variables",
   };
 };

@@ -87,7 +87,7 @@ export default (responses) => {
           ) {
             let subEvalutation = null;
             if (selectedRow !== null) {
-              const identifierMap = I.Map(state.identifiers.map(
+              const identifierMap = I.Map(state.context.freeIdentifiers.map(
                 (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
               ));
 
@@ -141,12 +141,10 @@ export default (responses) => {
   const table$ = state$.debounce(300).combineLatest(
     formatter$,
     (state, formatter) =>
-    state.expressions &&
-    state.expressions.size ? toTable(
-      state.identifiers,
-      state.toplevelExpressions,
-      state.showSubExpressions ?
-        state.subExpressions : void 0,
+    state.context &&
+    state.context.expressions.size ? toTable(
+      state.context,
+      state.showSubExpressions,
       formatter
     ) : null
   ).share();

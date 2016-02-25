@@ -118,26 +118,26 @@ const render = (state, table) =>
       ]),
     ]),
     div('.app-body', [
-      IF(state && state.expressions && state.expressions.size > 1, () =>
+      IF(state && state.context && state.context.expressions.size > 1, () =>
         div([
           h2('Compare expressions'),
 
           div('.comparator', [
             select('.compare-selection', {
-              size: Math.min(3, state.expressions.size + 1),
+              size: Math.min(3, state.context.expressions.size + 1),
             }, [
               option({value: '', selected: true}, '---'),
-              state.expressions.map(
+              state.context.expressions.map(
                 (e,value) => option({value},
                   e.name || expressionToString(e.content)
                 )
               ).toArray(),
             ]),
             select('.compare-selection', {
-              size: Math.min(3, state.expressions.size + 1),
+              size: Math.min(3, state.context.expressions.size + 1),
             }, [
               option({value: '', selected: true}, '---'),
-              state.expressions.map(
+              state.context.expressions.map(
                 (e, value) => option({value},
                   e.name || expressionToString(e.content)
                 )
@@ -147,7 +147,7 @@ const render = (state, table) =>
         ])
       ),
 
-      state && state.expressions && state.expressions.size ?
+      state && state.context && state.context.expressions.size ?
       div([
         h2('Table'),
 
