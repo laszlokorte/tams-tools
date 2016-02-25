@@ -6,21 +6,22 @@ const row = I.Record({
 });
 
 const evalBinary = (expression, identifierMap, evalExpr) => {
+  const lhs = evalExpr(expression.lhs, identifierMap);
+  const rhs = evalExpr(expression.rhs, identifierMap);
+
   switch (expression.operator) {
-  case 'AND':
-    return evalExpr(expression.lhs, identifierMap) &&
-      evalExpr(expression.rhs, identifierMap)
-    ;
-  case 'OR':
-    return evalExpr(expression.lhs, identifierMap) ||
-      evalExpr(expression.rhs, identifierMap)
-    ;
-  case 'XOR':
-    return !evalExpr(expression.lhs, identifierMap) !==
-      !evalExpr(expression.rhs, identifierMap)
-    ;
-  default:
+  case 'AND': {
+    return (lhs === false || rhs === false) ? false : lhs && rhs;
+  }
+  case 'OR': {
+    return (lhs === null && rhs === false) ? null : lhs || rhs;
+  }
+  case 'XOR': {
+    return (lhs === null || rhs === null) ? null : !lhs !== !rhs;
+  }
+  default: {
     throw new Error(`unknown operator: ${expression.operator}`);
+  }
   }
 };
 
@@ -35,7 +36,8 @@ const evalVector = (identifiers, values, identifierMap) => {
 const evalUnary = (expression, identifierMap, evalExpr) => {
   switch (expression.operator) {
   case 'NOT':
-    return !evalExpr(expression.operand, identifierMap);
+    const v = evalExpr(expression.operand, identifierMap);
+    return v === null ? null : !v;
   default:
     throw new Error(`unknown operator: ${expression.operator}`);
   }

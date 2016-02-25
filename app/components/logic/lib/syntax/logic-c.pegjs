@@ -16,6 +16,7 @@ logicNot = "!" / "~"
 
 logicTop = "true" / "1"
 logicBottom = "false" / "0"
+logicUndefined = "void"
 
 vectorStart = "<"
 vectorEnd = ">"
@@ -57,6 +58,7 @@ charEscapeSequence
 literalValue
   = logicTop { return true; }
   / logicBottom { return false; }
+  / logicUndefined { return null; }
 
 vectorHead "vectorHead"
   = head:identifier _ tail:(expressionSeparator _ identifier)+ {

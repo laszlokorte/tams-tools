@@ -9,13 +9,16 @@ start
 labelOperator "labelOperator"
   = "="
 
+noChar = [^0-9A-Za-z_-] / EOF
+
 logicAnd = "&&" / "&" / "*" / "∧" / "\\wedge"
 logicOr = "||" / "|" / "+" / "∨" / "\\vee"
 logicXor = "^" / "⊕" / "\\oplus"
 logicNot = "!" / "~" / "-" / "¬" / "\\neg" / "\\overline"
 
-logicTop = "true" / "1" / "T" / "W" / "⊤" / "\\top"
-logicBottom = "false" / "0" / "F" / "⊥" / "\\bot"
+logicTop = "true"&noChar / "1" / "T"&noChar / "W"&noChar / "⊤" / "\\top"
+logicBottom = "false"&noChar / "0" / "F"&noChar / "⊥" / "\\bot"
+logicUndefined = "\\nothing"
 
 vectorStart = "<"
 vectorEnd = ">"
@@ -57,6 +60,8 @@ charEscapeSequence
 literalValue
   = logicTop { return true; }
   / logicBottom { return false; }
+  / logicUndefined { return null; }
+
 
 vectorHead
   = head:identifier _ tail:(expressionSeparator _ identifier)+ {

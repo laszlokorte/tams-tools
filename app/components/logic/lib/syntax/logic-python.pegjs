@@ -9,13 +9,16 @@ start
 labelOperator "labelOperator"
   = "="
 
-logicAnd = "and"
-logicOr = "or"
-logicXor = "xor"
-logicNot = "not"
+noChar = [^0-9A-Za-z_-] / EOF
 
-logicTop = "true" / "1"
-logicBottom = "false" / "0"
+logicAnd = "and" & noChar
+logicOr = "or" & noChar
+logicXor = "xor" & noChar
+logicNot = "not" & noChar
+
+logicTop = "True" & noChar / "1"
+logicBottom = "False" & noChar / "0"
+logicUndefined = "None" & noChar
 
 vectorStart = "<"
 vectorEnd = ">"
@@ -38,6 +41,8 @@ identifierName
 literalValue
   = logicTop { return true; }
   / logicBottom { return false; }
+  / logicUndefined { return null; }
+
 
 vectorHead
   = head:identifier _ tail:(expressionSeparator _ identifier)+ {

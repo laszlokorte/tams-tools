@@ -1,5 +1,6 @@
 const greenColor = '#00cc00';
 const redColor = '#cc0000';
+const cyanColor = '#00dddd';
 
 const children = (expression) => {
   switch (expression.node) {
@@ -30,6 +31,9 @@ const name = (expression) => {
   case 'identifier':
     return expression.name.toString();
   case 'constant':
+    if(expression.value === null) {
+      return '*';
+    }
     return expression.value ? '1' : '0';
   case 'vector':
     return 'Vector[...]';
@@ -46,8 +50,14 @@ const color = (expression, evalutationMap) => {
   case 'identifier':
   case 'vector':
     const value = evalutationMap.get(expression);
+    if (value === null) {
+      return cyanColor;
+    }
     return value ? greenColor : redColor;
   case 'constant':
+    if (expression.value === null) {
+      return cyanColor;
+    }
     return expression.value ? greenColor : redColor;
   default:
     throw new Error(`unknown node: ${expression.node}`);
