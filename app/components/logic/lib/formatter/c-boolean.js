@@ -13,6 +13,16 @@ const whitspace = new RegExp('\s+', 'g');
 const sanitizeName = (name) =>
   name.replace(whitspace, '_');
 
+const valueToString = (value) => {
+  if (value === true) {
+    return '1';
+  } else if (value === false) {
+    return '0';
+  } else {
+    return '*';
+  }
+};
+
 export default {
   formatBinary: (op, lhs, rhs/*, depth*/) => {
     return `(${lhs} ${tryFetch(operators, op)} ${rhs})`;
@@ -33,7 +43,8 @@ export default {
     return `<${
       identifiers.map((i) => sanitizeName(i.name)).join(',')
     }:${
-      values.map((v) => v ? '1' : '0').join('')
+      values.map(valueToString).join('')
     }>`;
   },
+  formatVectorValue: valueToString,
 };

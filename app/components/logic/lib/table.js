@@ -43,9 +43,7 @@ export default (
         .concat(showSubExpressions ? context.subExpressions : []).toList(),
       identifiers: context.freeIdentifiers,
     }).map((row) => ({
-      values: row.values.map(
-        (v) => v ? '1' : '0'
-      ).toArray(),
+      values: row.values.map(::formatter.formatVectorValue).toArray(),
     })).toArray() : [],
 
     error: context.freeIdentifiers.size < 9 ? null :

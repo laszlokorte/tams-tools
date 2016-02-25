@@ -70,6 +70,7 @@ vectorHead
 vectorValue
   = "1" { return true; }
   / "0" { return false; }
+  / "*" { return null; }
 
 vectorBody "vectorBody"
   = values:vectorValue*
