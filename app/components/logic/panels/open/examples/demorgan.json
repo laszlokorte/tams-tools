@@ -1,4 +1,4 @@
 {
-  "language": "math",
+  "langId": "math",
   "term": "(P ∧ Q), (¬((¬P) ∨ (¬Q)))"
 }

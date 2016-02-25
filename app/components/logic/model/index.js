@@ -9,151 +9,105 @@ import {
   contextFromLabeledExpression,
 } from '../lib/context';
 
-import cParser from '../lib/syntax/logic-c.pegjs';
-import latexParser from '../lib/syntax/logic-latex.pegjs';
-import mathParser from '../lib/syntax/logic-math.pegjs';
-import pythonParser from '../lib/syntax/logic-python.pegjs';
+import {
+  C, Python, Latex, Math,
+} from './languages';
 
-const completions = {
-  c: ['&','|','^','~','1','0'],
-  python: ['and','or','xor','not','true','false'],
-  latex: ['\\wedge','\\vee','\\oplus','\\neg','\\top','\\bot'],
-  math: ['∧','∨','⊕','¬','⊤','⊥'],
-};
-
-function ParseError({lang, string, message, location, detected = null}) {
-  this.lang = lang;
+function ParseError({langId, string, message, location, language = null}) {
+  this.langId = langId;
   this.string = string;
   this.message = message;
   this.location = location;
-  this.detected = detected;
+  this.language = language;
 };
-
-const _language = I.Record({
-  name: null,
-  parse: () => { throw new Error("not implemented"); },
-});
-
-const cLang = _language({
-  name: 'C',
-  parse: (string) => {
-    return {
-      lang: 'c',
-      parsed: cParser.parse(string),
-    };
-  },
-});
-
-const latexLang = _language({
-  name: 'Latex',
-  parse: (string) => {
-    return {
-      lang: 'latex',
-      parsed: latexParser.parse(string),
-    };
-  },
-});
-
-const pythonLang = _language({
-  name: 'Python',
-  parse: (string) => {
-    return {
-      lang: 'python',
-      parsed: pythonParser.parse(string),
-    };
-  },
-});
-
-const mathLang = _language({
-  name: 'Math',
-  parse: (string) => {
-    return {
-      lang: 'math',
-      parsed: mathParser.parse(string),
-    };
-  },
-});
-
-const allLanguages = [
-  cLang,
-  pythonLang,
-  latexLang,
-  mathLang,
-];
-
-const autoLang = _language({
-  name: 'Auto detect',
-  parse: (string) => {
-    let error = null;
-    let detected = null;
-    for (const lang of allLanguages) {
-      try {
-        const result = lang.parse(string);
-        return {
-          parsed: result.parsed,
-          lang: 'auto',
-          detected: lang.name,
-        };
-      } catch (e) {
-        if (!error) {
-          detected = lang.name;
-          error = e;
-        } else if (
-          e.location.start.offset >
-          error.location.start.offset
-        ) {
-          detected = lang.name;
-          error = e;
-        }
-      }
-    }
-
-    throw new ParseError({
-      lang: 'auto',
-      string,
-      message: error.message,
-      location: error.location,
-      detected,
-    });
-  },
-});
 
 const languages = {
-  auto: autoLang,
-  c: cLang,
-  latex: latexLang,
-  math: mathLang,
-  python: pythonLang,
+  auto: null,
+  c: C,
+  latex: Latex,
+  math: Math,
+  python: Python,
 };
 
-const parse = ({string, lang, showSubExpressions}) => {
-  try {
-    const parseResult = languages[lang]
-      .parse(string);
+const autoDetect = (string) => {
+  let prevError = null;
+  let prevDetected = null;
+  for (const langId of Object.keys(languages)) {
+    const lang = languages[langId];
+    if (lang === null) {
+      continue;
+    }
+    try {
+      return {
+        parsed: lang.parse(string),
+        language: lang,
+        langId: langId,
+      };
+    } catch (error) {
+      if (prevError === null) {
+        prevDetected = langId;
+        prevError = error;
+      } else if (
+        error.location.start.offset >
+        prevError.location.start.offset
+      ) {
+        prevDetected = langId;
+        prevError = error;
+      }
+    }
+  };
 
-    return {
-      lang: parseResult.lang,
-      detected: parseResult.detected,
-      string,
-      showSubExpressions,
-      expressions: parseResult.parsed.map(expressionFromJson),
-    };
+  throw new ParseError({
+    langId: prevDetected,
+    language: languages[prevDetected],
+    string,
+    message: prevError.message,
+    location: prevError.location,
+  });
+};
+
+const parse = ({string, langId, showSubExpressions}) => {
+  try {
+    const language = languages[langId];
+
+    if (language === null) {
+      const detected = autoDetect(string);
+      return {
+        langId,
+        language: detected.language,
+        string,
+        showSubExpressions,
+        expressions: detected.parsed.map(expressionFromJson),
+      };
+    } else {
+      return {
+        langId,
+        language: language,
+        string,
+        showSubExpressions,
+        expressions: language.parse(string).map(expressionFromJson),
+      };
+    }
   } catch (e) {
     throw new ParseError({
-      lang, string,
+      langId, string,
       message: e.message,
       location: e.location,
-      detected: e.detected,
+      language: e.language,
     });
   }
 };
 
-const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
+const analyze = ({
+  language,
+  langId, expressions,
+  string, showSubExpressions,
+}) => {
   const context = contextFromLabeledExpression(expressions);
 
   return {
-    lang,
-    detected,
+    language,
+    langId,
     string,
     context,
     showSubExpressions,
@@ -162,8 +116,8 @@ const analyze = ({lang, detected, expressions, string, showSubExpressions}) => {
 
 const handleError = (error) =>
   O.just({
-    lang: error.lang,
-    detected: error.detected,
+    langId: error.langId,
+    language: error.language,
     error: {
       location: error.location,
       message: error.message,
@@ -176,19 +130,19 @@ export default (actions) => {
   const parsed$ = actions.openExpression$
   .map((string) => JSON.parse(string))
   .startWith({
-    language: 'auto',
+    langId: 'auto',
     term: '',
   })
-  .flatMapLatest(({language, term}) =>
+  .flatMapLatest(({langId: initialLang, term}) =>
     O.combineLatest(
       actions.input$.startWith(term),
-      actions.language$.startWith(language),
+      actions.language$.startWith(initialLang),
       actions.selectFormat$.startWith('math'),
       actions.showSubExpressions$.startWith(false),
-      (string, lang, outputFormat, showSubExpressions) =>
+      (string, langId, outputFormat, showSubExpressions) =>
         O.just({
           string,
-          lang,
+          langId,
           detected: null,
           showSubExpressions,
         })
@@ -196,22 +150,27 @@ export default (actions) => {
         .map(analyze)
         .catch(handleError)
         .map(({
-          detected,
+          language,
           error,
           formatter,
           context,
         }) => ({
-          detected,
-          lang,
+          languageList:
+            Object.keys(languages)
+            .map((id) => ({
+              id: id,
+              language: languages[id],
+            }))
+            .filter(({language}) => language !== null),
+          language,
+          langId,
           string,
           error,
           context,
           formatter,
           showSubExpressions,
           outputFormat,
-          completions: completions[
-            (detected && detected.toLowerCase()) || lang
-          ] || [],
+          completions: language ? language.completions : I.List(),
         }))
     ).switch()
   );

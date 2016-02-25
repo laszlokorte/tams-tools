@@ -62,24 +62,21 @@ const render = (state, table) =>
             select('.syntax-selector',{
               name: 'language',
             }, [
-              state.lang === 'auto' ?
+              state.langId === 'auto' ?
               option(
                 {value: 'auto', selected: true},
-                `Auto detect (${state.detected || '???'})`
+                `Auto detect (${state.language.name || '???'})`
               ) :
               option(
                 {value: 'auto', selected: false},
                 `Auto detect`
               ),
-
-              option({value: 'c',
-                selected: state.lang === 'c'}, 'C'),
-              option({value: 'python',
-                selected: state.lang === 'pyhton'}, 'Python'),
-              option({value: 'math',
-                selected: state.lang === 'math'}, 'Math'),
-              option({value: 'latex',
-                selected: state.lang === 'latex'}, 'Latex'),
+              state.languageList.map((item) =>
+                option({
+                  value: item.id,
+                  selected: state.langId === item.id,
+                }, item.language.name)
+              ),
             ]),
           ]),
           div('.complete-panel',
@@ -90,7 +87,7 @@ const render = (state, table) =>
                   'data-action-insert': c,
                 },
               }, c)
-            )
+            ).toArray()
           ),
           div('.logic-input', [
             textarea('.logic-input-field', {
