@@ -126,7 +126,7 @@ const render = (state, table) =>
               option({value: '', selected: true}, '---'),
               state.context.expressions.map(
                 (e,value) => option({value},
-                  e.name || expressionToString(e.content)
+                  e.name || expressionToString(e.body)
                 )
               ).toArray(),
             ]),
@@ -136,7 +136,7 @@ const render = (state, table) =>
               option({value: '', selected: true}, '---'),
               state.context.expressions.map(
                 (e, value) => option({value},
-                  e.name || expressionToString(e.content)
+                  e.name || expressionToString(e.body)
                 )
               ).toArray(),
             ]),

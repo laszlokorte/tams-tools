@@ -166,6 +166,8 @@ const omitGate = (color, angle, inputCount, defaultSignal) => {
         transform: `translate(-50, 0) rotate(${-angle})`,
       }, signalName(defaultSignal)),
     ];
+  } else {
+    return [];
   }
 };
 

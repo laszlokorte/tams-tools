@@ -1,6 +1,6 @@
 /* eslint-disable no-class/no-class */
 export class Node {
-  constructor(data, outgoing = new Set(), incomingCount = 0) {
+  constructor(data, outgoing = new window.Set(), incomingCount = 0) {
     this.data = data;
     this.outgoing = outgoing;
     this.incomingCount = incomingCount;
@@ -21,7 +21,7 @@ export const sort = (nodes) => {
     });
   });
 
-  const rootNodes = new Set(
+  const rootNodes = new window.Set(
     nodes.filter(incomingCountIsEmpty)
   );
 
@@ -39,7 +39,7 @@ export const sort = (nodes) => {
   }
 
   const cycle = nodes.filter((node) => !incomingCountIsEmpty(node));
-  if (cycle.length) {
+  if (cycle.size) {
     const error = new Error("Cyclic dependency");
     error.cycle = cycle;
     throw error;

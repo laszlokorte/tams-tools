@@ -67,9 +67,9 @@ const autoDetect = (string) => {
 };
 
 const parse = ({string, langId, showSubExpressions}) => {
-  try {
-    const language = languages[langId];
+  const language = languages[langId];
 
+  try {
     if (language === null) {
       const detected = autoDetect(string);
       return {
@@ -93,7 +93,7 @@ const parse = ({string, langId, showSubExpressions}) => {
       langId, string,
       message: e.message,
       location: e.location,
-      language: e.language,
+      language: e.language || language,
     });
   }
 };
@@ -115,6 +115,7 @@ const analyze = ({
 };
 
 const handleError = (error) =>
+  console.error(error) ||
   O.just({
     langId: error.langId,
     language: error.language,
@@ -161,7 +162,7 @@ export default (actions) => {
               id: id,
               language: languages[id],
             }))
-            .filter(({language}) => language !== null),
+            .filter(({language: l}) => l !== null),
           language,
           langId,
           string,

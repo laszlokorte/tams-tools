@@ -75,8 +75,8 @@ literalVector
   }
 
 parentheses
-  = "(" _ content:additive _ ")" {
-    return {content: content, style: 1}
+  = "(" _ body:additive _ ")" {
+    return {body: body, style: 1}
   }
 
 expressionSeparator "expression separator"
@@ -102,20 +102,20 @@ label "expressionLabel"
   }
 
 labeledExpression
-  = name:label _ labelOperator _ content:expression {
+  = name:label _ labelOperator _ body:expression {
     return {
       location: location(),
       node: 'label',
       name: name,
-      content: content,
+      body: body,
     };
   }
-  / content:expression {
+  / body:expression {
     return {
       location: location(),
       node: 'label',
       name: null,
-      content: content,
+      body: body,
     };
   }
 
@@ -145,7 +145,7 @@ primary
 
 group
   = paren:parentheses {
-    return {node: 'group', content: paren.content, style: paren.style};
+    return {node: 'group', body: paren.body, style: paren.style};
   }
 
 unary

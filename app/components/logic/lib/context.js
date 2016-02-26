@@ -17,7 +17,7 @@ const context = I.Record({
 }, 'context');
 
 const buildDependencyGraph = (expressionList) => {
-  const declaredIdentifiers = new Set(
+  const declaredIdentifiers = new window.Set(
     expressionList
       .filter((id) => id.name !== null)
       .map((id) => id.name)
@@ -42,7 +42,7 @@ const buildDependencyGraph = (expressionList) => {
   }, {map: new I.Map(), list: new I.List()});
 
   for (let node of nodeList) {
-    let dependencies = collectIdentifiers(node.data.content)
+    let dependencies = collectIdentifiers(node.data.body)
       .map((id) => id.name)
       .filter(::declaredIdentifiers.has)
       .map(::nodeMap.get)
@@ -63,7 +63,7 @@ const errorAtLocation = (msg, location) => {
 };
 
 const deduplicateDeclarations = (declaredIdentifiers) => {
-  const deduplicatedIds = new Set();
+  const deduplicatedIds = new window.Set();
 
   for (let decl of declaredIdentifiers) {
     if (deduplicatedIds.has(decl.name)) {
@@ -88,7 +88,7 @@ export const contextFromLabeledExpression = (expressions) => {
 
   const freeIdentifiers = expressionList
   .flatMap(
-    (expression) => collectIdentifiers(expression.content)
+    (expression) => collectIdentifiers(expression.body)
   )
   .toSet()
   .filter((i) => !declaredNames.has(i.name))
@@ -102,12 +102,12 @@ export const contextFromLabeledExpression = (expressions) => {
     );
 
     const subExpressions = expressionList.flatMap(
-      (expression) => collectSubExpressions(expression.content)
+      (expression) => collectSubExpressions(expression.body)
         .toList()
     );
 
     const toplevelExpressions = expressionList.filter(
-      (e) => e.name !== null || e.content.node !== 'identifier'
+      (e) => e.name !== null || e.body._name !== 'identifier'
     );
 
     return context({

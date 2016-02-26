@@ -25,10 +25,10 @@ export default (
           name:
             e.name ?
             (e.name + (showSubExpressions ?
-              " = " + expressionToString(e.content, formatter) :
+              " = " + expressionToString(e.body, formatter) :
               ''
             )) :
-            expressionToString(e.content, formatter),
+            expressionToString(e.body, formatter),
         })
       ).toArray(),
     });
@@ -47,7 +47,7 @@ export default (
 
     rows: context.freeIdentifiers.size < 9 ? evaluateAll({
       expressions: context.freeIdentifiers
-        .concat(context.toplevelExpressions.map((e) => e.content))
+        .concat(context.toplevelExpressions.map((e) => e.body))
         .concat(showSubExpressions ? context.subExpressions : []).toList(),
       identifiers: context.freeIdentifiers,
     }).map((row) => ({

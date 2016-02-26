@@ -3,31 +3,34 @@ const redColor = '#cc0000';
 const cyanColor = '#00dddd';
 
 const children = (expression) => {
-  switch (expression.node) {
+  switch (expression._name) {
   case 'binary':
     return [expression.lhs, expression.rhs];
   case 'unary':
     return [expression.operand];
   case 'group':
-    return [expression.content];
+  case 'label':
+    return [expression.body];
   case 'identifier':
   case 'constant':
     return [];
   case 'vector':
-    return expression.vectorIdentifiers;
+    return expression.identifiers;
   default:
-    throw new Error(`unknown node: ${expression.node}`);
+    throw new Error(`unknown node: ${expression._name}`);
   }
 };
 
 const name = (expression) => {
-  switch (expression.node) {
+  switch (expression._name) {
   case 'binary':
     return expression.operator.toString();
   case 'unary':
     return expression.operator.toString();
   case 'group':
     return "(...)";
+  case 'label':
+    return `${expression.name} = `;
   case 'identifier':
     return expression.name.toString();
   case 'constant':
@@ -38,12 +41,13 @@ const name = (expression) => {
   case 'vector':
     return 'Vector[...]';
   default:
-    throw new Error(`unknown node: ${expression.node}`);
+    throw new Error(`unknown node: ${expression._name}`);
   }
 };
 
 const color = (expression, evalutationMap) => {
-  switch (expression.node) {
+  console.log("a", expression);
+  switch (expression._name) {
   case 'binary':
   case 'unary':
   case 'group':
@@ -54,13 +58,15 @@ const color = (expression, evalutationMap) => {
       return cyanColor;
     }
     return value ? greenColor : redColor;
+  case 'label':
+    return color(expression.body, evalutationMap);
   case 'constant':
     if (expression.value === null) {
       return cyanColor;
     }
     return expression.value ? greenColor : redColor;
   default:
-    throw new Error(`unknown node: ${expression.node}`);
+    throw new Error(`unknown node: ${expression._name}`);
   }
 };
 
@@ -69,18 +75,10 @@ const toTree = (expression, evalutationMap) => {
     return null;
   }
 
-  if (expression.node === 'group') {
-    return toTree(expression.content, evalutationMap);
-  } else if (expression._name === 'labeledExpression') {
-    if (expression.name === null) {
-      return toTree(expression.content, evalutationMap);
-    } else {
-      return {
-        name: expression.name.toString() + ' =',
-        children: [toTree(expression.content, evalutationMap)],
-        color: evalutationMap && color(expression.content, evalutationMap),
-      };
-    }
+  if (expression._name === 'group') {
+    return toTree(expression.body, evalutationMap);
+  } else if (expression._name === 'label' && expression.name === null) {
+    return toTree(expression.body, evalutationMap);
   }
 
   return {

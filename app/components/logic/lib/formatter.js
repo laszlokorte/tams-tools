@@ -24,7 +24,7 @@ export const expressionToString = (
     return '';
   }
 
-  switch (expression.node) {
+  switch (expression._name) {
   case 'binary':
     return formatter.formatBinary(
       expression.operator,
@@ -40,7 +40,7 @@ export const expressionToString = (
     );
   case 'group':
     const contentString = expressionToString(
-      expression.content, formatter, depth + 1
+      expression.body, formatter, depth + 1
     );
     return formatter.formatGroup(contentString, depth);
   case 'identifier':
@@ -49,9 +49,9 @@ export const expressionToString = (
     return formatter.formatValue(expression.value);
   case 'vector':
     return formatter.formatVector(
-      expression.vectorIdentifiers, expression.vectorValues
+      expression.identifiers, expression.values
     );
   default:
-    throw new Error(`unknown node: ${expression.node}`);
+    throw new Error(`unknown node: ${expression._name}`);
   }
 };

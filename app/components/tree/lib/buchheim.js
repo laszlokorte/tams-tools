@@ -34,6 +34,7 @@ class LayoutNode {
         }
       }
     }
+    return void 0;
   };
 
   getLeftMostSibling() {

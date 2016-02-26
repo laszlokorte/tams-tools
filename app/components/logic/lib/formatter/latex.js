@@ -9,7 +9,7 @@ const tryFetch = (map, key) =>
   map[key] || key
 ;
 
-export default {
+export default self = {
   formatBinary: (op, lhs, rhs/*, depth*/) => {
     return `(${lhs} ${tryFetch(operators, op)} ${rhs})`;
   },
@@ -35,7 +35,7 @@ export default {
     return `<${
       identifiers.map((i) => i.name).join(',')
     }:${
-      values.map(this.valueToString).join('')
+      values.map(self.formatVectorValue).join('')
     }>`;
   },
   formatVectorValue: (value) => {

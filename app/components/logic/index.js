@@ -93,12 +93,12 @@ export default (responses) => {
               ));
 
               const evaluate = (expr) =>
-                expr.node === 'group' ? evaluate(expr.content) :
+                expr._name === 'group' ? evaluate(expr.body) :
                 [expr, evaluateExpression(expr, identifierMap)]
               ;
 
               subEvalutation = I.Map(state.context.toplevelExpressions.map(
-                (e) => evaluate(e.content))
+                (e) => evaluate(e.body))
               )
               .merge(
                 I.Map(state.context.subExpressions.map(evaluate))
@@ -156,7 +156,7 @@ export default (responses) => {
       return state.context ? state.context.expressions.map(
         (e) => {
           const label = e.name !== null ? `${e.name} = ` : '';
-          return label + expressionToString(e.content, formatter);
+          return label + expressionToString(e.body, formatter);
         }
       ).join(', ') : '';
     }

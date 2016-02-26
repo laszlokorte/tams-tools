@@ -47,7 +47,7 @@ export const evaluateExpression = (expression, identifierMap) => {
   if (expression === null) {
     return null;
   }
-  switch (expression.node) {
+  switch (expression._name) {
   case 'binary':
     return evalBinary(expression, identifierMap,
       evaluateExpression
@@ -57,20 +57,20 @@ export const evaluateExpression = (expression, identifierMap) => {
       evaluateExpression
     );
   case 'group':
-    return evaluateExpression(expression.content, identifierMap,
+    return evaluateExpression(expression.body, identifierMap,
       evaluateExpression
     );
   case 'identifier':
     return !!identifierMap.get(expression);
   case 'vector':
     return evalVector(
-      expression.vectorIdentifiers, expression.vectorValues,
+      expression.identifiers, expression.values,
       identifierMap
     );
   case 'constant':
     return expression.value;
   default:
-    throw new Error(`unknown node: ${expression.node}`);
+    throw new Error(`unknown node: ${expression._name}`);
   }
 };
 

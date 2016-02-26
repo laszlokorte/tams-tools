@@ -102,60 +102,60 @@ parentheses
 
 
 roundParens
-  = '(' _ content:additive _ ')' {
-    return {content: content, style: 1}
+  = '(' _ body:additive _ ')' {
+    return {body: body, style: 1}
   }
-  / '\\bigl(' _ content:additive _ '\\bigr)' {
-    return {content: content, style: 2}
+  / '\\bigl(' _ body:additive _ '\\bigr)' {
+    return {body: body, style: 2}
   }
-  / '\\Bigl(' _ content:additive _ '\\Bigr)' {
-    return {content: content, style: 3}
+  / '\\Bigl(' _ body:additive _ '\\Bigr)' {
+    return {body: body, style: 3}
   }
-  / '\\biggl(' _ content:additive _ '\\biggr)' {
-    return {content: content, style: 4}
+  / '\\biggl(' _ body:additive _ '\\biggr)' {
+    return {body: body, style: 4}
   }
-  / '\\Biggl(' _ content:additive _ '\\Biggr)' {
-    return {content: content, style: 5}
+  / '\\Biggl(' _ body:additive _ '\\Biggr)' {
+    return {body: body, style: 5}
   }
 
 
 angularParens
-  = '[' _ content:additive _ ']' {
-    return {content: content, style: 6}
+  = '[' _ body:additive _ ']' {
+    return {body: body, style: 6}
   }
-  / '\\bigl[' _ content:additive _ '\\bigr]' {
-    return {content: content, style: 7}
+  / '\\bigl[' _ body:additive _ '\\bigr]' {
+    return {body: body, style: 7}
   }
-  / '\\Bigl[' _ content:additive _ '\\Bigr]' {
-    return {content: content, style: 8}
+  / '\\Bigl[' _ body:additive _ '\\Bigr]' {
+    return {body: body, style: 8}
   }
-  / '\\biggl[' _ content:additive _ '\\biggr]' {
-    return {content: content, style: 9}
+  / '\\biggl[' _ body:additive _ '\\biggr]' {
+    return {body: body, style: 9}
   }
-  / '\\Biggl[' _ content:additive _ '\\Biggr]' {
-    return {content: content, style: 10}
+  / '\\Biggl[' _ body:additive _ '\\Biggr]' {
+    return {body: body, style: 10}
   }
 
 
-  / '\\lbrack' _ content:additive _ '\\rbrack' {
-    return {content: content, style: 6}
+  / '\\lbrack' _ body:additive _ '\\rbrack' {
+    return {body: body, style: 6}
   }
-  / '\\bigl\\lbrack' _ content:additive _ '\\bigr\\rbrack' {
-    return {content: content, style: 7}
+  / '\\bigl\\lbrack' _ body:additive _ '\\bigr\\rbrack' {
+    return {body: body, style: 7}
   }
-  / '\\Bigl\\lbrack' _ content:additive _ '\\Bigr\\rbrack' {
-    return {content: content, style: 8}
+  / '\\Bigl\\lbrack' _ body:additive _ '\\Bigr\\rbrack' {
+    return {body: body, style: 8}
   }
-  / '\\biggl\\lbrack' _ content:additive _ '\\biggr\\rbrack' {
-    return {content: content, style: 9}
+  / '\\biggl\\lbrack' _ body:additive _ '\\biggr\\rbrack' {
+    return {body: body, style: 9}
   }
-  / '\\Biggl\\lbrack' _ content:additive _ '\\Biggr\\rbrack' {
-    return {content: content, style: 10}
+  / '\\Biggl\\lbrack' _ body:additive _ '\\Biggr\\rbrack' {
+    return {body: body, style: 10}
   }
 
 curlyParens
-  = '{' _ content:additive _ '}' {
-    return {content: content, style: 1}
+  = '{' _ body:additive _ '}' {
+    return {body: body, style: 1}
   }
 
 expressionSeparator "expression separator"
@@ -181,20 +181,20 @@ label "expressionLabel"
   }
 
 labeledExpression
-  = name:label _ labelOperator _ content:expression {
+  = name:label _ labelOperator _ body:expression {
     return {
       location: location(),
       node: 'label',
       name: name,
-      content: content,
+      body: body,
     };
   }
-  / content:expression {
+  / body:expression {
     return {
       location: location(),
       node: 'label',
       name: null,
-      content: content,
+      body: body,
     };
   }
 
@@ -224,7 +224,7 @@ primary
 
 group
   = paren:parentheses {
-    return {node: 'group', content: paren.content, style: paren.style};
+    return {node: 'group', body: paren.body, style: paren.style};
   }
 
 unary
