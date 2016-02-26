@@ -46,7 +46,6 @@ const name = (expression) => {
 };
 
 const color = (expression, evalutationMap) => {
-  console.log("a", expression);
   switch (expression._name) {
   case 'binary':
   case 'unary':
