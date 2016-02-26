@@ -21,12 +21,20 @@ export default (
     groups.push({
       name: "expressions",
       columns: context.toplevelExpressions.map(
-        (e) => ({name: e.name || expressionToString(e.content, formatter)})
+        (e) => ({
+          name:
+            e.name ?
+            (e.name + (showSubExpressions ?
+              " = " + expressionToString(e.content, formatter) :
+              ''
+            )) :
+            expressionToString(e.content, formatter),
+        })
       ).toArray(),
     });
   }
 
-  if (showSubExpressions) {
+  if (showSubExpressions && context.subExpressions.size) {
     groups.push({
       name: "Sub expressions",
       columns: context.subExpressions.map(
