@@ -154,7 +154,10 @@ export default (responses) => {
     formatter$,
     (state, formatter) => {
       return state.context ? state.context.expressions.map(
-        (e) => expressionToString(e.content, formatter)
+        (e) => {
+          const label = e.name !== null ? `${e.name} = ` : '';
+          return label + expressionToString(e.content, formatter);
+        }
       ).join(', ') : '';
     }
   ).share();
