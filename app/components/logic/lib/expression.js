@@ -1,36 +1,36 @@
 import I from 'immutable';
 
-const labelExpression = I.Record({
+export const labelExpression = I.Record({
   location: null,
   name: null,
   body: null,
 }, 'label');
 
-const binaryExpression = I.Record({
+export const binaryExpression = I.Record({
   operator: null,
   lhs: null,
   rhs: null,
 }, 'binary');
 
-const unaryExpression = I.Record({
+export const unaryExpression = I.Record({
   operator: null,
   operand: null,
 }, 'unary');
 
-const groupExpression = I.Record({
+export const groupExpression = I.Record({
   body: null,
   style: null,
 }, 'group');
 
-const identifierExpression = I.Record({
+export const identifierExpression = I.Record({
   name: null,
 }, 'identifier');
 
-const constantExpression = I.Record({
+export const constantExpression = I.Record({
   value: null,
 }, 'constant');
 
-const vectorExpression = I.Record({
+export const vectorExpression = I.Record({
   identifiers: I.List(),
   values: I.List(),
 }, 'vector');

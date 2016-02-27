@@ -3,7 +3,7 @@ import I from 'immutable';
 import isolate from '@cycle/isolate';
 
 import {expressionToString} from './lib/formatter';
-import {evaluateExpression} from './lib/evaluation';
+import {evaluator} from './lib/evaluation';
 
 import model from './model';
 import view from './view';
@@ -92,18 +92,10 @@ export default (responses) => {
                 (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
               ));
 
-              const evaluate = (expr) =>
-                expr._name === 'group' ? evaluate(expr.body) :
-                [expr, evaluateExpression(expr, identifierMap)]
-              ;
-
-              subEvalutation = I.Map(state.context.toplevelExpressions.map(
-                (e) => evaluate(e.body))
-              )
-              .merge(
-                I.Map(state.context.subExpressions.map(evaluate))
-              )
-              .merge(identifierMap);
+              subEvalutation = state.context.sortedExpressions.reduce(
+                evaluator,
+                state.context.subExpressions.reduce(evaluator, identifierMap)
+              );
             }
 
             if (state.context.expressions.size === 1) {

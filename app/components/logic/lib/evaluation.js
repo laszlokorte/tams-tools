@@ -1,5 +1,7 @@
 import I from 'immutable';
 
+import {identifierExpression} from './expression';
+
 const row = I.Record({
   identifierValues: I.Map(),
   values: I.List(),
@@ -46,6 +48,8 @@ const evalUnary = (expression, identifierMap, evalExpr) => {
 export const evaluateExpression = (expression, identifierMap) => {
   if (expression === null) {
     return null;
+  } else if (identifierMap.has(expression)) {
+    return identifierMap.get(expression);
   }
   switch (expression._name) {
   case 'binary':
@@ -61,7 +65,7 @@ export const evaluateExpression = (expression, identifierMap) => {
       evaluateExpression
     );
   case 'identifier':
-    return !!identifierMap.get(expression);
+    return identifierMap.get(expression);
   case 'vector':
     return evalVector(
       expression.identifiers, expression.values,
@@ -69,20 +73,42 @@ export const evaluateExpression = (expression, identifierMap) => {
     );
   case 'constant':
     return expression.value;
+  case 'label':
+    return evaluateExpression(expression.body, identifierMap);
   default:
     throw new Error(`unknown node: ${expression._name}`);
   }
 };
 
 const makeIdentifierMap = (identifiers, counter) =>
-  I.Map(identifiers.map(
-    (name, i) => [name, !!(Math.pow(2, i) & counter)]
+  I.OrderedMap(identifiers.map(
+    (id, i) => [id, !!(Math.pow(2, i) & counter)]
   ))
 ;
 
-const makeEvaluator = (identifierMap) => (expr) =>
-  evaluateExpression(expr, identifierMap)
+export const evaluator = (identifierMap, expr) => {
+  const val = evaluateExpression(expr, identifierMap);
+  if (expr._name === 'label') {
+    const newMap = identifierMap
+      .set(expr.body, val)
+      .set(expr, val);
+    if (expr.name !== null) {
+      return newMap
+        .set(identifierExpression({name: expr.name}), val);
+    } else {
+      return newMap;
+    }
+  } else {
+    return identifierMap.set(expr, val);
+  }
+}
 ;
+
+export const evaluateSingle = ({
+  expressions, identifierMap,
+}) => {
+  return expressions.reduce(evaluator, identifierMap);
+};
 
 export const evaluateAll = ({
   expressions, identifiers,
@@ -95,11 +121,11 @@ export const evaluateAll = ({
   let mutAcc = acc;
   while (mutCounter >= 0) {
     const identifierMap = makeIdentifierMap(identifiers, mutCounter);
-    const evaluator = makeEvaluator(identifierMap);
+    const resultMap = evaluateSingle({expressions, identifierMap});
 
     mutAcc = mutAcc.push(row({
       identifierValues: identifierMap,
-      values: expressions.map(evaluator).toList(),
+      values: expressions.map(::resultMap.get),
     }));
 
     mutCounter--;

@@ -30,19 +30,28 @@ const analyze = ({
   langId, expressions,
   string, showSubExpressions,
 }) => {
-  const context = contextFromLabeledExpression(expressions);
+  try {
+    const context = contextFromLabeledExpression(expressions);
 
-  return {
-    language,
-    langId,
-    string,
-    context,
-    showSubExpressions,
-  };
+    return {
+      language,
+      langId,
+      string,
+      context,
+      showSubExpressions,
+    };
+  } catch (e) {
+    return {
+      language,
+      langId,
+      string,
+      error: e,
+      showSubExpressions,
+    };
+  }
 };
 
 const handleError = (error) =>
-  console.error(error) ||
   O.just({
     langId: error.langId,
     language: error.language,

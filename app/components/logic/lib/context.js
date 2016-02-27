@@ -97,7 +97,7 @@ export const contextFromLabeledExpression = (expressions) => {
   const nodeList = buildDependencyGraph(expressionList);
 
   try {
-    const sortedExpressions = sort(nodeList).map((node) =>
+    const sortedExpressions = I.List(sort(nodeList)).map((node) =>
       node.data
     );
 

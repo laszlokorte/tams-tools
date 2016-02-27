@@ -17,10 +17,10 @@ export default (
     });
   }
 
-  if (context.toplevelExpressions.size) {
+  if (!context.sortedExpressions.isEmpty()) {
     groups.push({
       name: "expressions",
-      columns: context.toplevelExpressions.map(
+      columns: context.sortedExpressions.map(
         (e) => ({
           name:
             e.name ?
@@ -47,7 +47,7 @@ export default (
 
     rows: context.freeIdentifiers.size < 9 ? evaluateAll({
       expressions: context.freeIdentifiers
-        .concat(context.toplevelExpressions.map((e) => e.body))
+        .concat(context.sortedExpressions)
         .concat(showSubExpressions ? context.subExpressions : []).toList(),
       identifiers: context.freeIdentifiers,
     }).map((row) => ({
