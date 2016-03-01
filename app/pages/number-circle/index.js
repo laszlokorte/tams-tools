@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
-import {div, svg} from '@cycle/dom';
+import {div, button, svg} from '@cycle/dom';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
@@ -34,10 +34,25 @@ const renderDots = (dots) =>
   ]))
 ;
 
+const renderButtons = (state) => div([
+  button({
+    attributes: {
+      'data-action': 'add-bit',
+    },
+  }, 'Add Bit'),
+
+  button({
+    attributes: {
+      'data-action': 'remove-bit',
+    },
+  }, 'Remove Bit'),
+]);
+
 // convert array of angles into svg
 const render = (state) =>
   div([
     div(['Number of bits:', state.bitCount]),
+    renderButtons(state),
     renderDots(state.dots),
   ])
 ;
