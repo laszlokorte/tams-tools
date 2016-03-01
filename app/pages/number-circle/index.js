@@ -7,6 +7,29 @@ import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {globalEventDriver} from '../../drivers/global-events';
 
+import {IF} from '../../lib/h-helper';
+
+const renderArc = (dots, selected, size, radius) =>
+  IF(selected !== null, () => {
+    const dot = dots[selected];
+    const angle = dot.angle;
+    const x = Math.sin(angle) * radius;
+    const y = -Math.cos(angle) * radius;
+    const center = size / 2;
+    const mid = angle > Math.PI;
+
+    return svg('path', {
+      d: `M ${center} ${center - radius}
+          A ${radius} ${radius} 0
+          ${mid ? 1 : 0} 1
+          ${x + center} ${y + center}`,
+      fill: 'none',
+      'stroke-width': 10,
+      stroke: 'green',
+    });
+  })
+;
+
 const renderDots = (dots, selected = null) => {
   const dotRadius = 50;
   const radius = 150 * Math.sqrt(dots.length);
@@ -21,26 +44,29 @@ const renderDots = (dots, selected = null) => {
       viewBox: `0 0 ${size} ${size}`,
       preserveAspectRatio: 'xMidYMid meet',
     },
-  }, dots.map((dot, dotIndex) => svg('g', {
-    attributes: {
-      'data-dot-index': dotIndex,
-    },
   }, [
-    svg('circle', {
-      cx: center + Math.sin(dot.angle) * radius,
-      cy: center - Math.cos(dot.angle) * radius,
-      r: 50,
-      fill: selected === dotIndex ? 'green' : '#444',
-    }),
-    svg('text', {
-      x: center + Math.sin(dot.angle) * radius,
-      y: center - Math.cos(dot.angle) * radius,
-      fill: '#fff',
-      'font-size': '50px',
-      'text-anchor': 'middle',
-      'dominant-baseline': 'central',
-    }, dot.value.toString()),
-  ])));
+    dots.map((dot, dotIndex) => svg('g', {
+      attributes: {
+        'data-dot-index': dotIndex,
+      },
+    }, [
+      svg('circle', {
+        cx: center + Math.sin(dot.angle) * radius,
+        cy: center - Math.cos(dot.angle) * radius,
+        r: 50,
+        fill: selected === dotIndex ? 'green' : '#444',
+      }),
+      svg('text', {
+        x: center + Math.sin(dot.angle) * radius,
+        y: center - Math.cos(dot.angle) * radius,
+        fill: '#fff',
+        'font-size': '50px',
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+      }, dot.value.toString()),
+    ])),
+    renderArc(dots, selected, size, radius - dotRadius * 1.5),
+  ]);
 };
 
 const renderButtons = (state) => div([
