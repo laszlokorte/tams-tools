@@ -32,6 +32,8 @@ const renderArc = (dots, selected, size, radius) =>
   })
 ;
 
+// the the horizontal offset for text at the given angle
+// (in radians)
 const textAnchor = (angle) => {
   const sin = Math.sin(angle);
 
@@ -44,6 +46,8 @@ const textAnchor = (angle) => {
   }
 };
 
+// get the vertical offset for text at the given angle
+// (in radians)
 const baseLine = (angle) => {
   const cos = -Math.cos(angle);
 
@@ -56,6 +60,7 @@ const baseLine = (angle) => {
   }
 };
 
+// render the dots as svg element
 const renderDots = (dots, selected = null) => {
   const dotRadius = 50;
   const radius = 150 * Math.sqrt(dots.length);
@@ -114,6 +119,7 @@ const renderDots = (dots, selected = null) => {
 };
 
 const renderButtons = (state) => div('.button-bar',[
+  // The button for removing a bit
   button('.bit-button', {
     attributes: {
       'data-action': 'remove-bit',
@@ -121,6 +127,7 @@ const renderButtons = (state) => div('.button-bar',[
     disabled: state.canRemoveBits ? void 0 : 'true',
   }, 'Remove Bit'),
 
+  // The button for adding a bit
   button('.bit-button', {
     attributes: {
       'data-action': 'add-bit',
@@ -138,6 +145,20 @@ const render = (state) =>
   ])
 ;
 
+// convert numbert into bit pattern string of length
+// bitCount.
+const bitPattern = (number, bitCount) =>
+  Array
+    .apply(Array, {length: bitCount})
+    .map((__, b) =>
+      (1 << (bitCount - b - 1)) & number ? 1 : 0
+    ).join('')
+;
+
+const intValue = (number, bitCountPow2) =>
+  number >= bitCountPow2 / 2 ? number - bitCountPow2 : number
+;
+
 // generate array of angles for a number circle of
 // given bitCount.
 const dotArray = (bitCount) =>
@@ -147,9 +168,8 @@ const dotArray = (bitCount) =>
   // map array to angles
   .map((_, index, all) => ({
     angle: 2 * Math.PI * index / all.length,
-    value: index >= all.length / 2 ? index - all.length : index,
-    pattern: Array.apply(Array, {length: bitCount})
-      .map((__, b) => (1 << (bitCount - b - 1)) & index ? 1 : 0).join(''),
+    value: intValue(index, all.length),
+    pattern: bitPattern(index, bitCount),
   }))
 ;
 
@@ -185,10 +205,15 @@ const model = (initialBitCount, actions) => {
   .scan((state, modifierFunction) => modifierFunction(state))
   // convert number of bit's into array of angles
   .map(({bitCount, selected}) => ({
+    // number of bits
     bitCount,
+    // the dots to draw
     dots: dotArray(bitCount),
+    // the index of the selected dot
     selected,
+    // boolean if more bits can be added
     canAddBits: bitCount < 5,
+    // boolean fi a bit can be removed
     canRemoveBits: bitCount > 1,
   }));
 };
