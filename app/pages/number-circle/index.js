@@ -26,23 +26,31 @@ const renderCircle = (angles) =>
 ;
 
 // convert array of angles into svg
-const render = (angles) =>
+const render = (state) =>
   div([
-    renderCircle(angles),
+    div(['Number of bits:', state.bitCount]),
+    renderCircle(state.angles),
   ])
+;
+
+// generate array of angles for a number circle of
+// given bitCount.
+const angleArray = (bitCount) =>
+  Array
+  // init array of length 2^bits.
+  .apply(Array, {length: Math.pow(2, bitCount)})
+  // map array to angles
+  .map((_, index, all) => 2 * Math.PI * index / all.length)
 ;
 
 const model = (initialBitCount) =>
   // number of bits to generate the number circle for
   O.just(initialBitCount)
   // convert number of bit's into array of angles
-  .map((bits) =>
-    Array
-      // init array of length 2^bits.
-      .apply(Array, {length: Math.pow(2, bits)})
-      // map array to angles
-      .map((_, index, all) => 2 * Math.PI * index / all.length)
-  )
+  .map((bitCount) => ({
+    bitCount,
+    angles: angleArray(bitCount),
+  }))
 ;
 
 const view = (state$) =>
