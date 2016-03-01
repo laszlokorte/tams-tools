@@ -6,10 +6,6 @@ import {
   label, input, button,
 } from '@cycle/dom';
 
-import {IF} from '../../../lib/h-helper';
-
-import {expressionToString} from '../lib/formatter';
-
 import './index.styl';
 
 const markError = (string, error) => {

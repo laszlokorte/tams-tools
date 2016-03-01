@@ -2,7 +2,7 @@ import {Observable as O} from 'rx';
 import I from 'immutable';
 
 import {
-  contextFromLabeledExpression,
+  contextFromLabeledExpressions,
 } from '../lib/context';
 
 import {
@@ -31,7 +31,7 @@ const analyze = ({
   string, showSubExpressions,
 }) => {
   try {
-    const context = contextFromLabeledExpression(expressions);
+    const context = contextFromLabeledExpressions(expressions);
 
     return {
       language,

@@ -7,19 +7,31 @@ const row = I.Record({
   values: I.List(),
 });
 
+const evalAND = (lhs, rhs) =>
+  (lhs === false || rhs === false) ? false : lhs && rhs
+;
+
+const evalOR = (lhs, rhs) =>
+  (lhs === null && rhs === false) ? null : lhs || rhs
+;
+
+const evalXOR = (lhs, rhs) =>
+  (lhs === null || rhs === null) ? null : !lhs !== !rhs
+;
+
 const evalBinary = (expression, identifierMap, evalExpr) => {
   const lhs = evalExpr(expression.lhs, identifierMap);
   const rhs = evalExpr(expression.rhs, identifierMap);
 
   switch (expression.operator) {
   case 'AND': {
-    return (lhs === false || rhs === false) ? false : lhs && rhs;
+    return evalAND(lhs, rhs);
   }
   case 'OR': {
-    return (lhs === null && rhs === false) ? null : lhs || rhs;
+    return evalOR(lhs, rhs);
   }
   case 'XOR': {
-    return (lhs === null || rhs === null) ? null : !lhs !== !rhs;
+    return evalXOR(lhs, rhs);
   }
   default: {
     throw new Error(`unknown operator: ${expression.operator}`);
@@ -45,12 +57,7 @@ const evalUnary = (expression, identifierMap, evalExpr) => {
   }
 };
 
-export const evaluateExpression = (expression, identifierMap) => {
-  if (expression === null) {
-    return null;
-  } else if (identifierMap.has(expression)) {
-    return identifierMap.get(expression);
-  }
+const doEvaluateExpression = (expression, identifierMap) => {
   switch (expression._name) {
   case 'binary':
     return evalBinary(expression, identifierMap,
@@ -77,6 +84,16 @@ export const evaluateExpression = (expression, identifierMap) => {
     return evaluateExpression(expression.body, identifierMap);
   default:
     throw new Error(`unknown node: ${expression._name}`);
+  }
+};
+
+export const evaluateExpression = (expression, identifierMap) => {
+  if (expression === null) {
+    return null;
+  } else if (identifierMap.has(expression)) {
+    return identifierMap.get(expression);
+  } else {
+    return doEvaluateExpression(expression, identifierMap);
   }
 };
 

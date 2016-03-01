@@ -3,10 +3,6 @@ import I from 'immutable';
 export const collectSubExpressions = (
   expression, acc = I.OrderedSet(), collect = false
 ) => {
-  if (expression === null) {
-    return acc;
-  }
-
   const newAcc = collect === true ? acc.add(expression) : acc;
 
   switch (expression._name) {

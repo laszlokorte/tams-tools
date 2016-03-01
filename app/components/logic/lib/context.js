@@ -79,7 +79,7 @@ const deduplicateDeclarations = (declaredIdentifiers) => {
   return deduplicatedIds;
 };
 
-export const contextFromLabeledExpression = (expressions) => {
+export const contextFromLabeledExpressions = (expressions) => {
   const expressionList = I.List(expressions);
   const declaredIdentifiers = expressionList
     .filter((id) => id.name !== null);

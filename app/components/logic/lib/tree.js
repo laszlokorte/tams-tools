@@ -21,6 +21,13 @@ const children = (expression) => {
   }
 };
 
+const constantName = (expression) => {
+  if (expression.value === null) {
+    return '*';
+  }
+  return expression.value ? '1' : '0';
+};
+
 const name = (expression) => {
   switch (expression._name) {
   case 'binary':
@@ -34,15 +41,27 @@ const name = (expression) => {
   case 'identifier':
     return expression.name.toString();
   case 'constant':
-    if (expression.value === null) {
-      return '*';
-    }
-    return expression.value ? '1' : '0';
+    return constantName(expression);
   case 'vector':
-    return 'Vector[...]';
+    return '<Vector:...>';
   default:
     throw new Error(`unknown node: ${expression._name}`);
   }
+};
+
+const constantColor = (expression) => {
+  if (expression.value === null) {
+    return cyanColor;
+  }
+  return expression.value ? greenColor : redColor;
+};
+
+const expressionColor = (expression, evalutationMap) => {
+  const value = evalutationMap.get(expression);
+  if (value === null) {
+    return cyanColor;
+  }
+  return value ? greenColor : redColor;
 };
 
 const color = (expression, evalutationMap) => {
@@ -52,18 +71,11 @@ const color = (expression, evalutationMap) => {
   case 'group':
   case 'identifier':
   case 'vector':
-    const value = evalutationMap.get(expression);
-    if (value === null) {
-      return cyanColor;
-    }
-    return value ? greenColor : redColor;
+    return expressionColor(expression, evalutationMap);
   case 'label':
     return color(expression.body, evalutationMap);
   case 'constant':
-    if (expression.value === null) {
-      return cyanColor;
-    }
-    return expression.value ? greenColor : redColor;
+    return constantColor(expression);
   default:
     throw new Error(`unknown node: ${expression._name}`);
   }

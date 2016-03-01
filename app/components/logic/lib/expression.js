@@ -36,10 +36,6 @@ export const vectorExpression = I.Record({
 }, 'vector');
 
 export const expressionFromJson = (data) => {
-  if (data === null) {
-    return null;
-  }
-
   switch (data.node) {
   case 'label':
     return labelExpression({
