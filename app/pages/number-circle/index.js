@@ -7,7 +7,7 @@ import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {globalEventDriver} from '../../drivers/global-events';
 
-const renderCircle = (angles) =>
+const renderDots = (dots) =>
   svg('svg', {
     attributes: {
       width: 200,
@@ -16,31 +16,43 @@ const renderCircle = (angles) =>
       viewBox: `0 0 500 500`,
       preserveAspectRatio: 'xMidYMid meet',
     },
-  }, angles.map((angle) =>
+  }, dots.map((dot) => [
     svg('circle', {
-      cx: 250 + Math.sin(angle) * 200,
-      cy: 250 + Math.cos(angle) * 200,
+      cx: 250 + Math.sin(dot.angle) * 200,
+      cy: 250 - Math.cos(dot.angle) * 200,
       r: 50,
-    }))
-  )
+      fill: '#444',
+    }),
+    svg('text', {
+      x: 250 + Math.sin(dot.angle) * 200,
+      y: 250 - Math.cos(dot.angle) * 200,
+      fill: '#fff',
+      'font-size': '50px',
+      'text-anchor': 'middle',
+      'dominant-baseline': 'central',
+    }, dot.value.toString()),
+  ]))
 ;
 
 // convert array of angles into svg
 const render = (state) =>
   div([
     div(['Number of bits:', state.bitCount]),
-    renderCircle(state.angles),
+    renderDots(state.dots),
   ])
 ;
 
 // generate array of angles for a number circle of
 // given bitCount.
-const angleArray = (bitCount) =>
+const dotArray = (bitCount) =>
   Array
   // init array of length 2^bits.
   .apply(Array, {length: Math.pow(2, bitCount)})
   // map array to angles
-  .map((_, index, all) => 2 * Math.PI * index / all.length)
+  .map((_, index, all) => ({
+    angle: 2 * Math.PI * index / all.length,
+    value: index,
+  }))
 ;
 
 const model = (initialBitCount) =>
@@ -49,7 +61,7 @@ const model = (initialBitCount) =>
   // convert number of bit's into array of angles
   .map((bitCount) => ({
     bitCount,
-    angles: angleArray(bitCount),
+    dots: dotArray(bitCount),
   }))
 ;
 
