@@ -9,6 +9,8 @@ import {globalEventDriver} from '../../drivers/global-events';
 
 import {IF} from '../../lib/h-helper';
 
+import './index.styl';
+
 const renderArc = (dots, selected, size, radius) =>
   IF(selected !== null, () => {
     const dot = dots[selected];
@@ -19,13 +21,13 @@ const renderArc = (dots, selected, size, radius) =>
     const mid = angle > Math.PI;
 
     return svg('path', {
+      class: 'selection-arc',
       d: `M ${center} ${center - radius}
           A ${radius} ${radius} 0
           ${mid ? 1 : 0} 1
           ${x + center} ${y + center}`,
       fill: 'none',
       'stroke-width': 10,
-      stroke: 'green',
     });
   })
 ;
@@ -40,23 +42,26 @@ const renderDots = (dots, selected = null) => {
     attributes: {
       width: 500,
       height: 500,
-      class: 'graphics-root',
+      class: 'number-circle',
       viewBox: `0 0 ${size} ${size}`,
       preserveAspectRatio: 'xMidYMid meet',
     },
   }, [
     dots.map((dot, dotIndex) => svg('g', {
       attributes: {
+        class: 'number-dot' +
+          (selected === dotIndex ? ' state-selected' : ''),
         'data-dot-index': dotIndex,
       },
     }, [
       svg('circle', {
+        class: 'number-dot-background',
         cx: center + Math.sin(dot.angle) * radius,
         cy: center - Math.cos(dot.angle) * radius,
         r: 50,
-        fill: selected === dotIndex ? 'green' : '#444',
       }),
       svg('text', {
+        class: 'number-dot-label',
         x: center + Math.sin(dot.angle) * radius,
         y: center - Math.cos(dot.angle) * radius,
         fill: '#fff',
@@ -69,26 +74,26 @@ const renderDots = (dots, selected = null) => {
   ]);
 };
 
-const renderButtons = (state) => div([
-  button({
-    attributes: {
-      'data-action': 'add-bit',
-    },
-    disabled: state.canAddBits ? void 0 : 'true',
-  }, 'Add Bit'),
-
-  button({
+const renderButtons = (state) => div('.button-bar',[
+  button('.bit-button', {
     attributes: {
       'data-action': 'remove-bit',
     },
     disabled: state.canRemoveBits ? void 0 : 'true',
   }, 'Remove Bit'),
+
+  button('.bit-button', {
+    attributes: {
+      'data-action': 'add-bit',
+    },
+    disabled: state.canAddBits ? void 0 : 'true',
+  }, 'Add Bit'),
 ]);
 
 // convert array of angles into svg
 const render = (state) =>
-  div([
-    div(['Number of bits:', state.bitCount]),
+  div('.number-circle-container', [
+    div('.bit-count', ['Number of bits: ', state.bitCount]),
     renderButtons(state),
     renderDots(state.dots, state.selected),
   ])

@@ -1,0 +1,44 @@
+@import '../../styles/layout'
+
+.number-circle-container
+  position absolute
+  top 0
+  bottom 0
+  right 0
+  left 0
+
+.number-circle
+  width 100%
+  height auto
+  max-height 80%
+
+.number-dot
+  cursor pointer
+  &.state-selected
+    .number-dot-background
+      fill color-focus
+
+.number-dot-background
+  fill #444
+
+.number-dot-label
+  font-family font-sans
+
+.selection-arc
+  stroke color-focus
+
+.button-bar
+  text-align center
+  padding space(1)
+
+.bit-button
+  margin space(0.1)
+  button(false, color-background-inverse)
+
+  &:disabled
+    opacity 0.8
+
+.bit-count
+  margin-top space(1)
+  font-size font-size-big
+  text-align center
