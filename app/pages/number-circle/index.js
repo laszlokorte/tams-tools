@@ -9,7 +9,12 @@ import {globalEventDriver} from '../../drivers/global-events';
 
 const numberCircleApp = (sources) => {
   return {
-    DOM: O.just(
+    DOM: O.just([
+      0,
+      Math.PI / 2,
+      Math.PI,
+      Math.PI * 3 / 2,
+    ]).map((angles) =>
       div([
         svg('svg', {
           attributes: {
@@ -19,13 +24,13 @@ const numberCircleApp = (sources) => {
             viewBox: `0 0 500 500`,
             preserveAspectRatio: 'xMidYMid meet',
           },
-        }, [
+        }, angles.map((angle) =>
           svg('circle', {
-            cx: 50,
-            cy: 50,
+            cx: 250 + Math.sin(angle) * 200,
+            cy: 250 + Math.cos(angle) * 200,
             r: 50,
-          }),
-        ]),
+          }))
+        ),
       ])
     ),
   };
