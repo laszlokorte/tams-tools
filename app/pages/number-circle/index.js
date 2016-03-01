@@ -72,7 +72,7 @@ const dotArray = (bitCount) =>
   // map array to angles
   .map((_, index, all) => ({
     angle: 2 * Math.PI * index / all.length,
-    value: index,
+    value: index >= all.length / 2 ? index - all.length : index,
   }))
 ;
 
