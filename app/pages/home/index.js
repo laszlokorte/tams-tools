@@ -9,23 +9,33 @@ const home = (sources) => {
   const {
   } = sources;
 
+  const components = [
+    {
+      name: 'KV diagram editor',
+      url: './kvd-editor.html',
+    },
+    {
+      name: 'Logic expression editor',
+      url: './logic-editor.html',
+    },
+    {
+      name: 'LED editor',
+      url: './led-editor.html',
+    },
+    {
+      name: 'FSM editor',
+      url: './fsm-editor.html',
+    },
+  ];
+
   return {
     DOM: O.just(
       div([
-        ul('.tile-grid', [
+        ul('.tile-grid', components.map((component) =>
           li('.tile-item', a('.tile-link', {
-            href: './kvd-editor.html',
-          }, 'KV diagram editor')),
-          li('.tile-item', a('.tile-link', {
-            href: './logic-editor.html',
-          }, 'Logic expression editor')),
-          li('.tile-item', a('.tile-link', {
-            href: './led-editor.html',
-          }, 'LED editor')),
-          li('.tile-item', a('.tile-link', {
-            href: './fsm-editor.html',
-          }, 'FSM editor')),
-        ]),
+            href: component.url,
+          }, component.name))
+        )),
       ])
     ),
   };
