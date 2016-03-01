@@ -7,24 +7,28 @@ import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {globalEventDriver} from '../../drivers/global-events';
 
+const renderCircle = (angles) =>
+  svg('svg', {
+    attributes: {
+      width: 200,
+      height: 200,
+      class: 'graphics-root',
+      viewBox: `0 0 500 500`,
+      preserveAspectRatio: 'xMidYMid meet',
+    },
+  }, angles.map((angle) =>
+    svg('circle', {
+      cx: 250 + Math.sin(angle) * 200,
+      cy: 250 + Math.cos(angle) * 200,
+      r: 50,
+    }))
+  )
+;
+
 // convert array of angles into svg
 const render = (angles) =>
   div([
-    svg('svg', {
-      attributes: {
-        width: 200,
-        height: 200,
-        class: 'graphics-root',
-        viewBox: `0 0 500 500`,
-        preserveAspectRatio: 'xMidYMid meet',
-      },
-    }, angles.map((angle) =>
-      svg('circle', {
-        cx: 250 + Math.sin(angle) * 200,
-        cy: 250 + Math.cos(angle) * 200,
-        r: 50,
-      }))
-    ),
+    renderCircle(angles),
   ])
 ;
 
