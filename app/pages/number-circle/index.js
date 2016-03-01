@@ -28,20 +28,29 @@ const render = (angles) =>
   ])
 ;
 
+const model = (initialBitCount) =>
+  // number of bits to generate the number circle for
+  O.just(initialBitCount)
+  // convert number of bit's into array of angles
+  .map((bits) =>
+    Array
+      // init array of length 2^bits.
+      .apply(Array, {length: Math.pow(2, bits)})
+      // map array to angles
+      .map((_, index, all) => 2 * Math.PI * index / all.length)
+  )
+;
+
+const view = (state$) =>
+  state$.map(render)
+;
+
 const numberCircleApp = (sources) => {
-  const state$ = // number of bits to generate the number circle for
-    O.just(3)
-    // convert number of bit's into array of angles
-    .map((bits) =>
-      Array
-        // init array of length 2^bits.
-        .apply(Array, {length: Math.pow(2, bits)})
-        // map array to angles
-        .map((_, index, all) => 2 * Math.PI * index / all.length)
-    );
+  const state$ = model(3);
+  const vtree$ = view(state$);
 
   return {
-    DOM: state$.map(render),
+    DOM: vtree$,
   };
 };
 
