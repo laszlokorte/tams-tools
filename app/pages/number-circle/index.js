@@ -70,22 +70,42 @@ const dotArray = (bitCount) =>
   }))
 ;
 
-const model = (initialBitCount) =>
+const intent = (DOM) => {
+  return {
+    addBit$: DOM.select('[data-action="add-bit"]').events('click'),
+    removeBit$: DOM.select('[data-action="remove-bit"]').events('click'),
+  };
+};
+
+const model = (initialBitCount, actions) => {
+  const modifierFunction$ = O.merge([
+    actions.addBit$.map(() => (state) =>
+      ({bitCount: state.bitCount + 1})
+    ),
+    actions.removeBit$.map(() => (state) =>
+      ({bitCount: state.bitCount - 1})
+    ),
+  ]);
+
+  return modifierFunction$
   // number of bits to generate the number circle for
-  O.just(initialBitCount)
+  .startWith({bitCount: initialBitCount})
+  // apply the function
+  .scan((state, modifierFunction) => modifierFunction(state))
   // convert number of bit's into array of angles
-  .map((bitCount) => ({
+  .map(({bitCount}) => ({
     bitCount,
     dots: dotArray(bitCount),
-  }))
-;
+  }));
+};
 
 const view = (state$) =>
   state$.map(render)
 ;
 
 const numberCircleApp = (sources) => {
-  const state$ = model(3);
+  const actions = intent(sources.DOM);
+  const state$ = model(3, actions);
   const vtree$ = view(state$);
 
   return {
