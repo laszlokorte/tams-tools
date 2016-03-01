@@ -9,12 +9,19 @@ import {globalEventDriver} from '../../drivers/global-events';
 
 const numberCircleApp = (sources) => {
   return {
-    DOM: O.just([
-      0,
-      Math.PI / 2,
-      Math.PI,
-      Math.PI * 3 / 2,
-    ]).map((angles) =>
+    DOM:
+    // number of bits to generate the number circle for
+    O.just(3)
+    // convert number of bit's into array of angles
+    .map((bits) =>
+      Array
+        // init array of length 2^bits.
+        .apply(Array, {length: Math.pow(2, bits)})
+        // map array to angles
+        .map((_, index, all) => 2 * Math.PI * index / all.length)
+    )
+    // convert array of angles into svg
+    .map((angles) =>
       div([
         svg('svg', {
           attributes: {
