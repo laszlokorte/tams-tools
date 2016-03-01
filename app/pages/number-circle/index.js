@@ -7,44 +7,50 @@ import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {globalEventDriver} from '../../drivers/global-events';
 
-const renderDots = (dots) =>
-  svg('svg', {
+const renderDots = (dots) => {
+  const dotRadius = 50;
+  const radius = 150 * Math.sqrt(dots.length);
+  const size = 2 * (radius + dotRadius);
+  const center = size / 2;
+  return svg('svg', {
     attributes: {
-      width: 200,
-      height: 200,
+      width: 500,
+      height: 500,
       class: 'graphics-root',
-      viewBox: `0 0 500 500`,
+      viewBox: `0 0 ${size} ${size}`,
       preserveAspectRatio: 'xMidYMid meet',
     },
   }, dots.map((dot) => [
     svg('circle', {
-      cx: 250 + Math.sin(dot.angle) * 200,
-      cy: 250 - Math.cos(dot.angle) * 200,
+      cx: center + Math.sin(dot.angle) * radius,
+      cy: center - Math.cos(dot.angle) * radius,
       r: 50,
       fill: '#444',
     }),
     svg('text', {
-      x: 250 + Math.sin(dot.angle) * 200,
-      y: 250 - Math.cos(dot.angle) * 200,
+      x: center + Math.sin(dot.angle) * radius,
+      y: center - Math.cos(dot.angle) * radius,
       fill: '#fff',
       'font-size': '50px',
       'text-anchor': 'middle',
       'dominant-baseline': 'central',
     }, dot.value.toString()),
-  ]))
-;
+  ]));
+};
 
 const renderButtons = (state) => div([
   button({
     attributes: {
       'data-action': 'add-bit',
     },
+    disabled: state.canAddBits ? void 0 : 'true',
   }, 'Add Bit'),
 
   button({
     attributes: {
       'data-action': 'remove-bit',
     },
+    disabled: state.canRemoveBits ? void 0 : 'true',
   }, 'Remove Bit'),
 ]);
 
@@ -96,6 +102,8 @@ const model = (initialBitCount, actions) => {
   .map(({bitCount}) => ({
     bitCount,
     dots: dotArray(bitCount),
+    canAddBits: bitCount < 6,
+    canRemoveBits: bitCount > 1,
   }));
 };
 
