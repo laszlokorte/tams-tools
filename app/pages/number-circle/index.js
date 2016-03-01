@@ -32,18 +32,48 @@ const renderArc = (dots, selected, size, radius) =>
   })
 ;
 
+const textAnchor = (angle) => {
+  const sin = Math.sin(angle);
+
+  if (sin > 0.5) {
+    return 'start';
+  } else if (sin < -0.5) {
+    return 'end';
+  } else {
+    return 'middle';
+  }
+};
+
+const baseLine = (angle) => {
+  const cos = -Math.cos(angle);
+
+  if (cos > 0.5) {
+    return 'text-before-edge';
+  } else if (cos < -0.5) {
+    return 'text-after-edge';
+  } else {
+    return 'central';
+  }
+};
+
 const renderDots = (dots, selected = null) => {
   const dotRadius = 50;
   const radius = 150 * Math.sqrt(dots.length);
   const size = 2 * (radius + dotRadius);
   const center = size / 2;
+  const padding = 100;
 
   return svg('svg', {
     attributes: {
       width: 500,
       height: 500,
       class: 'number-circle',
-      viewBox: `0 0 ${size} ${size}`,
+      viewBox: `
+        ${-padding}
+        ${-padding}
+        ${size + 2 * padding}
+        ${size + 2 * padding}
+      `,
       preserveAspectRatio: 'xMidYMid meet',
     },
   }, [
@@ -69,6 +99,15 @@ const renderDots = (dots, selected = null) => {
         'text-anchor': 'middle',
         'dominant-baseline': 'central',
       }, dot.value.toString()),
+      svg('text', {
+        class: 'number-dot-pattern',
+        x: center + Math.sin(dot.angle) * (radius * 1 + 70),
+        y: center - Math.cos(dot.angle) * (radius * 1 + 70),
+        fill: '#000',
+        'font-size': '50px',
+        'text-anchor': textAnchor(dot.angle),
+        'dominant-baseline': baseLine(dot.angle),
+      }, dot.pattern.toString()),
     ])),
     renderArc(dots, selected, size, radius - dotRadius * 1.5),
   ]);
@@ -109,6 +148,8 @@ const dotArray = (bitCount) =>
   .map((_, index, all) => ({
     angle: 2 * Math.PI * index / all.length,
     value: index >= all.length / 2 ? index - all.length : index,
+    pattern: Array.apply(Array, {length: bitCount})
+      .map((__, b) => (1 << (bitCount - b - 1)) & index ? 1 : 0).join(''),
   }))
 ;
 
@@ -147,7 +188,7 @@ const model = (initialBitCount, actions) => {
     bitCount,
     dots: dotArray(bitCount),
     selected,
-    canAddBits: bitCount < 6,
+    canAddBits: bitCount < 5,
     canRemoveBits: bitCount > 1,
   }));
 };
