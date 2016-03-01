@@ -7,11 +7,12 @@ import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {globalEventDriver} from '../../drivers/global-events';
 
-const renderDots = (dots) => {
+const renderDots = (dots, selected = null) => {
   const dotRadius = 50;
   const radius = 150 * Math.sqrt(dots.length);
   const size = 2 * (radius + dotRadius);
   const center = size / 2;
+
   return svg('svg', {
     attributes: {
       width: 500,
@@ -20,12 +21,16 @@ const renderDots = (dots) => {
       viewBox: `0 0 ${size} ${size}`,
       preserveAspectRatio: 'xMidYMid meet',
     },
-  }, dots.map((dot) => [
+  }, dots.map((dot, dotIndex) => svg('g', {
+    attributes: {
+      'data-dot-index': dotIndex,
+    },
+  }, [
     svg('circle', {
       cx: center + Math.sin(dot.angle) * radius,
       cy: center - Math.cos(dot.angle) * radius,
       r: 50,
-      fill: '#444',
+      fill: selected === dotIndex ? 'green' : '#444',
     }),
     svg('text', {
       x: center + Math.sin(dot.angle) * radius,
@@ -35,7 +40,7 @@ const renderDots = (dots) => {
       'text-anchor': 'middle',
       'dominant-baseline': 'central',
     }, dot.value.toString()),
-  ]));
+  ])));
 };
 
 const renderButtons = (state) => div([
@@ -59,7 +64,7 @@ const render = (state) =>
   div([
     div(['Number of bits:', state.bitCount]),
     renderButtons(state),
-    renderDots(state.dots),
+    renderDots(state.dots, state.selected),
   ])
 ;
 
@@ -80,6 +85,11 @@ const intent = (DOM) => {
   return {
     addBit$: DOM.select('[data-action="add-bit"]').events('click'),
     removeBit$: DOM.select('[data-action="remove-bit"]').events('click'),
+
+    selectBit$: DOM.select('[data-dot-index]')
+      .events('click').map(
+        (evt) => parseInt(evt.ownerTarget.getAttribute('data-dot-index'), 10)
+      ),
   };
 };
 
@@ -91,17 +101,21 @@ const model = (initialBitCount, actions) => {
     actions.removeBit$.map(() => (state) =>
       ({bitCount: state.bitCount - 1})
     ),
+    actions.selectBit$.map((bitIndex) => (state) =>
+      ({bitCount: state.bitCount, selected: bitIndex})
+    ),
   ]);
 
   return modifierFunction$
   // number of bits to generate the number circle for
-  .startWith({bitCount: initialBitCount})
+  .startWith({bitCount: initialBitCount, selected: null})
   // apply the function
   .scan((state, modifierFunction) => modifierFunction(state))
   // convert number of bit's into array of angles
-  .map(({bitCount}) => ({
+  .map(({bitCount, selected}) => ({
     bitCount,
     dots: dotArray(bitCount),
+    selected,
     canAddBits: bitCount < 6,
     canRemoveBits: bitCount > 1,
   }));
