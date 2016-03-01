@@ -46,6 +46,7 @@ module.exports = {
     logicEditor: "./app/pages/logic-editor/index.js",
     ledEditor: "./app/pages/led-editor/index.js",
     fsmEditor: "./app/pages/fsm-editor/index.js",
+    numberCircle: "./app/pages/number-circle/index.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -132,6 +133,14 @@ module.exports = {
       template: './app/index.html',
       filename: 'fsm-editor.html',
       favicon: './app/pages/fsm-editor/fsm.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Number circle',
+      minify: htmlMinifyOptions,
+      chunks: ['numberCircle', 'vendor'],
+      template: './app/index.html',
+      filename: 'number-circle.html',
+      favicon: './app/pages/number-circle/number-circle.ico',
     }),
     new HtmlWebpackPlugin({
       title: 'Debug',

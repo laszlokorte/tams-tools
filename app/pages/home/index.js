@@ -26,6 +26,10 @@ const home = (sources) => {
       name: 'FSM editor',
       url: './fsm-editor.html',
     },
+    {
+      name: 'Number circle',
+      url: './number-circle.html',
+    },
   ];
 
   return {
