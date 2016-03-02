@@ -30,6 +30,7 @@ const renderArc = (dots, selected, size, radius) =>
           ${x + center} ${y + center}`,
       fill: 'none',
       'stroke-width': 10,
+      'marker-end': 'url(#markerArrow)',
     });
   })
 ;
@@ -93,6 +94,21 @@ const renderDots = (dots, selected = null) => {
       preserveAspectRatio: 'xMidYMid meet',
     },
   }, [
+    svg('defs', [
+      svg('marker', {
+        id: 'markerArrow',
+        markerWidth: 3,
+        markerHeight: 4,
+        refX: 2,
+        refY: 2,
+        orient: 'auto',
+        class: 'arrow-head',
+      }, [
+        svg('path', {
+          d: 'M0,0 L0,4 L3,2 L0,0',
+        }),
+      ]),
+    ]),
     dots.map((dot, dotIndex) => svg('g', {
       attributes: {
         class: 'number-dot' +
