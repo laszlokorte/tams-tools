@@ -19,12 +19,14 @@ const renderArc = (dots, selected, size, radius) =>
     const y = -Math.cos(angle) * radius;
     const center = size / 2;
     const mid = angle > Math.PI;
+    const midAngle = dots[dots.length / 2 - 1].angle;
+    const reverse = angle > midAngle;
 
     return svg('path', {
       class: 'selection-arc',
       d: `M ${center} ${center - radius}
           A ${radius} ${radius} 0
-          ${mid ? 1 : 0} 1
+          ${mid !== reverse ? 1 : 0} ${reverse ? 0 : 1}
           ${x + center} ${y + center}`,
       fill: 'none',
       'stroke-width': 10,
