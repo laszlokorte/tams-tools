@@ -68,6 +68,15 @@ const renderDots = (dots, selected = null) => {
   const center = size / 2;
   const padding = 100;
 
+  const overflowAngle = (
+  dots[
+    Math.floor((dots.length - 1) / 2)
+  ].angle +
+  dots[
+    Math.ceil((dots.length - 1) / 2)
+  ].angle
+  ) / 2;
+
   return svg('svg', {
     attributes: {
       width: 500,
@@ -115,6 +124,15 @@ const renderDots = (dots, selected = null) => {
       }, dot.pattern.toString()),
     ])),
     renderArc(dots, selected, size, radius - dotRadius * 1.5),
+    svg('line', {
+      class: 'overflow-line',
+      x1: center,
+      y1: center,
+      x2: center + Math.sin(overflowAngle) * radius,
+      y2: center - Math.cos(overflowAngle) * radius,
+      stroke: 'black',
+      'stroke-width': '10',
+    }),
   ]);
 };
 
