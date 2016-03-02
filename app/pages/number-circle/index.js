@@ -37,9 +37,9 @@ const renderArc = (dots, selected, size, radius) =>
 const textAnchor = (angle) => {
   const sin = Math.sin(angle);
 
-  if (sin > 0.5) {
+  if (sin > 0.01) {
     return 'start';
-  } else if (sin < -0.5) {
+  } else if (sin < -0.01) {
     return 'end';
   } else {
     return 'middle';
@@ -51,9 +51,9 @@ const textAnchor = (angle) => {
 const baseLine = (angle) => {
   const cos = -Math.cos(angle);
 
-  if (cos > 0.5) {
+  if (cos > 0.01) {
     return 'text-before-edge';
-  } else if (cos < -0.5) {
+  } else if (cos < -0.01) {
     return 'text-after-edge';
   } else {
     return 'central';
