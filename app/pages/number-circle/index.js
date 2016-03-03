@@ -202,9 +202,9 @@ const dotArray = (bitCount) =>
   // init array of length 2^bits.
   .apply(Array, {length: Math.pow(2, bitCount)})
   // map array to angles
-  .map((_, index, all) => ({
-    angle: 2 * Math.PI * index / all.length,
-    value: intValue(index, all.length),
+  .map((_, index, {length}) => ({
+    angle: 2 * Math.PI * index / length,
+    value: intValue(index, length),
     pattern: bitPattern(index, bitCount),
   }))
 ;
