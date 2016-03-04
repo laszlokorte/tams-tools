@@ -1,4 +1,4 @@
-# Zahlen Kreis in CycleJS
+# Zahlenkreis in CycleJS
 
 Im Folgenen soll gezeigt werden, wie sich mit CycleJS sehr einfach ein eine interaktive Komponente entwickeln lässt.
 Dies wird am Beispiel der Erstellung eines Zahlenkreises gezeigt, der die Addition, die Subtraktion und den Überlauf von Binärkodierten Ganzzahlen darstellen soll.
