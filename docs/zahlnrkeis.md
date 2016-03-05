@@ -7,13 +7,14 @@ Dies wird am Beispiel der Erstellung eines Zahlenkreises gezeigt, der die Additi
 
 Zunächst muss eine neue Seite angelegt werden, auf der der Zahlenrkeis dargestellt werden soll.
 
-Hierzu wird, wie schon in der Projekteinleitung beschrieben, in dem `/app/pages/` Ordner ein neues Unterverzeichnis namens `number-circle` angelegt und diesem Unterverzeichnis dann eine leere Datei `index.js` erstellt.
+### JavaScript-Datei erzeugen
 
-* `/app/pages/number-circle/index.js` erzeugen
+Hierzu wird, wie schon in der Projekteinleitung beschrieben, in dem `/app/pages/` Ordner ein neues Unterverzeichnis namens `number-circle` angelegt und darin dann eine leere Datei `index.js` erstellt.
 
-Wie ebenfalls schon in der Einleitung erklärt, muss diese neue JavaScript-Datei nun in der Webpack-Konfiguration als Einstiegspunkt deklariert werden. Dafür wird die `/webpack/common.config.babel.js` entsprechend bearbeitet:
+### Einsteigspunkt deklarieren
 
-* Webpack Konfiguration bearbeiten:
+Wie ebenfalls schon in der Einleitung erklärt, muss diese neue JavaScript-Datei nun in der Webpack-Konfiguration als Einstiegspunkt deklariert werden. Dafür wird die `/webpack/common.config.babel.js` Datei entsprechend bearbeitet:
+
 
 ```diff
 // in /webpack/common.config.babel.js
@@ -47,9 +48,10 @@ module.exports = {
 
 Nachdem die Webpack-Konfiguration bearbeitet wurde, muss der Webpack-Development-Server neugestartet werden, falls er zuvor schon gestartet wurde.
 
+### Link auf Startseite hinzufügen
+
 Damit sich die neue Seite bequem aufrufen lässt, soll noch ein entsprechender Link auf die Startseite hinzugefügt werden. Dafür wird die `/app/pages/home/index.js` Datei bearbeitet:
 
-* Link auf der Startseite hinzufügen
 
 ```diff
 // in /app/pages/home/index.js
@@ -75,8 +77,6 @@ Nun lässt sich die Zahlenkreis-Seite über die direkte URL http://localhost:300
 Nun wurde zwar eine neue Seite angelegt und diese kann auch aufgerufen werden, allerdings ist sie noch vollkommen leer. Dies soll sich nun ändern.
 
 Im nächsten Schritt wird CycleJS verwendet um einen einfachen Text auf der Seite darzustellen. Dafür wird die `/app/pages/number-circle/index.js` wie folgt geändert:
-
-* CycleJS in `/app/pages/number-circle/index.js` initialisieren
 
 ```js
 // in /app/pages/number-circle/index.js
@@ -1130,3 +1130,548 @@ const dotArray = (bits) =>
 ```
 
 Die linke Hälfte des Kreises stellt nun negative Zahlen dar. An dem untersten Punkt des Kreises treffen die größe positive und die im Betrag größte negative Zahl aufeinander.
+
+## Zahlenwerte Klickbar machen
+
+Es soll nicht nur die größe des Zahlenkreises vom Benutzer verändert werden können. Der Benutzer soll auch Werte im Zahlenkreis auswählen können, um später Werte miteinander addieren und subtrahieren zu können.
+Zuersteinmal soll ein Wert durch einfaches anklicken ausgewählt und dadurch farblich hervorgehoben werden können.
+
+```diff
+// in /app/pages/number-circle/index.js
+
+import {Observable as O} from 'rx';
+import Cycle from '@cycle/core';
+import {makeDOMDriver} from '@cycle/dom';
+import {div, button, svg} from '@cycle/dom';
+
+//...
+
+-const renderDots = (dots) => {
++const renderDots = (dots, selected) => {
+   const dotRadius = 50;
+   const radius = 150 * Math.sqrt(dots.length);
+   const size = 2 * (radius + dotRadius);
+   const center = size / 2;
+    svg('svg', {
+      attributes: {
+        width: 500,
+        height: 500,
+        class: 'graphics-root',
+        viewBox: `0 0 ${size} ${size}`,
+        preserveAspectRatio: 'xMidYMid meet',
+      },
+-   }, dots.map((dot) => [
++   }, dots.map((dot, dotIndex) => svg('g', {
++     attributes: {
++       'data-dot-index': dotIndex,
++     },
++   }, [
+      svg('circle', {
+        cx: center + Math.sin(dot.angle) * radius,
+        cy: center - Math.cos(dot.angle) * radius,
+-       fill: '#444',
++       fill: selected === dotIndex ? 'green' : '#444',
+        r: 50,
+      }),
+      svg('text', {
+        x: center + Math.sin(dot.angle) * radius,
+        y: center - Math.cos(dot.angle) * radius,
+        fill: '#fff',
+        'font-size': '50px',
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+      }, dot.value.toString()),
+-  ]));
++  ])));
+};
+
+const render = (state) =>
+  div([
+    div(['Number of bits:', state.bitCount]),
+    renderButtons(state),
+-   renderDots(state.dots),
++   renderDots(state.dots, state.selected),
+  ])
+;
+
+const intent = (DOM) => {
+  return {
+    addBit$: DOM.select('[data-action="add-bit"]').events('click'),
+    removeBit$: DOM.select('[data-action="remove-bit"]').events('click'),
++   selectDot$: DOM.select('[data-dot-index]')
++      .events('click').map(
++        (evt) => parseInt(evt.ownerTarget.getAttribute('data-dot-index'), 10)
++      ),
+  };
+};
+
+const model = (initialBitCount, actions) => {
+  const modifierFunction$ = O.merge([
+    actions.addBit$.map(() => (state) =>
+-     ({bitCount: state.bitCount + 1})
++     ({bitCount: state.bitCount + 1, selected: null})
+    ),
+    actions.removeBit$.map(() => (state) =>
+-     ({bitCount: state.bitCount - 1})
++     ({bitCount: state.bitCount - 1, selected: null})
+    ),
++   actions.selectDot$.map((bitIndex) => (state) =>
++     ({bitCount: state.bitCount, selected: bitIndex})
++   ),
+  ]);
+
+  return modifierFunction$
+- .startWith({bitCount: initialBitCount})
++ .startWith({bitCount: initialBitCount, selected: null})
+  .scan((state, modifierFunction) => 
+    modifierFunction(state)
+  )
+  .map(({bitCount, selected}) => ({
+     bitCount,
+     dots: dotArray(bitCount),
++    selected,
+     canAddBits: bitCount < 5,
+     canRemoveBits: bitCount > 1,
+  }));
+};
+
+const numberCircleApp = (sources) => {
+  const actions = intent(DOM);
+  const state$ = model(3, actions); 
+  const vtree$ = view(state$);
+
+ return {
+   DOM: vtree$,
+ };
+};
+
+//...
+```
+
+Zunächst wurde das `state` Objekt in der `model` Funktion um die Eigenschaft `selected` erweitert. Sie soll den Index des ausgewählten Punktes beinhalten und wird auf den Wert `null` initialisiert, sodass zu Beginn kein Punkt ausgewählt ist.
+
+Die `render` Funktion gibt nun den Wert der `selected` Eigenschaft als zweiten Parameter an die `renderDots` Funktion.
+
+Die `renderDots` setzt nun das `fill` Attribut der kleinen Kreise abhängig von dem Wert des `selected` Parameters und Gruppiert die `circle` und `text` SVG-Elemente jeweils in eine  SVG-Gruppe `g`, die das Attribut `data-dot-index` auf den den Index des jeweiligen "Dots" gesetzt bekommt.
+
+Die `intent` Funktion erzeugt nun einen dritten Aktions-Stream `selectDot$`, indem sie den Stream der Klick-Ereignisse auf Elemente, die das `data-dot-index` Attribut gesetzt haben - also Mouseklicks auf die kleinen Kreise des Zahlenkreises - in einen Stream der Werte des Attributes transformiert. Der `selectDot$` Stream enthält also die Indizes der angeklickten Zahlen. 
+
+In der `model` Funktion wiederum wird dieser `selectDot$` Stream dann in einen Stream aus Funktionen transformiert, die einen `state` mit dem entsprechenden `selected` Wert erzeugen. Dieser neue Stream aus Funktionen wird ebenfalls per `merge` mit den anderen `action` Streams in den `modifierFunction$` Stream verschmolzen.
+
+## Einen Kreisbogen zeichen
+
+Nun soll nicht nur die Ausgewählte zahl farbig hervorgehoben werden, sondern es soll auch ein Kreisbogen zwischen der 0 der der Ausgewählten Zahl gezeichnet werden, um den Betrag der Zahl visuell hervorzuheben. Hierbei handelt es sich lediglich um eine Änderung in der Darstellung. Daher muss nur die `render` Funktion verändert werden: 
+
+```diff
+// in /app/pages/number-circle/index.js
+
+import {Observable as O} from 'rx';
+import Cycle from '@cycle/core';
+import {makeDOMDriver} from '@cycle/dom';
+import {div, button, svg} from '@cycle/dom';
++import {IF} from '../../lib/h-helper';
+
+//...
+
++const renderArc = (dots, selected, size, radius) =>
++  IF(selected !== null, () => {
++    const dot = dots[selected];
++    const angle = dot.angle;
++    const x = Math.sin(angle) * radius;
++    const y = -Math.cos(angle) * radius;
++    const center = size / 2;
++    const mid = angle > Math.PI;
++
++    return svg('path', {
++      d: `M ${center} ${center - radius}
++          A ${radius} ${radius} 0
++          ${mid ? 1 : 0} 1
++          ${x + center} ${y + center}`,
++      fill: 'none',
++      'stroke-width': 10,
++      stroke: 'green',
++    });
++  })
++;
+
+ const renderDots = (dots, selected) => {
+   const dotRadius = 50;
+   const radius = 150 * Math.sqrt(dots.length);
+   const size = 2 * (radius + dotRadius);
+   const center = size / 2;
+    svg('svg', {
+      attributes: {
+        width: 500,
+        height: 500,
+        class: 'graphics-root',
+        viewBox: `0 0 ${size} ${size}`,
+        preserveAspectRatio: 'xMidYMid meet',
+      },
+-   }, dots.map((dot, dotIndex) => svg('g', {
++   }, [
++   ...dots.map((dot, dotIndex) => svg('g', {
+      attributes: {
+        'data-dot-index': dotIndex,
+      },
+    }, [
+      svg('circle', {
+        cx: center + Math.sin(dot.angle) * radius,
+        cy: center - Math.cos(dot.angle) * radius,
+        fill: selected === dotIndex ? 'green' : '#444',
+        r: 50,
+      }),
+      svg('text', {
+        x: center + Math.sin(dot.angle) * radius,
+        y: center - Math.cos(dot.angle) * radius,
+        fill: '#fff',
+        'font-size': '50px',
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+      }, dot.value.toString()),
+-  ])));
++  ])),
++  renderArc(dots, selected, size, radius - dotRadius * 1.5),
++  ]);
+};
+
+//...
+```
+
+Für die Erzeugung des Kreisbogens wurde eine neue Funktion `renderArc` definiert. Die `renderDots` Funktion ruft die `renderArc` Funktion auf, um den Kreisbogen zusätzlichen zu den erzeugten `circle` und `text` Elemente als Kind an das `svg` Element zu übergeben. Daher müssen das transformierte `dots` Array und das von `renderArc` Erzeugte Element zu einem neuen Array zusammen gefasst werden. Dies geschieht hier mithilfe des `...`-Spread-Operators. `[...dots, arc]` erzeugt ein Array, welches alle `dots` und als letztes element `arc` enthält.
+
+`renderArc` erzeugt ein SVG `path` Element dessen Attribute entsprechend gesetzt werden.
+
+`IF` mit allen Buchstaben großgeschrieben ist eine Helfer Funktion, die Analog zu JavaScript eigenen `if`-Anweisung funktioniert, allerdings als Funktion definiert ist, sodass sie als Ausdruck mit einem Rückgabewerte verwendet werden kann.
+Sie Akzeptiet zwei Parameter: Einen boolschen Wert und eine Funktion. Wenn der boolsche Wert wahr ist, wird die Funktion ausgeführt und ihr Rückgabewerte zurückgegeben. Wenn der boolsche Werte falsch ist, wird `undefined` zurückgegeben.
+
+In diesem Fall wird diese Funktion benutzt, um den Kreisbogen nur dann zu erzeugen, wenn der `selected` nicht `null` ist, also wenn eine Zahl ausgewählt ist.
+
+
+## CSS bzw Stylus zum Gestalten verweden
+
+Bis jetzt wurde das Aussehen der Schrift und der Buttons nicht weiter beachtet, sondern bei den Standardwerten des Browsers belassen. Die Farben der SVG-Elemente wurde als Attribute direkt an den Elementen gesetzt. Nun soll eine Gestaltung mit Hilfe von CSS-Klassen vorgenommen werden.
+
+Anstelle von klassischem CSS soll jedoch die Sprache *Stylus* verwendet werden. Stylus ist eine Sprache, die CSS sehr ähnlich ist und letztendlich auch zu CSS kompiliert wird, allerdings eine leicht abgeänderte Syntax hat und einige zusätzliche Funktionen bietet. Beispielsweise lassen sich in *Stylus* Markos und Variablen definieren, sodass Style-Definition besser wiederverwendet werden können und sich umfangreiche Stylesheets einfacher Pflegen lassen.
+
+Zunächst wird eine neue `.styl` Datei mit dem Namen `index.styl` im selben Ordner wo schon die `index.js` liegt angelegt:
+
+* `index.styl` anelegen
+
+```styl
+// in /app/pages/number-circle/index.styl
+
+@import '../../styles/layout'
+
+.number-circle-container
+  position absolute
+  top 0
+  bottom 0
+  right 0
+  left 0
+
+.number-circle
+  width 100%
+  height auto
+  max-height 80%
+
+.number-dot
+  cursor pointer
+  &.state-selected
+    .number-dot-background
+      fill color-focus
+
+.number-dot-background
+  fill #444
+
+.number-dot-label
+  font-family font-sans
+
+.selection-arc
+  stroke color-focus
+
+.button-bar
+  text-align center
+  padding space(1)
+
+.bit-button
+  margin space(0.1)
+  button(false, color-background-inverse)
+
+  &:disabled
+    opacity 0.8
+
+.bit-count
+  margin-top space(1)
+  font-size font-size-big
+  text-align center
+```
+
+Wie sich erkennen lässt müssen in *Stylus* im Vergleich zu *CSS* keine geschweiften Klammer `{}` geschrieben werden. Stattdessen werden die Eigenschaften gegenüber den Selektoren eingerückt.
+Doppelpunkt `:` und Semikolon `;` zum Trennen der Eigenschaften und ihrer Werte sind ebenfalls nicht nötig.
+
+Zu Beginn der `index.styl` Datei wird ein anderen Stylesheet `../../styles/layout` importiert. In diesem sind schon einige Markos und und Farbkonstanten definiert - beispielsweise das `button` Makro, welches verwendet wird um den `.bit-button` Selektor zu definieren.
+
+Als nächstes muss die `index.styl` noch geladen werden. Dafür wird der `index.js` eine entsprechende `import` Anweisung hinzugefügt. Webpack erkennt an der Dateiendung, dass es sich bei dem Import um keine JavaScript-Datei, sondern eine Stylus-Datei handelt und sorgt dafür, dass das Stylesheet in gültiges CSS umgewandelt und auf der Seite eingebunden wird.
+
+```diff
+// in /app/pages/number-circle/index.js
+
+import {Observable as O} from 'rx';
+import Cycle from '@cycle/core';
+import {makeDOMDriver} from '@cycle/dom';
+import {div, button, svg} from '@cycle/dom';
+import {IF} from '../../lib/h-helper';
+
++import './index.styl';
+
+//...
+
+Nun da das Stylesheet erstellt und importiert wurde, müssen nur noch den Elementen die passenden Klassen hinzugefügt werden:
+
+```diff
+// in /app/pages/number-circle/index.js
+
+import {Observable as O} from 'rx';
+import Cycle from '@cycle/core';
+import {makeDOMDriver} from '@cycle/dom';
+import {div, button, svg} from '@cycle/dom';
+import {IF} from '../../lib/h-helper';
+
+import './index.styl';
+
+//...
+
+const renderArc = (dots, selected, size, radius) =>
+  IF(selected !== null, () => {
+    const dot = dots[selected];
+    const angle = dot.angle;
+    const x = Math.sin(angle) * radius;
+    const y = -Math.cos(angle) * radius;
+    const center = size / 2;
+    const mid = angle > Math.PI;
+
+    return svg('path', {
+      d: `M ${center} ${center - radius}
+          A ${radius} ${radius} 0
+          ${mid ? 1 : 0} 1
+          ${x + center} ${y + center}`,
+      fill: 'none',
+      'stroke-width': 10,
++     class: 'selection-arc',
+-     stroke: 'green',
+    });
+  })
+;
+
+ const renderDots = (dots, selected) => {
+   const dotRadius = 50;
+   const radius = 150 * Math.sqrt(dots.length);
+   const size = 2 * (radius + dotRadius);
+   const center = size / 2;
+    svg('svg', {
+      attributes: {
+        width: 500,
+        height: 500,
+-       class: 'graphics-root',
++       class: 'number-circle',
+        viewBox: `0 0 ${size} ${size}`,
+        preserveAspectRatio: 'xMidYMid meet',
+      },
+   }, [
+   ...dots.map((dot, dotIndex) => svg('g', {
+      attributes: {
++        class: 'number-dot' +
++          (selected === dotIndex ? ' state-selected' : ''),
+        'data-dot-index': dotIndex,
+      },
+    }, [
+      svg('circle', {
++       class: 'number-dot-background',
+        cx: center + Math.sin(dot.angle) * radius,
+        cy: center - Math.cos(dot.angle) * radius,
+-       fill: selected === dotIndex ? 'green' : '#444',
+        r: 50,
+      }),
+      svg('text', {
++       class: 'number-dot-label',
+        x: center + Math.sin(dot.angle) * radius,
+        y: center - Math.cos(dot.angle) * radius,
+        fill: '#fff',
+        'font-size': '50px',
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+      }, dot.value.toString()),
+  ])),
+  renderArc(dots, selected, size, radius - dotRadius * 1.5),
+  ]);
+};
+
+
+-const renderButtons = (state) => div([
++const renderButtons = (state) => div('.button-bar', [
+- button({
++ button('.bit-button', {
+    attributes: {
+     'data-action': 'add-bit',
+    },
+    disabled: state.canAddBits ? void 0 : 'true',
+  }, 'Add Bit'),
+
+- button({
++ button('.bit-button', {
+    attributes: {
+      'data-action': 'remove-bit',
+    },
+    disabled: state.canRemoveBits ? void 0 : 'true',
+  }, 'Remove Bit'),
+]);
+
+const render = (state) =>
+- div([
++ div('.number-circle-container', [
+-   div(['Number of bits:', state.bitCount]),
++   div('.bit-count', ['Number of bits:', state.bitCount]),
+    renderButtons(state),
+    renderDots(state.dots, state.selected),
+  ])
+;
+
+//...
+```
+
+Zu beachten ist, dass bei HTML-Elementen wie `div` oder `button` der Klassenname als CSS-Selektor im ersten Parameter angegeben werden kann (z.B. `button('.bit-button', ...)` bei SVG-Elementen jedoch als Attribut: `svg('g', {attributes: {class: 'number-dot'}})`. Das liegt daran, dass SVG-Elemente in älteren Browsern die `classList` Eigenschaft nicht vollsändig unterstützen, sondern die die API von SVG Elementen leicht von der HTML-DOM-API unterscheidet.
+
+
+## Bitmuster anzeigen
+
+Zusätzliche zu den Zahlenwerten soll nun auch noch das Bitmuster angezeigt werden, sodass sich erkennen lässt, dass bei den negativen Zahlen das vorderste Bit auf `1` gesetzt ist.
+
+```diff
+// in /app/pages/number-circle/index.js
+
+import {Observable as O} from 'rx';
+import Cycle from '@cycle/core';
+import {makeDOMDriver} from '@cycle/dom';
+import {div, button, svg} from '@cycle/dom';
+import {IF} from '../../lib/h-helper';
+
+import './index.styl';
+
+//...
+
+  
++const textAnchor = (angle) => {
++  const sin = Math.sin(angle);
++
++  if (sin > 0.01) {
++    return 'start';
++  } else if (sin < -0.01) {
++    return 'end';
++  } else {
++    return 'middle';
++  }
++};
++
++const baseLine = (angle) => {
++  const cos = -Math.cos(angle);
++
++  if (cos > 0.01) {
++    return 'text-before-edge';
++  } else if (cos < -0.01) {
++    return 'text-after-edge';
++  } else {
++    return 'central';
++  }
++};
+
+ const renderDots = (dots, selected) => {
+   const dotRadius = 50;
+   const radius = 150 * Math.sqrt(dots.length);
+   const size = 2 * (radius + dotRadius);
+   const center = size / 2;
++  const padding = 100;
+
+    svg('svg', {
+      attributes: {
+        width: 500,
+        height: 500,
+        class: 'number-circle',
+-       viewBox: `0 0 ${size} ${size}`,
++       viewBox: `
++        ${-padding}
++        ${-padding}
++        ${size + 2 * padding}
++        ${size + 2 * padding}
++      `,
+        preserveAspectRatio: 'xMidYMid meet',
+      },
+   }, [
+   ...dots.map((dot, dotIndex) => svg('g', {
+      attributes: {
+        class: 'number-dot' +
+          (selected === dotIndex ? ' state-selected' : ''),
+        'data-dot-index': dotIndex,
+      },
+    }, [
+      svg('circle', {
+        class: 'number-dot-background',
+        cx: center + Math.sin(dot.angle) * radius,
+        cy: center - Math.cos(dot.angle) * radius,
+        r: 50,
+      }),
+      svg('text', {
+        class: 'number-dot-label',
+        x: center + Math.sin(dot.angle) * radius,
+        y: center - Math.cos(dot.angle) * radius,
+        fill: '#fff',
+        'font-size': '50px',
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+      }, dot.value.toString()),
++     svg('text', {
++       class: 'number-dot-pattern',
++       x: center + Math.sin(dot.angle) * (radius * 1 + 70),
++       y: center - Math.cos(dot.angle) * (radius * 1 + 70),
++       fill: '#000',
++       'font-size': '50px',
++       'text-anchor': textAnchor(dot.angle),
++       'dominant-baseline': baseLine(dot.angle),
++     }, dot.pattern.toString()),
+  ])),
+  renderArc(dots, selected, size, radius - dotRadius * 1.5),
+  ]);
+};
+
+//...
+
++const bitPattern = (number, bitCount) =>
++  Array
++    .apply(Array, {length: bitCount})
++    .map((__, b) =>
++      (1 << (bitCount - b - 1)) & number ? 1 : 0
++    ).join('')
++;
++
++const intValue = (number, bitCountPow2) =>
++  number >= bitCountPow2 / 2 ? number - bitCountPow2 : number
++;
+
+const dotArray = (bits) => 
+  arrayOfSize(Math.pow(2, bits))
+  .map((_, index, {length}) => ({
+    angle: 2 * Math.PI * index / length,
+-   value: index >= all.length / 2 ? index - all.length : index,
++   value: intValue(index, all.length),
++   pattern: bitPattern(index, bitCount),
+  }))
+;
+
+//...
+```
+
+In der `dotArray` wird nun zusätzliche zu der `value` Eigenschaft noch ein `pattern` Wert berechnet. Für die Umwandlung einer Zahl in ein Bitpattern wurde die Funktion `bitPattern` definiert. Die Berechnung des `value` Wertes wurde ebenfalls in eine neue Funktion mit dem Namen `intValue` ausgelagert.
+
+Die `renderDots` erzeugt nun ein zusätzliches SVG `text` Element welches den `pattern` Wert darstellt. Damit um den Zahlenkreis herum genügend Platz ist, sodass die `pattern` Werte vollständig dargestellt werden können, wurde die `viewBox` des `svg` Elementes vergrößert.
+
+Das `text-anchor` Attribut des neuen `text` Elementes wird mithilfe der `textAnchor` Funktionen abhängig vom Winkel berechnet, sodass die Texte auf der linken Seite der Graphik rechtsbündig und die Texte auf der linken Seite linksbündig platziert werden. 
+Analog dazu wird auch das `dominant-baseline` Attribut abhängig vom Winkel gesetzt, sodass auch vertikele Position der `pattern` Beschriftungen gleichmäßig ist.

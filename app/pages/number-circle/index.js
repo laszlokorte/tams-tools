@@ -109,7 +109,7 @@ const renderDots = (dots, selected = null) => {
         }),
       ]),
     ]),
-    dots.map((dot, dotIndex) => svg('g', {
+    ...dots.map((dot, dotIndex) => svg('g', {
       attributes: {
         class: 'number-dot' +
           (selected === dotIndex ? ' state-selected' : ''),
