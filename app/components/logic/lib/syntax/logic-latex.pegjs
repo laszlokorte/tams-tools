@@ -11,13 +11,13 @@ labelOperator "labelOperator"
 
 noChar = [^0-9A-Za-z_-] / EOF
 
-logicAnd = "&&" / "&" / "*" / "∧" / "\\wedge"
-logicOr = "||" / "|" / "+" / "∨" / "\\vee"
-logicXor = "^" / "⊕" / "\\oplus"
-logicNot = "!" / "~" / "-" / "¬" / "\\neg" / "\\overline"
+logicAnd = "&&" / "&" / "*" / "∧" / "\\wedge" & noChar
+logicOr = "||" / "|" / "+" / "∨" / "\\vee" & noChar
+logicXor = "^" / "⊕" / "\\oplus" & noChar
+logicNot = "!" / "~" / "-" / "¬" / "\\neg" & noChar / "\\overline" & noChar
 
-logicTop = "true" & noChar / "1" / "T" & noChar / "W" & noChar / "⊤" / "\\top"
-logicBottom = "false" & noChar / "0" / "F" & noChar / "⊥" / "\\bot"
+logicTop = "true" & noChar / "1" / "T" & noChar / "W" & noChar / "⊤" / "\\top" & noChar
+logicBottom = "false" & noChar / "0" / "F" & noChar / "⊥" / "\\bot" & noChar
 logicUndefined = "\\nothing" & noChar
 
 vectorStart = "<"
