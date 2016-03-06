@@ -26,7 +26,7 @@ const markError = (string, error) => {
   }
 };
 
-const render = (state, table) =>
+const render = (state, field, table) =>
   div('.app', [
     div('.app-head', [
       div('.action-panel', [
@@ -51,6 +51,7 @@ const render = (state, table) =>
           ]),
         ]),
       ]),
+      field,
       div('.logic-panel', [
         div('.logic-panel-body', [
           label('.logic-language-chooser',[
@@ -152,12 +153,12 @@ const render = (state, table) =>
   ])
 ;
 
-export default (state$, table$, {panel$s}) =>
-  O.combineLatest(state$, table$, ...panel$s,
-    (state, table, ...panels) =>
+export default (state$, field$, table$, {panel$s}) =>
+  O.combineLatest(state$, field$, table$, ...panel$s,
+    (state, field, table, ...panels) =>
       div([
         panels,
-        render(state, table),
+        render(state, field, table),
       ])
   )
 ;

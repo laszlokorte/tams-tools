@@ -1,6 +1,8 @@
-import {ReplaySubject, Subject} from 'rx';
+import {Observable as O, ReplaySubject, Subject} from 'rx';
 import I from 'immutable';
 import isolate from '@cycle/isolate';
+
+import Field from './input-field';
 
 import {expressionToString} from './lib/formatter';
 import {evaluator} from './lib/evaluation';
@@ -62,6 +64,10 @@ export default (responses) => {
     table$: tableSubject,
   });
 
+  const field = isolate(Field)({DOM});
+
+  console.log(field.DOM);
+
   const actions = intent({
     DOM,
     keydown,
@@ -69,7 +75,7 @@ export default (responses) => {
   });
 
   const state$ = model(actions).shareReplay(1);
-  const vtree$ = view(state$, tableComponent.DOM, {
+  const vtree$ = view(state$, field.DOM, tableComponent.DOM, {
     panel$s: [
       helpPanel.DOM,
       openPanel.DOM,
