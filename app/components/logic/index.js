@@ -1,26 +1,13 @@
 import {Observable as O, ReplaySubject, Subject} from 'rx';
-import I from 'immutable';
 import isolate from '@cycle/isolate';
 
 import Field from './input-field';
-
-import {expressionToString} from './lib/formatter';
-import {evaluator} from './lib/evaluation';
 
 import model from './model';
 import view from './view';
 import intent from './intent';
 import TableComponent from '../table';
 import asciiTable from '../table/lib/format-ascii';
-
-import mathFormatter from './lib/formatter/math';
-import latexFormatter from './lib/formatter/latex';
-import pythonFormatter from './lib/formatter/python';
-import cBitwiseFormatter from './lib/formatter/c-bitwise';
-import cBooleanFormatter from './lib/formatter/c-boolean';
-
-import toTree from './lib/tree';
-import toTable from './lib/table';
 
 import HelpPanel from './panels/help';
 import OpenPanel from './panels/open';
@@ -64,17 +51,19 @@ export default (responses) => {
     table$: tableSubject,
   });
 
-  const field = isolate(Field)({DOM});
-
-  console.log(field.DOM);
-
   const actions = intent({
     DOM,
     keydown,
     openData$: openPanel.data$,
   });
 
-  const state$ = model(actions).shareReplay(1);
+  const field = isolate(Field)({DOM, input$: openPanel.data$});
+
+  const state$ = model(
+    actions, field.output$,
+    tableComponent.selectedRow$
+  ).shareReplay(1);
+
   const vtree$ = view(state$, field.DOM, tableComponent.DOM, {
     panel$s: [
       helpPanel.DOM,
@@ -83,82 +72,13 @@ export default (responses) => {
     ],
   });
 
-  const tree$ = state$.debounce(300).flatMapLatest(
-    (state) => {
-      return tableComponent.selectedRow$
-        .startWith(null)
-        .map((selectedRow) => {
-          if (state &&
-            state.context &&
-            state.context.expressions.size > 0
-          ) {
-            let subEvalutation = null;
-            if (selectedRow !== null) {
-              const identifierMap = I.Map(state.context.freeIdentifiers.map(
-                (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
-              ));
+  const tree$ = state$.map((s) => s.tree).share();
 
-              subEvalutation = state.context.sortedExpressions.reduce(
-                evaluator,
-                state.context.subExpressions.reduce(evaluator, identifierMap)
-              );
-            }
+  const table$ = state$
+    .distinctUntilChanged((s) => s.table)
+    .map((state) => state.table).share();
 
-            if (state.context.expressions.size === 1) {
-              return toTree(state.context.expressions.get(0), subEvalutation);
-            } else {
-              return {
-                name: 'Expression List',
-                children: state.context.expressions.map(
-                  (e) => toTree(e, subEvalutation)
-                ).toArray(),
-                hidden: true,
-              };
-            }
-          } else {
-            return null;
-          }
-        });
-    }
-  ).share();
-
-  const formatters = {
-    math: mathFormatter,
-    latex: latexFormatter,
-    python: pythonFormatter,
-    'c-bitwise': cBitwiseFormatter,
-    'c-boolean': cBooleanFormatter,
-  };
-
-  const formatter$ = actions.selectFormat$
-    .startWith('math')
-    .map((formatName) => {
-      return formatters[formatName] || mathFormatter;
-    })
-    .shareReplay(1);
-
-  const table$ = state$.debounce(300).combineLatest(
-    formatter$,
-    (state, formatter) =>
-    state.context &&
-    state.context.expressions.size ? toTable(
-      state.context,
-      state.showSubExpressions,
-      formatter
-    ) : null
-  ).share();
-
-  const formula$ = state$.combineLatest(
-    formatter$,
-    (state, formatter) => {
-      return state.context ? state.context.expressions.map(
-        (e) => {
-          const label = e.name !== null ? `${e.name} = ` : '';
-          return label + expressionToString(e.body, formatter);
-        }
-      ).join(', ') : '';
-    }
-  ).share();
+  const formula$ = state$.map((s) => s.formula).share();
 
   formula$.subscribe(formulaSubject);
   table$.subscribe(tableSubject);
@@ -166,10 +86,13 @@ export default (responses) => {
 
   return {
     DOM: vtree$,
-    preventDefault: actions.preventDefault,
-    autoResize: actions.autoResize,
+    preventDefault: O.merge([
+      actions.preventDefault,
+      field.preventDefault,
+    ]),
+    autoResize: field.autoResize,
     selectAll: savePanel.selectAll,
     tree$: tree$,
-    insertString: actions.insertString$,
+    insertString: field.insertString,
   };
 };

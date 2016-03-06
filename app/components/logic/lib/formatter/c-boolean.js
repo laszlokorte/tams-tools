@@ -14,6 +14,7 @@ const sanitizeName = (name) =>
   name.replace(whitspace, '_');
 
 export default self = {
+  name: "C Boolean",
   formatBinary: (op, lhs, rhs/*, depth*/) => {
     return `(${lhs} ${tryFetch(operators, op)} ${rhs})`;
   },
@@ -50,5 +51,11 @@ export default self = {
     } else {
       return '*';
     }
+  },
+  formatLabel: (name, body) => {
+    return `${name}=${body}`;
+  },
+  formatExpressions: (expressions) => {
+    return expressions.join(', ');
   },
 };

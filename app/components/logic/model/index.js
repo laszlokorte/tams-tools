@@ -1,111 +1,70 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import {
-  contextFromLabeledExpressions,
-} from '../lib/context';
+import {buildTree} from './tree';
+import {buildTable} from './table';
+import {buildFormula} from './formula';
 
-import {
-  C, Python, Latex, Math,
-} from './languages';
+import mathFormatter from '../lib/formatter/math';
+import latexFormatter from '../lib/formatter/latex';
+import pythonFormatter from '../lib/formatter/python';
+import cBitwiseFormatter from '../lib/formatter/c-bitwise';
+import cBooleanFormatter from '../lib/formatter/c-boolean';
 
-import parser from './parser';
-
-const languages = {
-  c: C,
-  latex: Latex,
-  math: Math,
-  python: Python,
+const FORMAT_MAP = {
+  math: mathFormatter,
+  latex: latexFormatter,
+  python: pythonFormatter,
+  cbitwise: cBitwiseFormatter,
+  cBoolean: cBooleanFormatter,
 };
 
-const languageList = Object
-  .keys(languages)
+const formatList = I.List(Object
+  .keys(FORMAT_MAP)
   .map((id) => ({
     id: id,
-    language: languages[id],
-  }));
-
-const analyze = ({
-  language,
-  langId, expressions,
-  string, showSubExpressions,
-}) => {
-  try {
-    const context = contextFromLabeledExpressions(expressions);
-
-    return {
-      language,
-      langId,
-      string,
-      context,
-      showSubExpressions,
-    };
-  } catch (e) {
-    return {
-      language,
-      langId,
-      string,
-      error: e,
-      showSubExpressions,
-    };
-  }
-};
-
-const handleError = (error) =>
-  O.just({
-    langId: error.langId,
-    language: error.language,
-    error: {
-      location: error.location,
-      message: error.message,
-    },
-    string: error.string,
-  })
+    format: FORMAT_MAP[id],
+  })))
 ;
 
-export default (actions) => {
-  const parsed$ = actions.openExpression$
-  .map((string) => JSON.parse(string))
-  .startWith({
-    langId: 'auto',
-    term: '',
-  })
-  .flatMapLatest(({langId: initialLang, term}) =>
-    O.combineLatest(
-      actions.input$.startWith(term),
-      actions.language$.startWith(initialLang),
-      actions.selectFormat$.startWith('math'),
-      actions.showSubExpressions$.startWith(false),
-      (string, langId, outputFormat, showSubExpressions) =>
-        O.just({
-          string,
-          langId,
-          detected: null,
-          showSubExpressions,
-        })
-        .map(parser(languages))
-        .map(analyze)
-        .catch(handleError)
-        .map(({
-          language,
-          error,
-          formatter,
-          context,
-        }) => ({
-          languageList,
-          language,
-          langId,
-          string,
-          error,
-          context,
-          formatter,
-          showSubExpressions,
-          outputFormat,
-          completions: language ? language.completions : I.List(),
-        }))
-    ).switch()
-  );
+const _state = I.Record({
+  selectedRow: null,
+  expression: null,
+  formatId: null,
+  formatList: I.List(),
+  showSubExpressions: false,
+  formula: null,
+  table: null,
+  tree: null,
+});
 
-  return parsed$.share();
+export default (actions, expressionOutput$, selectedRow$) => {
+  const state$ = O.combineLatest(
+    expressionOutput$.debounce(200),
+    actions.selectFormat$.startWith('math'),
+    actions.showSubExpressions$.startWith(false),
+    (expression, outputFormat, showSubExpressions) =>
+      selectedRow$
+      .startWith(_state({
+        expression,
+        showSubExpressions,
+        formatId: outputFormat,
+        formatList: formatList,
+        formula: buildFormula(
+          expression.result, FORMAT_MAP[outputFormat]
+        ),
+        table: buildTable(
+          expression.result, showSubExpressions,
+          FORMAT_MAP[outputFormat]
+        ),
+        tree: buildTree(expression.result),
+      })).scan((state, row) =>
+        state
+          .set('selectedRow', row)
+          .set('tree', buildTree(state.expression.result, row))
+      )
+  ).switch();
+
+  return state$.share();
 }
 ;

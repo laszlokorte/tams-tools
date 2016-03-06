@@ -50,22 +50,22 @@ const render = (state) =>
               value: item.id,
               selected: state.input.langId === item.id,
             }, item.language.name)
-          ),
+          ).toArray(),
         ]),
       ]),
       div('.complete-panel',
-        state.output.language.completions.map((c) =>
+        state.output.language.completions.map((completion) =>
           button('.completion-button', {
             title: 'Bottom',
             attributes: {
-              'data-action-insert': c,
+              'data-action-insert': completion,
             },
-          }, c)
+          }, completion)
         ).toArray()
       ),
       div('.logic-input', [
         textarea('.logic-input-field', {
-          value: state.string,
+          value: state.input.string,
           placeholder: 'Enter some logic expression...',
           autocomplete: 'off',
           autocorrect: 'off',

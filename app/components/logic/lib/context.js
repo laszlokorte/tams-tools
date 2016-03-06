@@ -123,7 +123,7 @@ export const contextFromLabeledExpressions = (expressions) => {
       const steps = error.cycle.map((node) => node.data.name);
       throw errorAtLocation(
         `Cyclic dependency between: ${steps.join(', ')}`,
-        error.cycle.get(error.cycle.length - 1).data.location
+        error.cycle.get(error.cycle.size - 1).data.location
       );
     } else {
       throw error;

@@ -10,6 +10,7 @@ const tryFetch = (map, key) =>
 ;
 
 export default self = {
+  name: "Math",
   formatBinary: (op, lhs, rhs/*, depth*/) => {
     return `(${lhs} ${tryFetch(operators, op)} ${rhs})`;
   },
@@ -46,5 +47,11 @@ export default self = {
     } else {
       return '*';
     }
+  },
+  formatLabel: (name, body) => {
+    return `${name}=${body}`;
+  },
+  formatExpressions: (expressions) => {
+    return expressions.join(', ');
   },
 };

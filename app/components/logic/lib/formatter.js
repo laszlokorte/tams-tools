@@ -15,6 +15,28 @@ const defaultFormatter = {
   formatValue: (value) => {
     return value;
   },
+  formatVector: (identifiers, values) => {
+    return `<${
+      identifiers.map((i) => i.name).join(',')
+    }:${
+      values.map(defaultFormatter.formatVectorValue).join('')
+    }>`;
+  },
+  formatVectorValue: (value) => {
+    if (value === true) {
+      return '1';
+    } else if (value === false) {
+      return '0';
+    } else {
+      return '*';
+    }
+  },
+  formatLabel: (name, body) => {
+    return `${name}=${body}`;
+  },
+  formatExpressions: (expressions) => {
+    return expressions.join(', ');
+  },
 };
 
 export const expressionToString = (
@@ -55,3 +77,15 @@ export const expressionToString = (
     throw new Error(`unknown node: ${expression._name}`);
   }
 };
+
+export const expressionListToString = (
+  expressionList, formatter = defaultFormatter
+) =>
+  formatter.formatExpressions(expressionList.map(
+    (e) => e.name !== null ?
+      formatter.formatLabel(
+        formatter.formatName(e.name),
+        expressionToString(e.body, formatter)
+      ) : expressionToString(e.body, formatter)
+  ))
+;

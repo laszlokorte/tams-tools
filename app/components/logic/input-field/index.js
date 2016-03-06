@@ -8,6 +8,7 @@ export default (responses) => {
   const {
     DOM,
     keydown,
+    input$,
   } = responses;
 
   const actions = intent({
@@ -15,7 +16,7 @@ export default (responses) => {
     keydown,
   });
 
-  const state$ = model(O.empty(), actions).shareReplay(1);
+  const state$ = model(input$, actions).shareReplay(1);
   const vtree$ = view(state$);
 
   return {
@@ -23,5 +24,6 @@ export default (responses) => {
     preventDefault: actions.preventDefault,
     autoResize: actions.autoResize,
     insertString: actions.insertString$,
+    output$: state$.map((state) => state.output),
   };
 };

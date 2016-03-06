@@ -27,12 +27,12 @@ const _state = I.Record({
   output: null,
 }, 'state');
 
-const languageList = Object
+const languageList = I.List(Object
   .keys(LANGUAGE_MAP)
   .map((id) => ({
     id: id,
     language: LANGUAGE_MAP[id],
-  }));
+  })));
 
 const handleError = (parseError) =>
   O.just(_output({
