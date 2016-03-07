@@ -53,15 +53,17 @@ const render = (state) =>
           ).toArray(),
         ]),
       ]),
-      div('.complete-panel',
-        state.output.language.completions.map((completion) =>
-          button('.completion-button', {
-            title: 'Bottom',
-            attributes: {
-              'data-action-insert': completion,
-            },
-          }, completion)
-        ).toArray()
+      IF(state.showCompletion, () =>
+        div('.complete-panel',
+          state.output.language.completions.map((completion) =>
+            button('.completion-button', {
+              title: 'Bottom',
+              attributes: {
+                'data-action-insert': completion,
+              },
+            }, completion)
+          ).toArray()
+        )
       ),
       div('.logic-input', [
         textarea('.logic-input-field', {

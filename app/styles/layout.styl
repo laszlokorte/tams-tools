@@ -605,3 +605,23 @@ $keyframe-name = slide-up
   &:focus
     border-color color-focus
 
+.block-button-dark
+  margin space(0.5)
+  display block
+  text-align left
+  border 3px solid transparent
+  outline none
+  padding (button-size / 8)
+  line-height (button-size / 2)
+  background-color color-background-inverse-weak
+  color color-foreground-inverse
+  cursor pointer
+  transition background-color 0.1s 0s ease-out
+
+  &:hover
+    background-color lighten(color-background-inverse-weak, 15%)
+  &:active
+    background-color darken(color-background-inverse-weak, 5%)
+  &:focus
+    border-color color-focus
+

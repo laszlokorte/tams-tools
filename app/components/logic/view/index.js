@@ -33,7 +33,7 @@ const render = (state, field, table) =>
           ]),
         ]),
       ]),
-      field,
+      div('.field-panel', [field]),
     ]),
     div('.app-body', [
       table ?

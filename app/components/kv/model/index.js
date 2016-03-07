@@ -6,6 +6,8 @@ import {buildLayout} from '../lib/layout';
 
 import {memoize, clamp, padLeft, compose} from '../../../lib/utils';
 
+import expressionImport from './expression-import';
+
 const kvState = I.Record({
   currentEditMode: 'loops',
   currentKvMode: KVD.modeFromName('dnf'),
@@ -308,6 +310,15 @@ const openDiagram = (state, json) => {
   return state.set('errorMessage', 'InvalidData');
 };
 
+const importExpression = (state, context) => {
+  try {
+    const diagram = expressionImport(context);
+    return state.set('diagram', diagram);
+  } catch (e) {
+    return state.set('errorMessage', e.message);
+  }
+};
+
 const setViewSetting = (state, viewSetting) =>
   state.set('viewSetting', viewSetting)
 ;
@@ -377,6 +388,9 @@ const modifiers = (actions) => {
     }),
     actions.openDiagram$.map((data) => (state) => {
       return openDiagram(cancelRename(state), data);
+    }),
+    actions.importExpression$.map((data) => (state) => {
+      return importExpression(cancelRename(state), data);
     }),
     actions.setViewSetting$.map((viewSetting) => (state) => {
       return setViewSetting(cancelRename(state), viewSetting);

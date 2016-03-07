@@ -2,12 +2,19 @@ import {Observable as O} from 'rx';
 
 import fileReader from './file-reader';
 
-export default ({DOM}) => {
+export default ({DOM, expression$}) => {
   const openExampleButton = DOM.select('[data-open-json]');
   const openExampleEvent$ = openExampleButton
     .events('click');
 
   const fileInput = DOM.select('[data-file-picker="json"]');
+
+  const expressionButton = DOM.select('[data-action="import-expression"]');
+  const importClick$ = expressionButton.events('click');
+  const importExpression$ = expression$
+    .sample(importClick$)
+    .map((output) => output.result)
+  ;
 
   const openFileEvent$ = fileInput.events('change');
 
@@ -25,9 +32,11 @@ export default ({DOM}) => {
 
   return {
     open$: open$.share(),
+    importExpression$: importExpression$.share(),
     preventDefault: O.merge(
       openExampleEvent$,
-      openExampleButton.events('mousedown')
+      openExampleButton.events('mousedown'),
+      expressionButton.events('mousedown')
     ),
   };
 };

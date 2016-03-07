@@ -12,7 +12,7 @@ const isNoInput = (evt) => {
     evt.target.contentEditable !== "true";
 };
 
-export default ({DOM, globalEvents, keydown, openData$, viewSetting$}) => {
+export default ({DOM, globalEvents, keydown, openData$, importExpression$, viewSetting$}) => {
   const cancel$ = keydown
     .filter((evt) => evt.keyCode === 27)
     .share();
@@ -55,6 +55,7 @@ export default ({DOM, globalEvents, keydown, openData$, viewSetting$}) => {
         .map((evt) => evt.ownerTarget.dataset.editMode)
         .share(),
     openDiagram$: openData$,
+    importExpression$,
     setViewSetting$: viewSetting$,
 
     panel$: panels.open$,

@@ -25,6 +25,7 @@ const _state = I.Record({
   languageList: I.List(),
   input: null,
   output: null,
+  showCompletion: true,
 }, 'state');
 
 const languageList = I.List(Object
@@ -57,25 +58,29 @@ const processInput = (input) => {
   .catch(handleError);
 };
 
-export default (initalExpression$ = O.empty(), actions) => {
+export default (props$, initalExpression$, actions) => {
   const parsed$ = initalExpression$
   .map((string) => JSON.parse(string))
   .startWith({term: '', langId: 'auto'})
   .flatMapLatest((initial) =>
     O.combineLatest(
-      actions.input$.startWith(initial.term),
-      actions.language$.startWith(initial.langId),
-      (term, langId) => _input({string: term, langId})
-    )
-    .flatMap((input) => processInput(input)
-      .map((output) =>
-        _state({
-          input,
-          output: output,
-          languageList,
-        })
-      )
-    )
+      O.combineLatest(
+        actions.input$.startWith(initial.term),
+        actions.language$.startWith(initial.langId),
+        (term, langId) => _input({string: term, langId})
+      ),
+      props$,
+      (input, props) =>
+        processInput(input)
+        .map((output) =>
+          _state({
+            input,
+            output: output,
+            languageList,
+            showCompletion: props.showCompletion,
+          })
+        )
+    ).switch()
   );
 
   return parsed$.share();

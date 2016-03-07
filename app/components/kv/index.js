@@ -56,6 +56,7 @@ export default (responses) => {
   const actions = intent({
     DOM, globalEvents, keydown,
     openData$: openPanel.data$,
+    importExpression$: openPanel.expression$,
     viewSetting$: settingsPanel.viewSetting$,
   });
 

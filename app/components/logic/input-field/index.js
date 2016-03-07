@@ -8,7 +8,8 @@ export default (responses) => {
   const {
     DOM,
     keydown,
-    input$,
+    input$ = O.empty(),
+    props$ = O.just({showCompletion: true}),
   } = responses;
 
   const actions = intent({
@@ -16,7 +17,7 @@ export default (responses) => {
     keydown,
   });
 
-  const state$ = model(input$, actions).shareReplay(1);
+  const state$ = model(props$, input$, actions).shareReplay(1);
   const vtree$ = view(state$);
 
   return {
