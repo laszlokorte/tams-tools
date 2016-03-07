@@ -106,7 +106,7 @@ export const contextFromLabeledExpressions = (expressions) => {
         .toList()
     );
 
-    const toplevelExpressions = expressionList.filter(
+    const toplevelExpressions = sortedExpressions.filter(
       (e) => e.name !== null || e.body._name !== 'identifier'
     );
 

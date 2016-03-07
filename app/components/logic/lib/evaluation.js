@@ -131,14 +131,15 @@ export const evaluateAll = ({
   expressions, identifiers,
   acc = I.List(), counter = Math.pow(2, identifiers.size) - 1,
 }) => {
-  // if (counter < 0) {
-  //   return acc.reverse();
-  // } else {
   let mutCounter = counter;
   let mutAcc = acc;
   while (mutCounter >= 0) {
-    const identifierMap = makeIdentifierMap(identifiers, mutCounter);
-    const resultMap = evaluateSingle({expressions, identifierMap});
+    const identifierMap = makeIdentifierMap(
+      identifiers, mutCounter
+    ).asMutable();
+    const resultMap = evaluateSingle({
+      expressions, identifierMap,
+    }).asImmutable();
 
     mutAcc = mutAcc.push(row({
       identifierValues: identifierMap,
@@ -149,24 +150,4 @@ export const evaluateAll = ({
   }
 
   return mutAcc.reverse();
-/*
-    const identifierMap = I.Map(identifiers.map(
-      (name, i) => [name, !!(Math.pow(2, i) & counter)]
-    ));
-
-    const newAcc = acc.push(row({
-      identifierValues: identifierMap,
-      values: expressions.map((expr) =>
-        evaluateExpression(expr, identifierMap)
-      ).toList(),
-    }));
-
-    return evaluateAll({
-      expressions,
-      identifiers,
-      acc: newAcc,
-      counter: counter - 1,
-    });
-  }
-    */
 };

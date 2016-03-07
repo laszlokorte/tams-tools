@@ -11,10 +11,10 @@ export default ({DOM, expression$}) => {
 
   const expressionButton = DOM.select('[data-action="import-expression"]');
   const importClick$ = expressionButton.events('click');
-  const importExpression$ = expression$
-    .sample(importClick$)
-    .map((output) => output.result)
-  ;
+  const importExpression$ = importClick$
+    .withLatestFrom(expression$,
+      (_, output) => output.result
+    );
 
   const openFileEvent$ = fileInput.events('change');
 

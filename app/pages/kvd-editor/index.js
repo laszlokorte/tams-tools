@@ -7,6 +7,8 @@ import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {keyboardDriver} from '../../drivers/keyboard';
 import {selectAllDriver} from '../../drivers/select-all';
 import {globalEventDriver} from '../../drivers/global-events';
+import {autoResizeDriver} from '../../drivers/textarea-resize';
+import {insertStringDriver} from '../../drivers/rangy';
 
 import kv from '../../components/kv';
 import pla from '../../components/pla';
@@ -60,6 +62,8 @@ const kvdApp = (sources) => {
     selectAll: O.merge([
       kvComponent.selectAll,
     ]),
+    autoResize: kvComponent.autoResize,
+    insertString: kvComponent.insertString,
   };
 };
 
@@ -70,6 +74,8 @@ const drivers = {
   keydown: keyboardDriver,
   selectAll: selectAllDriver,
   globalEvents: globalEventDriver,
+  autoResize: autoResizeDriver,
+  insertString: insertStringDriver,
 };
 
 Cycle.run(kvdApp, drivers);

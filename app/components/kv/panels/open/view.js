@@ -6,8 +6,33 @@ import examples from './examples';
 
 import {IF} from '../../../../lib/h-helper';
 
-const render = (state, logicField) => div([
-  h1('.modal-box-title', 'Open...'),
+const renderExpressionImport = (state, logicField) => [
+  h3('From Expressions'),
+  logicField,
+  IF(state.validExpression, () =>
+    button('.block-button-dark', {
+      attributes: {'data-action': 'import-expression'},
+    }, 'Import Expressions')
+  ),
+  IF(state.expressionError !== null, () =>
+    div('.logic-panel-body', [
+      div('.error-box', state.expressionError),
+    ])
+  ),
+];
+
+const renderJsonImport = () => [
+  h3('From JSON File'),
+  div([
+    input('.block-button', {
+      attributes: {'data-file-picker': 'json'},
+      value: '',
+      type: 'file',
+    }),
+  ]),
+];
+
+const renderExamples = () => [
   h3('Examples'),
   ul('.block-list.style-small', [
     examples.map((example) =>
@@ -18,21 +43,13 @@ const render = (state, logicField) => div([
       }, example.name)])
     ),
   ]),
-  h3('From JSON File'),
-  div([
-    input('.block-button', {
-      attributes: {'data-file-picker': 'json'},
-      value: '',
-      type: 'file',
-    }),
-  ]),
-  h3('From Formula'),
-  logicField,
-  IF(state.validExpression, () =>
-    button('.block-button-dark', {
-      attributes: {'data-action': 'import-expression'},
-    }, 'Import Formula')
-  ),
+];
+
+const render = (state, logicField) => div([
+  h1('.modal-box-title', 'Open...'),
+  renderExamples(),
+  renderExpressionImport(state, logicField),
+  renderJsonImport(),
 ])
 ;
 

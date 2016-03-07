@@ -90,5 +90,7 @@ export default (responses) => {
       openPanel.preventDefault,
     ]).share(),
     selectAll: savePanel.selectAll,
+    autoResize: openPanel.autoResize,
+    insertString: openPanel.insertString,
   };
 };

@@ -17,12 +17,13 @@ export default ({DOM, keydown, visible$}) => {
     DOM: isolatedDOM,
     props$: O.just({showCompletion: false}),
   });
+  const expression$ = logicField.output$;
 
   const actions = intent({
     DOM: isolatedDOM,
-    expression$: logicField.output$,
+    expression$,
   });
-  const state$ = model(visible$, logicField.output$, actions);
+  const state$ = model(visible$, expression$, actions);
   const modal = isolate(ModalBox)({
     DOM,
     keydown,
@@ -32,8 +33,13 @@ export default ({DOM, keydown, visible$}) => {
 
   return {
     DOM: modal.DOM.map((e) => div([e])),
-    preventDefault: actions.preventDefault,
+    preventDefault: O.merge([
+      actions.preventDefault,
+      logicField.preventDefault,
+    ]),
     data$: actions.open$,
     expression$: actions.importExpression$,
+    autoResize: logicField.autoResize,
+    insertString: logicField.insertString,
   };
 };

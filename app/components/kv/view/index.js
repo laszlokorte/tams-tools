@@ -1,6 +1,8 @@
 import {Observable as O} from 'rx';
 import FocusHook from 'virtual-dom/virtual-hyperscript/hooks/focus-hook';
 
+import cache from '../../../lib/cache';
+
 import {
   div, button ,span, ul, li,
 } from '@cycle/dom';
@@ -237,7 +239,7 @@ export default (state$, {panel$s}) =>
     (state, ...panels) =>
       div([
         panels,
-        render(state),
+        cache(() => render(state), state, "KV"),
       ])
   )
 ;

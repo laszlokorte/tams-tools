@@ -1,13 +1,8 @@
 import {fromJSON} from '../lib/diagram';
 
-const evaluate = (context, e) => {
-  return Array.apply(Array, {
-    length: Math.pow(2, context.freeIdentifiers.size),
-  }).map(() => null);
-};
+import {evaluateAll} from '../../logic/lib/evaluation';
 
 export default (context) => {
-  console.log(context.toJS());
   if (
     context.freeIdentifiers.size > 8
   ) {
@@ -17,17 +12,28 @@ export default (context) => {
   }
 
   if (
-    context.toplevelExpressions.size > 7
+    context.sortedExpressions.size > 7
   ) {
     throw new Error("No more that 7 expressions are allowed");
   }
 
-  return fromJSON({
-    inputs: context.freeIdentifiers.map((i) => i.name).toArray(),
-    outputs: context.toplevelExpressions.map((e, expIndex) => ({
-      name: e.name || `O${expIndex + 1}`,
-      values: evaluate(context, e),
-    })).toArray(),
-    loops: [],
+  const evaluation = evaluateAll({
+    expressions: context.sortedExpressions.toList(),
+    identifiers: context.freeIdentifiers,
   });
+
+  const outputs = context.sortedExpressions.map((e, expIndex) => ({
+    name: e.name || `O${expIndex + 1}`,
+    values: evaluation.map((row) => row.values.get(expIndex)).toArray(),
+  })).toArray();
+
+  const json = {
+    inputs: context.freeIdentifiers.map((i) => i.name).toArray(),
+    outputs,
+    loops: [],
+  };
+
+  console.log(json);
+
+  return fromJSON(json);
 };
