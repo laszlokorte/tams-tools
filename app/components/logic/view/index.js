@@ -36,7 +36,8 @@ const render = (state, field, table) =>
       div('.field-panel', [field]),
     ]),
     div('.app-body', [
-      table ?
+      state.expression.result &&
+      state.expression.result.expressions.size ?
       div([
         h2('Table'),
 
