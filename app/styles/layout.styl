@@ -46,41 +46,19 @@ plainlist(inline = false)
     > *
       display inline-block
 
-action-icon(icon)
-  width button-size
-  height button-size
-  background-color transparent
-  border none
-  background-image svgurl(icon) svg(
-    path fill color-background-secondary-strong
-  )
-  background-size 80% 80%
-  background-position 50% 50%
-  background-repeat no-repeat
-  overflow hidden
-  text-indent -500px
-  cursor pointer
-
-  &:focus
-    background-image svgurl(icon) svg(
-      path fill color-background-secondary-strong,
-      path stroke color-focus,
-      path stroke-width 1px
-    )
-
 round()
   width button-size-small
   height button-size-small
   border-radius (button-size-small / 2)
   overflow hidden
   border 2px solid transparent
-  text-indent -500px
   font-size 0
   outline none
 
-button(icon = false,
+button(
   color-background = color-background-secondary-strong,
-  color-foreground = color-foreground-secondary-strong)
+  color-foreground = color-foreground-secondary-strong
+)
   line-height 1
   height button-size
   border 2px solid transparent
@@ -91,16 +69,7 @@ button(icon = false,
   outline none
   background-color color-background
   color color-foreground
-  if icon
-    padding-left button-size
-    background-image svgurl(icon) svg(
-      path fill color-foreground
-    )
-    background-size space(1.2) space(1.2)
-    background-position space(0.7) 50%
-    background-repeat no-repeat
-  else
-    padding-left space(1)
+  padding-left space(1)
 
   &:not(.state-active)
     &:hover
@@ -195,8 +164,7 @@ $keyframe-name = slide-up
   min-width space(2)
   text-align center
 
-.spinner-button-decrement
-.spinner-button-increment
+.spinner-button
   round()
   background-color color-background-inverse
   vertical-align top
@@ -205,6 +173,9 @@ $keyframe-name = slide-up
   background-repeat no-repeat
   margin 0 space(0.2)
   transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill color-foreground-inverse
 
   &:hover
     background-color lighten(color-background-inverse, 3%)
@@ -220,24 +191,12 @@ $keyframe-name = slide-up
     pointer-events none
 
 .state-readonly
-  .spinner-button-decrement
-  .spinner-button-increment
+  .spinner-button
       pointer default
       background-color lighten(color-background-inverse, 25%)
       transform scale(0)
       opacity 0
       pointer-events none
-
-
-.spinner-button-decrement
-  background-image svgurl('assets/icons/minus.svg') svg(
-    rect fill color-foreground-secondary
-  )
-.spinner-button-increment
-  background-image svgurl('assets/icons/plus.svg') svg(
-    path fill color-foreground-secondary
-  )
-
 
 .edit-mode-panel
   display block
@@ -245,10 +204,10 @@ $keyframe-name = slide-up
 
 .edit-mode-button-loops
 .edit-mode-button-function
-  button(false,
+  button(
     color-background-inverse,
     color-foreground-inverse
-    )
+  )
   opacity 0.7
   width 150px
   &.state-active
@@ -267,19 +226,22 @@ $keyframe-name = slide-up
 .action-list-item
   padding 0 space(0.2)
 
-.action-button-open
-  action-icon('assets/icons/open.svg')
-.action-button-export
-  action-icon('assets/icons/export.svg')
-.action-button-settings
-  action-icon('assets/icons/settings.svg')
-.action-button-help
-  action-icon('assets/icons/help.svg')
+.action-button
+  padding 0
+  margin space(0.2)
+  width 32px
+  height 32px
+  border none
+  background-color transparent
 
-.action-button-open
-.action-button-export
-.action-button-settings
-.action-button-help
+  .icon-shape
+    fill color-background-secondary-strong
+
+.svg-icon
+  display inline-block
+  margin 0
+  width 100%
+  height 100%
   outline none
   &:hover
     opacity 0.8
@@ -298,17 +260,15 @@ $keyframe-name = slide-up
   color color-foreground-highlight
   width space(3)
   height space(3)
-  text-indent -500px
   overflow hidden
   margin space(1.5) space(1)
-
-  background-image svgurl('assets/icons/plus.svg') svg(
-    path fill shade(color-foreground-highlight, 10%)
-  )
   background-size 50% 50%
   background-position 50% 50%
   background-repeat no-repeat
   transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill color-foreground-inverse
 
   &:hover
     background-color tint(color-background-highlight, 10%)
@@ -374,14 +334,13 @@ $keyframe-name = slide-up
   z-index 10
   border-color color-background-secondary
   background-color color-danger
-
-  background-image svgurl('assets/icons/delete.svg') svg(
-    path fill tint(color-danger, 70%)
-  )
   background-size 50% 50%
   background-position 50% 50%
   background-repeat no-repeat
   transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill tint(color-danger, 90%)
 
   &:hover
     background-color lighten(color-danger, 5%)
@@ -458,9 +417,10 @@ $keyframe-name = slide-up
   plainlist(inline: true)
 
 .loop-mode
-  button(false,
+  button(
     color-background-inverse-weak,
-    color-foreground-inverse-weak)
+    color-foreground-inverse-weak
+  )
 
   &.state-active
     cursor default
@@ -514,11 +474,6 @@ $keyframe-name = slide-up
   vertical-align middle
   background-color transparent
   border 3px solid transparent
-
-  background-image svgurl('assets/icons/delete.svg') svg(
-    path fill black,
-    path opacity 0.5
-  )
   background-size 50%
   background-position 50% 50%
   background-repeat no-repeat

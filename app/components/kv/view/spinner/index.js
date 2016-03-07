@@ -2,6 +2,9 @@ import {
   div, button ,span,
 } from '@cycle/dom';
 
+import plusIcon from '../../../../icons/plus';
+import minusIcon from '../../../../icons/minus';
+
 export default ({attributes, label, readonly, value, min, max}) =>
   div('.spinner' + (
     (readonly ? '.state-readonly' : '')
@@ -9,14 +12,14 @@ export default ({attributes, label, readonly, value, min, max}) =>
     attributes: attributes,
   }, [
     span('.spinner-label', label),
-    button('.spinner-button-decrement', {
+    button('.spinner-button', {
       attributes: {'data-spinner-action': 'decrement'},
       disabled: min >= value,
-    }, 'Decrement'),
+    }, minusIcon(24)),
     span('.spinner-value', value.toString()),
-    button('.spinner-button-increment', {
+    button('.spinner-button', {
       attributes: {'data-spinner-action': 'increment'},
       disabled: max <= value,
-    }, 'Increment'),
+    }, plusIcon(24)),
   ])
 ;

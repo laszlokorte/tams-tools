@@ -5,19 +5,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import jeet from 'jeet';
 import rupture from 'rupture';
 import nib from 'nib';
-import _svgStylus from 'svg-stylus/svg';
 import rework from 'rework';
-
-function svgStylus(options) {
-  return function callback() {
-    this.on('end', (err, css) => {
-      const cssObj = rework(css);
-      cssObj.use(_svgStylus(options));
-
-      return cssObj.toString();
-    });
-  };
-};
 
 const vendorModules = /(node_modules|bower_components)/;
 
@@ -86,7 +74,7 @@ module.exports = {
   },
 
   stylus: {
-    use: [svgStylus('./app'), jeet(), rupture(), nib()],
+    use: [jeet(), rupture(), nib()],
   },
 
   plugins: [

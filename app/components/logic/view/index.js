@@ -6,6 +6,10 @@ import {
   label, input, button,
 } from '@cycle/dom';
 
+import openIcon from '../../../icons/open';
+import exportIcon from '../../../icons/export';
+import helpIcon from '../../../icons/help';
+
 import './index.styl';
 
 const render = (state, field, table) =>
@@ -14,22 +18,22 @@ const render = (state, field, table) =>
       div('.action-panel', [
         div('.action-list', [
           div('.action-list-item', [
-            button('.action-button-open', {
+            button('.action-button', {
               attributes: {'data-panel': 'open'},
               title: 'Open Diagram...',
-            }, 'Open...'),
+            }, openIcon(24)),
           ]),
           div('.action-list-item', [
-            button('.action-button-export', {
+            button('.action-button', {
               attributes: {'data-panel': 'save'},
               title: 'Export Diagram...',
-            }, 'Export...'),
+            }, exportIcon(24)),
           ]),
           div('.action-list-item', [
-            button('.action-button-help', {
+            button('.action-button', {
               attributes: {'data-panel': 'help'},
               title: 'Help...',
-            }, 'Help'),
+            }, helpIcon(24)),
           ]),
         ]),
       ]),

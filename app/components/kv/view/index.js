@@ -3,6 +3,13 @@ import FocusHook from 'virtual-dom/virtual-hyperscript/hooks/focus-hook';
 
 import cache from '../../../lib/cache';
 
+import settingsIcon from '../../../icons/settings';
+import openIcon from '../../../icons/open';
+import exportIcon from '../../../icons/export';
+import helpIcon from '../../../icons/help';
+import plusIcon from '../../../icons/plus';
+import deleteIcon from '../../../icons/delete';
+
 import {
   div, button ,span, ul, li,
 } from '@cycle/dom';
@@ -119,13 +126,13 @@ const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
             'data-kv-remove-output': i,
           },
           disabled: !(canEdit && canRemove),
-        }, 'Delete Button'),
+        }, deleteIcon(24)),
       ])
     ).toArray()),
     button('.output-button-add', {
       attributes: {'data-kv-add-output': true},
       disabled: !(canEdit && canAdd),
-    }, 'Add Output'),
+    }, plusIcon(24)),
   ])
 ;
 
@@ -162,28 +169,28 @@ const render = ({state, layout}, index) =>
       div('.action-panel', [
         div('.action-list', [
           div('.action-list-item', [
-            button('.action-button-open', {
+            button('.action-button', {
               attributes: {'data-panel': 'open'},
               title: 'Open Diagram...',
-            }, 'Open...'),
+            }, openIcon(24)),
           ]),
           div('.action-list-item', [
-            button('.action-button-export', {
+            button('.action-button', {
               attributes: {'data-panel': 'save'},
               title: 'Export Diagram...',
-            }, 'Export...'),
+            }, exportIcon(24)),
           ]),
           div('.action-list-item', [
-            button('.action-button-settings', {
+            button('.action-button', {
               attributes: {'data-panel': 'settings'},
               title: 'Settings...',
-            }, 'Settings'),
+            }, settingsIcon(24)),
           ]),
           div('.action-list-item', [
-            button('.action-button-help', {
+            button('.action-button', {
               attributes: {'data-panel': 'help'},
               title: 'Help...',
-            }, 'Help'),
+            }, helpIcon(24)),
           ]),
         ]),
       ]),
