@@ -1,5 +1,3 @@
-import {Observable as O} from 'rx';
-
 import {
   div, span, textarea, h2,
   select, option,

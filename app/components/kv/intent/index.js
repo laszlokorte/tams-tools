@@ -12,7 +12,10 @@ const isNoInput = (evt) => {
     evt.target.contentEditable !== "true";
 };
 
-export default ({DOM, globalEvents, keydown, openData$, importExpression$, viewSetting$}) => {
+export default ({
+  DOM, globalEvents, keydown, openData$,
+  importExpression$, viewSetting$,
+}) => {
   const cancel$ = keydown
     .filter((evt) => evt.keyCode === 27)
     .share();
