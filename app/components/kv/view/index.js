@@ -34,7 +34,7 @@ const renderLoopIcon = (loop, index, editable) =>
           'data-loop-index': index,
         },
         disabled: !editable,
-      }, "Delete"),
+      }, deleteIcon(24)),
     ]),
   ])
 ;
