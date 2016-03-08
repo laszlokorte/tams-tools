@@ -19,6 +19,10 @@ const home = (sources) => {
       url: './logic-editor.html',
     },
     {
+      name: 'Logic Checker',
+      url: './logic-checker.html',
+    },
+    {
       name: 'LED editor',
       url: './led-editor.html',
     },

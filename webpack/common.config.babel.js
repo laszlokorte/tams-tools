@@ -5,7 +5,6 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import jeet from 'jeet';
 import rupture from 'rupture';
 import nib from 'nib';
-import rework from 'rework';
 
 const vendorModules = /(node_modules|bower_components)/;
 
@@ -35,6 +34,7 @@ module.exports = {
     ledEditor: "./app/pages/led-editor/index.js",
     fsmEditor: "./app/pages/fsm-editor/index.js",
     numberCircle: "./app/pages/number-circle/index.js",
+    logicChecker: "./app/pages/logic-checker/index.js",
     vendor: require("../app/vendor.js"),
   },
 
@@ -129,6 +129,14 @@ module.exports = {
       template: './app/index.html',
       filename: 'number-circle.html',
       favicon: './app/pages/number-circle/number-circle.ico',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Logic Checker',
+      minify: htmlMinifyOptions,
+      chunks: ['logicChecker', 'vendor'],
+      template: './app/index.html',
+      filename: 'logic-checker.html',
+      favicon: './app/pages/logic-checker/logic-checker.ico',
     }),
     new HtmlWebpackPlugin({
       title: 'Debug',
