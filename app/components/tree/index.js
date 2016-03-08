@@ -31,6 +31,7 @@ export default (responses) => {
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map((o) => o.bounds),
     content$: isolateSink(vtree$, 'graphicsContent'),
+    autoCenter$: state$.map(() => true),
   });
 
   return {

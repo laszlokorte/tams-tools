@@ -19,7 +19,7 @@ export default (responses) => {
     data$,
   } = responses;
 
-  const pla$ = data$.map(plaFromJson);
+  const pla$ = data$.map(plaFromJson).share();
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'));
   const state$ = model(props$, pla$, actions).shareReplay(1);
@@ -35,7 +35,13 @@ export default (responses) => {
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map(pluck('bounds')),
     content$: isolateSink(vtree$, 'graphicsContent'),
+    autoCenter$: data$.distinctUntilChanged(
+      (s) => s.loops.length,
+      (a, b) => a === b
+    ).map(() => true),
   });
+
+  stage.DOM.subscribe();
 
   return {
     DOM: O.combineLatest(

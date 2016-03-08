@@ -49,28 +49,27 @@ const autoCenterModifier = ({
   });
 };
 
-export default ({props$, camera$, bounds$, content$}, actions) => {
+export default ({
+  props$, camera$, bounds$,
+  content$, autoCenter$,
+}, actions) => {
   const contentThunk$ = content$.map((content, index) => {
     return new ContentThunk(content, index % 2);
   });
 
-  const distinctBounds$ = bounds$
-    .distinctUntilChanged(
-      (a) => a,
-      (a,b) => a.minX === b.minX && a.maxX === b.maxX &&
-        a.minY === b.minY && a.maxY === b.maxY
-    );
+  const forceBounds$ = autoCenter$
+    .withLatestFrom(bounds$, (_,b) => b)
+    .merge(bounds$.take(1));
 
   return O.combineLatest(
     props$,
     camera$,
     (props, initCamera) =>
-      distinctBounds$
-      .flatMapLatest((bounds) =>
+      forceBounds$.flatMapLatest((bounds) =>
         O.merge([
           actions.zoom$.map(zoomModifier(0.2, 5)),
           actions.pan$.map(panModifier),
-          distinctBounds$.map(autoCenterModifier(props)),
+          forceBounds$.map(autoCenterModifier(props)),
         ]).map((mod) => clampPosition(mod, bounds))
         .startWith(({x, y, zoom}) => ({
           zoom,
