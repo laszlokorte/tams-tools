@@ -6,7 +6,6 @@ export const layoutedNode = I.Record({
   label: null,
   x: 0,
   y: 0,
-  radius: 70,
   pivotAngle: 0,
 }, 'layoutedNode');
 
@@ -30,6 +29,7 @@ export const layoutedEdge = I.Record({
 export const layoutedGraph = I.Record({
   nodes: I.List(),
   edges: I.List(),
+  nodeRadius: 70,
 }, 'layoutedGraph');
 
 const calculateEdgePivotAngle = (graph, nodeIndex) => {
@@ -70,12 +70,12 @@ const calculateEdgePivotAngle = (graph, nodeIndex) => {
   return angleSum;
 };
 
-const boundingBox = (nodes, padding) => {
+const boundingBox = (nodes, radius, padding) => {
   return bounds(nodes.reduce((box, node) => ({
-    minX: Math.min(box.minX, node.x - node.radius - padding),
-    maxX: Math.max(box.maxX, node.x + node.radius + padding),
-    minY: Math.min(box.minY, node.y - node.radius - padding),
-    maxY: Math.max(box.maxY, node.y + node.radius + padding),
+    minX: Math.min(box.minX, node.x - padding),
+    maxX: Math.max(box.maxX, node.x + padding),
+    minY: Math.min(box.minY, node.y - padding),
+    maxY: Math.max(box.maxY, node.y + padding),
   }), {
     minX: Infinity,
     maxX: -Infinity,
@@ -90,7 +90,7 @@ const calculateNodeLayout = (graph) => {
       label: node.label,
       x: node.x,
       y: node.y,
-      radius: node.radius,
+      radius: graph.nodeRadius,
       pivotAngle: calculateEdgePivotAngle(graph, nodeIndex),
     });
   });
@@ -206,7 +206,7 @@ const calculateEdgeLayout = (graph, layoutedNodes) => {
       path: calculateConnectionPath({
         from: startNode,
         to: endNode,
-        offset: startNode.radius,
+        offset: graph.nodeRadius,
         preferredAngle: startNode.pivotAngle + Math.PI,
         streight: false,
       }),
@@ -222,6 +222,7 @@ const calculateLayout = (graph) => {
   return layoutedGraph({
     nodes,
     edges,
+    nodeRadius: graph.nodeRadius,
   });
 };
 
@@ -230,6 +231,6 @@ export const layoutGraph = (graph) => {
 
   return {
     graph: layouted,
-    bounds: boundingBox(graph.nodes, 100),
+    bounds: boundingBox(graph.nodes, graph.nodeRadius, 10 * graph.nodeRadius),
   };
 };

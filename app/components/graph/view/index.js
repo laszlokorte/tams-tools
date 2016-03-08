@@ -1,5 +1,7 @@
 import {svg} from '@cycle/dom';
 
+import {IF} from '../../../lib/h-helper';
+
 import './index.styl';
 
 const bezierString = (path) =>
@@ -57,6 +59,16 @@ const arrowHeadString = (path, length) => {
 
 const render = (state) =>
   svg('g', [
+    svg('rect', {
+      x: state.bounds.minX,
+      y: state.bounds.minY,
+      width: state.bounds.maxX - state.bounds.minX,
+      height: state.bounds.maxY - state.bounds.minY,
+      fill: 'none',
+      attributes: {
+        'data-target': true,
+      },
+    }),
     state.graph.edges.map((e) => svg('g', [
       svg('path', {
         d: bezierString(e.path),
@@ -78,7 +90,7 @@ const render = (state) =>
       svg('circle', {
         cx: n.x,
         cy: n.y,
-        r: n.radius,
+        r: state.graph.nodeRadius,
         fill: 'black',
       }),
       svg('text', {
@@ -89,6 +101,24 @@ const render = (state) =>
         fill: 'white',
       }, n.label),
     ])).toArray(),
+
+    IF(state.transientNode !== null, () =>
+      svg('g', [
+        svg('circle', {
+          cx: state.transientNode.x,
+          cy: state.transientNode.y,
+          r: 50,
+          fill: 'black',
+        }),
+        svg('text', {
+          x: state.transientNode.x,
+          y: state.transientNode.y,
+          'text-anchor': 'middle',
+          'dominant-baseline': 'central',
+          fill: 'white',
+        }, "New Node"),
+      ])
+    ),
   ])
 ;
 

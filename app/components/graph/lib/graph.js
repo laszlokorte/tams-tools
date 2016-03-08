@@ -4,7 +4,6 @@ export const graphNode = I.Record({
   label: null,
   x: 0,
   y: 0,
-  radius: 70,
 }, 'graphNode');
 
 export const graphEdge = I.Record({
@@ -16,6 +15,7 @@ export const graphEdge = I.Record({
 export const _graph = I.Record({
   nodes: I.List(),
   edges: I.List(),
+  nodeRadius: 70,
 }, 'graph');
 
 export const graphFromJson = (data) => {
