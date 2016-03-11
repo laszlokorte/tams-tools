@@ -1,0 +1,41 @@
+@import '../../../styles/layout'
+
+.number-circle
+  width 100%
+  height auto
+  max-height 70%
+
+.number-circle-circumference
+  fill color-background-secondary-weak
+  opacity 0.5
+  stroke color-background-secondary-strong
+  stroke-width 5
+
+.number-dot
+  cursor pointer
+  &.state-selected
+    .number-dot-background
+      fill color-focus
+    .number-dot-pattern
+      fill color-focus
+
+.number-dot-background
+  fill color-background-inverse
+
+.number-dot-label
+  color color-foreground-inverse
+  font-family font-sans
+.number-dot-pattern
+  font-family monospace
+  color color-foreground-primary
+
+.selection-arc
+  stroke color-focus
+
+.arrow-head
+  fill color-focus
+
+.overflow-line
+  stroke-dasharray 10, 30
+  stroke color-foreground-inverse-weak
+  stroke-linecap round

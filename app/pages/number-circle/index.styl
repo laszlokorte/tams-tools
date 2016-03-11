@@ -3,38 +3,9 @@
 .number-circle-container
   position absolute
   top 0
-  bottom 0
+  bottom 20%
   right 0
   left 0
-
-.number-circle
-  width 100%
-  height auto
-  max-height 70%
-
-.number-dot
-  cursor pointer
-  &.state-selected
-    .number-dot-background
-      fill color-focus
-    .number-dot-pattern
-      fill color-focus
-
-.number-dot-background
-  fill color-background-inverse
-
-.number-dot-label
-  color color-foreground-inverse
-  font-family font-sans
-.number-dot-pattern
-  font-family monospace
-  color color-foreground-primary
-
-.selection-arc
-  stroke color-focus
-
-.arrow-head
-  fill color-focus
 
 .button-bar
   text-align center
@@ -51,8 +22,3 @@
   margin-top space(1)
   font-size font-size-big
   text-align center
-
-.overflow-line
-  stroke-dasharray 10, 30
-  stroke color-foreground-inverse-weak
-  stroke-linecap round
