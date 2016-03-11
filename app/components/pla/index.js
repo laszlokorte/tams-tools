@@ -36,8 +36,10 @@ export default (responses) => {
     bounds$: state$.map(pluck('bounds')),
     content$: isolateSink(vtree$, 'graphicsContent'),
     autoCenter$: data$.distinctUntilChanged(
-      (s) => s.loops.length,
-      (a, b) => a === b
+      (s) => s,
+      (a, b) => a.loops.length === b.loops.length &&
+        a.inputs.length === b.inputs.length &&
+        a.outputs.length === b.outputs.length
     ).map(() => true),
   });
 

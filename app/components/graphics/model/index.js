@@ -67,7 +67,11 @@ export default ({
     (props, initCamera) =>
       forceBounds$.flatMapLatest((bounds) =>
         O.merge([
-          actions.zoom$.map(zoomModifier(0.2, 5)),
+          actions.zoom$.map(zoomModifier(Math.min(
+            props.width / (bounds.maxX - bounds.minX),
+            props.height / (bounds.maxY - bounds.minY),
+            0.5
+          ), 5)),
           actions.pan$.map(panModifier),
           forceBounds$.map(autoCenterModifier(props)),
         ]).map((mod) => clampPosition(mod, bounds))
