@@ -32,7 +32,7 @@ const panModifier = (delta) => ({x, y, zoom}) => ({
   y: y - delta.y,
 });
 
-const autoCenterModifier = ({
+const autoCenterModifier = (minZoom, {
   width, height, pivotX = 0.5, pivotY = 0,
 }) => ({minX, minY, maxX, maxY}) => {
   const centerX = (maxX + minX) / 2;
@@ -45,7 +45,7 @@ const autoCenterModifier = ({
   return () => ({
     x: centerX + (pivotX - 0.5) * contentWidth,
     y: centerY + (pivotY - 0.5) * contentHeight + height / 2 / zoom,
-    zoom: clamp(zoom, 0.2, 5),
+    zoom: clamp(zoom, minZoom, 5),
   });
 };
 
@@ -65,22 +65,24 @@ export default ({
     props$,
     camera$,
     (props, initCamera) =>
-      forceBounds$.flatMapLatest((bounds) =>
-        O.merge([
-          actions.zoom$.map(zoomModifier(Math.min(
-            props.width / (bounds.maxX - bounds.minX),
-            props.height / (bounds.maxY - bounds.minY),
-            0.5
-          ), 5)),
+      forceBounds$.flatMapLatest((bounds) => {
+        const minZoom = Math.min(
+          props.width / (bounds.maxX - bounds.minX),
+          props.height / (bounds.maxY - bounds.minY),
+          0.5
+        );
+
+        return O.merge([
+          actions.zoom$.map(zoomModifier(minZoom, 5)),
           actions.pan$.map(panModifier),
-          forceBounds$.map(autoCenterModifier(props)),
+          forceBounds$.map(autoCenterModifier(minZoom, props)),
         ]).map((mod) => clampPosition(mod, bounds))
         .startWith(({x, y, zoom}) => ({
           zoom,
           x: clamp(x, bounds.minX, bounds.maxX),
           y: clamp(y, bounds.minY, bounds.maxY),
-        }))
-      )
+        }));
+      })
       .startWith({
         zoom: initCamera.zoom,
         x: initCamera.x,
