@@ -46,20 +46,20 @@ export default (bitCount$, actions) => {
     ),
   ]);
 
-  return bitCount$.map((bitCount) =>
-    modifierFunction$
+  return bitCount$.map((bitCount) => {
+    const dots = dotArray(bitCount);
+    const dotRadius = 50;
+    const circumference = dotRadius * 4 * Math.max(7, dots.length);
+    const radius = circumference / 2 / Math.PI;
+    const sizeHalf = (radius + dotRadius) + 100 * Math.max(2, bitCount);
+
+    return modifierFunction$
     // number of bits to generate the number circle for
     .startWith({selected: null})
     // apply the function
     .scan((state, modifierFunction) => modifierFunction(state))
     // convert number of bit's into array of angles
     .map(({selected}) => {
-      const dots = dotArray(bitCount);
-      const dotRadius = 50;
-      const circumference = dotRadius * 4 * Math.max(7, dots.length);
-      const radius = circumference / 2 / Math.PI;
-      const sizeHalf = (radius + dotRadius) + 100 * Math.max(2, bitCount);
-
       return {
         // number of bits
         bitCount,
@@ -67,13 +67,13 @@ export default (bitCount$, actions) => {
         dots,
         // the index of the selected dot
         selected,
-
+        // the radius of a single dot
         dotRadius,
-
+        // the radius of the circle
         radius,
-
+        // the angle at which the overflow occurs
         overflowAngle: overflowAngle(dots),
-
+        // the bounding box of the circle
         bounds: {
           minX: -sizeHalf,
           minY: -sizeHalf,
@@ -81,6 +81,6 @@ export default (bitCount$, actions) => {
           maxY: sizeHalf,
         },
       };
-    })
-  ).switch();
+    });
+  }).switch();
 };
