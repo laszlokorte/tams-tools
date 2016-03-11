@@ -30,9 +30,9 @@ const render = (state) =>
         soderStart, soderEnd,
       })
     ),
-    state.circuit.labels.map(({text, align, anchor}) =>
+    state.circuit.labels.map(({text, align, anchor}, i) =>
       svg('text', {
-        key: 'label-' + text,
+        key: 'label-' + i,
         x: anchor.x * 10,
         y: anchor.y * 10,
         'text-anchor': align,
