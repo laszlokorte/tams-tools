@@ -8,6 +8,7 @@ const ownerElement = (rootElement) =>
     (e) => e,
     (a, b) => a === b
   )
+  .share()
 ;
 
 // get the id of the given touch
@@ -28,7 +29,10 @@ const toucheIds = (globalEvents, rootElement) => O.merge([
 ]).scan(
   (ids, modFn) => modFn(ids),
   I.Set()
-).distinctUntilChanged().share();
+).distinctUntilChanged(
+  (e) => e,
+  (a, b) => a === b
+).share();
 
 // get the center point of the given touches
 const touchCenter = (touches) => {
@@ -138,7 +142,7 @@ export const zoom = (globalEvents, rootElement, positionFn) => {
     action$: O.merge([
       touchAction$,
       wheelAction$,
-    ]),
+    ]).share(),
     stopPropagation: O.empty(),
     preventDefault: wheel$,
   };
@@ -191,7 +195,8 @@ export const pan = (globalEvents, rootElement, positionFn) => {
   const touchChange$ = O.merge([
     rootElement.events('touchstart'),
     globalEvents.events('touchend'),
-  ]);
+  ]).share();
+
   const touches$ = toucheIds(globalEvents, rootElement);
   const panStart$ = touches$.filter((ids) => ids.size > 0);
   const panEnd$ = touches$.filter((ids) => ids.size <= 0);
@@ -216,10 +221,13 @@ export const pan = (globalEvents, rootElement, positionFn) => {
     mouseDown$.map(() =>
       mouseMove$.takeUntil(mouseUp$)
     ).switch(),
-  ]);
+  ]).share();
 
   return {
-    action$: O.merge([touchAction$, mouseAction$]),
+    action$: O.merge([
+      touchAction$,
+      mouseAction$,
+    ]).share(),
     stopPropagation: O.empty(),
     preventDefault,
   };
