@@ -1,4 +1,4 @@
-import {Observable as O, ReplaySubject, Subject} from 'rx';
+import {Observable as O, Subject} from 'rx';
 import isolate from '@cycle/isolate';
 
 import model from './model';
@@ -18,21 +18,38 @@ export default (responses) => {
     globalEvents,
   } = responses;
 
-  const plaSubject = new ReplaySubject(1);
-  const jsonSubject = new ReplaySubject(1);
-  const panelSubject = new Subject();
+  const openData$ = new Subject();
+  const importExpression$ = new Subject();
+  const viewSetting$ = new Subject();
+
+  const actions = intent({
+    DOM, globalEvents, keydown,
+    openData$,
+    importExpression$,
+    viewSetting$: viewSetting$,
+  });
+
+  const state$ = model(O.empty(), actions).shareReplay(1);
+
+  const plaData$ = state$.debounce(10).map(({state}) =>
+    toPLA(state.diagram, state.currentKvMode, state.currentCube)
+  ).share();
+
+  const jsonData$ = state$.map(({state}) =>
+    JSON.stringify(toJSON(state.diagram))
+  ).share();
 
   const helpPanel = isolate(HelpPanel, 'helpPanel')({
     DOM,
     keydown,
-    visible$: panelSubject
+    visible$: actions.panel$
       .map((p) => p === 'help'),
   });
 
   const settingsPanel = isolate(SettingsPanel, 'settingsPanel')({
     DOM,
     keydown,
-    visible$: panelSubject
+    visible$: actions.panel$
       .map((p) => p === 'settings'),
     viewSetting$: O.just('function'),
   });
@@ -40,27 +57,19 @@ export default (responses) => {
   const openPanel = isolate(OpenPanel, 'openPanel')({
     DOM,
     keydown,
-    visible$: panelSubject
+    visible$: actions.panel$
       .map((p) => p === 'open'),
   });
 
   const savePanel = isolate(SavePanel, 'savePanel')({
     DOM,
     keydown,
-    pla$: plaSubject,
-    json$: jsonSubject,
-    visible$: panelSubject
+    pla$: plaData$,
+    json$: jsonData$,
+    visible$: actions.panel$
       .map((p) => p === 'save'),
   });
 
-  const actions = intent({
-    DOM, globalEvents, keydown,
-    openData$: openPanel.data$,
-    importExpression$: openPanel.expression$,
-    viewSetting$: settingsPanel.viewSetting$,
-  });
-
-  const state$ = model(O.empty(), actions).shareReplay(1);
   const vtree$ = view(
     state$, {
       panel$s: [
@@ -72,15 +81,9 @@ export default (responses) => {
     }
   );
 
-  const plaData$ = state$.delay(0).debounce(10).map(({state}) =>
-    toPLA(state.diagram, state.currentKvMode, state.currentCube)
-  );
-
-  actions.panel$.subscribe(panelSubject);
-  plaData$.subscribe(plaSubject);
-  state$.map(({state}) =>
-    JSON.stringify(toJSON(state.diagram))
-  ).subscribe(jsonSubject);
+  openPanel.data$.subscribe(openData$);
+  openPanel.expression$.subscribe(importExpression$);
+  settingsPanel.viewSetting$.subscribe(viewSetting$);
 
   return {
     DOM: vtree$,

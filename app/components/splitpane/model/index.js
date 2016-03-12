@@ -1,3 +1,4 @@
+import {Observable as O} from 'rx';
 import {clamp} from '../../../lib/utils';
 
 export default ({props$, firstChild$, secondChild$}, actions) => {
@@ -5,11 +6,10 @@ export default ({props$, firstChild$, secondChild$}, actions) => {
   const secondChild$shared = secondChild$.shareReplay(1);
 
   return props$.map((props) =>
-    actions.resize$
-      .startWith(props.proportion)
-      .combineLatest(
-        firstChild$shared,
-        secondChild$shared,
+      O.combineLatest(
+        actions.resize$.startWith(props.proportion),
+        firstChild$shared.startWith(null),
+        secondChild$shared.startWith(null),
         (proportion, firstChild, secondChild) => {
           return {
             proportion:

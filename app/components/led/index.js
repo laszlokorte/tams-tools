@@ -1,4 +1,4 @@
-import {ReplaySubject} from 'rx';
+import {Subject} from 'rx';
 import isolate from '@cycle/isolate';
 
 import model from './model';
@@ -15,23 +15,24 @@ export default (responses) => {
     data$,
   } = responses;
 
-  const tableSubject = new ReplaySubject(1);
-
-  const tableComponent = isolate(TableComponent)({
-    DOM,
-    table$: tableSubject,
-  });
+  const selectedRow$ = new Subject();
 
   const actions = intent({
     DOM,
     keydown,
-    selectIndex$: tableComponent.selectedRow$,
+    selectIndex$: selectedRow$,
   });
   const state$ = model(data$, actions).shareReplay(1);
-  const vtree$ = view(state$, tableComponent.DOM);
-
   const table$ = state$.map(toTable);
-  table$.subscribe(tableSubject);
+
+  const tableComponent = isolate(TableComponent)({
+    DOM,
+    table$,
+  });
+
+  tableComponent.selectedRow$.subscribe(selectedRow$);
+
+  const vtree$ = view(state$, tableComponent.DOM);
 
   return {
     DOM: vtree$,

@@ -1,4 +1,4 @@
-import {Observable as O, ReplaySubject, Subject} from 'rx';
+import {Observable as O, Subject} from 'rx';
 import isolate from '@cycle/isolate';
 
 import Field from './input-field';
@@ -19,7 +19,7 @@ export default (responses) => {
     keydown,
   } = responses;
 
-  const tableSubject = new ReplaySubject(1);
+  const tableSubject = new Subject();
   const formulaSubject = new Subject();
   const panelSubject = new Subject();
 

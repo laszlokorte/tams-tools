@@ -43,8 +43,6 @@ export default (responses) => {
     ).map(() => true),
   });
 
-  stage.DOM.subscribe();
-
   return {
     DOM: O.combineLatest(
       pla$.map(costPanel),

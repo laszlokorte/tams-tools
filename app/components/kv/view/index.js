@@ -30,9 +30,9 @@ const renderLoopIcon = (loop, index, editable) =>
       },
     }, [
       button('.loop-button-delete', {
-        attributes: {
+        attributes: editable ? {
           'data-loop-index': index,
-        },
+        } : {},
         disabled: !editable,
       }, deleteIcon(24)),
     ]),
