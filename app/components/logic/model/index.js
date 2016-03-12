@@ -40,7 +40,9 @@ const _state = I.Record({
 
 export default (actions, expressionOutput$, selectedRow$) => {
   const state$ = O.combineLatest(
-    expressionOutput$.debounce(200),
+    expressionOutput$.take(1).concat(
+      expressionOutput$.skip(1).debounce(300)
+    ),
     actions.selectFormat$.startWith('math'),
     actions.showSubExpressions$.startWith(false),
     (expression, outputFormat, showSubExpressions) =>

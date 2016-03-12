@@ -35,7 +35,9 @@ const kvdApp = (sources) => {
   const plaComponent = isolate(pla)({
     DOM, preventDefault, keydown,
     globalEvents,
-    data$: kvComponent.plaData$.delay(0).debounce(50),
+    data$: kvComponent.plaData$.take(1).concat(
+      kvComponent.plaData$.skip(1).debounce(100)
+    ),
     props$: O.just({}),
   });
 
