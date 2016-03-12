@@ -31,7 +31,7 @@ export default (responses) => {
 
   const state$ = model(O.empty(), actions).shareReplay(1);
 
-  const plaData$ = state$.debounce(10).map(({state}) =>
+  const plaData$ = state$.map(({state}) =>
     toPLA(state.diagram, state.currentKvMode, state.currentCube)
   ).share();
 
