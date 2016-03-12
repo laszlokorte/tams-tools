@@ -1,7 +1,7 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-const owner = (rootElement) =>
+const ownerElement = (rootElement) =>
   rootElement.observable
   .map((e) => e[0])
   .distinctUntilChanged(
@@ -78,9 +78,9 @@ const touchZoom = ({
   pinchStart$
   .map((ids) =>
     pinchMove$
-    .withLatestFrom(owner$, (moveEvt, ownerElement) => {
+    .withLatestFrom(owner$, (moveEvt, owner) => {
       const touches = filterTouches(ids, moveEvt.touches);
-      const {x, y} = positionFn(touchCenter(touches), ownerElement);
+      const {x, y} = positionFn(touchCenter(touches), owner);
       return {
         distance: touchRadius(touches),
         pivot: {x, y},
@@ -97,11 +97,11 @@ const touchZoom = ({
 ;
 
 const wheelZoom = ({wheel$, owner$, positionFn}) =>
-  wheel$.withLatestFrom(owner$, (evt, ownerElement) => {
+  wheel$.withLatestFrom(owner$, (evt, owner) => {
     const pivot = positionFn({
       x: evt.pageX,
       y: evt.pageY,
-    }, ownerElement);
+    }, owner);
 
     const factor = wheelFactor(evt);
 
@@ -114,7 +114,7 @@ const wheelZoom = ({wheel$, owner$, positionFn}) =>
 
 // interpret touch and scroll events as pinch
 export const zoom = (globalEvents, rootElement, positionFn) => {
-  const owner$ = owner(rootElement);
+  const owner$ = ownerElement(rootElement);
 
   const touches$ = toucheIds(globalEvents, rootElement);
   const pinchStart$ = touches$.filter((ids) => ids.size === 2);
@@ -148,13 +148,13 @@ const touchPan = ({
   touchChange$, panStart$, panMove$, panEnd$, owner$, positionFn,
 }) =>
   panStart$
-  .withLatestFrom(touchChange$, owner$, (ids, initial, ownerElement) => {
+  .withLatestFrom(touchChange$, owner$, (ids, initial, owner) => {
     const {x: startX, y: startY} = positionFn(
-      touchCenter(filterTouches(ids, initial.touches)), ownerElement
+      touchCenter(filterTouches(ids, initial.touches)), owner
     );
     return panMove$.map((move) => positionFn(
       touchCenter(filterTouches(ids, move.touches)),
-      ownerElement
+      owner
     ))
     .map((target) => ({
       x: target.x - startX,
@@ -168,13 +168,13 @@ const mousePan = ({
   mouseDown$, mouseMove$, mouseUp$, owner$, positionFn,
 }) =>
   mouseDown$
-  .withLatestFrom(owner$, (downEvt, ownerElement) => {
+  .withLatestFrom(owner$, (downEvt, owner) => {
     const {x: startX, y: startY} = positionFn(
-      {x: downEvt.pageX, y: downEvt.pageY}, ownerElement
+      {x: downEvt.pageX, y: downEvt.pageY}, owner
     );
     return mouseMove$.map((move) => positionFn(
       {x: move.pageX, y: move.pageY},
-      ownerElement
+      owner
     ))
     .map((target) => ({
       x: target.x - startX,
@@ -186,7 +186,7 @@ const mousePan = ({
 
 // interpret drag and touch events as pan
 export const pan = (globalEvents, rootElement, positionFn) => {
-  const owner$ = owner(rootElement);
+  const owner$ = ownerElement(rootElement);
 
   const touchChange$ = O.merge([
     rootElement.events('touchstart'),
