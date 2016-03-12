@@ -313,7 +313,9 @@ const openDiagram = (state, json) => {
 const importExpression = (state, context) => {
   try {
     const diagram = expressionImport(context);
-    return state.set('diagram', diagram);
+    return state
+      .set('diagram', diagram)
+      .set('currentOutput', 0);
   } catch (e) {
     return state.set('errorMessage', e.message);
   }
