@@ -31,7 +31,10 @@ const logicApp = (sources) => {
   const treeComponent = isolate(tree)({
     DOM, preventDefault, keydown, globalEvents,
     data$: logicComponent.tree$,
-    props$: O.just({}),
+    props$: O.just({
+      scaleX: 150,
+      scaleY: 150,
+    }),
   });
 
   const logicDOM = logicComponent.DOM;

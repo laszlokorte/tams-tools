@@ -12,7 +12,7 @@ const render = (state) =>
         y1: edge.fromY * state.scaleY,
         x2: edge.toX * state.scaleX,
         y2: edge.toY * state.scaleY,
-        'stroke-width': '2px',
+        'stroke-width': '3',
         class: 'tree-edge' + (edge.faded ? ' tree-faded' : ''),
         stroke: 'black',
         style: {
@@ -24,7 +24,7 @@ const render = (state) =>
       svg('circle', {
         cx: node.x * state.scaleX,
         cy: node.y * state.scaleY,
-        r: 5,
+        r: 6,
         class: 'tree-node' + (node.faded ? ' tree-faded' : ''),
         fill: 'black',
         style: {
@@ -33,7 +33,7 @@ const render = (state) =>
       }),
       svg('text', {
         x: node.x * state.scaleX + (node.leaf ? 0 : node.xOffset),
-        y: node.y * state.scaleY + (node.leaf ? 16 : -10),
+        y: node.y * state.scaleY + (node.leaf ? 25 : -15),
         'text-anchor': node.leaf ? 'middle' : node.labelAnchor,
         'alignment-baseline': 'middle',
         class: 'tree-node-label' + (node.faded ? ' tree-faded' : ''),

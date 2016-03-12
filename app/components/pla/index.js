@@ -29,7 +29,7 @@ export default (responses) => {
     DOM,
     globalEvents,
     props$: O.just({
-      width: 1200,
+      width: 600,
       height: 600,
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),

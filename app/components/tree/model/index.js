@@ -15,18 +15,18 @@ export default (props$, data$/*, actions*/) => {
   const layout$ = data$.map(layoutTree).shareReplay(1);
   return O.combineLatest(
     props$,
-    () =>
+    (props) =>
       layout$.map((layout) => {
         return treeUiState({
           graph: layout.graph,
-          scaleX: 70,
-          scaleY: 70,
+          scaleX: props.scaleX,
+          scaleY: props.scaleX,
           bounds: !isGraphEmpty(layout.graph) ?
             bounds({
-              minX: layout.bounds.minX * 70 - 60,
-              maxX: layout.bounds.maxX * 70 + 60,
-              minY: layout.bounds.minY * 70 - 60,
-              maxY: layout.bounds.maxY * 70 + 60,
+              minX: (layout.bounds.minX - 0.5) * props.scaleX,
+              maxX: (layout.bounds.maxX + 0.5) * props.scaleX,
+              minY: (layout.bounds.minY - 0.5) * props.scaleX,
+              maxY: (layout.bounds.maxY + 0.5) * props.scaleX,
             }) : bounds(),
         });
       })
