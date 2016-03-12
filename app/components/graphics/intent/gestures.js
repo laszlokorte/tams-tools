@@ -7,8 +7,7 @@ const ownerElement = (rootElement) =>
   .distinctUntilChanged(
     (e) => e,
     (a, b) => a === b
-  )
-  .share()
+  ).shareReplay(1)
 ;
 
 // get the id of the given touch
@@ -97,6 +96,7 @@ const touchZoom = ({
       factor: current.distance / prev.distance,
     }))
     .takeUntil(pinchEnd$)
+    .share()
   ).switch()
 ;
 
@@ -164,7 +164,8 @@ const touchPan = ({
       x: target.x - startX,
       y: target.y - startY,
     }))
-    .takeUntil(panEnd$);
+    .takeUntil(panEnd$)
+    .share();
   }).switch()
 ;
 
@@ -184,7 +185,8 @@ const mousePan = ({
       x: target.x - startX,
       y: target.y - startY,
     }))
-    .takeUntil(mouseUp$);
+    .takeUntil(mouseUp$)
+    .share();
   }).switch()
 ;
 
