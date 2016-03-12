@@ -1,6 +1,7 @@
 import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
+import {div, h1, h2, ul, li} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
@@ -11,7 +12,52 @@ import {globalEventDriver} from '../../drivers/global-events';
 import {insertStringDriver} from '../../drivers/rangy';
 
 import LogicField from '../../components/logic/input-field';
-import splitPane from '../../components/splitpane';
+
+import './index.styl';
+
+const render = (state, field1, field2) =>
+  div([
+    h1('Compare expressions'),
+    div('.column', [
+      h2('Expression 1'),
+      field1,
+    ]),
+    div('.column', [
+      h2('Expression 2'),
+      field2,
+    ]),
+    state !== null ? div('.result', [
+      state.length === 0 ?
+      div('.no-differences', 'Expressions are equal') :
+      div('.differences', [
+        'The expressions differ:',
+        ul('.diff-list', state.map((d) =>
+          li('.diff-list-item', d)
+        )),
+      ]),
+    ]) : null,
+  ])
+;
+
+const diff = (outputA, outputB) => {
+  if (outputA.error !== null || outputB.error !== null) {
+    return null;
+  }
+
+  if (outputA.result.sortedExpressions.size === 0 &&
+    outputB.result.sortedExpressions.size === 0) {
+    return null;
+  }
+
+  let differences = [];
+
+  if (outputA.result.freeIdentifiers.count() !==
+    outputB.result.freeIdentifiers.count()) {
+    differences.push('Different Identifiers');
+  }
+
+  return differences;
+};
 
 const logicApp = (sources) => {
   const {
@@ -20,48 +66,43 @@ const logicApp = (sources) => {
     keydown,
     autoResize,
     selectAll,
-    globalEvents,
   } = sources;
 
-  const logicField1 = isolate(LogicField)({
+  const logicFieldA = isolate(LogicField)({
     DOM, preventDefault, keydown, autoResize, selectAll,
   });
 
-  const logicField2 = isolate(LogicField)({
+  const logicFieldB = isolate(LogicField)({
     DOM, preventDefault, keydown, autoResize, selectAll,
   });
 
-  const leftDOM = logicField1.DOM;
-  const rightDOM = logicField2.DOM;
+  const fieldADOM$ = logicFieldA.DOM;
+  const fieldBDOM$ = logicFieldB.DOM;
 
-  const splitComponent = isolate(splitPane)({
-    DOM,
-    preventDefault,
-    keydown,
-    globalEvents,
-    props$: O.just({proportion: 0.50}),
-    firstChild$: leftDOM,
-    secondChild$: rightDOM,
-  });
+  const state$ = O.combineLatest(
+    logicFieldA.output$.do((a) => console.log(a.toJS())),
+    logicFieldB.output$,
+    diff
+  );
+
+  const vtree$ = O.combineLatest(
+    state$, fieldADOM$, fieldBDOM$,
+    render
+  );
 
   return {
-    DOM: splitComponent.DOM,
+    DOM: vtree$,
     preventDefault: O.merge([
-      logicField1.preventDefault,
-      logicField2.preventDefault,
-      splitComponent.preventDefault,
-    ]),
-    selectAll: O.merge([
-      logicField1.selectAll,
-      logicField2.selectAll,
+      logicFieldA.preventDefault,
+      logicFieldB.preventDefault,
     ]),
     autoResize: O.merge([
-      logicField1.autoResize,
-      logicField2.autoResize,
+      logicFieldA.autoResize,
+      logicFieldB.autoResize,
     ]),
     insertString: O.merge([
-      logicField1.insertString,
-      logicField2.insertString,
+      logicFieldA.insertString,
+      logicFieldB.insertString,
     ]),
   };
 };

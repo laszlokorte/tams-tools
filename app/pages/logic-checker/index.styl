@@ -1,0 +1,36 @@
+@import '../../styles/layout'
+
+h1
+h2
+  text-align center
+
+.column
+  float left
+  width 50%
+  box-sizing border-box
+  padding space(1)
+
+.result
+  clear both
+  margin space(1)
+  font-size font-size-medium
+
+.no-differences
+  padding space(1)
+  background-color color-background-secondary-weak
+  background-color tint(green, 70%)
+  font-weight font-bold
+
+.differences
+  padding space(1)
+  background-color color-background-secondary-weak
+  background-color tint(red, 95%)
+
+.diff-list
+  plainlist()
+  margin-top space(1)
+
+.diff-list-item
+  padding space(0.5)
+  background-color tint(red, 90%)
+  margin space(0.1) 0
