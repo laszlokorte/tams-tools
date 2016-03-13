@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import {buildLayout} from '../layout';
+import {buildLayout} from '../lib/layout';
 
 test('KV: Layout Sizes', (t) => {
   [
