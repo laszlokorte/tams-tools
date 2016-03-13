@@ -13,6 +13,17 @@ const ownerElement = (rootElement) =>
 // get the id of the given touch
 const touchId = (touch) => touch.identifier;
 
+// http://stackoverflow.com/a/12737882/1533291
+const isPrimaryMouseButton = (event) => {
+  if ('buttons' in event) {
+    return event.buttons === 1;
+  } else if ('which' in event) {
+    return event.which === 1;
+  } else {
+    return event.button === 1;
+  }
+};
+
 // get a stream of current touch ids
 const toucheIds = (globalEvents, rootElement) => O.merge([
   rootElement.events('touchstart').map(
@@ -204,7 +215,8 @@ export const pan = (globalEvents, rootElement, positionFn) => {
   const panEnd$ = touches$.filter((ids) => ids.size <= 0);
   const panMove$ = globalEvents.events('touchmove');
 
-  const mouseDown$ = rootElement.events('mousedown');
+  const mouseDown$ = rootElement.events('mousedown')
+    .filter(isPrimaryMouseButton);
   const mouseMove$ = globalEvents.events('mousemove');
   const mouseUp$ = globalEvents.events('mouseup');
 
