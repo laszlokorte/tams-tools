@@ -32,7 +32,7 @@ const decimaleInput = (state, decimal) => {
 };
 
 export default (data$, actions) =>
-  data$.flatMapLatest(({switches, leds}) => {
+  data$.map(({switches, leds}) => {
     return O.merge([
       actions.toggleSwitch$.map((switchIndex) => (state) =>
         toggleSwitch(state, switchIndex)
@@ -54,7 +54,9 @@ export default (data$, actions) =>
       })),
     })
     .scan((prev, fn) => fn(prev));
-  }).map((data) => {
+  })
+  .switch()
+  .map((data) => {
     return {
       switches: data.switches,
       decimal: tableIndex(...(data.switches.map(

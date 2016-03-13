@@ -39,21 +39,25 @@ export default (DOM, globalEvents) => {
     )
   );
 
-  const resize$ = handle.observable.skip(1).take(1).flatMap(() => panStart$
-    .flatMapLatest((startEvt) =>
-      panMove$
-      .map((pos) => pos.x / startEvt.ownerTarget.parentNode.clientWidth)
-      .takeUntil(panEnd$)
-    )
+  const resize$ = handle.observable
+    .skip(1)
+    .take(1)
+    .flatMap(() =>
+      panStart$
+      .map((startEvt) =>
+        panMove$
+        .map((pos) => pos.x / startEvt.ownerTarget.parentNode.clientWidth)
+        .takeUntil(panEnd$)
+      ).switch()
   ).share();
 
   return {
     resize$,
 
-    preventDefault: panStart$.flatMapLatest(() =>
+    preventDefault: panStart$.map(() =>
       panMove$
       .map((move) => move.event)
       .takeUntil(panEnd$)
-    ).share(),
+    ).switch().share(),
   };
 };

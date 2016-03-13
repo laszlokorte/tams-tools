@@ -93,7 +93,7 @@ const Drawing = ({DOM}) => {
   ;
 
   const model = (pos$, actions) =>
-    pos$.flatMapLatest((pos) =>
+    pos$.map((pos) =>
       actions.toggle$
         .startWith(true)
         .scan((prev) => !prev)
@@ -101,7 +101,7 @@ const Drawing = ({DOM}) => {
           pos,
           active,
         }))
-    )
+    ).switch()
   ;
 
   const {isolateSource, isolateSink} = DOM;

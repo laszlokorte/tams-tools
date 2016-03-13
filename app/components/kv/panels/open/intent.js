@@ -23,11 +23,11 @@ export default ({DOM, expression$}) => {
       .map((evt) => evt.ownerTarget.dataset.openJson),
 
     openFileEvent$
-      .flatMapLatest((evt) => {
+      .map((evt) => {
         const file = evt.ownerTarget.files[0];
 
         return fileReader(file);
-      }),
+      }).switch(),
   ]);
 
   return {

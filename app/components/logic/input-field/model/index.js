@@ -62,7 +62,7 @@ export default (props$, initalExpression$, actions) => {
   const parsed$ = initalExpression$
   .map((string) => JSON.parse(string))
   .startWith({term: '', langId: 'auto'})
-  .flatMapLatest((initial) =>
+  .map((initial) =>
     O.combineLatest(
       O.combineLatest(
         actions.input$.startWith(initial.term),
@@ -81,7 +81,7 @@ export default (props$, initalExpression$, actions) => {
           })
         )
     ).switch()
-  );
+  ).switch();
 
   return parsed$.share();
 }
