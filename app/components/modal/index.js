@@ -16,7 +16,7 @@ export default (responses) => {
     .map(pluck('visible'));
 
   const actions = intent(DOM, keydown);
-  const state$ = model(visible$, content$, actions).shareReplay(1);
+  const state$ = model(visible$, content$, actions);
   const vtree$ = view(state$);
 
   return {

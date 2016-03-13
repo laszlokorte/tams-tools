@@ -82,5 +82,7 @@ export default (bitCount$, actions) => {
         },
       };
     });
-  }).switch();
+  })
+  .switch()
+  .shareReplay(1);
 };

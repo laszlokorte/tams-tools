@@ -58,8 +58,8 @@ const processInput = (input) => {
   .catch(handleError);
 };
 
-export default (props$, initalExpression$, actions) => {
-  const parsed$ = initalExpression$
+export default (props$, initalExpression$, actions) =>
+  initalExpression$
   .map((string) => JSON.parse(string))
   .startWith({term: '', langId: 'auto'})
   .map((initial) =>
@@ -81,8 +81,6 @@ export default (props$, initalExpression$, actions) => {
           })
         )
     ).switch()
-  ).switch();
-
-  return parsed$.share();
-}
+  ).switch()
+  .shareReplay(1)
 ;

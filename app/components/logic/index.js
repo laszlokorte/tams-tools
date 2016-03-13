@@ -30,7 +30,7 @@ export default (responses) => {
   const state$ = model(
     actions, field.output$,
     selectedRow$
-  ).shareReplay(1);
+  );
 
   const tree$ = state$
     .map((s) => s.tree)

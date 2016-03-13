@@ -73,4 +73,5 @@ export default (data$, actions) =>
       })),
     };
   })
+  .shareReplay(1)
 ;

@@ -21,7 +21,7 @@ export default (responses) => {
   const graph$ = data$.map(graphFromJson);
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'), globalEvents);
-  const state$ = model(props$, graph$, actions).shareReplay(1);
+  const state$ = model(props$, graph$, actions);
   const vtree$ = view(state$);
 
   const stage = isolate(graphics, 'mygraphics')({

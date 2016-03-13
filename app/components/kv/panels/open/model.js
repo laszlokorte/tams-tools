@@ -28,8 +28,8 @@ const errorMessage = (output) => {
   return null;
 };
 
-export default (visible$, expressionFieldOutput$, actions) => {
-  return O.merge([
+export default (visible$, expressionFieldOutput$, actions) =>
+  O.merge([
     visible$.startWith(false),
     actions.open$.map(() => false),
     actions.importExpression$.map(() => false),
@@ -41,5 +41,6 @@ export default (visible$, expressionFieldOutput$, actions) => {
       validExpression: isValid(output),
       expressionError: errorMessage(output),
     }))
-  ).switch();
-};
+  ).switch()
+  .shareReplay(1);
+;

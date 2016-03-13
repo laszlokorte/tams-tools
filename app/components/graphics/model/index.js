@@ -83,5 +83,7 @@ export default ({
         bounds,
         content,
       }));
-    }).switch();
+    })
+    .switch()
+    .shareReplay(1);
 };

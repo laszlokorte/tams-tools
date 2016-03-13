@@ -106,4 +106,5 @@ export default (initial$, actions) =>
       (s) => s,
       (a, b) => a === b
     )
+    .shareReplay(1)
 ;

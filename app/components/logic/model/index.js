@@ -39,7 +39,7 @@ const _state = I.Record({
 });
 
 export default (actions, expressionOutput$, selectedRow$) => {
-  const state$ = O.combineLatest(
+  return O.combineLatest(
     expressionOutput$.take(1).concat(
       expressionOutput$.skip(1).debounce(300)
     ),
@@ -65,8 +65,7 @@ export default (actions, expressionOutput$, selectedRow$) => {
           .set('selectedRow', row)
           .set('tree', buildTree(state.expression.result, row))
       )
-  ).switch();
-
-  return state$.share();
-}
-;
+  )
+  .switch()
+  .shareReplay(1);
+};

@@ -102,13 +102,14 @@ const Drawing = ({DOM}) => {
           active,
         }))
     ).switch()
+    .shareReplay(1)
   ;
 
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent(
     isolateSource(DOM, 'moreIsolation'));
-  const state$ = model(O.just({x: 23, y: 42}), actions).shareReplay(1);
+  const state$ = model(O.just({x: 23, y: 42}), actions);
   const innerVTree$ = view(state$);
 
   const outerVTree$ = isolate(Canvas, 'myCanvas')({

@@ -417,19 +417,20 @@ const applyModification = (prev, modfn) => {
 };
 
 export default (initial$, actions) =>
-    O.merge(
-      initial$
-      .map(stateFromJson)
-      .startWith(initialState)
-      .map((kv) => () => kv),
-      modifiers(actions)
-    ).scan(applyModification, null)
-    .distinctUntilChanged(
-      (s) => s,
-      (a,b) => a === b
-    )
-    .map((state) => ({
-      state: state,
-      layout: layout(state.diagram.inputs.size),
-    }))
+  O.merge(
+    initial$
+    .map(stateFromJson)
+    .startWith(initialState)
+    .map((kv) => () => kv),
+    modifiers(actions)
+  ).scan(applyModification, null)
+  .distinctUntilChanged(
+    (s) => s,
+    (a,b) => a === b
+  )
+  .map((state) => ({
+    state: state,
+    layout: layout(state.diagram.inputs.size),
+  }))
+  .shareReplay(1)
 ;

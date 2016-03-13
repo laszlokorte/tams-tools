@@ -11,4 +11,5 @@ export default (visible$, content$, actions) =>
       content,
     })
   )
+  .shareReplay(1)
 ;

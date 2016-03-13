@@ -22,7 +22,7 @@ export default (responses) => {
     keydown,
     selectIndex$: selectedRow$,
   });
-  const state$ = model(data$, actions).shareReplay(1);
+  const state$ = model(data$, actions);
   const table$ = state$.map(toTable);
 
   const tableComponent = isolate(TableComponent)({

@@ -10,7 +10,7 @@ export default (sources) => {
   } = sources;
 
   const actions = intent(DOM);
-  const state$ = model(table$, actions).shareReplay(1);
+  const state$ = model(table$, actions);
   const vtree$ = view(state$);
 
   return {

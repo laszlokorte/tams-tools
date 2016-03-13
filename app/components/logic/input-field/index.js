@@ -17,7 +17,7 @@ export default (responses) => {
     keydown,
   });
 
-  const state$ = model(props$, input$, actions).shareReplay(1);
+  const state$ = model(props$, input$, actions);
   const vtree$ = view(state$);
 
   return {

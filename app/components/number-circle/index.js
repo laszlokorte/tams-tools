@@ -18,7 +18,7 @@ export default (sources) => {
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent(isolateSource(DOM, 'graphicsContent'));
-  const state$ = model(bitCount$, actions).shareReplay(1);
+  const state$ = model(bitCount$, actions);
   const vtree$ = view(state$);
 
   const stage = isolate(graphics, 'mygraphics')({

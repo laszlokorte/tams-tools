@@ -30,5 +30,7 @@ export default (props$, data$/*, actions*/) => {
           }),
         });
       })
-  ).switch();
+  )
+  .switch()
+  .shareReplay(1);
 };

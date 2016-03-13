@@ -30,5 +30,6 @@ export default (props$, data$/*, actions*/) => {
             }) : bounds(),
         });
       })
-  ).switch();
+  ).switch()
+  .shareReplay(1);
 };

@@ -20,5 +20,6 @@ export default ({props$, firstChild$, secondChild$}, actions) => {
         }
       )
   )
-  .switch();
+  .switch()
+  .shareReplay(1);
 };

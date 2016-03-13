@@ -11,7 +11,7 @@ export default (sources) => {
   } = sources;
 
   const actions = intent(DOM);
-  const state$ = model(inital$, actions).shareReplay(1);
+  const state$ = model(inital$, actions);
   const vtree$ = view(state$);
 
   return {

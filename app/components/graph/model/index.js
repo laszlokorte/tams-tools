@@ -50,5 +50,6 @@ export default (props$, graph$, actions) => {
         .set('graph', layout.graph)
         .set('bounds', layout.bounds);
     })
-  ).switch();
+  ).switch()
+  .shareReplay(1);
 };

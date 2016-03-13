@@ -9,4 +9,5 @@ export default (table$, formula$/*, actions*/) =>
       formula,
     })
   )
+  .shareReplay(1)
 ;

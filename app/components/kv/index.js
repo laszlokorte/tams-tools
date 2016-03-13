@@ -25,7 +25,7 @@ export default (responses) => {
     viewSetting$: viewSetting$,
   });
 
-  const state$ = model(O.empty(), actions).shareReplay(1);
+  const state$ = model(O.empty(), actions);
 
   const plaData$ = state$.map(({state}) =>
     toPLA(state.diagram, state.currentKvMode, state.currentCube)
