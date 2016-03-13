@@ -39,17 +39,13 @@ export default (DOM, globalEvents) => {
     )
   );
 
-  const resize$ = handle.observable
-    .skip(1)
-    .take(1)
-    .flatMap(() =>
-      panStart$
-      .map((startEvt) =>
-        panMove$
-        .map((pos) => pos.x / startEvt.ownerTarget.parentNode.clientWidth)
-        .takeUntil(panEnd$)
-      ).switch()
-  ).share();
+  const resize$ =
+    panStart$
+    .map((startEvt) =>
+      panMove$
+      .map((pos) => pos.x / startEvt.ownerTarget.parentNode.clientWidth)
+      .takeUntil(panEnd$)
+    ).switch();
 
   return {
     resize$,
