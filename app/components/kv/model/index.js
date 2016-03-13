@@ -7,6 +7,8 @@ import {buildLayout} from '../lib/layout';
 import {memoize, clamp, padLeft, compose} from '../../../lib/utils';
 
 import expressionImport from './expression-import';
+import colorPalette from './colors';
+import {generateUnique} from './unique';
 
 const kvState = I.Record({
   currentEditMode: 'loops',
@@ -21,38 +23,6 @@ const kvState = I.Record({
   errorMessage: null,
   viewSetting: 'function',
 }, 'state');
-
-const colorPalette = [
-  "#ff0000",
-  "#00ff00",
-  "#0000ff",
-  "#00cccc",
-  "#cc00cc",
-  "#dddd00",
-  "#FFC107",
-  "#3F51B5",
-  "#8BC34A",
-  "#795548",
-  "#009688",
-  "#2196F3",
-  "#FF5722",
-  "#9C27B0",
-  "#FF9800",
-  "#CDDC39",
-  "#00BCD4",
-  "#E91E63",
-  "#4CAF50",
-];
-
-const generateUnique = (set, generator, i = set.size) => {
-  const newName = generator(i);
-
-  if (set.contains(newName)) {
-    return generateUnique(set, generator, i + 1);
-  } else {
-    return newName;
-  }
-};
 
 const generateInputName = (i) =>
   String.fromCharCode(65 + i % 25) + (
