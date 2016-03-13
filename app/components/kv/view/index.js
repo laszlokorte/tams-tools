@@ -81,7 +81,7 @@ const renderLoopList = (state, editable) =>
 
 const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
   div('.output-panel', [
-    ul('.output-list',
+    ul('.output-list', [
       state.diagram.outputs.map((output, i) =>
       li('.output-list-item' +
       (i === state.currentOutput ? '.state-current' : ''), {
@@ -128,11 +128,14 @@ const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
           disabled: !(canEdit && canRemove),
         }, deleteIcon(24)),
       ])
-    ).toArray()),
-    button('.output-button-add', {
-      attributes: {'data-kv-add-output': true},
-      disabled: !(canEdit && canAdd),
-    }, plusIcon(24)),
+    ).toArray(),
+      li('.output-list-item', [
+        button('.output-button-add', {
+          attributes: {'data-kv-add-output': true},
+          disabled: !(canEdit && canAdd),
+        }, plusIcon(24)),
+      ]),
+    ]),
   ])
 ;
 
