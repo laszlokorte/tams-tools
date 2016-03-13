@@ -78,8 +78,7 @@ let subLayout;
 
 /// generates a KV layout for the given size
 /// scope is just needed for recursive calls
-export const buildLayout = (size, scope) => {
-  const _scope = scope || 0;
+export const buildLayout = (size, scope = 0) => {
   const maxLayoutSize = layouts.length - 1;
   const layoutType = size && (size - 1) % maxLayoutSize + 1;
   const layouter = layouts[layoutType];
@@ -91,7 +90,7 @@ export const buildLayout = (size, scope) => {
   );
 
   const rows = I.List(layouter(
-    subLayout.bind(null, {size: newSize, scope: _scope, stepSize})
+    subLayout.bind(null, {size: newSize, scope, stepSize})
   )).map((cells) => layoutRow({cells: I.List(cells)}));
 
   return layout({

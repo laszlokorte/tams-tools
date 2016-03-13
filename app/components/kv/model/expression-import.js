@@ -2,6 +2,11 @@ import {fromJSON} from '../lib/diagram';
 
 import {evaluateAll} from '../../logic/lib/evaluation';
 
+const spaces = new RegExp('\\s','gi');
+const sanitizeName = (name) =>
+  name.replace(spaces, '_')
+;
+
 export default (context) => {
   if (
     context.freeIdentifiers.size > 8
@@ -23,12 +28,13 @@ export default (context) => {
   });
 
   const outputs = context.sortedExpressions.map((e, expIndex) => ({
-    name: e.name || `O${expIndex + 1}`,
+    name: e.name ? sanitizeName(e.name) : `O${expIndex + 1}`,
     values: evaluation.map((row) => row.values.get(expIndex)).toArray(),
   })).toArray();
 
   const json = {
-    inputs: context.freeIdentifiers.map((i) => i.name).toArray(),
+    inputs: context.freeIdentifiers
+      .map((i) => sanitizeName(i.name)).toArray(),
     outputs,
     loops: [],
   };

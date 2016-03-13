@@ -2,8 +2,6 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import jeet from 'jeet';
-import rupture from 'rupture';
 import nib from 'nib';
 
 const vendorModules = /(node_modules|bower_components)/;
@@ -74,7 +72,7 @@ module.exports = {
   },
 
   stylus: {
-    use: [jeet(), rupture(), nib()],
+    use: [nib()],
   },
 
   plugins: [

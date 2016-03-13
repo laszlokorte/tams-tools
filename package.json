@@ -8,13 +8,13 @@
     "compile": "env NODE_ENV=production webpack --config webpack/prod.config.babel.js --progress",
     "lint": "eslint .",
     "start": "webpack-dev-server --config webpack/dev.config.babel.js --progress --inline --hot --host 0.0.0.0",
-    "starttest": "webpack --config webpack/test.config.babel.js",
-    "test": "testem",
+    "test": "ava",
     "clear": "rm -rf ./build"
   },
   "author": "Laszlo Korte <me@laszlokorte.de> (https://www.laszlokorte.de/)",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^0.13.0",
     "babel": "^6.5.2",
     "babel-core": "^6.7.2",
     "babel-eslint": "^5.0.0",
@@ -39,8 +39,6 @@
     "rework": "^1.0.1",
     "style-loader": "^0.13.0",
     "stylus-loader": "^1.5.1",
-    "tape": "^4.5.1",
-    "testem": "^1.5.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1",
@@ -54,10 +52,8 @@
     "babel-polyfill": "^6.7.2",
     "bitset.js": "^3.1.0",
     "immutable": "^3.7.6",
-    "jeet": "^6.1.2",
     "nib": "^1.1.0",
     "raf": "^3.2.0",
-    "rupture": "^0.6.1",
     "rx": "^4.1.0",
     "virtual-dom": "^2.1.1"
   },
@@ -65,5 +61,21 @@
     "presets": [
       "es2015"
     ]
-  }
+  },
+  "ava": {
+      "files": [
+        "**/*.spec.js"
+      ],
+      "source": [
+        "**/*.{js,jsx}",
+        "!build/**/*",
+        "!**/*.spec.js"
+      ],
+      "failFast": true,
+      "tap": false,
+      "require": [
+        "babel-register"
+      ],
+      "babel": "inherit"
+    }
 }
