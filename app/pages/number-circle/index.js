@@ -34,9 +34,11 @@ const renderButtons = (state) => div('.button-bar',[
 // convert array of angles into svg
 const render = (state, circle) =>
   div('.number-circle-container', [
-    div('.bit-count', ['Number of bits: ', state.bitCount]),
-    renderButtons(state),
-    div([
+    div('.number-circle-head', [
+      div('.bit-count', ['Number of bits: ', state.bitCount]),
+      renderButtons(state),
+    ]),
+    div('.number-circle-body', [
       circle,
     ]),
   ])
