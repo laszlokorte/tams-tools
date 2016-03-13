@@ -12,7 +12,7 @@ export default (machine, editable) => {
   );
 
   const lambdaNetworkHeight = Math.max(
-    100, PORT_HEIGHT * machine.outputs.size + PORT_HEIGHT
+    100, PORT_HEIGHT * machine.outputs.size + 2 * PORT_HEIGHT
   );
 
   const svgHeight = Math.max(
@@ -192,7 +192,7 @@ export default (machine, editable) => {
 
     machine.inputs.map((input, i) =>
       svg('g', {
-        transform: `translate(0, ${60 + PORT_HEIGHT * i})`,
+        transform: `translate(0, ${70 + PORT_HEIGHT * i})`,
         class: 'fsm-port-input-container',
       }, [
         svg('g', {
@@ -237,7 +237,7 @@ export default (machine, editable) => {
         attributes: {
           'data-fsm-action': 'add-input',
         },
-        transform: `translate(0, ${65 + PORT_HEIGHT * machine.inputs.size})`,
+        transform: `translate(0, ${45})`,
         class: 'fsm-button',
       }, [
         svg('rect', {
@@ -261,7 +261,7 @@ export default (machine, editable) => {
 
     machine.outputs.map((output, i) =>
       svg('g', {
-        transform: `translate(220, ${25 + PORT_HEIGHT * i})`,
+        transform: `translate(220, ${45 + PORT_HEIGHT * i})`,
         class: 'fsm-port-output-container',
       }, [
         svg('g', {
@@ -306,7 +306,7 @@ export default (machine, editable) => {
         attributes: {
           'data-fsm-action': 'add-output',
         },
-        transform: `translate(220, ${25 + PORT_HEIGHT * machine.outputs.size})`,
+        transform: `translate(220, 20)`,
         class: 'fsm-button',
       }, [
         svg('rect', {
