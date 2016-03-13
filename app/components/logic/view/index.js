@@ -66,9 +66,9 @@ const render = (state, field, table) =>
   ])
 ;
 
-export default (state$, field$, table$, {panel$s}) =>
-  O.combineLatest(state$, field$, table$, ...panel$s,
-    (state, field, table, ...panels) =>
+export default (state$, field$, table$, panels$) =>
+  O.combineLatest(state$, field$, table$, panels$,
+    (state, field, table, panels) =>
       div([
         panels,
         render(state, field, table),

@@ -2,9 +2,11 @@ import {Observable as O} from 'rx';
 
 import panelActions from './panels';
 
-export default ({DOM}) => {
-  const subExpressionCheckbox = DOM.select('input[name="subexpressions"]');
-  const formatSelect = DOM.select('.format-select');
+export default ({DOM, openData$}) => {
+  const subExpressionCheckbox = DOM
+    .select('input[name="subexpressions"]');
+  const formatSelect = DOM
+    .select('.format-select');
 
   const subExprEvent$ = subExpressionCheckbox.events('change');
 
@@ -22,6 +24,8 @@ export default ({DOM}) => {
     selectFormat$: selectFormatEvent$
       .map((evt) => evt.ownerTarget.value)
       .share(),
+
+    openData$,
 
     preventDefault: O.merge([
       panels.preventDefault,

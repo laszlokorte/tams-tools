@@ -241,9 +241,9 @@ const render = ({state, layout}, index) =>
     ]),
   ]);
 
-export default (state$, {panel$s}) =>
-  O.combineLatest(state$, ...panel$s,
-    (state, ...panels) =>
+export default (state$, panels$) =>
+  O.combineLatest(state$, panels$,
+    (state, panels) =>
       div([
         panels,
         cache(() => render(state), state, "KV"),
