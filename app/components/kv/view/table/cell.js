@@ -13,10 +13,11 @@ export default ({
   diagram, output, kvMode, editMode, cell,
   currentLoop, className, cellStyle,
 }) => {
+  const cellInt = cellToInt(cell);
   const value = diagram.outputs
     .get(output)
     .values
-    .get(cellToInt(cell));
+    .get(cellInt);
 
   const active = insideLoop(output, cell, currentLoop);
   const error = active && !isValidValueForMode(value, kvMode);
@@ -30,6 +31,7 @@ export default ({
   return td('.kv-table-cell-body.kv-cell-atom' +
     className + ' .cell-style-' + cellStyle,
     {
+      key: `kv-cell-${cellInt}`,
       className: [
         (active ? 'state-active' : null),
         (error ? 'state-error' : null),

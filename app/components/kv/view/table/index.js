@@ -46,7 +46,9 @@ export const renderTable = ({
   const styleClass = (compact ? '.style-compact' : '');
   const modeClass = '.edit-' + editMode;
 
-  return div('.kv-container' + styleClass + modeClass, [
+  return div('.kv-container' + styleClass + modeClass, {
+    key: 'kv-container',
+  }, [
     (editMode === 'loops' || !compact) &&
     layout.treeHeight === 0 &&
     renderLoops(
@@ -55,6 +57,7 @@ export const renderTable = ({
       ).toList(), kvMode, rows, cols) || null,
 
     table('.kv-table' + styleClass, {
+      key: 'kv-table',
       className: 'kv-mode-' + kvMode.name,
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
@@ -64,9 +67,11 @@ export const renderTable = ({
           key: `body-row${rowIndex}`,
         }, [
           compact ? null : renderTableRowStart(rowIndex, rowCount, labels),
-          row.cells.map((cell) => {
+          row.cells.map((cell, colIndex) => {
             if (cell.children) {
-              return td('.kv-table-cell-body.kv-cell-container' + styleClass, [
+              return td('.kv-table-cell-body.kv-cell-container' + styleClass, {
+                key: `kv-cell-container-${colIndex}`,
+              }, [
                 renderTable({
                   layout: cell.children,
                   diagram, kvMode, editMode, output,
