@@ -552,11 +552,11 @@ const toPLATerms = (
         .map((cell) => ({
           in:
             diagram.inputs
-            .map((i, iIndex) => cell.get(iIndex))
+            .map((i, iIndex) => cell.get(iIndex) ? true : false)
             .toArray(),
           out:
             diagram.outputs
-            .map((_, oIndex) => oIndex === outputIndex ? 1 : 0)
+            .map((_, oIndex) => oIndex === outputIndex)
             .toArray(),
           highlight: highlightCube && insideCube(cell, highlightCube),
         })
@@ -570,15 +570,15 @@ const toPLATerms = (
         (loop) => ({
           in: diagram.inputs.map((_, iIndex) => {
             if (loop.cube.include.get(iIndex) === 1) {
-              return 1;
+              return true;
             } else if (loop.cube.exclude.get(iIndex) === 1) {
-              return 0;
+              return false;
             } else {
               return null;
             }
           }).toArray(),
           out: diagram.outputs.map(
-            (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? 1 : 0
+            (_, oIndex) => loopBelongsToOutput(loop, oIndex) ? true : false
           ).toArray(),
           color: loop.color,
         })

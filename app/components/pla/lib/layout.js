@@ -96,7 +96,7 @@ const layoutOutputs = (pla, outputGateWidth) => {
   const outputWireCount = pla.outputs.map(
     (_, index) => pla.loops
       .filter((loop) =>
-        loop.out.get(index) === 1
+        loop.out.get(index) === true
       ).count()
     ).toArray()
   ;
@@ -126,7 +126,7 @@ const layoutOutputs = (pla, outputGateWidth) => {
       pla.outputs.map((_, index) =>
         pla.loops
           .map((loop, idx) => ({idx, loop}))
-          .filter(({loop}) => loop.out.get(index) === 1)
+          .filter(({loop}) => loop.out.get(index) === true)
           .map(({loop, idx}, wireIndex, all) => wire({
             type: 'vertical',
             from: position({
@@ -154,13 +154,13 @@ const layoutLoops = (pla, outputGateWidth) => {
     Array.prototype.concat.apply([],
       loop.in
       .map((cell, idx) => {
-        if (cell === 1 && pla.mode === 'dnf') {
+        if (cell === true && pla.mode === 'dnf') {
           return [2 * idx * 5 + 4];
-        } else if (cell === 0 && pla.mode === 'dnf') {
+        } else if (cell === false && pla.mode === 'dnf') {
           return [2 * idx * 5];
-        } if (cell === 0 && pla.mode === 'knf') {
+        } if (cell === true && pla.mode === 'knf') {
           return [2 * idx * 5 + 4];
-        } else if (cell === 1 && pla.mode === 'knf') {
+        } else if (cell === false && pla.mode === 'knf') {
           return [2 * idx * 5];
         } else {
           return [];
@@ -216,7 +216,7 @@ const calcOutputGateWidth = (pla) => {
   const outputWireCounts = pla.outputs.map((o, index) =>
     pla.loops
       .map((loop, idx) => ({idx, loop}))
-      .filter(({loop}) => loop.out.get(index) === 1)
+      .filter(({loop}) => loop.out.get(index) === true)
       .count()
   ).toArray();
   const maxOutputWireCount = Math.max(0, ...outputWireCounts);

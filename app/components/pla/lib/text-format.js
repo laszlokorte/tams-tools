@@ -1,6 +1,6 @@
 const valueToString = (value) => {
-  if (value === 1 || value === 0) {
-    return value;
+  if (value === true || value === false) {
+    return value ? '1' : '0';
   } else {
     return '-';
   }
@@ -8,6 +8,7 @@ const valueToString = (value) => {
 
 export default (pla) => {
   return [
+    `# ${pla.mode}`,
     `.i ${pla.inputs.length}`,
     `.innames ${pla.inputs.join(' ')}`,
     `.o ${pla.outputs.length}`,

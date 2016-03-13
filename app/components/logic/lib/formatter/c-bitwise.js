@@ -16,10 +16,16 @@ const sanitizeName = (name) =>
 export default self = {
   name: "C Bitwise",
   formatBinary: (op, lhs, rhs/*, depth*/) => {
-    return `(${lhs} ${tryFetch(operators, op)} ${rhs})`;
+    return self.formatBinaryChain(op, lhs, rhs);
+  },
+  formatBinaryChain: (op, ...operands) => {
+    return `(${operands.join(tryFetch(operators, op))})`;
   },
   formatUnary: (op, content/*, depth*/) => {
-    return `(${tryFetch(operators, op)}${content})`;
+    return `(${self.formatUnarySimple(op, content)})`;
+  },
+  formatUnarySimple: (op, content/*, depth*/) => {
+    return `${tryFetch(operators, op)}${content}`;
   },
   formatGroup: (content/*, depth*/) => {
     return content;

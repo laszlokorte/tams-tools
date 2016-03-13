@@ -1,10 +1,16 @@
 
 const defaultFormatter = {
   formatBinary: (op, lhs, rhs/*, depth*/) => {
-    return `(${lhs} ${op} ${rhs})`;
+    return defaultFormatter.formatBinaryChain(op, lhs, rhs);
+  },
+  formatBinaryChain: (op, ...operands) => {
+    return `(${operands.join(' ' + op + ' ')})`;
   },
   formatUnary: (op, content/*, depth*/) => {
     return `(${op} ${content})`;
+  },
+  formatUnarySimple: (op, content/*, depth*/) => {
+    return defaultFormatter.formatUnary(op, content);
   },
   formatGroup: (content/*, depth*/) => {
     return content;
