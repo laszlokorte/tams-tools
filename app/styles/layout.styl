@@ -233,9 +233,17 @@ $keyframe-name = slide-up
   height 32px
   border none
   background-color transparent
+  outline none
 
   .icon-shape
+    transform-origin 50% 50%
+    transform scale(0.95)
     fill color-background-secondary-strong
+
+  &:focus
+    .icon-shape
+      stroke color-focus
+      stroke-width 1px
 
 .svg-icon
   display inline-block
@@ -349,6 +357,8 @@ $keyframe-name = slide-up
 
   &:active
     background-color darken(color-danger, 10%)
+    .icon-shape
+      fill white
 
   &:disabled
     transform scale(0)

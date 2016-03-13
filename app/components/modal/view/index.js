@@ -6,6 +6,7 @@ import './index.styl';
 
 const render = ({visible, content}) =>
   div('.modal-container', {
+    'aria-hidden': visible ? true : void 0,
     className: visible ? 'state-visible' : 'state-hidden',
   }, [
     div('.modal-background'),
