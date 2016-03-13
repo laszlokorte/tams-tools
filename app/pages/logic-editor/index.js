@@ -4,7 +4,6 @@ import {makeDOMDriver} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
-import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
 import {globalEventDriver} from '../../drivers/global-events';
@@ -18,18 +17,17 @@ const logicApp = (sources) => {
   const {
     DOM,
     preventDefault,
-    keydown,
     autoResize,
     selectAll,
     globalEvents,
   } = sources;
 
   const logicComponent = isolate(logic)({
-    DOM, preventDefault, keydown, autoResize, selectAll,
+    DOM, preventDefault, globalEvents, autoResize, selectAll,
   });
 
   const treeComponent = isolate(tree)({
-    DOM, preventDefault, keydown, globalEvents,
+    DOM, preventDefault, globalEvents,
     data$: logicComponent.tree$,
     props$: O.just({
       scaleX: 150,
@@ -43,7 +41,6 @@ const logicApp = (sources) => {
   const splitComponent = isolate(splitPane)({
     DOM,
     preventDefault,
-    keydown,
     globalEvents,
     props$: O.just({proportion: 0.65}),
     firstChild$: logicDOM,
@@ -66,7 +63,6 @@ const logicApp = (sources) => {
 const drivers = {
   DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
-  keydown: keyboardDriver,
   autoResize: autoResizeDriver,
   selectAll: selectAllDriver,
   globalEvents: globalEventDriver,

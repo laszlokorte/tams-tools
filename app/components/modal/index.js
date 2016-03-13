@@ -9,13 +9,13 @@ export default (responses) => {
     DOM,
     props$,
     content$,
-    keydown,
+    globalEvents,
   } = responses;
 
   const visible$ = props$
     .map(pluck('visible'));
 
-  const actions = intent(DOM, keydown);
+  const actions = intent(DOM, globalEvents);
   const state$ = model(visible$, content$, actions);
   const vtree$ = view(state$);
 

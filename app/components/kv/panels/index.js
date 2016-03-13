@@ -7,18 +7,18 @@ import SettingsPanel from './settings';
 import OpenPanel from './open';
 import SavePanel from './save';
 
-export default ({DOM, keydown, open$, plaData$, jsonData$}) => {
+export default ({DOM, globalEvents, open$, plaData$, jsonData$}) => {
   return {
     help: isolate(HelpPanel, 'helpPanel')({
       DOM,
-      keydown,
+      globalEvents,
       visible$: open$
         .map((p) => p === 'help'),
     }),
 
     settings: isolate(SettingsPanel, 'settingsPanel')({
       DOM,
-      keydown,
+      globalEvents,
       visible$: open$
         .map((p) => p === 'settings'),
       viewSetting$: O.just('function'),
@@ -26,14 +26,14 @@ export default ({DOM, keydown, open$, plaData$, jsonData$}) => {
 
     open: isolate(OpenPanel, 'openPanel')({
       DOM,
-      keydown,
+      globalEvents,
       visible$: open$
         .map((p) => p === 'open'),
     }),
 
     save: isolate(SavePanel, 'savePanel')({
       DOM,
-      keydown,
+      globalEvents,
       pla$: plaData$,
       json$: jsonData$,
       visible$: open$

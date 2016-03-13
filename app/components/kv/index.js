@@ -10,7 +10,6 @@ import modalPanels from './panels';
 export default (responses) => {
   const {
     DOM,
-    keydown,
     globalEvents,
   } = responses;
 
@@ -19,7 +18,7 @@ export default (responses) => {
   const viewSetting$ = new Subject();
 
   const actions = intent({
-    DOM, globalEvents, keydown,
+    DOM, globalEvents,
     openData$,
     importExpression$,
     viewSetting$: viewSetting$,
@@ -36,7 +35,7 @@ export default (responses) => {
   ).share();
 
   const panels = modalPanels({
-    DOM, keydown,
+    DOM, globalEvents,
     open$: actions.panel$,
     plaData$,
     jsonData$,

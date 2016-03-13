@@ -11,7 +11,7 @@ import TableComponent from '../table';
 export default (responses) => {
   const {
     DOM,
-    keydown,
+    globalEvents,
     data$,
   } = responses;
 
@@ -19,7 +19,7 @@ export default (responses) => {
 
   const actions = intent({
     DOM,
-    keydown,
+    globalEvents,
     selectIndex$: selectedRow$,
   });
   const state$ = model(data$, actions);

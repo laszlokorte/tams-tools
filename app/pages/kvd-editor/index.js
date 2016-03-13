@@ -4,7 +4,6 @@ import {makeDOMDriver} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
-import {keyboardDriver} from '../../drivers/keyboard';
 import {selectAllDriver} from '../../drivers/select-all';
 import {globalEventDriver} from '../../drivers/global-events';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
@@ -24,16 +23,15 @@ const kvdApp = (sources) => {
   const {
     DOM,
     preventDefault,
-    keydown,
     globalEvents,
   } = sources;
 
   const kvComponent = isolate(kv)({
-    DOM, globalEvents, preventDefault, keydown,
+    DOM, globalEvents, preventDefault,
   });
 
   const plaComponent = isolate(pla)({
-    DOM, preventDefault, keydown,
+    DOM, preventDefault,
     globalEvents,
     data$: kvComponent.plaData$.take(1).concat(
       kvComponent.plaData$.skip(1).debounce(100)
@@ -47,7 +45,6 @@ const kvdApp = (sources) => {
   const splitComponent = isolate(splitPane)({
     DOM,
     preventDefault,
-    keydown,
     globalEvents,
     props$: O.just({proportion: 0.65}),
     firstChild$: kvDOM,
@@ -73,7 +70,6 @@ const kvdApp = (sources) => {
 const drivers = {
   DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
-  keydown: keyboardDriver,
   selectAll: selectAllDriver,
   globalEvents: globalEventDriver,
   autoResize: autoResizeDriver,

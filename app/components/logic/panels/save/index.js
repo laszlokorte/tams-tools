@@ -8,7 +8,7 @@ import view from './view';
 import model from './model';
 
 export default ({
-    DOM, keydown, visible$,
+    DOM, globalEvents, visible$,
     table$ = O.empty(),
     formula$ = O.empty(),
 }) => {
@@ -18,7 +18,7 @@ export default ({
   const state$ = model(table$, formula$, actions);
   const modal = isolate(ModalBox)({
     DOM,
-    keydown,
+    globalEvents,
     props$: visible$.map((visible) => ({visible})),
     content$: isolateSink(view(state$), 'modalBody'),
   });

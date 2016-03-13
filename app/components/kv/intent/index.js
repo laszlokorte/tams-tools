@@ -13,10 +13,10 @@ const isNoInput = (evt) => {
 };
 
 export default ({
-  DOM, globalEvents, keydown, openData$,
+  DOM, globalEvents, openData$,
   importExpression$, viewSetting$,
 }) => {
-  const cancel$ = keydown
+  const cancel$ = globalEvents.events('keydown')
     .filter((evt) => evt.keyCode === 27)
     .share();
 

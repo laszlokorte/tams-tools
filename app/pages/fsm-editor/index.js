@@ -5,7 +5,6 @@ import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {stopPropagationDriver} from '../../drivers/stop-propagation';
-import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
 import {globalEventDriver} from '../../drivers/global-events';
@@ -18,18 +17,16 @@ const fsmEditor = (sources) => {
   const {
     DOM,
     preventDefault,
-    keydown,
     globalEvents,
   } = sources;
 
   const fsmComponent = isolate(FSMComponent)({
     DOM,
-    keydown,
+    globalEvents,
   });
 
   const graphComponent = isolate(GraphComponent)({
     DOM,
-    keydown,
     globalEvents,
     data$: fsmComponent.graph$,
   });
@@ -40,7 +37,6 @@ const fsmEditor = (sources) => {
   const splitComponent = isolate(splitPane)({
     DOM,
     preventDefault,
-    keydown,
     globalEvents,
     props$: O.just({proportion: 0.65}),
     firstChild$: leftDOM,
@@ -64,7 +60,6 @@ const drivers = {
   DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
   stopPropagation: stopPropagationDriver,
-  keydown: keyboardDriver,
   autoResize: autoResizeDriver,
   selectAll: selectAllDriver,
   globalEvents: globalEventDriver,

@@ -5,7 +5,6 @@ import {div, h1, h2, ul, li} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
-import {keyboardDriver} from '../../drivers/keyboard';
 import {autoResizeDriver} from '../../drivers/textarea-resize';
 import {selectAllDriver} from '../../drivers/select-all';
 import {globalEventDriver} from '../../drivers/global-events';
@@ -63,17 +62,17 @@ const logicApp = (sources) => {
   const {
     DOM,
     preventDefault,
-    keydown,
+    globalEvents,
     autoResize,
     selectAll,
   } = sources;
 
   const logicFieldA = isolate(LogicField)({
-    DOM, preventDefault, keydown, autoResize, selectAll,
+    DOM, preventDefault, globalEvents, autoResize, selectAll,
   });
 
   const logicFieldB = isolate(LogicField)({
-    DOM, preventDefault, keydown, autoResize, selectAll,
+    DOM, preventDefault, globalEvents, autoResize, selectAll,
   });
 
   const fieldADOM$ = logicFieldA.DOM;
@@ -110,7 +109,6 @@ const logicApp = (sources) => {
 const drivers = {
   DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
-  keydown: keyboardDriver,
   autoResize: autoResizeDriver,
   selectAll: selectAllDriver,
   globalEvents: globalEventDriver,

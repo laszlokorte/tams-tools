@@ -14,7 +14,7 @@ import modalPanels from './panels';
 export default (responses) => {
   const {
     DOM,
-    keydown,
+    globalEvents,
   } = responses;
 
   const openData$ = new Subject();
@@ -51,7 +51,7 @@ export default (responses) => {
   });
 
   const panels = modalPanels({
-    DOM, keydown, open$: actions.panel$,
+    DOM, globalEvents, open$: actions.panel$,
     asciiTable$: table$.map(asciiTable),
     formula$,
   });

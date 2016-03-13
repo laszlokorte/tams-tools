@@ -4,25 +4,25 @@ import HelpPanel from './help';
 import OpenPanel from './open';
 import SavePanel from './save';
 
-export default ({DOM, keydown, asciiTable$, formula$, open$}) => {
+export default ({DOM, globalEvents, asciiTable$, formula$, open$}) => {
   return {
     help: isolate(HelpPanel, 'helpPanel')({
       DOM,
-      keydown,
+      globalEvents,
       visible$: open$
         .map((p) => p === 'help'),
     }),
 
     open: isolate(OpenPanel, 'openPanel')({
       DOM,
-      keydown,
+      globalEvents,
       visible$: open$
         .map((p) => p === 'open'),
     }),
 
     save: isolate(SavePanel, 'savePanel')({
       DOM,
-      keydown,
+      globalEvents,
       table$: asciiTable$,
       formula$,
       visible$: open$

@@ -7,7 +7,7 @@ import view from './view';
 import intent from './intent';
 import model from './model';
 
-export default ({DOM, keydown, visible$, viewSetting$ = O.empty()}) => {
+export default ({DOM, globalEvents, visible$, viewSetting$ = O.empty()}) => {
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
@@ -15,7 +15,7 @@ export default ({DOM, keydown, visible$, viewSetting$ = O.empty()}) => {
   const state$ = model(viewSetting$, actions);
   const modal = isolate(ModalBox)({
     DOM,
-    keydown,
+    globalEvents,
     props$: visible$.startWith(false).map((visible) => ({visible})),
     content$: isolateSink(view(state$), 'modalBody'),
   });

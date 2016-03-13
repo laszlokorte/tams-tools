@@ -7,14 +7,14 @@ import intent from './intent';
 export default (responses) => {
   const {
     DOM,
-    keydown,
+    globalEvents,
     input$ = O.empty(),
     props$ = O.just({showCompletion: true}),
   } = responses;
 
   const actions = intent({
     DOM,
-    keydown,
+    globalEvents,
   });
 
   const state$ = model(props$, input$, actions);

@@ -8,7 +8,6 @@ import Circle from '../../components/number-circle';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
 import {stopPropagationDriver} from '../../drivers/stop-propagation';
-import {keyboardDriver} from '../../drivers/keyboard';
 import {globalEventDriver} from '../../drivers/global-events';
 
 import './index.styl';
@@ -113,7 +112,6 @@ const drivers = {
   DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
   stopPropagation: stopPropagationDriver,
-  keydown: keyboardDriver,
   globalEvents: globalEventDriver,
 };
 

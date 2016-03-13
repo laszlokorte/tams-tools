@@ -5,10 +5,10 @@ import {div} from '@cycle/dom';
 import ModalBox from '../../../modal';
 import view from './view';
 
-export default ({DOM, keydown, visible$}) => {
+export default ({DOM, globalEvents, visible$}) => {
   const modal = isolate(ModalBox)({
     DOM,
-    keydown,
+    globalEvents,
     props$: visible$.startWith(false).map((visible) => ({visible})),
     content$: O.just(view()),
   });

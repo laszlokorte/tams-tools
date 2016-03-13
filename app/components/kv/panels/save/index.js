@@ -8,7 +8,7 @@ import view from './view';
 import model from './model';
 
 export default ({
-    DOM, keydown, visible$,
+    DOM, globalEvents, visible$,
     pla$ = O.empty(), json$ = O.empty(),
 }) => {
   const {isolateSource, isolateSink} = DOM;
@@ -17,7 +17,7 @@ export default ({
   const state$ = model(pla$, json$);
   const modal = isolate(ModalBox)({
     DOM,
-    keydown,
+    globalEvents,
     props$: O.merge([
       actions.finish$.map(() => false),
       visible$,
