@@ -13,11 +13,16 @@
 
 * refactor css definitions
 
+### bug
 
-## Logic Expressions
+* pla auto centering is out of range in a few edge cases
 
-* Context
-* Topological Sort
-* Table Syntax
-* Buttons
-* Button-Up-Evaluation
+## Logic Checker
+
+* implement expression comparison
+
+## SVG graphics
+
+* improve auto center api
+
+
