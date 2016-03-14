@@ -95,16 +95,18 @@ const applyModification = (prev, modfn) => {
 };
 
 export default (initial$, actions) =>
-    O.merge([
-      initial$
-      .map(stateFromJson)
-      .startWith(initialState)
-      .map((kv) => () => kv),
-      modifiers(actions),
-    ]).scan(applyModification, null)
+  initial$
+  .map(stateFromJson)
+  .startWith(initialState)
+  .map((initial) =>
+    modifiers(actions)
+    .startWith(initial)
+    .scan(applyModification)
     .distinctUntilChanged(
       (s) => s,
       (a, b) => a === b
     )
-    .shareReplay(1)
+  )
+  .switch()
+  .shareReplay(1)
 ;
