@@ -29,7 +29,7 @@ const formatList = I.List(Object
 
 const _state = I.Record({
   selectedRow: null,
-  expression: null,
+  fieldOutput: null,
   formatId: null,
   formatList: I.List(),
   showSubExpressions: false,
@@ -45,25 +45,25 @@ export default (actions, expressionOutput$, selectedRow$) => {
     ),
     actions.selectFormat$.startWith('math'),
     actions.showSubExpressions$.startWith(false),
-    (expression, outputFormat, showSubExpressions) =>
+    (fieldOutput, outputFormat, showSubExpressions) =>
       selectedRow$
       .startWith(_state({
-        expression,
+        fieldOutput,
         showSubExpressions,
         formatId: outputFormat,
         formatList: formatList,
         formula: buildFormula(
-          expression.result, FORMAT_MAP[outputFormat]
+          fieldOutput.network, FORMAT_MAP[outputFormat]
         ),
         table: buildTable(
-          expression.result, showSubExpressions,
+          fieldOutput.network, showSubExpressions,
           FORMAT_MAP[outputFormat]
         ),
-        tree: buildTree(expression.result),
+        tree: buildTree(fieldOutput.network),
       })).scan((state, row) =>
         state
           .set('selectedRow', row)
-          .set('tree', buildTree(state.expression.result, row))
+          .set('tree', buildTree(state.fieldOutput.network, row))
       )
   )
   .switch()

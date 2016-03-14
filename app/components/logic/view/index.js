@@ -40,8 +40,8 @@ const render = (state, field, table) =>
       div('.field-panel', [field]),
     ]),
     div('.app-body', [
-      state.expression.result &&
-      state.expression.result.expressions.size ?
+      state.fieldOutput.network &&
+      state.fieldOutput.network.expressions.size ?
       div([
         h2('Table'),
 

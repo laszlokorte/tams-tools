@@ -29,7 +29,7 @@ export default (languages) => {
         return _parseResult({
           input: input,
           language: detected.language,
-          expressions: detected.result.map(expressionFromJson),
+          expressions: detected.ast.map(expressionFromJson),
         });
       } else {
         const language = languages[input.langId];

@@ -7,9 +7,9 @@ const sanitizeName = (name) =>
   name.replace(spaces, '_')
 ;
 
-export default (context) => {
+export default (logicNetwork) => {
   if (
-    context.freeIdentifiers.size > 8
+    logicNetwork.freeIdentifiers.size > 8
   ) {
     throw new Error(
       "Expression must not not have more than 8 identifiers"
@@ -17,23 +17,23 @@ export default (context) => {
   }
 
   if (
-    context.sortedExpressions.size > 7
+    logicNetwork.sortedExpressions.size > 7
   ) {
     throw new Error("No more that 7 expressions are allowed");
   }
 
   const evaluation = evaluateAll({
-    expressions: context.sortedExpressions.toList(),
-    identifiers: context.freeIdentifiers,
+    expressions: logicNetwork.sortedExpressions.toList(),
+    identifiers: logicNetwork.freeIdentifiers,
   });
 
-  const outputs = context.sortedExpressions.map((e, expIndex) => ({
+  const outputs = logicNetwork.sortedExpressions.map((e, expIndex) => ({
     name: e.name ? sanitizeName(e.name) : `O${expIndex + 1}`,
     values: evaluation.map((row) => row.values.get(expIndex)).toArray(),
   })).toArray();
 
   const json = {
-    inputs: context.freeIdentifiers
+    inputs: logicNetwork.freeIdentifiers
       .map((i) => sanitizeName(i.name)).toArray(),
     outputs,
     loops: [],

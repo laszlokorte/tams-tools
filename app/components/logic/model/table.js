@@ -1,9 +1,9 @@
 import toTable from '../lib/table';
 
-export const buildTable = (context, showSubExpressions, formatter) =>
-  context &&
-  context.expressions.size ? toTable(
-    context,
+export const buildTable = (logicNetwork, showSubExpressions, formatter) =>
+  logicNetwork &&
+  logicNetwork.expressions.size ? toTable(
+    logicNetwork,
     showSubExpressions,
     formatter
   ) : null

@@ -3,38 +3,38 @@ import I from 'immutable';
 import {evaluator} from '../lib/evaluation';
 import toTree from '../lib/tree';
 
-const evaluateSubExpressions = (context, selectedRow = null) => {
+const evaluateSubExpressions = (logicNetwork, selectedRow = null) => {
   if (selectedRow === null) {
     return null;
   }
 
-  const identifierMap = I.Map(context.freeIdentifiers.map(
+  const identifierMap = I.Map(logicNetwork.freeIdentifiers.map(
     (name, i) => [name, !!(Math.pow(2, i) & selectedRow)]
   ));
 
-  return context.sortedExpressions.reduce(
+  return logicNetwork.sortedExpressions.reduce(
     evaluator,
-    context.subExpressions.reduce(evaluator, identifierMap)
+    logicNetwork.subExpressions.reduce(evaluator, identifierMap)
   );
 };
 
-export const buildTree = (context, selectedRow = null) => {
-  if (context === null ||
-    context.expressions.size === 0
+export const buildTree = (logicNetwork, selectedRow = null) => {
+  if (logicNetwork === null ||
+    logicNetwork.expressions.size === 0
   ) {
     return null;
   }
 
   const subEvalutation = evaluateSubExpressions(
-    context, selectedRow
+    logicNetwork, selectedRow
   );
 
-  if (context.expressions.size === 1) {
-    return toTree(context.expressions.get(0), subEvalutation);
+  if (logicNetwork.expressions.size === 1) {
+    return toTree(logicNetwork.expressions.get(0), subEvalutation);
   } else {
     return {
       name: 'Expression List',
-      children: context.expressions.map(
+      children: logicNetwork.expressions.map(
         (e) => toTree(e, subEvalutation)
       ).toArray(),
       hidden: true,

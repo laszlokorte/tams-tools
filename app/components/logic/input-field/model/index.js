@@ -6,7 +6,7 @@ import {
 } from './languages';
 
 import parser from './parser';
-import {analyse} from './analyser';
+import {postProcess} from './post-processor';
 
 import {
   input as _input,
@@ -37,7 +37,7 @@ const languageList = I.List(Object
 
 const handleError = (parseError) =>
   O.just(_output({
-    result: null,
+    network: null,
     language: parseError.language,
     error: _error({
       location: parseError.location,
@@ -49,10 +49,10 @@ const handleError = (parseError) =>
 const processInput = (input) => {
   return O.just(input)
   .map(parser(LANGUAGE_MAP))
-  .map(analyse)
+  .map(postProcess)
   .map((analysisResult) => _output({
     language: analysisResult.language,
-    result: analysisResult.expressionContext,
+    network: analysisResult.network,
     error: analysisResult.error,
   }))
   .catch(handleError);

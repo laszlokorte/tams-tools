@@ -3,7 +3,7 @@ import I from 'immutable';
 import {input as _input} from './io';
 
 const _detection = I.Record({
-  result: null,
+  ast: null,
   language: null,
   langId: null,
 });
@@ -26,7 +26,7 @@ export default (languages) => (string) => {
     }
     try {
       return _detection({
-        result: lang.parse(string),
+        ast: lang.parse(string),
         language: lang,
         langId: langId,
       });

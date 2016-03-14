@@ -2,25 +2,25 @@ import {expressionToString} from './formatter';
 import {evaluateAll} from './evaluation';
 
 export default (
-  context,
+  logicNetwork,
   showSubExpressions,
   formatter
 ) => {
   const groups = [];
 
-  if (context.freeIdentifiers.size) {
+  if (logicNetwork.freeIdentifiers.size) {
     groups.push({
       name: "identifiers",
-      columns: context.freeIdentifiers.map(
+      columns: logicNetwork.freeIdentifiers.map(
         (i) => ({name: expressionToString(i, formatter)})
       ).toArray(),
     });
   }
 
-  if (!context.sortedExpressions.isEmpty()) {
+  if (!logicNetwork.sortedExpressions.isEmpty()) {
     groups.push({
       name: "expressions",
-      columns: context.sortedExpressions.map(
+      columns: logicNetwork.sortedExpressions.map(
         (e) => ({
           name:
             e.name ?
@@ -34,10 +34,10 @@ export default (
     });
   }
 
-  if (showSubExpressions && context.subExpressions.size) {
+  if (showSubExpressions && logicNetwork.subExpressions.size) {
     groups.push({
       name: "Sub expressions",
-      columns: context.subExpressions.map(
+      columns: logicNetwork.subExpressions.map(
         (e) => ({name: expressionToString(e, formatter)})
       ).toArray(),
     });
@@ -45,16 +45,16 @@ export default (
   return {
     columnGroups: groups,
 
-    rows: context.freeIdentifiers.size < 9 ? evaluateAll({
-      expressions: context.freeIdentifiers
-        .concat(context.sortedExpressions)
-        .concat(showSubExpressions ? context.subExpressions : []).toList(),
-      identifiers: context.freeIdentifiers,
+    rows: logicNetwork.freeIdentifiers.size < 9 ? evaluateAll({
+      expressions: logicNetwork.freeIdentifiers
+        .concat(logicNetwork.sortedExpressions)
+        .concat(showSubExpressions ? logicNetwork.subExpressions : []).toList(),
+      identifiers: logicNetwork.freeIdentifiers,
     }).map((row) => ({
       values: row.values.map(::formatter.formatVectorValue).toArray(),
     })).toArray() : [],
 
-    error: context.freeIdentifiers.size < 9 ? null :
+    error: logicNetwork.freeIdentifiers.size < 9 ? null :
       "Too many variables",
   };
 };

@@ -1,24 +1,24 @@
 import I from 'immutable';
 
 import {
-  contextFromLabeledExpressions,
-} from '../../lib/context';
+  logicNetworkFromExpressions,
+} from '../../lib/network';
 
 const _analysisResult = I.Record({
   language: null,
-  expressionContext: null,
+  network: null,
   error: null,
 }, 'analysisResult');
 
-export const analyse = (parserResult) => {
+export const postProcess = (parserResult) => {
   try {
-    const context = contextFromLabeledExpressions(
+    const network = logicNetworkFromExpressions(
       parserResult.expressions
     );
 
     return _analysisResult({
       language: parserResult.language,
-      expressionContext: context,
+      network: network,
     });
   } catch (e) {
     return _analysisResult({

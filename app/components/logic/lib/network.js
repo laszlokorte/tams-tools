@@ -7,14 +7,14 @@ import {
 
 import {sort, Node} from './topological-sort';
 
-const context = I.Record({
+const logicNetwork = I.Record({
   freeIdentifiers: I.Set(),
   declaredIdentifiers: I.Set(),
   expressions: I.List(),
   sortedExpressions: I.List(),
   toplevelExpressions: I.List(),
   subExpressions: I.List(),
-}, 'context');
+}, 'logicNetwork');
 
 const buildDependencyGraph = (expressionList) => {
   const declaredIdentifiers = new window.Set(
@@ -79,7 +79,7 @@ const deduplicateDeclarations = (declaredIdentifiers) => {
   return deduplicatedIds;
 };
 
-export const contextFromLabeledExpressions = (expressions) => {
+export const logicNetworkFromExpressions = (expressions) => {
   const expressionList = I.List(expressions);
   const declaredIdentifiers = expressionList
     .filter((id) => id.name !== null);
@@ -110,7 +110,7 @@ export const contextFromLabeledExpressions = (expressions) => {
       (e) => e.name !== null || e.body._name !== 'identifier'
     );
 
-    return context({
+    return logicNetwork({
       freeIdentifiers,
       declaredIdentifiers,
       expressions: expressionList,

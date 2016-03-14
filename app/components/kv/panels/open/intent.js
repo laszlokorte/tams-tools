@@ -13,7 +13,7 @@ export default ({DOM, expression$}) => {
   const importClick$ = expressionButton.events('click');
   const importExpression$ = importClick$
     .withLatestFrom(expression$,
-      (_, output) => output.result
+      (_, output) => output.network
     );
 
   const openFileEvent$ = fileInput.events('change');

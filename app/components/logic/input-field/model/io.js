@@ -7,7 +7,7 @@ export const input = I.Record({
 
 export const output = I.Record({
   language: null,
-  result: null,
+  network: null,
   error: null,
 }, 'output');
 

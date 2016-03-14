@@ -3,23 +3,23 @@ import {Observable as O} from 'rx';
 const MAX_EXPRESSIONS = 7;
 const MAX_IDENTIFIERS = 8;
 
-const isValid = (output) =>
-  output.result !== null &&
-  output.result.expressions.size > 0 &&
-  output.result.expressions.size <= MAX_EXPRESSIONS &&
-  output.result.freeIdentifiers.size <= MAX_IDENTIFIERS
+const isValid = (network) =>
+  network !== null &&
+  network.expressions.size > 0 &&
+  network.expressions.size <= MAX_EXPRESSIONS &&
+  network.freeIdentifiers.size <= MAX_IDENTIFIERS
 ;
 
 const errorMessage = (output) => {
-  if (output.result === null) {
+  if (output.network === null) {
     return null;
   }
-  if (output.result.expressions.size > MAX_EXPRESSIONS) {
+  if (output.network.expressions.size > MAX_EXPRESSIONS) {
     return `No more than ${
       MAX_EXPRESSIONS
     } expressions are allowed`;
   }
-  if (output.result.freeIdentifiers.size > MAX_IDENTIFIERS) {
+  if (output.network.freeIdentifiers.size > MAX_IDENTIFIERS) {
     return `No more than ${
       MAX_IDENTIFIERS
     } unbound identifiers are allowed.`;
@@ -38,7 +38,7 @@ export default (visible$, expressionFieldOutput$, actions) =>
   .map((props) =>
     expressionFieldOutput$.map((output) => ({
       props,
-      validExpression: isValid(output),
+      validExpression: isValid(output.network),
       expressionError: errorMessage(output),
     }))
   ).switch()

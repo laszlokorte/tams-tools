@@ -280,9 +280,9 @@ const openDiagram = (state, json) => {
   return state.set('errorMessage', 'InvalidData');
 };
 
-const importExpression = (state, context) => {
+const importExpression = (state, logicNetwork) => {
   try {
-    const diagram = expressionImport(context);
+    const diagram = expressionImport(logicNetwork);
     return state
       .set('diagram', diagram)
       .set('currentOutput', 0);

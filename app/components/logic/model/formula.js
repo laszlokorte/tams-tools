@@ -1,9 +1,9 @@
 import {expressionListToString} from '../lib/formatter';
 
-export const buildFormula = (context, formatter) =>
-  context !== null ?
+export const buildFormula = (logicNetwork, formatter) =>
+  logicNetwork !== null ?
   expressionListToString(
-    context.expressions,
+    logicNetwork.expressions,
     formatter
   ) : ''
 ;

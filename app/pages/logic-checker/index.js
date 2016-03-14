@@ -43,15 +43,15 @@ const diff = (outputA, outputB) => {
     return null;
   }
 
-  if (outputA.result.sortedExpressions.size === 0 &&
-    outputB.result.sortedExpressions.size === 0) {
+  if (outputA.fieldOutput.sortedExpressions.size === 0 &&
+    outputB.fieldOutput.sortedExpressions.size === 0) {
     return null;
   }
 
   let differences = [];
 
-  if (outputA.result.freeIdentifiers.count() !==
-    outputB.result.freeIdentifiers.count()) {
+  if (outputA.fieldOutput.freeIdentifiers.count() !==
+    outputB.fieldOutput.freeIdentifiers.count()) {
     differences.push('Different Identifiers');
   }
 

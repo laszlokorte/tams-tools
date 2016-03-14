@@ -37,6 +37,7 @@ const render = (state) =>
           state.input.langId === 'auto' ?
           option(
             {value: 'auto', selected: true},
+            console.log(state.toJS()) ||
             `Auto detect (${state.output.language.name || '???'})`
           ) :
           option(
