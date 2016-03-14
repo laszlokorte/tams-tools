@@ -36,6 +36,13 @@ const render = (state) =>
         y: node.y * state.scaleY + (node.leaf ? 25 : -15),
         'text-anchor': node.leaf ? 'middle' : node.labelAnchor,
         'alignment-baseline': 'middle',
+        class: 'tree-node-label-outline',
+      }, node.label),
+      svg('text', {
+        x: node.x * state.scaleX + (node.leaf ? 0 : node.xOffset),
+        y: node.y * state.scaleY + (node.leaf ? 25 : -15),
+        'text-anchor': node.leaf ? 'middle' : node.labelAnchor,
+        'alignment-baseline': 'middle',
         class: 'tree-node-label' + (node.faded ? ' tree-faded' : ''),
         style: {
           fill: attrBool(node.color),
