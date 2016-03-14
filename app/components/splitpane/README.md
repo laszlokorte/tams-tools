@@ -1,4 +1,4 @@
 Split Pane component
 ====================
 
-This component renders multiple sub components next to each other.
+This component renders two sub components next to each other.
