@@ -45,7 +45,7 @@ export default (responses) => {
     preventDefault: O.merge([
       actions.preventDefault,
       stage.preventDefault,
-    ]),
+    ]).share(),
     stopPropagation: actions.stopPropagation,
   };
 };

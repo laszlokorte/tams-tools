@@ -49,7 +49,7 @@ const fsmEditor = (sources) => {
       fsmComponent.preventDefault,
       graphComponent.preventDefault,
       splitComponent.preventDefault,
-    ]),
+    ]).share(),
     stopPropagation: graphComponent.stopPropagation,
     selectAll: O.empty(),
     autoResize: O.empty(),

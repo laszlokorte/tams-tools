@@ -39,12 +39,13 @@ export default (DOM, globalEvents) => {
     globalEvents.events('touchmove')
   );
 
-  const drag$ = dragStart$.map(() => {
-    return dragMove$.takeUntil(dragEnd$);
+  const drag$ = dragStart$.map((e) => {
+    return dragMove$.takeUntil(dragEnd$).startWith(e);
   }).mergeAll();
 
   const tryCreate$ = createStart$.map((startEvt) => {
     return dragMove$
+    .startWith(startEvt)
     .map((evt) => svgEventPosition({
       x: evt.clientX,
       y: evt.clientY,
@@ -66,15 +67,16 @@ export default (DOM, globalEvents) => {
     stopCreate$: O.merge([
       createConfirm$,
       cancel$,
-    ]),
+    ]).share(),
     doCreate$: createConfirm$,
     drag$,
     preventDefault: O.merge([
-      drag$,
-    ]),
+      dragStart$,
+      createStart$,
+    ]).share(),
     stopPropagation: O.merge([
       dragStart$,
       createStart$,
-    ]),
+    ]).share(),
   };
 };
