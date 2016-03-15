@@ -8,13 +8,11 @@ import intent from './intent';
 import model from './model';
 import view from './view';
 
-export default (sources) => {
-  const {
-    DOM,
-    bitCount$,
-    globalEvents,
-  } = sources;
-
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver sources
+  bitCount$ = O.just(3), // the number of bit's the circle should display
+}) => {
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent(isolateSource(DOM, 'graphicsContent'));

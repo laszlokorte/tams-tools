@@ -11,14 +11,39 @@ import view from './view';
 import costPanel from './view/cost-panel';
 import intent from './intent';
 
-export default (responses) => {
-  const {
-    DOM,
-    globalEvents,
-    props$,
-    data$,
-  } = responses;
-
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver sources
+  props$ = O.just({}), // currently no properties
+  data$ = O.just({
+    mode: 'dnf', // pla mode: dnf or knf
+    inputs: [ // names of the inputs
+      "Input A",
+      "Input B",
+    ],
+    outputs: [ // names of the outputs
+      "Out 1",
+    ],
+    loops: [ // list of loops.
+    // each loop is a mapping from input values to output values
+      {
+        in: [ // input values.
+          // Either true, false or null.
+          // Must be same length as number of inputs.
+          // null indicates dont-care
+          false, true,
+        ],
+        out: [ // output values.
+          // Either true or false.
+          // must be same length as number of inputs
+          true,
+        ],
+        color: 'blue', // color of the gate representing this loop
+        highlight: false, // if the gate should be highlighted
+      },
+    ],
+  }),
+}) => {
   const pla$ = data$.map(plaFromJson).share();
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'));

@@ -8,17 +8,27 @@ import model from './model';
 import view from './view';
 import intent from './intent';
 
-export default (responses) => {
-  const {
-    DOM,
-    globalEvents,
-    props$ = O.just({
-      scaleX: 100,
-      scaleY: 100,
-    }),
-    data$,
-  } = responses;
-
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver source
+  props$ = O.just({
+    scaleX: 100, // the horizontal spacing between nodes
+    scaleY: 100, // the vertical spacing between nodes
+  }),
+  data$ = O.just({ // The tree simply as nested objects.
+    name: "Root", // The name of the node
+    color: 'black', // The color of the node
+    hidden: false, // If the node should be faded out
+    children: [ // The child nodes
+    // {
+    //   name: "Child",
+    //   color: ...,
+    //   hidden: false,
+    //   children: [...]
+    // },
+    ],
+  }),
+}) => {
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'));
   const state$ = model(props$, data$, actions);

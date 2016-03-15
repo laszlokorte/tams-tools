@@ -7,12 +7,10 @@ import {toPLA, toJSON} from './lib/diagram';
 
 import modalPanels from './panels';
 
-export default (responses) => {
-  const {
-    DOM,
-    globalEvents,
-  } = responses;
-
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver sources
+}) => {
   const openData$ = new Subject();
   const importExpression$ = new Subject();
   const viewSetting$ = new Subject();

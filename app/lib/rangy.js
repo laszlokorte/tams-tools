@@ -1,4 +1,7 @@
 // FROM: https://github.com/timdown/rangyinputs
+//
+// Functions to manipulate the carret of text fields
+// in a cross browser compatible way
 
 const UNDEF = "undefined";
 let getSelection;

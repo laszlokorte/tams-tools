@@ -8,13 +8,11 @@ import toTable from './lib/table';
 
 import TableComponent from '../table';
 
-export default (responses) => {
-  const {
-    DOM,
-    globalEvents,
-    data$,
-  } = responses;
-
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver sources
+  data$,
+}) => {
   const selectedRow$ = new Subject();
 
   const actions = intent({

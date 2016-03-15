@@ -4,14 +4,18 @@ import model from './model';
 import view from './view';
 import intent from './intent';
 
-export default (responses) => {
-  const {
-    DOM,
-    globalEvents,
-    input$ = O.empty(),
-    props$ = O.just({showCompletion: true}),
-  } = responses;
-
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver sources
+  input$ = O.just({ // The text initial value of the input field
+    langId: "auto", // The selected language
+    term: "", // The value of the text field
+  }),
+  props$ = O.just({
+    showCompletion: true, // if buttons for inserting syntax tokens
+                          // should be shown above the text field
+  }),
+}) => {
   const actions = intent({
     DOM,
     globalEvents,

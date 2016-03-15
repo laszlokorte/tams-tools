@@ -60,7 +60,6 @@ const processInput = (input) => {
 
 export default (props$, initalExpression$, actions) =>
   initalExpression$
-  .map((string) => JSON.parse(string))
   .startWith({term: '', langId: 'auto'})
   .map((initial) =>
     O.combineLatest(

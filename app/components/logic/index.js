@@ -11,12 +11,10 @@ import asciiTable from '../table/lib/format-ascii';
 
 import modalPanels from './panels';
 
-export default (responses) => {
-  const {
-    DOM,
-    globalEvents,
-  } = responses;
-
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver sources
+}) => {
   const openData$ = new Subject();
   const selectedRow$ = new Subject();
 
@@ -25,7 +23,10 @@ export default (responses) => {
     openData$,
   });
 
-  const field = isolate(Field)({DOM, input$: actions.openData$});
+  const field = isolate(Field)({
+    DOM,
+    input$: actions.openData$.map(::JSON.parse),
+  });
 
   const state$ = model(
     actions, field.output$,

@@ -4,13 +4,12 @@ import intent from './intent';
 import model from './model';
 import view from './view';
 
-export default (sources) => {
-  const {
-    DOM,
-    inital$ = O.empty(),
-  } = sources;
-
-  const actions = intent(DOM);
+export default ({
+  DOM, // DOM driver source
+  globalEvents, // globalEvent driver sources
+  inital$ = O.empty(), // The intial FSM data
+}) => {
+  const actions = intent(DOM, globalEvents);
   const state$ = model(inital$, actions);
   const vtree$ = view(state$);
 

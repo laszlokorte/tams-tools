@@ -1,15 +1,15 @@
-const equal = (a, b) => {
-  if (a === b) {
+const equal = (keyA, keyB) => {
+  if (keyA === keyB) {
     return true;
   }
 
-  const aHasLength = a.hasOwnProperty('length');
-  const bHasLength = b.hasOwnProperty('length');
+  const aHasLength = keyA.hasOwnProperty('length');
+  const bHasLength = keyB.hasOwnProperty('length');
 
-  if (aHasLength && bHasLength && a.length === b.length) {
-    const length = a.length;
+  if (aHasLength && bHasLength && keyA.length === keyB.length) {
+    const length = keyA.length;
     for (let i = 0; i < length; i++) {
-      if (a[i] !== b[i]) {
+      if (keyA[i] !== keyB[i]) {
         return false;
       }
     }
@@ -38,6 +38,14 @@ CacheThunk.prototype.render = function thunkRender(previous) {
   }
 };
 
+// The constructor for simple virtual-dom Thunk object
+// prevents DOM updates of child nodes until the cache key
+// changes and creates the new child nodes lazyly.
+//
+// key - the cache key or an array of cache keys
+// fn - the function that returns the child nodes
+// debug - an optional string that get's logged to the console
+//         whenever the cache invalidates.
 export default (key, fn, debug) => {
   return new CacheThunk(fn, key, debug);
 };
