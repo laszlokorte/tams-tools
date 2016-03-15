@@ -16,6 +16,7 @@ export const autoResizeDriver = (event$) => {
         element.style.height = element.scrollHeight + 'px';
 
         but in firefox 18 scrollHeight does not include padding
+        https://bugzilla.mozilla.org/show_bug.cgi?id=576976
       */
 
       element.style.height = '0px';
