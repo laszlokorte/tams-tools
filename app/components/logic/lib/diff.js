@@ -12,11 +12,6 @@ const pair = I.Record({
   expressionB: null,
 });
 
-const warning = I.Record({
-  message: null,
-  details: null,
-});
-
 const reason = I.Record({
   valueA: null,
   valueB: null,
@@ -32,7 +27,7 @@ const comparison = I.Record({
 
 const diffResult = I.Record({
   error: null,
-  warnings: I.List(),
+  unifications: I.List(),
   comparisons: I.List(),
 });
 
@@ -129,14 +124,13 @@ const prepareIdentifierMap = (commonIdentifiers, unifications) => (counter) => {
   )));
 };
 
-const diffEvaluate = (networkA, networkB, unifications, pairs) => {
-  const commonIdentifiers = I.OrderedSet(networkA.freeIdentifiers)
-    .intersect(networkB.freeIdentifiers).toList();
-
-  const identityMapBuilder = prepareIdentifierMap(
-    commonIdentifiers, unifications
-  );
-
+const evaluateBoth = ({
+  identityMapBuilder,
+  commonIdentifiers,
+  unifications,
+  networkA,
+  networkB,
+}) => {
   let rowCount = Math.pow(2, commonIdentifiers.size + unifications.size) - 1;
   const rows = [];
 
@@ -161,7 +155,11 @@ const diffEvaluate = (networkA, networkB, unifications, pairs) => {
     rowCount--;
   }
 
-  const comparisons = pairs.map((p) => {
+  return rows;
+};
+
+const compareResult = (rows, pairs) => {
+  return pairs.map((p) => {
     const difference = rows.reduce((d, {
       identifierMap,
       resultMapA,
@@ -190,23 +188,27 @@ const diffEvaluate = (networkA, networkB, unifications, pairs) => {
       difference,
     });
   });
+};
 
-  if (!unifications.isEmpty()) {
-    const unifyText = unifications.map(
-      (u) => `${u.identifierA.name} = ${u.identifierB.name}`
-    ).join(', ');
+const diffEvaluate = (networkA, networkB, unifications, pairs) => {
+  const commonIdentifiers = I.OrderedSet(networkA.freeIdentifiers)
+    .intersect(networkB.freeIdentifiers).toList();
 
-    return diffResult({
-      warnings: I.List.of(warning({
-        message: "Identifier names do not match",
-        details: `Non-matching itentifiers get unified: ${unifyText}`,
-      })),
-      comparisons,
-    });
-  }
+  const identityMapBuilder = prepareIdentifierMap(
+    commonIdentifiers, unifications
+  );
+
+  const rows = evaluateBoth({
+    networkA, networkB,
+    identityMapBuilder,
+    commonIdentifiers,
+    unifications,
+  });
+
+  const comparisons = compareResult(rows, pairs);
 
   return diffResult({
-    warnings: I.List(),
+    unifications,
     comparisons: comparisons,
   });
 };

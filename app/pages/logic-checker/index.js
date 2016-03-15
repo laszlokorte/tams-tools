@@ -31,13 +31,21 @@ const render = (state, field1, field2) =>
     ]),
     state !== null ? div('.result', [
       state.error && div('.error', state.error),
-      state.warnings.isEmpty() ? null :
-      div('.warnings', state.warnings.map((warning) =>
-        div('.warning', [
-          warning.message,
-          warning.details ? p('.warning-details', warning.details) : null,
-        ])
-      ).toArray()),
+      state.unifications.isEmpty() ? null :
+      div('.warning', [
+        'Identifier names do not match.',
+        'The following non matching identifiers have been unified:',
+        p('.warning-details',
+          formatter.formatExpressions(
+            state.unifications.map((unification) =>
+              formatter.formatLabel(
+                formatter.formatName(unification.identifierA.name),
+                formatter.formatName(unification.identifierB.name)
+              )
+            )
+          )
+        ),
+      ]),
 
       div('.comparison', [
         ul('.comparison-list', state.comparisons.map((comparison) =>
