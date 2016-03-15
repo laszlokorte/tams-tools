@@ -50,9 +50,10 @@ export default (DOM, globalEvents) => {
   return {
     resize$,
 
-    preventDefault: panStart$.map(() =>
+    preventDefault: panStart$.map((start) =>
       panMove$
       .map((move) => move.event)
+      .startWith(start)
       .takeUntil(panEnd$)
     ).switch().share(),
   };
