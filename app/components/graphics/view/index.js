@@ -2,6 +2,7 @@ import {div, svg} from '@cycle/dom';
 
 import './index.styl';
 
+// create the viewbox string
 const viewbox = (width, height, camera) =>
   `${camera.x - width / 2 / camera.zoom}
    ${camera.y - height / 2 / camera.zoom}
@@ -9,6 +10,7 @@ const viewbox = (width, height, camera) =>
    ${height / camera.zoom}`
 ;
 
+// create a rectangle covering the whole element
 const renderBackground = (width, height, camera) =>
   svg('rect', {
     attributes: {
@@ -21,6 +23,7 @@ const renderBackground = (width, height, camera) =>
   })
 ;
 
+// create a rectange of size of the bounds
 const renderBounds = ({minX, maxX, minY, maxY}) =>
   svg('rect', {
     attributes: {
@@ -33,6 +36,7 @@ const renderBounds = ({minX, maxX, minY, maxY}) =>
   })
 ;
 
+// create the background grid
 const renderGrid = ({minX, maxX, minY, maxY}) => [
   svg('defs', [
     svg('pattern', {
@@ -85,6 +89,7 @@ const renderGrid = ({minX, maxX, minY, maxY}) => [
   }),
 ];
 
+// create the graphics container
 const render = ({width, height, camera, bounds, content}) =>
   div('.graphics-container', [
     svg('svg', {

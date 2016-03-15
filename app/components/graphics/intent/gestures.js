@@ -1,6 +1,9 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
+// This file contains the logic for recognizing
+// pan and pinch gestures from touch events.
+
 const ownerElement = (rootElement) =>
   rootElement.observable
   .map((e) => e[0])
@@ -86,8 +89,13 @@ const wheelFactor = (wheelEvent) => {
   );
 };
 
+// transforms touch event streams into a pinch action stream
 const touchZoom = ({
-  pinchStart$, pinchMove$, pinchEnd$, owner$, positionFn,
+  pinchStart$, // stream of touch ids that start a zoom
+  pinchMove$, // stream of touch move events
+  pinchEnd$, // stream of touch ids that end a zoom
+  owner$, // stream containing the owner element of the events
+  positionFn, // function transforming event coordinates into world coorinates
 }) =>
   pinchStart$
   .map((ids) =>
@@ -111,7 +119,12 @@ const touchZoom = ({
   ).switch()
 ;
 
-const wheelZoom = ({wheel$, owner$, positionFn}) =>
+// transforms mouse wheel events into pinch/zoom events
+const wheelZoom = ({
+  wheel$, // stream of mouse events
+  owner$, // stream containing the owner element
+  positionFn// function transforming event coordinates into world coorinates
+}) =>
   wheel$.withLatestFrom(owner$, (evt, owner) => {
     const pivot = positionFn({
       x: evt.pageX,
@@ -127,8 +140,19 @@ const wheelZoom = ({wheel$, owner$, positionFn}) =>
   }).share()
 ;
 
-// interpret touch and scroll events as pinch
-export const zoom = (globalEvents, rootElement, positionFn) => {
+// interpret drag and touch events as pinch/zoom
+//
+// returns {action$, stopPropagation, preventDefault}
+// action$ - a stream containing the pinch/zoom gestures
+// stopPropagation - a stream containing the processed events
+// preventDefault - a stream containing the event's that default
+//                  behavior should be canceled
+export const zoom = (
+  globalEvents, // the globalEvent driver source
+  rootElement, // DOM source on which the pinch/zoom should be recognized
+  positionFn // function translation event positions
+             // into world coordinate system
+) => {
   const owner$ = ownerElement(rootElement);
 
   const touches$ = toucheIds(globalEvents, rootElement);
@@ -159,8 +183,15 @@ export const zoom = (globalEvents, rootElement, positionFn) => {
   };
 };
 
+// transforms touch event streams into a panning action stream
 const touchPan = ({
-  touchChange$, panStart$, panMove$, panEnd$, owner$, positionFn,
+  touchChange$, // stream of touch start end touch end events
+  panStart$, // stream of touch ids that start a pan
+  panMove$, // stream of touch move events
+  panEnd$, // stream of touch ids that stop a pan
+  owner$, // stream containing the event's owner element
+  positionFn, // function translation event positions
+              // into world coordinate system
 }) =>
   panStart$
   .withLatestFrom(touchChange$, owner$, (ids, initial, owner) => {
@@ -181,7 +212,11 @@ const touchPan = ({
 ;
 
 const mousePan = ({
-  mouseDown$, mouseMove$, mouseUp$, owner$, positionFn,
+  mouseDown$,
+  mouseMove$,
+  mouseUp$,
+  owner$,
+  positionFn,
 }) =>
   mouseDown$
   .withLatestFrom(owner$, (downEvt, owner) => {
@@ -201,8 +236,19 @@ const mousePan = ({
   }).switch()
 ;
 
-// interpret drag and touch events as pan
-export const pan = (globalEvents, rootElement, positionFn) => {
+// interpret drag and touch events as panning
+//
+// returns {action$, stopPropagation, preventDefault}
+// action$ - a stream containing the pan gestures
+// stopPropagation - a stream containing the processed events
+// preventDefault - a stream containing the event's that default
+//                  behavior should be canceled
+export const pan = (
+  globalEvents, // the globalEvent driver source
+  rootElement, // DOM source on which the panning should be recognized
+  positionFn // function translation event positions
+             // into world coordinate system
+) => {
   const owner$ = ownerElement(rootElement);
 
   const touchChange$ = O.merge([

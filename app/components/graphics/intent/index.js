@@ -4,6 +4,8 @@ import {pan, zoom} from './gestures';
 
 const svgEventPosition = (() => {
   let oldPoint = null;
+  // a function transforming a given point into the coordinate
+  // system of the given svg element
   return ({x,y}, svg) => {
     const pt = oldPoint || (oldPoint = svg.createSVGPoint());
     pt.x = x;
