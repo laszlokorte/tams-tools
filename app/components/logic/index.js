@@ -71,7 +71,8 @@ export default (responses) => {
     preventDefault: O.merge([
       actions.preventDefault,
       field.preventDefault,
-    ]),
+      panels.open.preventDefault,
+    ]).share(),
     autoResize: field.autoResize,
     selectAll: panels.save.selectAll,
     tree$: tree$,
