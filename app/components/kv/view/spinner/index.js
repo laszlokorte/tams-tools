@@ -5,6 +5,8 @@ import {
 import plusIcon from '../../../../icons/plus';
 import minusIcon from '../../../../icons/minus';
 
+import './index.styl';
+
 export default ({attributes, label, readonly, value, min, max}) =>
   div('.spinner' + (
     (readonly ? '.state-readonly' : '')

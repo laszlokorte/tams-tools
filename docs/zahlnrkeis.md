@@ -1360,7 +1360,7 @@ Zunächst wird eine neue `.styl` Datei mit dem Namen `index.styl` im selben Ordn
 ```styl
 // in /app/pages/number-circle/index.styl
 
-@import '../../styles/layout'
+@import '../../styles/app'
 
 .number-circle-container
   position absolute
@@ -1409,7 +1409,7 @@ Zunächst wird eine neue `.styl` Datei mit dem Namen `index.styl` im selben Ordn
 Wie sich erkennen lässt müssen in *Stylus* im Vergleich zu *CSS* keine geschweiften Klammer `{}` geschrieben werden. Stattdessen werden die Eigenschaften gegenüber den Selektoren eingerückt.
 Doppelpunkt `:` und Semikolon `;` zum Trennen der Eigenschaften und ihrer Werte sind ebenfalls nicht nötig.
 
-Zu Beginn der `index.styl` Datei wird ein anderen Stylesheet `../../styles/layout` importiert. In diesem sind schon einige Markos und und Farbkonstanten definiert - beispielsweise das `button` Makro, welches verwendet wird um den `.bit-button` Selektor zu definieren.
+Zu Beginn der `index.styl` Datei wird ein anderen Stylesheet `../../styles/app` importiert. In diesem sind schon einige Markos und und Farbkonstanten definiert - beispielsweise das `button` Makro, welches verwendet wird um den `.bit-button` Selektor zu definieren.
 
 Als nächstes muss die `index.styl` noch geladen werden. Dafür wird der `index.js` eine entsprechende `import` Anweisung hinzugefügt. Webpack erkennt an der Dateiendung, dass es sich bei dem Import um keine JavaScript-Datei, sondern eine Stylus-Datei handelt und sorgt dafür, dass das Stylesheet in gültiges CSS umgewandelt und auf der Seite eingebunden wird.
 

@@ -1,4 +1,283 @@
-@import '../../../styles/layout'
+@import '../../../styles/app'
 
-.app
-  min-width 450px
+.edit-panel
+  margin space(1) 0 0 space(2)
+  float left
+
+.edit-mode-panel
+  display block
+  padding-bottom space(1)
+
+.edit-mode-button-loops
+.edit-mode-button-function
+  button(
+    color-background-inverse,
+    color-foreground-inverse
+  )
+  opacity 0.7
+  width 150px
+  &.state-active
+    cursor default
+    opacity 1
+    font-weight 600
+    color tint(color-background-highlight, 40%)
+
+.output-panel
+  padding space(2) space(1.5) 0
+  clear both
+
+.output-button-add
+  padding 5px
+  outline none
+  border 5px solid color-background-primary
+  vertical-align top
+  background-color color-background-highlight
+  color color-foreground-highlight
+  width space(3)
+  height space(3)
+  overflow hidden
+  margin space(1.4) space(0.3)
+  background-size 50% 50%
+  background-position 50% 50%
+  background-repeat no-repeat
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill color-foreground-inverse
+
+  &:hover
+    background-color tint(color-background-highlight, 10%)
+  &:focus
+    border-color color-focus
+
+  &:active
+    background-color tint(color-background-highlight, 20%)
+
+  &:disabled
+    transform scale(0)
+    opacity 0
+    pointer-events none
+    cursor default
+
+.output-list
+  plainlist(inline: true)
+  display inline-block
+  vertical-align bottom
+
+  > .output-list-item
+    display block
+    float left
+    overflow visible
+
+.output-list-item
+  position relative
+  margin 0 space(0.5)
+  cursor pointer
+  outline none
+  border 3px solid color-background-secondary
+  border-bottom-width 0
+
+  &.state-current
+    background-color color-background-primary
+    font-weight font-bold
+    cursor default
+    > .output-thumbnail
+      background-color inherit
+
+  &:focus
+    border-color color-focus
+
+.output-thumbnail
+  background-color color-background-primary-weak
+  padding 4px
+  overflow hidden
+  display box
+  display flex
+  align-items center
+  justify-content center
+  min-width space(5)
+  min-height space(5)
+  width 100%
+
+  > *
+    margin 0 auto
+
+.output-button-delete
+  round()
+  border-width 3px
+  position absolute
+  top -12px
+  right -12px
+  z-index 10
+  border-color color-background-secondary
+  background-color color-danger
+  background-size 50% 50%
+  background-position 50% 50%
+  background-repeat no-repeat
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill tint(color-danger, 90%)
+
+  &:hover
+    background-color lighten(color-danger, 5%)
+  &:focus
+    border-color color-focus
+
+  &:active
+    background-color darken(color-danger, 10%)
+    .icon-shape
+      fill white
+
+  &:disabled
+    transform scale(0)
+    opacity 0
+    pointer-events none
+    cursor default
+
+.output-label
+  display block
+  height button-size
+  line-height button-size
+  text-align center
+  padding 0 1em
+  margin 0
+  border none
+  outline none
+  background-color transparent
+  clear both
+  overflow hidden
+
+  &.state-editable
+    cursor text
+    color darken(color-background-highlight, 20%)
+    text-decoration underline
+
+.output-label-edit
+  display block
+  white-space nowrap
+  text-align center
+  border none
+  outline 1px solid grey
+  margin space(0.25) 0 0
+  height (button-size - space(0.5))
+  line-height (button-size - space(0.5))
+  background-color color-background-primary
+  max-width 10em
+  overflow hidden
+  text-decoration none
+  &:focus
+    outline-color color-focus
+
+  &.state-invalid
+    outline-color color-danger
+    background-color tint(#f00, 90%)
+
+.loop-bar
+  margin space(2)
+  padding space(0.5)
+  background-color color-background-inverse
+
+  > .loop-list
+    transition opacity 0.1s linear
+
+  &.state-faded
+    opacity 0.6
+    > .loop-list
+      opacity 0.7
+
+.loop-mode-switch
+  border 1px solid tint(color-background-inverse-weak, 20%)
+  vertical-align middle
+  display inline-block
+  margin-right space(0.5)
+
+.loop-mode-options
+  plainlist(inline: true)
+
+.loop-mode
+  button(
+    color-background-inverse-weak,
+    color-foreground-inverse-weak
+  )
+
+  &.state-active
+    cursor default
+    font-weight font-bold
+    background-color color-background-inverse-strong
+    color color-foreground-inverse-strong
+    pointer default
+
+    &:hover
+      color color-foreground-inverse-strong
+      background-color lighten(color-background-inverse-strong, 1%)
+    &:focus
+      border-color color-focus
+
+    &:active
+      background-color color-background-inverse-strong
+
+
+  &:hover
+    color lighten(color-foreground-inverse-weak, 50%)
+    background-color lighten(color-background-inverse-weak, 1%)
+  &:focus
+    border-color color-focus
+
+  &:active
+    color #fff
+    background-color darken(color-background-inverse-weak, 10%)
+
+
+.loop-list
+  plainlist(inline: true)
+  display inline-block
+  vertical-align middle
+  padding 0
+
+.loop-list-item
+  padding space(0.1)
+.loop-list-item-empty
+  color darken(color-foreground-secondary, 40%)
+  padding 0 space(0.5)
+
+.loop-icon
+  width button-size-small
+  height button-size-small
+  vertical-align middle
+  display inline-block
+
+.loop-button-delete
+  round()
+  border-radius 0
+  vertical-align middle
+  background-color transparent
+  border 3px solid transparent
+  background-size 50%
+  background-position 50% 50%
+  background-repeat no-repeat
+
+  &:focus
+    border-color color-focus
+
+  &:active
+    background-color rgba(0,0,0,0.2)
+
+  &:disabled
+    cursor default
+    opacity 0
+
+.diagram-scroller
+  max-width 100%
+  overflow auto
+
+.diagram-scroller-body
+  width 100%
+  display box
+  box-align center
+  display flex
+  align-items center
+  justify-content center
+  min-width min-content
+  min-height min-content
+  padding space(2) 0

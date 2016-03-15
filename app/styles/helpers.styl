@@ -1,0 +1,47 @@
+
+plainlist(inline = false)
+  list-style none
+  margin 0
+  padding 0
+  if inline
+    > *
+      display inline-block
+
+round()
+  width button-size-small
+  height button-size-small
+  padding 5px
+  border-radius (button-size-small / 2)
+  overflow hidden
+  border 2px solid transparent
+  font-size 0
+  outline none
+
+
+button(
+  color-background = color-background-secondary-strong,
+  color-foreground = color-foreground-secondary-strong
+)
+  line-height 1
+  height button-size
+  border 2px solid transparent
+  vertical-align middle
+  padding-top 0
+  padding-bottom 0
+  padding-right space(1)
+  outline none
+  background-color color-background
+  color color-foreground
+  padding-left space(1)
+
+  &:not(.state-active)
+    &:hover
+      background-color lighten(color-background, 3%)
+    &:focus
+      border-color color-focus
+    &:active
+      background-color darken(color-background, 3%)
+
+
+space(u)
+  unit(15 * u, px)

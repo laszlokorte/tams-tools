@@ -1,0 +1,73 @@
+@import './global'
+@import './settings'
+
+.application
+  font-size 11pt
+
+$keyframe-name = slide-up
+@keyframes {$keyframe-name}
+  for i in 0..10
+    {10% * i}
+      transform scale((1 - i/10))
+      opacity (1 - i/10)
+
+.error-message
+  position absolute
+  top space(5)
+  left 30%
+  right 30%
+  padding space(1)
+  line-height (1.5*button-size)
+  background-color alpha(color-danger, 75%)
+  color #fff
+  border 3px solid #fff
+  font-weight 600
+  text-align center
+  z-index 100
+  pointer-events none
+  animation: slide-up 0.1s 2s 1 forwards
+
+
+.app
+  min-width 450px
+
+.app-head
+  overflow visible
+  background-color color-background-secondary
+
+.app-body
+  overflow hidden
+  background-color color-background-primary
+
+.action-panel
+  margin space(1) space(1.5) 0 0
+  float right
+
+.action-list
+  plainlist(inline: true)
+
+.action-list-item
+  padding 0 space(0.2)
+
+.action-button
+  padding 0
+  margin space(0.2)
+  width 32px
+  height 32px
+  border none
+  background-color transparent
+  outline none
+
+  .icon-shape
+    transform-origin 50% 50%
+    transform scale(0.95)
+    fill color-background-secondary-strong
+
+  &:hover
+    .icon-shape
+      fill tint(color-background-secondary-strong, 5%)
+
+  &:focus
+    .icon-shape
+      stroke color-focus
+      stroke-width 1px

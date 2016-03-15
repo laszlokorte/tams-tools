@@ -1,0 +1,79 @@
+@import '../../../../styles/helpers'
+@import '../../../../styles/settings'
+
+.spinner
+  display inline-block
+  clear both
+  position relative
+  padding space(0.5) space(0.5) space(0.5) space(1)
+  margin-right space(0.5)
+  background-color color-background-primary-weak
+  color color-foreground-primary
+  border 3px solid color-background-highlight
+  transition border-color 0.3s 0.3s ease-out
+  &.state-readonly
+    border-color transparent
+    transition-delay 0
+
+.spinner-buttons
+  transition opacity 0.3s ease-out
+  transition-delay 0.3s
+
+.spinner-label
+  margin-right space(0.5)
+
+.spinner-value
+.spinner-label
+  transition transform 0.2s ease-out
+  transition-delay 0s
+
+.spinner-label
+.spinner-value
+.spinner-buttons
+  display inline-block
+  line-height button-size-small
+  height button-size-small
+  vertical-align middle
+
+.spinner-label::after
+  content: ':'
+
+.spinner-value
+  font-size font-size-big
+  font-weight font-bold
+  min-width space(2)
+  text-align center
+
+.spinner-button
+  round()
+  background-color color-background-inverse
+  vertical-align top
+  background-size 45% 45%
+  background-position 50% 50%
+  background-repeat no-repeat
+  margin 0 space(0.2)
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill color-foreground-inverse
+
+  &:hover
+    background-color lighten(color-background-inverse, 3%)
+  &:focus
+    border-color color-focus
+  &:active
+    background-color darken(color-background-inverse, 3%)
+  &:disabled
+    pointer default
+    background-color lighten(color-background-inverse, 25%)
+    transform scale(0)
+    opacity 0
+    pointer-events none
+
+.state-readonly
+  .spinner-button
+      pointer default
+      background-color lighten(color-background-inverse, 25%)
+      transform scale(0)
+      opacity 0
+      pointer-events none
