@@ -64,7 +64,6 @@ const render = (state, field1, field2) =>
             }, [
               comparison.equal ? 'Equal!' : 'Not Equal!',
               comparison.difference && div('.comparison-reason', [
-                console.dir(comparison.difference.identifierMap.toJS()) ||
                 `For assignment (${
                   I.List(comparison.difference.identifierMap.entries())
                   .filter(([id]) => id._name === 'identifier')
