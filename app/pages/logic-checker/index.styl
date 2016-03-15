@@ -1,4 +1,4 @@
-@import '../../styles/global'
+@import '../../styles/layout'
 
 h1
 h2
@@ -15,20 +15,39 @@ h2
   margin space(1)
   font-size font-size-medium
 
-.no-differences
+.error
   padding space(1)
-  background-color tint(green, 70%)
-  font-weight font-bold
+  background-color tint(red, 75%)
 
-.differences
+.warning
   padding space(1)
-  background-color tint(red, 95%)
+  background-color tint(orange, 75%)
 
-.diff-list
+.warning-details
+  margin 0
+  padding 0
+
+.comparison-list
   plainlist()
   margin-top space(1)
 
-.diff-list-item
-  padding space(0.5)
-  background-color tint(red, 90%)
+.comparison-list-item
+  padding space(1)
   margin space(0.1) 0
+  background-color color-background-secondary-weak
+  border-left 3px solid color-background-secondary-weak
+
+  &.state-success
+    border-left-color lighten(color-success, 10%)
+  &.state-fail
+    border-left-color color-failure
+
+.comparison-head
+  font-weight bold
+
+.comparison-result
+  font-size font-size-big
+  &.state-success
+    color lighten(color-success, 10%)
+  &.state-fail
+    color color-failure

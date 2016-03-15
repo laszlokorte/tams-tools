@@ -1,7 +1,8 @@
 import {Observable as O} from 'rx';
+import I from 'immutable';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
-import {div, h1, h2, ul, li} from '@cycle/dom';
+import {div, h1, h2, ul, li, p} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
@@ -11,6 +12,9 @@ import {globalEventDriver} from '../../drivers/global-events';
 import {insertStringDriver} from '../../drivers/rangy';
 
 import LogicField from '../../components/logic/input-field';
+import {diffNetworks} from '../../components/logic/lib/diff';
+import {expressionToString} from '../../components/logic/lib/formatter';
+import formatter from '../../components/logic/lib/formatter/math';
 
 import './index.styl';
 
@@ -26,13 +30,55 @@ const render = (state, field1, field2) =>
       field2,
     ]),
     state !== null ? div('.result', [
-      state.length === 0 ?
-      div('.no-differences', 'Expressions are equal') :
-      div('.differences', [
-        'The expressions differ:',
-        ul('.diff-list', state.map((d) =>
-          li('.diff-list-item', d)
-        )),
+      state.error && div('.error', state.error),
+      state.warnings.isEmpty() ? null :
+      div('.warnings', state.warnings.map((warning) =>
+        div('.warning', [
+          warning.message,
+          warning.details ? p('.warning-details', warning.details) : null,
+        ])
+      ).toArray()),
+
+      div('.comparison', [
+        ul('.comparison-list', state.comparisons.map((comparison) =>
+          li('.comparison-list-item', {
+            className: comparison.equal ? 'state-success' : 'state-fail',
+          }, [
+            div('.comparison-head', [
+              `Comparing ${
+                expressionToString(comparison.expressionA.body, formatter)
+              } and ${
+                expressionToString(comparison.expressionB.body, formatter)
+              }`,
+            ]),
+            div('.comparison-result', {
+              className: comparison.equal ? 'state-success' : 'state-fail',
+            }, [
+              comparison.equal ? 'Equal!' : 'Not Equal!',
+              comparison.difference && div('.comparison-reason', [
+                console.dir(comparison.difference.identifierMap.toJS()) ||
+                `For assignment (${
+                  I.List(comparison.difference.identifierMap.entries())
+                  .filter(([id]) => id._name === 'identifier')
+                  .map(([id, value]) =>
+                    formatter.formatLabel(
+                      formatter.formatName(id.name),
+                      formatter.formatValue(value)
+                    )
+                  ).join(', ')
+                }): ${
+                  expressionToString(comparison.expressionA.body, formatter)
+                } is ${
+                  formatter.formatValue(comparison.difference.valueA)
+                } but ${
+                  expressionToString(comparison.expressionB.body, formatter)
+                } is ${
+                  formatter.formatValue(comparison.difference.valueB)
+                }`,
+              ]),
+            ]),
+          ])
+        ).toArray()),
       ]),
     ]) : null,
   ])
@@ -48,14 +94,7 @@ const diff = (outputA, outputB) => {
     return null;
   }
 
-  let differences = [];
-
-  if (outputA.network.freeIdentifiers.count() !==
-    outputB.network.freeIdentifiers.count()) {
-    differences.push('Different Identifiers');
-  }
-
-  return differences;
+  return diffNetworks(outputA.network, outputB.network);
 };
 
 const logicApp = (sources) => {
