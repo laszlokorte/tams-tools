@@ -79,7 +79,7 @@ const logicApp = (sources) => {
   const fieldBDOM$ = logicFieldB.DOM;
 
   const state$ = O.combineLatest(
-    logicFieldA.output$.do((a) => console.log(a.toJS())),
+    logicFieldA.output$,
     logicFieldB.output$,
     diff
   );

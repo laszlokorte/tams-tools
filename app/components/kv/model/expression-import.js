@@ -39,7 +39,5 @@ export default (logicNetwork) => {
     loops: [],
   };
 
-  console.log(json);
-
   return fromJSON(json);
 };
