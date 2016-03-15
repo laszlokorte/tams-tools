@@ -8,16 +8,6 @@
   background-color color-background-primary-weak
   padding 5px
 
-.logic-input
-  clear both
-  font-size font-size-big
-  font-family font-sans
-  color color-foreground-primary
-  border 1px solid color-background-secondary-strong
-  position relative
-  max-height 10em
-  overflow auto
-
 .logic-language-chooser
   padding 5px 0 10px
   display block
@@ -28,8 +18,18 @@
   padding-left 5px
   font-size font-size-default
 
+.logic-input
+  clear both
+  font-size font-size-big
+  font-family font-sans
+  color color-foreground-primary
+  border 1px solid color-background-secondary-strong
+  position relative
+  max-height 10em
+  overflow auto
+  line-height 1.4
+
 .logic-input-field
-  box-sizing border-box
   display block
   font-family inherit
   font-size inherit
@@ -43,26 +43,32 @@
   overflow hidden
 
 .logic-input-field
-  padding 5px
+  box-sizing border-box
+  line-height inherit
+  font-size inherit
   letter-spacing inherit
-  white-space pre
+  white-space pre-wrap
   word-wrap break-word
-  line-height 1.4
+  vertical-align top
+  padding 5px
   height 1.8em
 .logic-input-overlay
+  box-sizing border-box
+  line-height inherit
+  font-size inherit
+  letter-spacing inherit
   word-wrap break-word
+  white-space pre-wrap
   padding 5px
   z-index 1
-  letter-spacing inherit
-  white-space pre
-  font-size inherit
+  max-width 100%
   top 0
   left 0
   right 0
   position absolute
   pointer-events none
   display block
-  vertical-align middle
+  vertical-align top
   color transparent
 
 
