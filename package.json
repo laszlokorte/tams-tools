@@ -35,11 +35,8 @@
     "json-loader": "^0.5.4",
     "pegjs": "^0.9.0",
     "pegjs-loader": "^0.4.0",
-    "raw-loader": "^0.5.1",
-    "rework": "^1.0.1",
     "style-loader": "^0.13.0",
     "stylus-loader": "^1.5.1",
-    "url-loader": "^0.5.7",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1",
     "webpack-merge": "^0.8.3"
