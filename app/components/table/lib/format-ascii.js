@@ -31,9 +31,8 @@ const row = (values, widths) => {
           colGroup.map(
             (w, ci) => {
               const width = w + 2;
-              const v = values[i + ci];
+              const v = values[i + ci].toString();
               const delta2 = (width - v.length) / 2;
-
               return new Array(Math.ceil(delta2) + 1).join(' ') +
                 v +
                 new Array(Math.floor(delta2) + 1).join(' ');

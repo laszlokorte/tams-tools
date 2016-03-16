@@ -1,29 +1,45 @@
 @import '../../../styles/app'
 
+.led-viewer
+  width 100%
+
 .switch-button
-  stroke grey
+  stroke #666
   stroke-width 3px
-  fill darken(darkred, 30%)
+  fill #ff5555
   cursor pointer
 
   &.state-enabled
-    fill green
+    fill #20f655
+
+  &:hover
+    stroke #777
 
 .led
-  fill grey
+  fill #ff5555
   cursor pointer
 
   &.state-enabled
-    fill green
+    fill #20f655
 
   &.state-undefined
-    fill orange
+    fill #55bbbb
+
+  &:hover
+    opacity 0.9
+
+.number-field-container
+  display block
+  margin space(1) auto
+  width 40%
+  font-size font-size-big
+  font-family font-sans
 
 .number-field
   font-size inherit
   font-family inherit
-  padding 3px
-  width 150px
-  margin-left 90px
+  padding 5px
+  margin space(0.5)
   outline none
+  width 5em
   border 2px solid #ccc

@@ -1,0 +1,88 @@
+{
+  "segments": [
+    {
+      "name": "A",
+      "labelPosition": {"x": 10, "y": 5},
+      "shape": {
+        "type" : "circle",
+        "attributes" : {
+          "cx": 10,
+          "cy": 30,
+          "r": 10
+        }
+      }
+    },
+    {
+      "name": "B",
+      "labelPosition": {"x": 80, "y": 5},
+      "shape": {
+        "type" : "circle",
+        "attributes" : {
+          "cx": 80,
+          "cy": 30,
+          "r": 10
+        }
+      }
+    },
+    {
+      "name": "C",
+      "labelPosition": {"x": 150, "y": 5},
+      "shape": {
+        "type" : "circle",
+        "attributes" : {
+          "cx": 150,
+          "cy": 30,
+          "r": 10
+        }
+      }
+    },
+    {
+      "name": "D",
+      "labelPosition": {"x": 100, "y": 100},
+      "shape": {
+        "type" : "circle",
+        "attributes" : {
+          "cx": 80,
+          "cy": 100,
+          "r": 10
+        }
+      }
+    },
+    {
+      "name": "E",
+      "labelPosition": {"x": 10, "y": 200},
+      "shape": {
+        "type" : "circle",
+        "attributes" : {
+          "cx": 10,
+          "cy": 170,
+          "r": 10
+        }
+      }
+    },
+    {
+      "name": "F",
+      "labelPosition": {"x": 80, "y": 200},
+      "shape": {
+        "type" : "circle",
+        "attributes" : {
+          "cx": 80,
+          "cy": 170,
+          "r": 10
+        }
+      }
+    },
+    {
+      "name": "G",
+      "labelPosition": {"x": 150, "y": 200},
+      "shape": {
+        "type" : "circle",
+        "attributes" : {
+          "cx": 150,
+          "cy": 170,
+          "r": 10
+        }
+      }
+    }
+  ]
+}

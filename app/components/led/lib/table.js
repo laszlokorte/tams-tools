@@ -17,9 +17,7 @@ export default (state) => {
       },
       {
         name: 'Outputs',
-        columns: state.leds.map(
-          (_,i) => ({name: (i + 1).toString()})
-        ),
+        columns: state.leds.map(({name}) => ({name})),
       },
     ],
 

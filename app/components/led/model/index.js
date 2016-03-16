@@ -1,5 +1,7 @@
 import {Observable as O} from 'rx';
 
+import templates from './templates';
+
 const tableIndex = (...bools) => {
   return bools.reduce(
     (prev, on, i) => prev + (on ? Math.pow(2, i) : 0)
@@ -11,10 +13,11 @@ const toggleSwitch = (state, switchId) => {
   return state;
 };
 
-const cycleOutput = (state, ledId) => {
+const toggleOutput = (state, outputIndex, reset) => {
   const index = tableIndex(...state.switches.map(({enabled}) => enabled));
-  const oldVal = state.leds[ledId].functionTable[index];
-  state.leds[ledId].functionTable[index] =
+  const oldVal = state.leds[outputIndex].functionTable[index];
+
+  state.leds[outputIndex].functionTable[index] = reset ? null :
     !oldVal;
 
   return state;
@@ -32,25 +35,29 @@ const decimaleInput = (state, decimal) => {
 };
 
 export default (data$, actions) =>
-  data$.map(({switches, leds}) => {
+  data$
+  .startWith(templates[0])
+  .map((template) => {
     return O.merge([
       actions.toggleSwitch$.map((switchIndex) => (state) =>
         toggleSwitch(state, switchIndex)
       ),
-      actions.cycleOutput$.map((ledIndex) => (state) =>
-        cycleOutput(state, ledIndex)
+      actions.toggleOutput$.map(({outputIndex, reset}) => (state) =>
+        toggleOutput(state, outputIndex, reset)
       ),
       actions.decimalInput$.map((decimal) => (state) =>
         decimaleInput(state, decimal)
       ),
     ]).startWith({
-      switches: switches.map((name) => ({
+      switches: template.inputs.map((name) => ({
         name,
         enabled: false,
       })),
-      leds: leds.map(({shape, values}) => ({
-        path: shape,
-        functionTable: values,
+      leds: template.segments.map(({name, shape, labelPosition}, idx) => ({
+        name,
+        labelPosition,
+        shape,
+        functionTable: template.outputs[idx],
       })),
     })
     .scan((prev, fn) => fn(prev));
@@ -63,7 +70,9 @@ export default (data$, actions) =>
         ({enabled}) => enabled
       ))),
       leds: data.leds.map((led) => ({
-        path: led.path,
+        name: led.name,
+        labelPosition: led.labelPosition,
+        shape: led.shape,
         functionTable: led.functionTable,
         enabled: led.functionTable[
           tableIndex(...(data.switches.map(

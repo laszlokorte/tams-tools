@@ -1,5 +1,8 @@
 import {Observable as O} from 'rx';
 
+import panelActions from './panels';
+
+
 export default ({DOM, selectIndex$}) => {
   const switchButton = DOM.select('.switch-button');
   const led = DOM.select('.led');
@@ -9,12 +12,17 @@ export default ({DOM, selectIndex$}) => {
   const ledEvent$ = led.events('click');
   const inputEvent$ = numberField.events('input');
 
+  const panels = panelActions({DOM});
+
   return {
     toggleSwitch$: switchEvent$.map(
       (evt) => parseInt(evt.ownerTarget.getAttribute('data-switch'), 10)
     ).share(),
-    cycleOutput$: ledEvent$.map(
-      (evt) => parseInt(evt.ownerTarget.getAttribute('data-led'), 10)
+    toggleOutput$: ledEvent$.map(
+      (evt) => ({
+        outputIndex: parseInt(evt.ownerTarget.getAttribute('data-led'), 10),
+        reset: evt.altKey,
+      })
     ).share(),
     decimalInput$: O.merge([
       inputEvent$.map(
@@ -22,6 +30,9 @@ export default ({DOM, selectIndex$}) => {
       ),
       selectIndex$.filter((i) => i !== null),
     ]).distinctUntilChanged().share(),
-    preventDefault: O.empty(),
+
+    panel$: panels.open$,
+
+    preventDefault: panels.preventDefault,
   };
 };
