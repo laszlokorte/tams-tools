@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
-import {div} from '@cycle/dom';
+import {wrapInDiv} from '../../lib/dom-helper';
 
 import graphics from '../graphics';
 
@@ -49,11 +49,7 @@ export default ({
   });
 
   return {
-    DOM: stage.DOM.map(
-      (stageEl) => div([
-        stageEl,
-      ])
-    ),
+    DOM: stage.DOM.map(wrapInDiv),
     preventDefault: O.merge([
       actions.preventDefault,
       stage.preventDefault,

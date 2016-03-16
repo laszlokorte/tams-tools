@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
-import {div} from '@cycle/dom';
+import {wrapInDiv} from '../../../../lib/dom-helper';
 
 import ModalBox from '../../../modal';
 import intent from './intent';
@@ -24,7 +24,7 @@ export default ({
   });
 
   return {
-    DOM: modal.DOM.map((e) => div([e])),
+    DOM: modal.DOM.map(wrapInDiv),
     selectAll: actions.selectAll$,
   };
 };

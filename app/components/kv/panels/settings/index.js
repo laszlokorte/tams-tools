@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
-import {div} from '@cycle/dom';
+import {wrapInDiv} from '../../../../lib/dom-helper';
 
 import ModalBox from '../../../modal';
 import view from './view';
@@ -21,7 +21,7 @@ export default ({DOM, globalEvents, visible$, viewSetting$ = O.empty()}) => {
   });
 
   return {
-    DOM: modal.DOM.map((e) => div([e])),
+    DOM: modal.DOM.map(wrapInDiv),
     viewSetting$: state$.map((settings) => settings.view),
   };
 };

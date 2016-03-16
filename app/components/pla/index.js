@@ -1,6 +1,6 @@
 import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
-import {div} from '@cycle/dom';
+import {wrapInDiv} from '../../lib/dom-helper';
 
 import {pluck} from '../../lib/utils';
 import graphics from '../graphics';
@@ -72,11 +72,8 @@ export default ({
     DOM: O.combineLatest(
       pla$.map(costPanel),
       stage.DOM,
-      (plaEl, stageEl) => div([
-        plaEl,
-        stageEl,
-      ])
-    ),
+      (a,b) => [a,b]
+    ).map(wrapInDiv),
     preventDefault: O.merge([
       actions.preventDefault,
       stage.preventDefault,
