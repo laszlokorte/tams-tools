@@ -123,7 +123,7 @@ const touchZoom = ({
 const wheelZoom = ({
   wheel$, // stream of mouse events
   owner$, // stream containing the owner element
-  positionFn// function transforming event coordinates into world coorinates
+  positionFn, // function transforming event coordinates into world coorinates
 }) =>
   wheel$.withLatestFrom(owner$, (evt, owner) => {
     const pivot = positionFn({

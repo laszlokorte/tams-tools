@@ -6,7 +6,7 @@ import {ContentThunk} from '../../../lib/contentThunk';
 const zoomModifier = ({factor, pivot}, zoomLimit, bounds) => ({x, y, zoom}) => {
   const newZoom = clamp(zoom * factor, zoomLimit.min, zoomLimit.max);
   const realFactor = newZoom / zoom;
-  const panFactor = (1 - 1 / realFactor);
+  const panFactor = 1 - 1 / realFactor;
 
   return {
     zoom: newZoom,
@@ -48,7 +48,7 @@ export default ({
   props$, camera$, bounds$,
   content$, autoCenter$,
 }, actions) => {
-  const contentThunk$ = content$.map((content, index) => {
+  const cachedContent$ = content$.map((content, index) => {
     return new ContentThunk(content, index % 2);
   });
 
@@ -70,8 +70,12 @@ export default ({
       }));
 
       return O.merge([
-        actions.zoom$.withLatestFrom(zoomLimit$, bounds$, zoomModifier),
-        actions.pan$.withLatestFrom(bounds$, panModifier),
+        actions.zoom$.withLatestFrom(
+          zoomLimit$, bounds$, zoomModifier
+        ),
+        actions.pan$.withLatestFrom(
+          bounds$, panModifier
+        ),
         forceBounds$.withLatestFrom(
           zoomLimit$, bounds$, props$, autoCenterModifier
         ),
@@ -82,7 +86,7 @@ export default ({
         y: initCamera.y,
       })
       .scan((cam, modFn) => modFn(cam))
-      .combineLatest(bounds$, contentThunk$, (cam, bounds, content) => ({
+      .combineLatest(bounds$, cachedContent$, (cam, bounds, content) => ({
         width: props.width,
         height: props.height,
         camera: cam,
