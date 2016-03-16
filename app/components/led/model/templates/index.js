@@ -83,6 +83,34 @@ export default [
   },
 
   {
+    name: "7 Segment (Blank)",
+    inputs: ["x1","x2","x3","x4"],
+    segments: require('./7-segment.json').segments,
+    outputs: [
+      [null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null],
+
+      [null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null],
+
+      [null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null],
+
+      [null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null],
+
+      [null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null],
+
+      [null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null],
+
+      [null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null],
+    ],
+  },
+
+  {
     name: "Dice",
     inputs: ["x1","x2","x3"],
     segments: require('./dice.json').segments,
@@ -94,6 +122,21 @@ export default [
       [false,false,false,false,true,true,true,null],
       [false,false,false,false,false,false,true,null],
       [false,false,true,true,true,true,true,null],
+    ],
+  },
+
+  {
+    name: "Dice (Blank)",
+    inputs: ["x1","x2","x3"],
+    segments: require('./dice.json').segments,
+    outputs: [
+      [null,null,null,null,null,null,null,null],
+      [null,null,null,null,null,null,null,null],
+      [null,null,null,null,null,null,null,null],
+      [null,null,null,null,null,null,null,null],
+      [null,null,null,null,null,null,null,null],
+      [null,null,null,null,null,null,null,null],
+      [null,null,null,null,null,null,null,null],
     ],
   },
 ];
