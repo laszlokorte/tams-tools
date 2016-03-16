@@ -2,13 +2,6 @@ import I from 'immutable';
 
 import bounds from '../../graphics/lib/bounds';
 
-export const layoutedNode = I.Record({
-  label: null,
-  x: 0,
-  y: 0,
-  pivotAngle: 0,
-}, 'layoutedNode');
-
 const path = I.Record({
   fromX: 0,
   fromY: 0,
@@ -20,29 +13,17 @@ const path = I.Record({
   toY: 0,
 }, 'path');
 
-export const layoutedEdge = I.Record({
-  label: null,
-  path: path(),
-  head: true,
-}, 'layoutedEdge');
-
-export const layoutedGraph = I.Record({
-  nodes: I.List(),
-  edges: I.List(),
-  nodeRadius: 70,
-}, 'layoutedGraph');
-
-const calculateEdgePivotAngle = (graph, nodeIndex) => {
-  const state = graph.nodes.get(nodeIndex);
-  const outgoingTrans = graph.edges.filter((edge) => {
+const calculateEdgePivotAngle = (nodes, edges, nodeIndex) => {
+  const state = nodes.get(nodeIndex);
+  const outgoingTrans = edges.filter((edge) => {
     return edge.fromIndex === nodeIndex &&
       edge.toIndex !== nodeIndex;
-  }).map((edge) => graph.nodes.get(edge.toIndex));
+  }).map((edge) => nodes.get(edge.toIndex));
 
-  const incomingTrans = graph.edges.filter((edge) => {
+  const incomingTrans = edges.filter((edge) => {
     return edge.fromIndex !== nodeIndex &&
       edge.toIndex === nodeIndex;
-  }).map((edge) => graph.nodes.get(edge.fromIndex));
+  }).map((edge) => nodes.get(edge.fromIndex));
 
   const avoidAngleOutgoing = outgoingTrans.map((target) => {
     return Math.atan2(target.y - state.y, target.x - state.x);
@@ -84,15 +65,12 @@ const boundingBox = (nodes, radius, padding) => {
   }));
 };
 
-const calculateNodeLayout = (graph) => {
-  return graph.nodes.map((node, nodeIndex) => {
-    return layoutedNode({
-      label: node.label,
-      x: node.x,
-      y: node.y,
-      radius: graph.nodeRadius,
-      pivotAngle: calculateEdgePivotAngle(graph, nodeIndex),
-    });
+const calculateNodeLayout = (nodes, edges) => {
+  return nodes.map((node, nodeIndex) => {
+    return node.set(
+      'pivotAngle',
+      calculateEdgePivotAngle(nodes, edges, nodeIndex)
+    );
   });
 };
 
@@ -197,40 +175,34 @@ const calculateConnectionPath = ({
   }
 };
 
-const calculateEdgeLayout = (graph, layoutedNodes) => {
-  return graph.edges.map((e) => {
+const calculateEdgeLayout = (nodeRadius, edges, layoutedNodes) => {
+  return edges.map((e) => {
     const startNode = layoutedNodes.get(e.fromIndex);
     const endNode = layoutedNodes.get(e.toIndex);
-    return layoutedEdge({
-      label: e.label,
-      path: calculateConnectionPath({
-        from: startNode,
-        to: endNode,
-        offset: graph.nodeRadius,
-        preferredAngle: startNode.pivotAngle + Math.PI,
-        streight: false,
-      }),
-    });
-  }
-  );
-};
-
-const calculateLayout = (graph) => {
-  const nodes = calculateNodeLayout(graph);
-  const edges = calculateEdgeLayout(graph, nodes);
-
-  return layoutedGraph({
-    nodes,
-    edges,
-    nodeRadius: graph.nodeRadius,
+    return e.set('path', calculateConnectionPath({
+      from: startNode,
+      to: endNode,
+      offset: nodeRadius,
+      preferredAngle: startNode.pivotAngle + Math.PI,
+      streight: false,
+    }));
   });
 };
 
-export const layoutGraph = (graph) => {
-  const layouted = calculateLayout(graph);
+const calculateLayout = (nodeRadius, graph) => {
+  const layoutedNodes = calculateNodeLayout(graph.nodes, graph.edges);
+  return graph
+    .set('nodes', layoutedNodes)
+    .update('edges', (edges) =>
+      calculateEdgeLayout(70, edges, layoutedNodes)
+    );
+};
 
-  return {
-    graph: layouted,
-    bounds: boundingBox(graph.nodes, graph.nodeRadius, 10 * graph.nodeRadius),
-  };
+export const layoutGraph = (nodeRadius, graph) => {
+  const layouted = calculateLayout(nodeRadius, graph);
+
+  return layouted.set(
+    'bounds',
+    boundingBox(layouted.nodes, nodeRadius, 10 * nodeRadius)
+  );
 };

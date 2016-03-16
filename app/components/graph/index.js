@@ -2,10 +2,8 @@ import {Observable as O} from 'rx';
 import isolate from '@cycle/isolate';
 import {div} from '@cycle/dom';
 
-import {pluck} from '../../lib/utils';
 import graphics from '../graphics';
 
-import {graphFromJson} from './lib/graph';
 import model from './model';
 import view from './view';
 import intent from './intent';
@@ -13,7 +11,9 @@ import intent from './intent';
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources
-  props$ = O.empty(), // currently not properties supported
+  props$ = O.just({
+    nodeRadius: 70, // radius of the node circles
+  }),
   data$ = O.just({ // The graph data to display
     nodes: [ // the graph's nodes
       {
@@ -31,10 +31,9 @@ export default ({
     ],
   }),
 }) => {
-  const graph$ = data$.map(graphFromJson);
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'), globalEvents);
-  const state$ = model(props$, graph$, actions);
+  const state$ = model(props$, data$, actions);
   const vtree$ = view(state$);
 
   const stage = isolate(graphics, 'mygraphics')({
@@ -45,7 +44,7 @@ export default ({
       height: 600,
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
-    bounds$: state$.map(pluck('bounds')),
+    bounds$: state$.map((s) => s.graph.bounds),
     content$: isolateSink(vtree$, 'graphicsContent'),
   });
 

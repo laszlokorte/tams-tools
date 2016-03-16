@@ -1,8 +1,7 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import bounds from '../../graphics/lib/bounds';
-import {graphNode} from '../lib/graph';
+import {graphFromJson, graphNode} from '../lib/graph';
 import {layoutGraph} from '../lib/layout';
 
 const _position = I.Record({
@@ -12,7 +11,7 @@ const _position = I.Record({
 
 const graphUiState = I.Record({
   graph: null,
-  bounds: bounds(),
+  nodeRadius: 10,
   transientNode: null,
 }, 'graphUiState');
 
@@ -35,21 +34,24 @@ const stopCreate = (state) =>
   state.set('transientNode', null)
 ;
 
-export default (props$, graph$, actions) => {
-  return graph$.map((graph) =>
+export default (props$, data$, actions) => {
+  return data$
+  .map(graphFromJson)
+  .map((baseGraph) =>
     O.merge([
       actions.tryCreate$.map((pos) => (state) => tryCreate(pos, state)),
       actions.doCreate$.map(() => (state) => doCreate(state)),
       actions.stopCreate$.map(() => (state) => stopCreate(state)),
     ])
-    .startWith(graphUiState({graph}))
+    .startWith(graphUiState({graph: baseGraph}))
     .scan(applyModifier)
-    .map((state) => {
-      const layout = layoutGraph(state.graph);
-      return state
-        .set('graph', layout.graph)
-        .set('bounds', layout.bounds);
-    })
+    .combineLatest(props$, (state, props) =>
+      state
+        .update('graph', (graph) =>
+          layoutGraph(props.nodeRadius, graph)
+        )
+        .set('nodeRadius', props.nodeRadius)
+    )
   ).switch()
   .shareReplay(1);
 };

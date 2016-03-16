@@ -4,18 +4,20 @@ export const graphNode = I.Record({
   label: null,
   x: 0,
   y: 0,
+  pivotAngle: null,
 }, 'graphNode');
 
 export const graphEdge = I.Record({
   label: null,
   fromIndex: null,
   toIndex: null,
+  path: null,
 }, 'graphEdge');
 
 export const _graph = I.Record({
   nodes: I.List(),
   edges: I.List(),
-  nodeRadius: 70,
+  bounds: null,
 }, 'graph');
 
 export const graphFromJson = (data) => {

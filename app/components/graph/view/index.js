@@ -60,10 +60,10 @@ const arrowHeadString = (path, length) => {
 const render = (state) =>
   svg('g', [
     svg('rect', {
-      x: state.bounds.minX,
-      y: state.bounds.minY,
-      width: state.bounds.maxX - state.bounds.minX,
-      height: state.bounds.maxY - state.bounds.minY,
+      x: state.graph.bounds.minX,
+      y: state.graph.bounds.minY,
+      width: state.graph.bounds.maxX - state.graph.bounds.minX,
+      height: state.graph.bounds.maxY - state.graph.bounds.minY,
       fill: 'none',
       attributes: {
         'data-target': true,
@@ -90,7 +90,7 @@ const render = (state) =>
       svg('circle', {
         cx: n.x,
         cy: n.y,
-        r: state.graph.nodeRadius,
+        r: state.nodeRadius,
         fill: 'black',
       }),
       svg('text', {
