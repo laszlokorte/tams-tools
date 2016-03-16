@@ -37,7 +37,8 @@ const autoCenterModifier = (_, zoomLimit, bounds, {
       bounds.minX, bounds.maxX
     ),
     y: clamp(
-      centerY + (pivotY - 0.5) * contentHeight + height * zoom / 2,
+      height / zoom / 2 +
+      centerY + (pivotY - 0.5) * contentHeight,
       bounds.minY, bounds.maxY
     ),
     zoom: clamp(zoom, zoomLimit.min, zoomLimit.max),
