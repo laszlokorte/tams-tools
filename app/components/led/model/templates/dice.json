@@ -38,7 +38,7 @@
     },
     {
       "name": "D",
-      "labelPosition": {"x": 100, "y": 100},
+      "labelPosition": {"x": 102, "y": 101},
       "shape": {
         "type" : "circle",
         "attributes" : {
