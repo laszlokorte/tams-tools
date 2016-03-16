@@ -31,7 +31,7 @@ const diffResult = I.Record({
   comparisons: I.List(),
 });
 
-const sameAmountOfIdentifiers = (networkA, networkB) => {
+const sameNumberOfIdentifiers = (networkA, networkB) => {
   return networkA.freeIdentifiers.count() ===
     networkB.freeIdentifiers.count();
 };
@@ -214,9 +214,9 @@ const diffEvaluate = (networkA, networkB, unifications, pairs) => {
 };
 
 export const diffNetworks = (networkA, networkB) => {
-  if (!sameAmountOfIdentifiers(networkA, networkB)) {
+  if (!sameNumberOfIdentifiers(networkA, networkB)) {
     return diffResult({
-      error: 'Expression have diffrent amount of variables',
+      error: 'The Expressions have diffrent number of variables.',
     });
   }
 

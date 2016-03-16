@@ -210,7 +210,7 @@ export const isValidCubeForValuesInMode = (
   , true)
 ;
 
-/// Adjust given cube for a new amount of inputs.
+/// Adjust given cube for a new number of inputs.
 const resizeCube = (
   /*int*/inputCount,
   /*kvCube*/cube
@@ -223,7 +223,7 @@ const resizeCube = (
   ;
 };
 
-/// Adjust the given loop for a new amount of inputs.
+/// Adjust the given loop for a new number of inputs.
 const resizeLoop = (
   /*int*/inputCount,
   /*kvLoop*/loop

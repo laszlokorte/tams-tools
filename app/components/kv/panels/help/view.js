@@ -10,7 +10,7 @@ export default () => div([
   h2('Edit function'),
   dl([
     helpItem('Change Size:', [
-      'You can change the amount of inputs.',
+      'You can change the number of inputs.',
       'This will change the KV-diagrams\'s dimensions.',
     ]),
     helpItem('Outputs:', [
