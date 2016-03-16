@@ -7,7 +7,7 @@ import helpIcon from '../../../icons/help';
 
 import './index.styl';
 
-const signaleAsString = (state) => {
+const signalAsString = (state) => {
   if (state === true) {
     return 'enabled';
   } else if (state === false) {
@@ -96,13 +96,13 @@ const render = (state, table) =>
             'text-anchor': 'end',
             'alignment-baseline': 'middle',
             fill: '#fff',
-          }, "Input as binary"),
+          }, "Input in binary:"),
         ]),
         svg('g', {
           transform: 'translate(170, 120)',
         },
           state.leds.map((led, i) => {
-            const stateClass = 'state-' + signaleAsString(led.enabled);
+            const stateClass = 'state-' + signalAsString(led.enabled);
             return svg('g', [
               svg(led.shape.type, {
                 attributes: {
