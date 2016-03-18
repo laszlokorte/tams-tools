@@ -44,7 +44,7 @@ export default ({
     ],
   }),
 }) => {
-  const pla$ = data$.map(plaFromJson).share();
+  const pla$ = data$.map(plaFromJson).shareReplay(1);
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(isolateSource(DOM, 'graphicsContent'));
   const state$ = model(props$, pla$, actions);
@@ -60,12 +60,13 @@ export default ({
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map(pluck('bounds')),
     content$: isolateSink(vtree$, 'graphicsContent'),
-    autoCenter$: data$.distinctUntilChanged(
+    autoCenter$: pla$.sample(state$).distinctUntilChanged(
       (s) => s,
       (a, b) => a.loops.length === b.loops.length &&
         a.inputs.length === b.inputs.length &&
         a.outputs.length === b.outputs.length
-    ).map(() => true),
+    ).map(() => ({weightX: 0.5, weightY: 0}))
+    .sample(state$),
   });
 
   return {
