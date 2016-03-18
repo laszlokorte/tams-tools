@@ -3,7 +3,7 @@ export default [
     name: "De Morgan",
     data: {
       langId: "math",
-      term: "(P ∧ Q), (¬((¬P) ∨ (¬Q)))",
+      term: "(P ∧ Q), ¬(¬P ∨ ¬Q)",
     },
   },
   {
