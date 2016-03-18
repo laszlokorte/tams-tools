@@ -14,6 +14,7 @@ import {
   error as _error,
 } from './io';
 
+// a mapping from languageId to language object
 const LANGUAGE_MAP = {
   c: C,
   latex: Latex,
@@ -22,12 +23,13 @@ const LANGUAGE_MAP = {
 };
 
 const _state = I.Record({
-  languageList: I.List(),
-  input: null,
-  output: null,
-  showCompletion: true,
+  languageList: I.List(), // the list of all available languages
+  input: null, // the current input
+  output: null, // the current ouput
+  showCompletion: true, // if buttons for inserting special tokens are visible
 }, 'state');
 
+// a list of languages with their corrsponding id
 const languageList = I.List(Object
   .keys(LANGUAGE_MAP)
   .map((id) => ({
@@ -35,6 +37,7 @@ const languageList = I.List(Object
     language: LANGUAGE_MAP[id],
   })));
 
+// function to recover the parser pipeline from a parse error
 const handleError = (parseError) =>
   O.just(_output({
     network: null,
@@ -46,6 +49,8 @@ const handleError = (parseError) =>
   }))
 ;
 
+// parse and analyze the given input object
+// returns a stream containing an output object
 const processInput = (input) => {
   return O.just(input)
   .map(parser(LANGUAGE_MAP))

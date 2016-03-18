@@ -6,6 +6,7 @@ import intent from './intent';
 
 import {pluck} from '../../lib/utils';
 
+// initialize the modal window component
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources

@@ -469,13 +469,6 @@ export const newLoop = (
   })
 ;
 
-/// Deserialize a cube from given json.
-export const cubeFromJson = (
-  json
-  ) => json === null ? null :
-  kvCube(json)
-;
-
 /// Get a new diagram
 export const newDiagram = (
   ) =>

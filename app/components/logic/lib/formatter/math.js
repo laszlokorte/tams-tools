@@ -9,9 +9,9 @@ const tryFetch = (map, key) =>
   map[key] || key
 ;
 
-const notAsci = new RegExp('[^a-z0-9]', 'i');
+const notASCII = new RegExp('[^a-z0-9]', 'i');
 const sanitizeName = (name) =>
-  notAsci.test(name) ? `"${name}"` : name;
+  notASCII.test(name) ? `"${name}"` : name;
 
 export default self = {
   name: "Math",

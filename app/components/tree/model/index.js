@@ -4,11 +4,12 @@ import I from 'immutable';
 import {graph, isGraphEmpty} from '../lib/graph';
 import {layoutTree, bounds} from '../lib/layout';
 
+// the ui state of the tree component
 const treeUiState = I.Record({
-  graph: graph(),
-  scaleX: 1,
-  scaleY: 1,
-  bounds: bounds(),
+  graph: graph(), // the tree graph to be rendered
+  scaleX: 1, // minimal horizontal distance between nodes
+  scaleY: 1, // minimal vertical distance between nodes
+  bounds: bounds(), // the bounding box of the tree
 }, 'treeUiState');
 
 export default (props$, data$/*, actions*/) => {

@@ -1,37 +1,45 @@
 import I from 'immutable';
 
-export const graphNode = I.Record({
-  label: null,
-  x: 0,
-  y: 0,
-  leaf: false,
-  labelAnchor: 'middle',
-  xOffset: 0,
-  color: null,
-  faded: false,
-}, 'graphNode');
+// object representing a node of the tree graph
+const graphNode = I.Record({
+  label: null, // name of the node
+  x: 0, // 2d cartesian x position of the node
+  y: 0, // 2d cartesian y position of the node
+  leaf: false, // if it is a leaf node
+  // text alignment of the node's label
+  // (start | middle | end)
+  labelAlignment: 'middle',
+  xOffset: 0, // horizontal offset of the node's label
+  color: null, // color of the node (css color)
+  faded: false, // if the node should be slightly faded out
+}, 'treeNode');
 
-export const graphEdge = I.Record({
-  label: null,
-  fromX: 0,
+// object representing an edge of the tree graph
+const graphEdge = I.Record({
+  fromX: 0, // 2d position of the edge
   fromY: 0,
   toX: 0,
   toY: 0,
-  color: null,
-  faded: false,
-}, 'graphEdge');
+  color: null, // color of the edge (css color)
+  faded: false, // if the edge should be slightly faded out
+}, 'treeEdge');
 
-export const _graph = I.Record({
+// object representing a tree graph
+// it contains lists of nodes and edges to represent the
+// tree as a flat structure instead of an object tree
+export const graph = I.Record({
   nodes: I.List(),
   edges: I.List(),
-}, 'graph');
+}, 'tree');
 
+// get a list of a child nodes of the given node
+// the list also includes the given node itself
 const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
   if (layoutNode === null) {
     return acc;
   }
 
-  let labelAnchor = rel;
+  let labelAlignment = rel;
   let xOffset = 0;
 
   if (rel === 'start') {
@@ -57,13 +65,15 @@ const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
     x: layoutNode.x,
     y: layoutNode.y,
     leaf: layoutNode.children.length === 0,
-    labelAnchor: labelAnchor,
+    labelAlignment: labelAlignment,
     xOffset: xOffset,
     color: layoutNode.node.color,
     faded: layoutNode.node.hidden,
   })));
 };
 
+// get all edges of the child nodes of the given node
+// as well as the edges of the node itself
 const edgeList = (layoutNode, acc = I.List()) => {
   if (layoutNode === null) {
     return acc;
@@ -80,16 +90,16 @@ const edgeList = (layoutNode, acc = I.List()) => {
   })) : acc);
 };
 
-export const isGraphEmpty = (graph) => {
-  return graph.nodes.isEmpty() &&
-    graph.edges.isEmpty();
+// check if the given graph is empty
+export const isGraphEmpty = (g) => {
+  return g.nodes.isEmpty() &&
+    g.edges.isEmpty();
 };
 
+// create a tree graph from a given plain object
 export const graphFromJson = (object) => {
-  return _graph({
+  return graph({
     nodes: nodeList(object),
     edges: edgeList(object),
   });
 };
-
-export {_graph as graph};

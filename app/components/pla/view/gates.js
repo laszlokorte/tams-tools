@@ -171,8 +171,8 @@ const omitGate = (color, angle, inputCount, defaultSignal) => {
   }
 };
 
-// The shape of a negator
-const negatorFeature = (color) =>
+// The shape of a inverter
+const inverterFeature = (color) =>
   svg('circle', {
     attributes: {
       cx: 38,
@@ -324,7 +324,7 @@ export const clipPaths = (size = 400) =>
     inputClipPath({type: 'nand', indent: 25, size}),
     inputClipPath({type: 'and', indent: 25, size}),
     inputClipPath({type: 'buffer', indent: 50, size}),
-    inputClipPath({type: 'negator', indent: 50, size}),
+    inputClipPath({type: 'inverter', indent: 50, size}),
   ])
 ;
 
@@ -377,7 +377,7 @@ export const wires = {
   },
 };
 
-// functions to generate gates
+// functions to generate gate shapes
 export const gates = {
   and: composedGate({
     type: 'and',
@@ -390,7 +390,7 @@ export const gates = {
   nand: composedGate({
     type: 'nand',
     inputIndent: 25,
-    features: [andBodyFeature, negatorFeature],
+    features: [andBodyFeature, inverterFeature],
   }),
 
   or: composedGate({
@@ -404,7 +404,7 @@ export const gates = {
   nor: composedGate({
     type: 'nor',
     inputIndent: 20,
-    features: [orBodyFeature, negatorFeature],
+    features: [orBodyFeature, inverterFeature],
   }),
 
   xor: composedGate({
@@ -416,7 +416,7 @@ export const gates = {
   xnor: composedGate({
     type: 'xnor',
     inputIndent: 10,
-    features: [orBodyFeature, exclusionFeature, negatorFeature],
+    features: [orBodyFeature, exclusionFeature, inverterFeature],
   }),
 
   buffer: composedGate({
@@ -427,11 +427,11 @@ export const gates = {
     canOmit: true,
   }),
 
-  negator: composedGate({
-    type: 'negator',
+  inverter: composedGate({
+    type: 'inverter',
     inputIndent: 50,
     bodyWidth: 50,
-    features: [bufferBodyFeature, negatorFeature],
+    features: [bufferBodyFeature, inverterFeature],
     defaultSignal: 1,
   }),
 };

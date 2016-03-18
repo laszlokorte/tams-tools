@@ -53,7 +53,7 @@ const renderNode = (state, node) => [
   renderLabel({
     x: node.x * state.scaleX + (node.leaf ? 0 : node.xOffset),
     y: node.y * state.scaleY + (node.leaf ? 25 : -15),
-    anchor: node.leaf ? 'middle' : node.labelAnchor,
+    anchor: node.leaf ? 'middle' : node.labelAlignment,
     faded: node.faded,
     color: node.color,
   }, node.label),

@@ -105,7 +105,7 @@ roundParens
   = '(' _ body:additive _ ')' {
     return {body: body, style: 1}
   }
-  / '\\bigl(' _ body:additive _ '\\bigr)' {
+  / "\\bigl(" _ body:additive _ '\\bigr)' {
     return {body: body, style: 2}
   }
   / '\\Bigl(' _ body:additive _ '\\Bigr)' {

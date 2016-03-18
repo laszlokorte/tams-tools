@@ -7,6 +7,7 @@ import {toPLA, toJSON} from './lib/diagram';
 
 import modalPanels from './panels';
 
+// initialize the kv editor component
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources
@@ -25,7 +26,7 @@ export default ({
   const state$ = model(O.empty(), actions);
 
   const plaData$ = state$.map(({state}) =>
-    toPLA(state.diagram, state.currentKvMode, state.currentCube)
+    toPLA(state.diagram, state.currentKvMode, state.currentLoop.cube)
   ).share();
 
   const jsonData$ = state$.map(({state}) =>

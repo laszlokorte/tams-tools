@@ -1,26 +1,52 @@
-
+// the interface for a formatter object
+// a formatter needs to provide the following methods in order
+// to be used for formatting an expression
 const defaultFormatter = {
+  // format a binary expression
+  //
+  // op is the name of the operator: 'AND' | 'OR' | 'XOR'
+  // lhs and rhs are the left and right hand side already
+  // converted into a string
   formatBinary: (op, lhs, rhs/*, depth*/) => {
     return defaultFormatter.formatBinaryChain(op, lhs, rhs);
   },
+  // join multiple operands with a binary operator
+  //
+  // op is the name of the operator: 'AND' | 'OR' | 'XOR'
+  // operands is a list of strings
   formatBinaryChain: (op, ...operands) => {
     return `(${operands.join(' ' + op + ' ')})`;
   },
-  formatUnary: (op, content/*, depth*/) => {
-    return `(${op} ${content})`;
+  // format a unary expression
+  //
+  // op is the name of the operator: 'NOT'
+  // body is the sub expression as string
+  formatUnary: (op, body/*, depth*/) => {
+    return `(${op} ${body})`;
   },
+  // format a unary expression without wrapping
+  // it in parenthesis
+  //
+  // op is the name of the operator: 'NOT'
+  // body is the sub expression as string
   formatUnarySimple: (op, content/*, depth*/) => {
     return defaultFormatter.formatUnary(op, content);
   },
-  formatGroup: (content/*, depth*/) => {
-    return content;
+  // format a group expression
+  //
+  // body is the sub expression as string
+  formatGroup: (body/*, depth*/) => {
+    return body;
   },
+  // format the name of an identifier (string)
   formatName: (name) => {
     return name;
   },
+  // format a constant value: true | false | null
   formatValue: (value) => {
     return value;
   },
+  // format a vector of values
   formatVector: (identifiers, values) => {
     return `<${
       identifiers.map((i) => i.name).join(',')
@@ -28,6 +54,7 @@ const defaultFormatter = {
       values.map(defaultFormatter.formatVectorValue).join('')
     }>`;
   },
+  // format a single vector value
   formatVectorValue: (value) => {
     if (value === true) {
       return '1';
@@ -37,14 +64,20 @@ const defaultFormatter = {
       return '*';
     }
   },
+  // format a labeled expression
+  // name is the label as string
+  // body is the sub expression as string
   formatLabel: (name, body) => {
     return `${name}=${body}`;
   },
+  // format a list of expressions
+  // expressions is an array of strings
   formatExpressions: (expressions) => {
     return expressions.join(', ');
   },
 };
 
+// convert an expression into a string using the given formatter
 export const expressionToString = (
   expression, formatter = defaultFormatter, depth = 0
 ) => {
@@ -84,6 +117,8 @@ export const expressionToString = (
   }
 };
 
+// Convert a list of expressions into a string using
+// the given formatter
 export const expressionListToString = (
   expressionList, formatter = defaultFormatter
 ) =>

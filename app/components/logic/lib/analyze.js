@@ -1,5 +1,6 @@
 import I from 'immutable';
 
+// collect the set of all subexpression from the AST of th given expression
 export const collectSubExpressions = (
   expression, acc = I.OrderedSet(), collect = false
 ) => {
@@ -24,6 +25,8 @@ export const collectSubExpressions = (
   }
 };
 
+// Collect the set of all identifiers occuring in the AST
+// of the given expression
 export const collectIdentifiers = (expression, acc = I.Set()) => {
   if (expression === null) {
     return acc;

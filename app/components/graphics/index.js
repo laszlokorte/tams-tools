@@ -4,6 +4,7 @@ import model from './model';
 import view from './view';
 import intent from './intent';
 
+// initialize the graphics component
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources

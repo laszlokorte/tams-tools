@@ -1,6 +1,9 @@
 import {Observable as O} from 'rx';
 import {clamp} from '../../../lib/utils';
 
+// The minimal proportional size of each of the panes
+const MIN_PROPORTION = 0.1; // 10%
+
 export default ({props$, firstChild$, secondChild$}, actions) => {
   const firstChild$shared = firstChild$.shareReplay(1);
   const secondChild$shared = secondChild$.shareReplay(1);
@@ -12,8 +15,10 @@ export default ({props$, firstChild$, secondChild$}, actions) => {
         secondChild$shared.startWith(null),
         (proportion, firstChild, secondChild) => {
           return {
-            proportion:
-              clamp(proportion, 0.1, 0.9),
+            proportion: clamp(
+              proportion,
+              MIN_PROPORTION, (1 - MIN_PROPORTION)
+            ),
             firstChild,
             secondChild,
           };

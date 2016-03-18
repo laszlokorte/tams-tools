@@ -39,6 +39,7 @@ export default ({
   return {
     DOM: vtree$,
     selectedRow$: state$.map(
+      // index of the currently selected table row
       ({selectedIndex}) => selectedIndex
     ),
   };

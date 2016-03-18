@@ -1,7 +1,15 @@
-const greenColor = '#00cc00';
-const redColor = '#cc0000';
-const cyanColor = '#00dddd';
+// node colors
+// TODO(Laszlo Korte): move color defintions to css
+//
+// color for expressions that evaluate to true
+const trueColor = '#00cc00';
+// color for expressions that evaluate to false
+const falseColor = '#cc0000';
+// color for expressions that evaluate to null / dont-care
+const nullColor = '#00dddd';
 
+// get the child expression of a given expression
+// to be used as child nodes in the tree
 const children = (expression) => {
   switch (expression._name) {
   case 'binary':
@@ -21,6 +29,7 @@ const children = (expression) => {
   }
 };
 
+// get the tree node's label for a given constant expression
 const constantName = (expression) => {
   if (expression.value === null) {
     return '*';
@@ -28,6 +37,7 @@ const constantName = (expression) => {
   return expression.value ? '1' : '0';
 };
 
+// get the tree node's label for a given expression
 const name = (expression) => {
   switch (expression._name) {
   case 'binary':
@@ -49,21 +59,26 @@ const name = (expression) => {
   }
 };
 
+// get the color of a constant expression
 const constantColor = (expression) => {
   if (expression.value === null) {
-    return cyanColor;
+    return nullColor;
   }
-  return expression.value ? greenColor : redColor;
+  return expression.value ? trueColor : falseColor;
 };
 
+// get the color for the given expression
+// by looking up it's value in the evaluation map
 const expressionColor = (expression, evalutationMap) => {
   const value = evalutationMap.get(expression);
   if (value === null) {
-    return cyanColor;
+    return nullColor;
   }
-  return value ? greenColor : redColor;
+  return value ? trueColor : falseColor;
 };
 
+// get the color for the given expression
+// by looking up it's value in the evaluation map
 const color = (expression, evalutationMap) => {
   switch (expression._name) {
   case 'binary':
@@ -81,22 +96,32 @@ const color = (expression, evalutationMap) => {
   }
 };
 
-const toTree = (expression, evalutationMap) => {
-  if (expression === null) {
-    return null;
-  }
-
+// build an expression tree
+const toTree = (expression, evalutationMap = null) => {
+  // skip group expressions
   if (expression._name === 'group') {
-    return toTree(expression.body, evalutationMap);
-  } else if (expression._name === 'label' && expression.name === null) {
     return toTree(expression.body, evalutationMap);
   }
 
   return {
     name: name(expression),
-    children: children(expression).map((e) => toTree(e, evalutationMap)),
+    children: children(expression).map(
+      (e) => toTree(e, evalutationMap)
+    ),
+    // color the node if an evaluation mal is available
     color: evalutationMap && color(expression, evalutationMap),
   };
 };
 
-export default toTree;
+// build an operator tree of the given expression
+// to be displayed via the tree component
+// use the evalutaionMap to color the nodes
+export default (expression, evalutationMap = null) => {
+  // if the expression is a label but has no name set
+  // skip it and only use the sub expression
+  if (expression._name === 'label' && expression.name === null) {
+    return toTree(expression.body, evalutationMap);
+  } else {
+    return toTree(expression.body, evalutationMap);
+  }
+};

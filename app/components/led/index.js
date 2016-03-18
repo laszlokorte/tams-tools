@@ -11,6 +11,7 @@ import asciiTable from '../table/lib/format-ascii';
 
 import modalPanels from './panels';
 
+// initialize the led editor component
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources

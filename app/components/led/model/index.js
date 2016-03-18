@@ -2,19 +2,23 @@ import {Observable as O} from 'rx';
 
 import templates from './templates';
 
-const tableIndex = (...bools) => {
+// convert a list of bools into a number
+const tableIndex = (bools) => {
   return bools.reduce(
-    (prev, on, i) => prev + (on ? Math.pow(2, i) : 0)
+    (prev, on, i) => prev + (on ? 1 << i : 0)
   , 0);
 };
 
-const toggleSwitch = (state, switchId) => {
-  state.switches[switchId].enabled = !state.switches[switchId].enabled;
+// toggle the switch the given index
+const toggleSwitch = (swichIndex, state) => {
+  state.switches[swichIndex].enabled = !state.switches[swichIndex].enabled;
   return state;
 };
 
-const toggleOutput = (state, outputIndex, reset) => {
-  const index = tableIndex(...state.switches.map(({enabled}) => enabled));
+// toggle the ouput of the given index
+// if reset is true the output is set to null (dont-care)
+const toggleOutput = (outputIndex, reset, state) => {
+  const index = tableIndex(state.switches.map(({enabled}) => enabled));
   const oldVal = state.leds[outputIndex].functionTable[index];
 
   state.leds[outputIndex].functionTable[index] = reset ? null :
@@ -23,7 +27,9 @@ const toggleOutput = (state, outputIndex, reset) => {
   return state;
 };
 
-const decimaleInput = (state, decimal) => {
+// set the input switch values to match the binary
+// pattern of the given decimal number
+const decimaleInput = (decimal, state) => {
   state.switches = state.switches.map((s, i) =>
     ({
       name: s.name,
@@ -40,13 +46,13 @@ export default (data$, actions) =>
   .map((template) => {
     return O.merge([
       actions.toggleSwitch$.map((switchIndex) => (state) =>
-        toggleSwitch(state, switchIndex)
+        toggleSwitch(switchIndex, state)
       ),
       actions.toggleOutput$.map(({outputIndex, reset}) => (state) =>
-        toggleOutput(state, outputIndex, reset)
+        toggleOutput(outputIndex, reset, state)
       ),
       actions.decimalInput$.map((decimal) => (state) =>
-        decimaleInput(state, decimal)
+        decimaleInput(decimal, state)
       ),
     ]).startWith({
       switches: template.inputs.map((name) => ({
@@ -65,19 +71,22 @@ export default (data$, actions) =>
   .switch()
   .map((data) => {
     return {
+      // the names and values of the input switches
       switches: data.switches,
-      decimal: tableIndex(...(data.switches.map(
+      // the current input values interpreted as decimal number
+      decimal: tableIndex(data.switches.map(
         ({enabled}) => enabled
-      ))),
+      )),
+      // the output leds
       leds: data.leds.map((led) => ({
-        name: led.name,
-        labelPosition: led.labelPosition,
-        shape: led.shape,
-        functionTable: led.functionTable,
-        enabled: led.functionTable[
-          tableIndex(...(data.switches.map(
+        name: led.name, // nam of the led
+        labelPosition: led.labelPosition, // position of the leds label text
+        shape: led.shape, // shape of the led
+        functionTable: led.functionTable, // function table for this output
+        enabled: led.functionTable[ // if the led is on or off
+          tableIndex(data.switches.map(
             ({enabled}) => enabled
-          )))
+          ))
         ],
       })),
     };

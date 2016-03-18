@@ -5,10 +5,17 @@ import latexParser from '../../lib/syntax/logic-latex.pegjs';
 import mathParser from '../../lib/syntax/logic-math.pegjs';
 import pythonParser from '../../lib/syntax/logic-python.pegjs';
 
+// an object representing a language that can be used for parsing
+// a expression given as string
 const language = I.Record({
+  // the name of the language
   name: null,
+  // important tokens used in the language
+  // which a user might not be able to type
+  // on the keyboard
   completions: I.List(),
-  parse: () => { throw new Error("not implemented"); },
+  // function from json to plain ast
+  parse: (/*string*/) => { throw new Error("not implemented"); },
 });
 
 export const C = language({

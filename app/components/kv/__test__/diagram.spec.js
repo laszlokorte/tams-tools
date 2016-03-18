@@ -84,7 +84,6 @@ test.todo('setValue');
 test.todo('getValue');
 test.todo('newCubeFromTo');
 test.todo('newLoop');
-test.todo('cubeFromJson');
 test.todo('fromJSON');
 test.todo('toJSON');
 test.todo('toPLA');

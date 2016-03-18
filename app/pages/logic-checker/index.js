@@ -12,7 +12,7 @@ import {globalEventDriver} from '../../drivers/global-events';
 import {insertStringDriver} from '../../drivers/rangy';
 
 import LogicField from '../../components/logic/input-field';
-import {diffNetworks} from '../../components/logic/lib/diff';
+import {compareNetworks} from '../../components/logic/lib/diff';
 import {expressionToString} from '../../components/logic/lib/formatter';
 import formatter from '../../components/logic/lib/formatter/math';
 
@@ -63,9 +63,9 @@ const render = (state, field1, field2) =>
               className: comparison.equal ? 'state-success' : 'state-fail',
             }, [
               comparison.equal ? 'Equal!' : 'Not Equal!',
-              comparison.difference && div('.comparison-reason', [
+              comparison.reason && div('.comparison-reason', [
                 `For assignment (${
-                  I.List(comparison.difference.identifierMap.entries())
+                  I.List(comparison.reason.identifierMap.entries())
                   .filter(([id]) => id._name === 'identifier')
                   .map(([id, value]) =>
                     formatter.formatLabel(
@@ -76,11 +76,11 @@ const render = (state, field1, field2) =>
                 }): ${
                   expressionToString(comparison.expressionA.body, formatter)
                 } is ${
-                  formatter.formatValue(comparison.difference.valueA)
+                  formatter.formatValue(comparison.reason.valueA)
                 } but ${
                   expressionToString(comparison.expressionB.body, formatter)
                 } is ${
-                  formatter.formatValue(comparison.difference.valueB)
+                  formatter.formatValue(comparison.reason.valueB)
                 }`,
               ]),
             ]),
@@ -101,7 +101,7 @@ const diff = (outputA, outputB) => {
     return null;
   }
 
-  return diffNetworks(outputA.network, outputB.network);
+  return compareNetworks(outputA.network, outputB.network);
 };
 
 const logicApp = (sources) => {

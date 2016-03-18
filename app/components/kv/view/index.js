@@ -146,7 +146,6 @@ const renderBody = (layout, state) =>
     kvMode: state.currentKvMode,
     editMode: state.currentEditMode,
     output: state.currentOutput,
-    currentCube: state.currentCube,
     currentLoop: state.currentLoop,
     compact: false,
     cellStyle: state.viewSetting,
@@ -218,7 +217,7 @@ const render = ({state, layout}, index) =>
           readonly: state.currentEditMode !== 'function',
           value: state.diagram.inputs.size,
           min: 0,
-          max: 8,
+          max: state.maxInputs,
         }),
         renderSpinner({
           attributes: {
@@ -228,13 +227,13 @@ const render = ({state, layout}, index) =>
           readonly: state.currentEditMode !== 'function',
           value: state.diagram.outputs.size,
           min: 1,
-          max: 7,
+          max: state.maxOutputs,
         }),
       ]),
 
       renderOutputThumbnails(layout, state, {
         canEdit: state.currentEditMode === 'function',
-        canAdd: state.diagram.outputs.size < 7,
+        canAdd: state.diagram.outputs.size < state.maxOutputs,
         canRemove: state.diagram.outputs.size > 1,
       }),
     ]),

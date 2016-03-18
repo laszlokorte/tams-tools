@@ -7,18 +7,19 @@ const sanitizeName = (name) =>
   name.replace(spaces, '_')
 ;
 
-export default (logicNetwork) => {
-  if (
-    logicNetwork.freeIdentifiers.size > 8
-  ) {
+// convert logic expressions into a kv diagram
+// the expressions are provided as logicNetwork object.
+//
+// maxInputs limits the number of used identifiers
+// maxOutputs limits the number of expressions
+export default (logicNetwork, maxInputs, maxOutputs) => {
+  if (logicNetwork.freeIdentifiers.size > maxInputs) {
     throw new Error(
       "Expression must not not have more than 8 identifiers"
     );
   }
 
-  if (
-    logicNetwork.sortedExpressions.size > 7
-  ) {
+  if (logicNetwork.sortedExpressions.size > maxOutputs) {
     throw new Error("No more that 7 expressions are allowed");
   }
 

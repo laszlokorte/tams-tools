@@ -6,6 +6,8 @@ const valueToString = (value) => {
   }
 };
 
+// Convert a pla into a BLIF string format
+// https://www.ece.cmu.edu/~ee760/760docs/blif.pdf
 export default (pla) => {
   return [
     `# ${pla.mode}`,

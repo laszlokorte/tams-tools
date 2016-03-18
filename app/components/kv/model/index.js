@@ -10,30 +10,45 @@ import expressionImport from './expression-import';
 import colorPalette from './colors';
 import {generateUnique} from './unique';
 
+const MAX_INPUTS = 8;
+const MAX_OUTPUTS = 7;
+
 const kvState = I.Record({
-  currentEditMode: 'loops',
-  currentKvMode: KVD.modeFromName('dnf'),
-  currentCube: KVD.kvCube(),
-  currentLoop: KVD.kvLoop(),
-  currentOutput: 0,
-  renameOutput: -1,
-  renameOutputValue: null,
-  renameOutputValid: false,
-  diagram: KVD.newDiagram(),
-  errorMessage: null,
-  viewSetting: 'function',
+  maxInputs: MAX_INPUTS, // maximal number of input ports
+  maxOutputs: MAX_INPUTS, // maximal number of output ports
+  currentEditMode: 'loops', // 'loops' or 'functions'
+  currentKvMode: KVD.modeFromName('dnf'), // mode of currently edited loop
+  currentLoop: KVD.kvLoop(), // the loop currently being created
+  currentOutput: 0, // the currently selected output
+  renameOutput: -1, // the output currently being renamed
+  renameOutputValue: null, // the new name for the currently renamed output
+  renameOutputValid: false, // if the new output name is valid
+  diagram: KVD.newDiagram(), // the kv diagram being edited
+  errorMessage: null, // The current error message
+  viewSetting: 'function', // the style in which cells are displayed.
+                           // function - the function's value inside a cell
+                           // decimal - the cell's index as decimal number
+                           // binary - the cell's index as binary number
 }, 'state');
 
-const generateInputName = (i) =>
-  String.fromCharCode(65 + i % 25) + (
-    i > 25 ? (i / 25 + 1).toString() : ''
+// Generate an input name from a number
+// return's the n'th letter of the alphabet
+const inputName = (n) =>
+  String.fromCharCode(65 + n % 25) + (
+    n > 25 ? (n / 25 + 1).toString() : ''
   )
 ;
 
-const generateOutputName = (i) =>
-  "O" + (i + 1)
+// generate an output name from a number
+const outputName = (n) =>
+  "O" + (n + 1)
 ;
 
+// convert 32 bit hex color values (#rrggbbaa) into
+// 24 bit hex color values (#rrggbb) by multiplying the rgb
+// channels with the alpha channel
+//
+// eg #ffaa0088 -> #885500
 const inlineAlphaChannel = (hex) => {
   const channels = hex
     .match(/#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})/i)
@@ -51,33 +66,38 @@ const inlineAlphaChannel = (hex) => {
   return color;
 };
 
-const generateLoopColor = (i) =>
+// generate a color (#rrggbb) from a number
+const loopColor = (n) =>
   inlineAlphaChannel(
-    colorPalette[i % colorPalette.length] + (
-      (255 - (101 * Math.floor(i / colorPalette.length)) % 251).toString(16)
+    colorPalette[n % colorPalette.length] + (
+      (255 - (101 * Math.floor(n / colorPalette.length)) % 251).toString(16)
     )
   )
 ;
 
+// memoize the function for generating kv layouts
 const layout = memoize(buildLayout);
 
+// reset the state's error message
 const clearError = (state) =>
   state ? state.remove('errorMessage') : state
 ;
 
+// add an input the kv diagram of state
 const addInput = (state) =>
   state.update('diagram', (diagram) =>
     KVD.appendInput(
       generateUnique(
+        inputName,
         diagram.inputs
         .map((input) => input.name)
-        .toSet()
-      , generateInputName),
+        .toSet()),
       diagram
     )
   )
 ;
 
+// remove an input from the kv diagram of state
 const removeInput = (state) =>
   state.update('diagram', (diagram) =>
     KVD.popInput(
@@ -86,6 +106,9 @@ const removeInput = (state) =>
   )
 ;
 
+// cycles through possible output values:
+// true -> null -> false
+// true -> false -> null (if reverse)
 const nextValue = (
   /*mixed*/currentValue,
   /*boolean*/reverse
@@ -96,11 +119,13 @@ const nextValue = (
   return reverse ? prev : next;
 };
 
+// cycles the value of cell for a given the output
+// of the given state
 const cycleValue = (
-  state,
   /*int*/outputIndex,
   /*BitSet*/cell,
-  /*boolean*/reverse
+  /*boolean*/reverse,
+  state
   ) =>
   state.update('diagram', (diagram) =>
     KVD.setValue(
@@ -115,19 +140,24 @@ const cycleValue = (
   )
 ;
 
-const tryLoop = ({state, startCell, targetCell, allOutputs}) =>
-  state
-  .set('currentCube',
-    KVD.newCubeFromTo(
-      startCell, targetCell, state.diagram.inputs.size
-    )
-  ).set('currentLoop',
+// try to create a loop from startCell to targetCell
+//
+// this does not create a persistent loop but just an transient
+// one for preview purposes.
+//
+// this transient loop can be removed again via `stopTryLoop(state)`
+//
+// allOutputs - if the loop should be created across all
+//              outputs or only for the currently selected output
+const tryLoop = ({startCell, targetCell, allOutputs, state}) =>
+  state.set('currentLoop',
     KVD.kvLoop({
       color: generateUnique(
+        loopColor,
         state.diagram.loops
         .map((loop) => loop.color)
         .toSet()
-      , generateLoopColor),
+      ),
       cube: KVD.newCubeFromTo(
         startCell, targetCell, state.diagram.inputs.size
       ),
@@ -138,24 +168,35 @@ const tryLoop = ({state, startCell, targetCell, allOutputs}) =>
   )
 ;
 
+// stop trying to create a loop
 const stopTryLoop = (state) =>
   state
-  .set('currentCube', KVD.kvCube())
   .set('currentLoop', KVD.kvLoop())
 ;
 
-const removeLoop = (state, loopIndex, allOutputs) =>
+// remove the loop at the given index
+//
+// allOutputs - if the loop should be removed from all outputs
+//              or only from the currently selected one
+const removeLoop = (loopIndex, allOutputs, state) =>
   state.update('diagram', (diagram) =>
     allOutputs ? KVD.removeLoop(loopIndex, diagram) :
       KVD.removeLoopFromOutput(loopIndex, state.currentOutput, diagram)
   )
 ;
 
+// crate a loop from startCell to endCell for output of given index
+//
+// if allMatchingOutputs is true the loop will also be created for all other
+// outputs if possible ie if their function values allow the loop exist.
 const addLoop = ({
-  state, outputIndex,
-  start, end, allMatchingOutputs = true,
+  outputIndex, startCell, targetCell,
+  allMatchingOutputs = true,
+  state,
 }) => {
-  const newCube = KVD.newCubeFromTo(start, end, state.diagram.inputs.size);
+  const newCube = KVD.newCubeFromTo(
+    startCell, targetCell, state.diagram.inputs.size
+  );
   const values = state.diagram.outputs.get(outputIndex).values;
   if (!KVD.isValidCubeForValuesInMode(
     newCube, values, state.currentKvMode
@@ -174,10 +215,11 @@ const addLoop = ({
   return state.update('diagram', (diagram) =>
     KVD.appendLoop(KVD.kvLoop({
       color: generateUnique(
+        loopColor,
         diagram.loops
         .map((loop) => loop.color)
         .toSet()
-      , generateLoopColor),
+      ),
       cube: newCube,
       outputs: outputs,
       mode: state.currentKvMode,
@@ -185,13 +227,15 @@ const addLoop = ({
   );
 };
 
+// create a new output to the state's kv diagram
 const addOutput = (state) => {
   const newDiagram = KVD.appendOutput(
     generateUnique(
+      outputName,
       state.diagram.outputs
       .map((output) => output.name)
       .toSet()
-    , generateOutputName),
+    ),
     state.diagram
   );
 
@@ -200,7 +244,8 @@ const addOutput = (state) => {
     .set('currentOutput', newDiagram.outputs.size - 1);
 };
 
-const removeOutput = (state, outputIndex) =>
+// remove the output at the given index from the state's kv diagram
+const removeOutput = (outputIndex, state) =>
   state.update('currentOutput', (currentOutput) =>
     Math.max(0,
       currentOutput >= outputIndex ?
@@ -214,20 +259,24 @@ const removeOutput = (state, outputIndex) =>
   )
 ;
 
-const selectOutput = (state, outputIndex) =>
+// select the output at the given index
+const selectOutput = (outputIndex, state) =>
   state.set('currentOutput',
     clamp(outputIndex, 0, state.diagram.outputs.size - 1))
 ;
 
-const switchKvMode = (state, mode) =>
+// set the state's kv mode to either 'knf' or 'dnf'
+const switchKvMode = (mode, state) =>
   state.set('currentKvMode', KVD.modeFromName(mode))
 ;
 
-const switchEditMode = (state, mode) =>
+// set the state's edit mode to either 'function' or 'loops'
+const switchEditMode = (mode, state) =>
   state.set('currentEditMode', mode)
 ;
 
-const startRename = (state, outputIndex) =>
+// begin renaming the output of given index
+const startRename = (outputIndex, state) =>
   state
     .set('renameOutput', outputIndex)
     .set('renameOutputValue',
@@ -235,6 +284,7 @@ const startRename = (state, outputIndex) =>
     .set('renameOutputValid', true)
 ;
 
+// cancel renaming the output
 const cancelRename = (state) =>
   state
     .remove('renameOutput')
@@ -242,6 +292,7 @@ const cancelRename = (state) =>
     .remove('renameOutputValid')
 ;
 
+// confirm the current renaming of the output
 const confirmOutputName = (state) =>
   (state.renameOutput > -1) &&
   state.renameOutputValid ?
@@ -258,16 +309,18 @@ const confirmOutputName = (state) =>
     ) : state
 ;
 
-const tryOutputName = (state, outputIndex, name) =>
+// try reanming the output at given index
+const tryOutputName = (outputIndex, newName, state) =>
   state
-    .set('renameOutputValue', name)
-    .set('renameOutputValid', KVD.isValidOutputName(name))
-
+    .set('renameOutput', outputIndex)
+    .set('renameOutputValue', newName)
+    .set('renameOutputValid', KVD.isValidOutputName(newName))
 ;
 
-const openDiagram = (state, json) => {
+// import the given json as kv diagram
+const openDiagram = (jsonDiagram, state) => {
   try {
-    const parsed = JSON.parse(json);
+    const parsed = JSON.parse(jsonDiagram);
     const openedDiagram = KVD.fromJSON(parsed);
     if (openedDiagram) {
       return state
@@ -280,9 +333,10 @@ const openDiagram = (state, json) => {
   return state.set('errorMessage', 'InvalidData');
 };
 
-const importExpression = (state, logicNetwork) => {
+// import the given logic network as kv diagram
+const importExpression = (logicNetwork, state) => {
   try {
-    const diagram = expressionImport(logicNetwork);
+    const diagram = expressionImport(logicNetwork, MAX_INPUTS, MAX_OUTPUTS);
     return state
       .set('diagram', diagram)
       .set('currentOutput', 0);
@@ -291,7 +345,7 @@ const importExpression = (state, logicNetwork) => {
   }
 };
 
-const setViewSetting = (state, viewSetting) =>
+const setViewSetting = (viewSetting, state) =>
   state.set('viewSetting', viewSetting)
 ;
 
@@ -304,50 +358,51 @@ const modifiers = (actions) => {
       compose(cancelRename, removeInput)
     ),
     actions.cycleValue$.map(({output, cell, reverse}) => (state) =>
-      cycleValue(cancelRename(state), output, cell, reverse)
+      cycleValue(output, cell, reverse, cancelRename(state))
     ),
     actions.tryLoop$.map(({
       startCell, targetCell,
       allOutputs = true,
     }) => (state) => {
-      return tryLoop({state, startCell, targetCell, allOutputs});
+      return tryLoop({startCell, targetCell, allOutputs, state});
     }),
     actions.stopTryLoop$.map(() => (state) => {
       return stopTryLoop(state);
     }),
     actions.removeLoop$.map(({loopIndex, allOutputs}) => (state) => {
-      return removeLoop(state, loopIndex, allOutputs);
+      return removeLoop(loopIndex, allOutputs, state);
     }),
     actions.addLoop$.map(({
       output, startCell, targetCell,
       allOutputs = true,
     }) => (state) => {
       return addLoop({
-        state, outputIndex: output,
-        start: startCell, end: targetCell,
+        outputIndex: output,
+        startCell, targetCell,
         allMatchingOutputs: allOutputs,
+        state,
       });
     }),
     actions.addOutput$.map(() =>
       compose(cancelRename, addOutput)
     ),
     actions.removeOutput$.map((index) => (state) => {
-      return removeOutput(cancelRename(state), index);
+      return removeOutput(index, cancelRename(state));
     }),
     actions.removeLastOutput$.map(() => (state) => {
-      return removeOutput(cancelRename(state), state.diagram.outputs.size - 1);
+      return removeOutput(state.diagram.outputs.size - 1, cancelRename(state));
     }),
     actions.selectOutput$.map((index) => (state) => {
-      return selectOutput(cancelRename(state), index);
+      return selectOutput(index, cancelRename(state));
     }),
     actions.switchKvMode$.map((mode) => (state) => {
-      return switchKvMode(cancelRename(state), mode);
+      return switchKvMode(mode, cancelRename(state));
     }),
     actions.switchEditMode$.map((mode) => (state) => {
-      return switchEditMode(cancelRename(state), mode);
+      return switchEditMode(mode, cancelRename(state));
     }),
     actions.startRename$.map((outputIndex) => (state) => {
-      return startRename(state, outputIndex);
+      return startRename(outputIndex, state);
     }),
     actions.cancelRename$.map(() => (state) => {
       return cancelRename(state);
@@ -356,16 +411,16 @@ const modifiers = (actions) => {
       return confirmOutputName(state);
     }),
     actions.tryOutputName$.map(({outputIndex, name}) => (state) => {
-      return tryOutputName(state, outputIndex, name);
+      return tryOutputName(outputIndex, name, state);
     }),
     actions.openDiagram$.map((data) => (state) => {
-      return openDiagram(cancelRename(state), data);
+      return openDiagram(data, cancelRename(state));
     }),
     actions.importExpression$.map((data) => (state) => {
-      return importExpression(cancelRename(state), data);
+      return importExpression(data, cancelRename(state));
     }),
     actions.setViewSetting$.map((viewSetting) => (state) => {
-      return setViewSetting(cancelRename(state), viewSetting);
+      return setViewSetting(viewSetting, cancelRename(state));
     }),
   ]);
 };
@@ -376,7 +431,6 @@ const stateFromJson = (json) =>
   kvState({
     currentEditMode: json.currentEditMode,
     currentKvMode: KVD.modeFromName(String(json.mode)),
-    currentCube: KVD.cubeFromJson(json.cube),
     currentOutput: json.currentOutput,
     diagram: KVD.fromJSON(json),
   })

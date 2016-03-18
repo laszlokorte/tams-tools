@@ -3,10 +3,16 @@ import {svg} from '@cycle/dom';
 import {gates, wires, clipPaths} from './gates';
 import './index.styl';
 
-const render = (state) =>
+// generate an svg tree displaying the gates and wires of
+// a given pla
+const renderCircuit = (circuit) =>
   svg('g',[
+    // max width of a gate. 3000 should be enough
+    // input ports of larger gates get clipped
     clipPaths(3000),
-    state.circuit.gates.map(({
+
+    // create gate shapes
+    circuit.gates.map(({
       type,
       center, rotation, inputCount,
       soderInput,soderOutput, color,
@@ -18,8 +24,10 @@ const render = (state) =>
         soderInput, soderOutput, color,
         highlight, mayOmit,
       })
-    ),
-    state.circuit.wires.map(({
+    ).toArray(),
+
+    // create wire shapes
+    circuit.wires.map(({
       type,
       from, toX, toY, input, inputCount,
       soderStart, soderEnd,
@@ -29,8 +37,10 @@ const render = (state) =>
         from, toX, toY, input, inputCount,
         soderStart, soderEnd,
       })
-    ),
-    state.circuit.labels.map(({text, align, anchor}, i) =>
+    ).toArray(),
+
+    // create text labels
+    circuit.labels.map(({text, align, anchor}, i) =>
       svg('text', {
         key: 'label-' + i,
         x: anchor.x * 10,
@@ -38,8 +48,12 @@ const render = (state) =>
         'text-anchor': align,
         'alignment-baseline': 'middle',
       }, text)
-    ),
+    ).toArray(),
   ])
+;
+
+const render = (state) =>
+  renderCircuit(state.circuit)
 ;
 
 export default (state$) =>

@@ -1,6 +1,7 @@
 import {div, strong} from '@cycle/dom';
 import calcCosts from '../lib/costs';
 
+// Create a div node containing the costs of the cicuit
 export default (pla) => {
   const costs = calcCosts(pla);
 

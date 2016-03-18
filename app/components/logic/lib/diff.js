@@ -2,40 +2,53 @@ import I from 'immutable';
 
 import {evaluateSingle} from './evaluation';
 
+// an object representing the unification of two identifiers
 const unification = I.Record({
   identifierA: null,
   identifierB: null,
 });
 
+// a pair of expressions that should be compared
 const pair = I.Record({
   expressionA: null,
   expressionB: null,
 });
 
+// the reason why two expressions are not equal
 const reason = I.Record({
-  valueA: null,
-  valueB: null,
-  identifierMap: null,
+  valueA: null, // the value of the one expression
+  valueB: null, // the value of the other epressions
+  identifierMap: null, // the input values for which
+                       // the expressions evaluate to
+                       // the respective values
 });
 
+// the result of the comparsion of two expression
 const comparison = I.Record({
-  expressionA: null,
-  expressionB: null,
-  equal: false,
-  difference: null,
+  expressionA: null, // the one expression
+  expressionB: null, // the other expression
+  equal: false, // if they are equal
+  reason: null, // the reason explaining why they are not equal
 });
 
-const diffResult = I.Record({
+// the result of comparing two logic networks
+const result = I.Record({
+  // error message if networks could not be compared
   error: null,
+  // The identifiers of both networks that have unified
+  // in order to do the comparison
   unifications: I.List(),
+  // the list of single expression comparisons that have been made
   comparisons: I.List(),
 });
 
+// check if the two networks have the same number of identifiers
 const sameNumberOfIdentifiers = (networkA, networkB) => {
   return networkA.freeIdentifiers.count() ===
     networkB.freeIdentifiers.count();
 };
 
+// unify the identifiers that the two networks do not have in common
 const unifyIdentifiers = (networkA, networkB) => {
   const idsA = I.OrderedSet(networkA.freeIdentifiers);
   const idsB = I.OrderedSet(networkB.freeIdentifiers);
@@ -48,14 +61,23 @@ const unifyIdentifiers = (networkA, networkB) => {
   }, idsOnlyB);
 };
 
+// if the given expression has a label
 const isLabeled = (expression) =>
   expression.name !== null
 ;
 
+// if the given expression has no label
 const isNotLabeled = (expression) =>
   !isLabeled(expression)
 ;
 
+// try to find pairs of expressions to comparse
+// This will pair expressions of both networks
+// that have the same label.
+// Unlabeled expressions will be paired by there index
+//
+// If expressions to not match up an {error} object will be returned
+// otherwise a {pairs} object will be returned containing a list of pairs.
 const pairUpExpressions = (networkA, networkB) => {
   const labelMapA = I.Map(
     networkA.toplevelExpressions
@@ -69,19 +91,19 @@ const pairUpExpressions = (networkA, networkB) => {
     .map((e) => [e.name, e])
   );
 
+  const labelsA = I.Set(labelMapA.keys());
+  const labelsB = I.Set(labelMapB.keys());
+
+  const labelsOnlyA = labelsA.subtract(labelsB);
+  const labelsOnlyB = labelsB.subtract(labelsA);
+
   const unlabeledA = networkA.toplevelExpressions
     .filter(isNotLabeled);
 
   const unlabeledB = networkB.toplevelExpressions
     .filter(isNotLabeled);
 
-  const labelsA = I.Set(labelMapA.keys());
-  const labelsB = I.Set(labelMapB.keys());
-
   const commonLabels = labelsA.intersect(labelsB);
-
-  const labelsOnlyA = labelsA.subtract(labelsB);
-  const labelsOnlyB = labelsB.subtract(labelsA);
 
   const labeledPairs = commonLabels.map((label) => pair({
     expressionA: labelMapA.get(label),
@@ -112,6 +134,8 @@ const pairUpExpressions = (networkA, networkB) => {
   };
 };
 
+// create a function that returns an identifier map containg
+// values for given identifiers and their unifications
 const prepareIdentifierMap = (commonIdentifiers, unifications) => (counter) => {
   const commonCount = commonIdentifiers.count();
   return I.OrderedMap(commonIdentifiers.map(
@@ -124,6 +148,8 @@ const prepareIdentifierMap = (commonIdentifiers, unifications) => (counter) => {
   )));
 };
 
+// create a function table containing the evaluations for all expressions
+// of both networks
 const evaluateBoth = ({
   identityMapBuilder,
   commonIdentifiers,
@@ -158,6 +184,9 @@ const evaluateBoth = ({
   return rows;
 };
 
+// compair the given pairs of expressions
+// by looking up their values in the rows of
+// the given function table
 const compareResult = (rows, pairs) => {
   return pairs.map((p) => {
     const difference = rows.reduce((d, {
@@ -185,12 +214,13 @@ const compareResult = (rows, pairs) => {
       expressionA: p.expressionA,
       expressionB: p.expressionB,
       equal: difference === null,
-      difference,
+      reason: difference,
     });
   });
 };
 
-const diffEvaluate = (networkA, networkB, unifications, pairs) => {
+// compare the pairs from networkA and networkB
+const doComparison = (networkA, networkB, unifications, pairs) => {
   const commonIdentifiers = I.OrderedSet(networkA.freeIdentifiers)
     .intersect(networkB.freeIdentifiers).toList();
 
@@ -207,15 +237,16 @@ const diffEvaluate = (networkA, networkB, unifications, pairs) => {
 
   const comparisons = compareResult(rows, pairs);
 
-  return diffResult({
+  return result({
     unifications,
     comparisons: comparisons,
   });
 };
 
-export const diffNetworks = (networkA, networkB) => {
+// compare the two given logic networks
+export const compareNetworks = (networkA, networkB) => {
   if (!sameNumberOfIdentifiers(networkA, networkB)) {
-    return diffResult({
+    return result({
       error: 'The Expressions have diffrent number of variables.',
     });
   }
@@ -224,12 +255,12 @@ export const diffNetworks = (networkA, networkB) => {
   const expresionPairs = pairUpExpressions(networkA, networkB);
 
   if (expresionPairs.error) {
-    return diffResult({
+    return result({
       error: expresionPairs.error,
     });
   }
 
-  return diffEvaluate(
+  return doComparison(
     networkA, networkB,
     identifierUnifications, expresionPairs.pairs
   );

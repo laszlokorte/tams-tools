@@ -1,3 +1,4 @@
+// calculate the costs of the central gates
 const calcLoopCosts = (pla) => {
   // the number of input ports of each loop gate
   const portCount = pla.loops.map((loop) =>
@@ -14,6 +15,7 @@ const calcLoopCosts = (pla) => {
   };
 };
 
+// calculate costs of the output gates
 const calcOutputCosts = (pla) => {
   const outputMap = pla.outputs
     .map((_, index) =>

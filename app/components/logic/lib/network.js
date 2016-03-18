@@ -1,3 +1,4 @@
+/* global window */
 import I from 'immutable';
 
 import {
@@ -7,15 +8,39 @@ import {
 
 import {sort, Node} from './topological-sort';
 
+// A logic network respresents a set of expressions
+// and contains additional information about their relationship.
+//
+// By using labels multiple expressions can reference each other.
+// eg: X = Y&Z, A = X & B
+// The expression A references the expression X
+// So X is not a free identifier inside expression A
 const logicNetwork = I.Record({
+  // A set of all identifiers occuring in the expressions
+  // that are not used as labels
   freeIdentifiers: I.Set(),
+  // A set of identifiers that are used to label the expressions
   declaredIdentifiers: I.Set(),
+  // A list of all the expressions
   expressions: I.List(),
+  // A list of all expressions toplogically sorted by their dependencies
+  // The first expression in this list does not depend on the later expressions
   sortedExpressions: I.List(),
+  // List of all expressions except the ones that are not labeled AND consist
+  // just of an identifier.
+  // Eg for following expressions:
+  // X=A, A&B, Y, !Y
+  // toplevelExpressions will not contain the "Y" expression
+  // but all others
   toplevelExpressions: I.List(),
-  subExpressions: I.List(),
+  // A set of all sub expressions the expressions are composed of
+  subExpressions: I.Set(),
 }, 'logicNetwork');
 
+// Build a graph representing the dependencies between the given
+// expressions
+// returns a list of nodes representing the expressions
+// and referencing the other nodes.
 const buildDependencyGraph = (expressionList) => {
   const declaredIdentifiers = new window.Set(
     expressionList
@@ -62,6 +87,9 @@ const errorAtLocation = (msg, location) => {
   return error;
 };
 
+// check a given list of identifiers for duplicates
+// return Set of identifiers
+// throws if there is a duplicate.
 const deduplicateDeclarations = (declaredIdentifiers) => {
   const deduplicatedIds = new window.Set();
 
@@ -79,6 +107,9 @@ const deduplicateDeclarations = (declaredIdentifiers) => {
   return deduplicatedIds;
 };
 
+// create a logicNetwork object from a list of expressions
+// throws if there are cyclic dependencies between expressions
+// throws if expressions have duplcate labels
 export const logicNetworkFromExpressions = (expressions) => {
   const expressionList = I.List(expressions);
   const declaredIdentifiers = expressionList
@@ -103,8 +134,7 @@ export const logicNetworkFromExpressions = (expressions) => {
 
     const subExpressions = expressionList.flatMap(
       (expression) => collectSubExpressions(expression.body)
-        .toList()
-    );
+    ).toSet().toList();
 
     const toplevelExpressions = sortedExpressions.filter(
       (e) => e.name !== null || e.body._name !== 'identifier'

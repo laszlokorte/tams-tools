@@ -4,6 +4,7 @@ import intent from './intent';
 import model from './model';
 import view from './view';
 
+// initialize the fsm component
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources

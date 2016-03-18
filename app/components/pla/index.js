@@ -11,6 +11,13 @@ import view from './view';
 import costPanel from './view/cost-panel';
 import intent from './intent';
 
+const dimenstionsHaveNotChanged = (a, b) =>
+  a.loops.size === b.loops.size &&
+  a.inputs.size === b.inputs.size &&
+  a.outputs.size === b.outputs.size
+;
+
+// initialize the pla component
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources
@@ -50,27 +57,33 @@ export default ({
   const state$ = model(props$, pla$, actions);
   const vtree$ = view(state$);
 
+  // Use the graphics component as container for the
+  // generated SVG to allow zooming and panning the content
   const stage = isolate(graphics, 'mygraphics')({
     DOM,
     globalEvents,
-    props$: O.just({
-      width: 600,
+    props$: O.just({ // Dimensions of the SVG element
+      width: 600,    // get overridden by CSS anyway
       height: 600,
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map(pluck('bounds')),
     content$: isolateSink(vtree$, 'graphicsContent'),
-    autoCenter$: pla$.sample(state$).distinctUntilChanged(
-      (s) => s,
-      (a, b) => a.loops.length === b.loops.length &&
-        a.inputs.length === b.inputs.length &&
-        a.outputs.length === b.outputs.length
-    ).map(() => ({weightX: 0.5, weightY: 0}))
-    .sample(state$),
+    autoCenter$: pla$
+      // align the camera as soon the the dimensions
+      // of the circuit change
+      .combineLatest(state$, (p) => p)
+      .distinctUntilChanged(
+        (s) => s,
+        dimenstionsHaveNotChanged
+      )
+      // Center the camera vertically and align it to the top
+      .map(() => ({weightX: 0.5, weightY: 0})),
   });
 
   return {
     DOM: O.combineLatest(
+      // merge the cost panel into the vtree
       pla$.map(costPanel),
       stage.DOM,
       (a,b) => [a,b]

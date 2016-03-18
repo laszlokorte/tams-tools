@@ -8,6 +8,7 @@ import intent from './intent';
 import model from './model';
 import view from './view';
 
+// initialize the number circle component
 export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources
@@ -28,7 +29,8 @@ export default ({
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map((s) => s.bounds),
-    autoCenter$: state$.map((s) => s.bounds).distinctUntilChanged(),
+    autoCenter$: state$.map((s) => s.bounds)
+      .distinctUntilChanged().map(() => true),
     content$: isolateSink(vtree$, 'graphicsContent'),
   });
 
