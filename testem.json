@@ -1,6 +1,0 @@
-{
-  "framework": "tap",
-  "on_start" : "npm run starttest",
-  "src_files": ["./build/test.js"],
-  "launch_in_dev": [ "chrome" ]
-}
