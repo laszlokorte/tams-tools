@@ -22,7 +22,7 @@ const calcOutputCosts = (pla) => {
       // count to how many loop gates
       // this output is connected
       pla.loops.count(
-        (loop) => loop.out.get(index) === 1
+        (loop) => loop.out.get(index) === true
       )
     )
     // gates with less than 2 input ports can be ignored
