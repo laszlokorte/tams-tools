@@ -2,7 +2,6 @@ import {Observable as O} from 'rx';
 
 import panelActions from './panels';
 
-
 export default ({DOM, selectIndex$}) => {
   const switchButton = DOM.select('.switch-button');
   const led = DOM.select('.led');
