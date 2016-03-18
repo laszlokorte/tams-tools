@@ -13,16 +13,16 @@ const notASCII = new RegExp('[^a-z0-9]', 'i');
 const sanitizeName = (name) =>
   notASCII.test(name) ? `"${name}"` : name;
 
-export default self = {
+const formatter = {
   name: "Latex",
   formatBinary: (op, lhs, rhs/*, depth*/) => {
-    return self.formatBinaryChain(op, lhs, rhs);
+    return formatter.formatBinaryChain(op, lhs, rhs);
   },
   formatBinaryChain: (op, ...operands) => {
-    return `(${operands.join(tryFetch(operators, op))})`;
+    return `(${operands.join(` ${tryFetch(operators, op)} `)})`;
   },
   formatUnary: (op, content/*, depth*/) => {
-    return `(${self.formatUnarySimple(op, content)})`;
+    return `(${formatter.formatUnarySimple(op, content)})`;
   },
   formatUnarySimple: (op, content/*, depth*/) => {
     return `${tryFetch(operators, op)} ${content}`;
@@ -46,7 +46,7 @@ export default self = {
     return `<${
       identifiers.map((i) => i.name).join(',')
     }:${
-      values.map(self.formatVectorValue).join('')
+      values.map(formatter.formatVectorValue).join('')
     }>`;
   },
   formatVectorValue: (value) => {
@@ -65,3 +65,5 @@ export default self = {
     return expressions.join(', ');
   },
 };
+
+export default formatter;
