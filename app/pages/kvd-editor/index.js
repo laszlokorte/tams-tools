@@ -19,19 +19,21 @@ import splitPane from '../../components/splitpane';
   the CycleJS main loop with the main function
 */
 
+// initialize the FSM editor page
 const kvdApp = (sources) => {
   const {
-    DOM,
-    preventDefault,
-    globalEvents,
+    DOM, // The DOM driver source
+    globalEvents, // The globalEvent driver source
   } = sources;
 
+  // initialize the kv editor component
   const kvComponent = isolate(kv)({
-    DOM, globalEvents, preventDefault,
+    DOM, globalEvents,
   });
 
+  // initialize the PLA component
   const plaComponent = isolate(pla)({
-    DOM, preventDefault,
+    DOM,
     globalEvents,
     data$: kvComponent.plaData$.take(1).merge(
       kvComponent.plaData$.skip(1).debounce(100)
@@ -39,16 +41,14 @@ const kvdApp = (sources) => {
     props$: O.just({}),
   });
 
-  const kvDOM = kvComponent.DOM;
-  const plaDOM = plaComponent.DOM;
-
+  // The split component to display the left and right
+  // side next to each other
   const splitComponent = isolate(splitPane)({
     DOM,
-    preventDefault,
     globalEvents,
     props$: O.just({proportion: 0.65}),
-    firstChild$: kvDOM,
-    secondChild$: plaDOM,
+    firstChild$: kvComponent.DOM,
+    secondChild$: plaComponent.DOM,
   });
 
   return {
@@ -66,7 +66,7 @@ const kvdApp = (sources) => {
   };
 };
 
-// The drivers for the kv editor
+// The drivers for the kv editor and pla components
 const drivers = {
   DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
@@ -76,4 +76,5 @@ const drivers = {
   insertString: insertStringDriver,
 };
 
+// start the application
 Cycle.run(kvdApp, drivers);

@@ -16,18 +16,17 @@ import splitPane from '../../components/splitpane';
 const logicApp = (sources) => {
   const {
     DOM,
-    preventDefault,
     autoResize,
     selectAll,
     globalEvents,
   } = sources;
 
   const logicComponent = isolate(logic)({
-    DOM, preventDefault, globalEvents, autoResize, selectAll,
+    DOM, globalEvents, autoResize, selectAll,
   });
 
   const treeComponent = isolate(tree)({
-    DOM, preventDefault, globalEvents,
+    DOM, globalEvents,
     data$: logicComponent.tree$,
     props$: O.just({
       scaleX: 150,
@@ -40,7 +39,6 @@ const logicApp = (sources) => {
 
   const splitComponent = isolate(splitPane)({
     DOM,
-    preventDefault,
     globalEvents,
     props$: O.just({proportion: 0.65}),
     firstChild$: logicDOM,

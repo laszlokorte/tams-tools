@@ -13,34 +13,34 @@ import FSMComponent from '../../components/fsm';
 import GraphComponent from '../../components/graph';
 import splitPane from '../../components/splitpane';
 
+// initialize the FSM editor page
 const fsmEditor = (sources) => {
   const {
-    DOM,
-    preventDefault,
-    globalEvents,
+    DOM, // The DOM driver source
+    globalEvents, // The globalEvent driver source
   } = sources;
 
+  // The FSM editor to be shown on the left side
   const fsmComponent = isolate(FSMComponent)({
     DOM,
     globalEvents,
   });
 
+  // The graph editor to be shown on the right side
   const graphComponent = isolate(GraphComponent)({
     DOM,
     globalEvents,
     data$: fsmComponent.graph$,
   });
 
-  const leftDOM = fsmComponent.DOM;
-  const rightDOM = graphComponent.DOM;
-
+  // The split component to display the left and right
+  // side next to each other
   const splitComponent = isolate(splitPane)({
     DOM,
-    preventDefault,
     globalEvents,
     props$: O.just({proportion: 0.65}),
-    firstChild$: leftDOM,
-    secondChild$: rightDOM,
+    firstChild$: fsmComponent.DOM,
+    secondChild$: graphComponent.DOM,
   });
 
   return {
@@ -56,6 +56,7 @@ const fsmEditor = (sources) => {
   };
 };
 
+// setup the drivers to be used
 const drivers = {
   DOM: makeDOMDriver('#app'),
   preventDefault: preventDefaultDriver,
@@ -65,4 +66,5 @@ const drivers = {
   globalEvents: globalEventDriver,
 };
 
+// start the application
 Cycle.run(fsmEditor, drivers);

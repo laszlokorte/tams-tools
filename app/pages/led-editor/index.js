@@ -16,5 +16,6 @@ const drivers = {
   globalEvents: globalEventDriver,
 };
 
+// start the LED component
 Cycle.run(LedComponent, drivers);
 

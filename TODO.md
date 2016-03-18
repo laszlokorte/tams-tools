@@ -20,9 +20,3 @@
 ## Logic Checker
 
 * implement expression comparison
-
-## SVG graphics
-
-* improve auto center api
-
-
