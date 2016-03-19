@@ -17,13 +17,8 @@ module.exports = merge(commonConfig, {
   module: {
     loaders: [
       {
-        test: /\.css$/,
-        loader: "style-loader!css-loader",
-      },
-
-      {
         test: /\.styl$/,
-        loader: "style-loader!css-loader!stylus-loader?resolve url",
+        loader: "style-loader!css-loader?-autoprefixer!stylus-loader?resolve url",
       },
     ],
   },

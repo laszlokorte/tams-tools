@@ -92,15 +92,17 @@ const renderOutputThumbnails = (layout, state, {canEdit, canAdd, canRemove}) =>
         },
       }, [
         div('.output-thumbnail', [
-          renderTable({
-            layout: layout,
-            diagram: state.diagram,
-            kvMode: state.currentKvMode,
-            editMode: state.currentEditMode,
-            output: i,
-            currentLoop: state.currentLoop,
-            compact: true,
-          }),
+          div([
+            renderTable({
+              layout: layout,
+              diagram: state.diagram,
+              kvMode: state.currentKvMode,
+              editMode: state.currentEditMode,
+              output: i,
+              currentLoop: state.currentLoop,
+              compact: true,
+            }),
+          ]),
         ]),
         span('.output-label' + (
           canEdit ? '.state-editable' : ''

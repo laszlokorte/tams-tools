@@ -18,12 +18,8 @@ module.exports = merge(commonConfig, {
   module: {
     loaders: [
       {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract("css", "css-loader"),
-      },
-      {
         test: /\.styl$/,
-        loader: ExtractTextPlugin.extract("stylus", "css-loader!stylus-loader"),
+        loader: ExtractTextPlugin.extract("stylus", "css-loader?-autoprefixer!stylus-loader"),
       },
     ],
   },
