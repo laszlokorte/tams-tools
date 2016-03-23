@@ -107,18 +107,15 @@ const diff = (outputA, outputB) => {
 const logicApp = (sources) => {
   const {
     DOM,
-    preventDefault,
     globalEvents,
-    autoResize,
-    selectAll,
   } = sources;
 
   const logicFieldA = isolate(LogicField)({
-    DOM, preventDefault, globalEvents, autoResize, selectAll,
+    DOM, globalEvents,
   });
 
   const logicFieldB = isolate(LogicField)({
-    DOM, preventDefault, globalEvents, autoResize, selectAll,
+    DOM, globalEvents,
   });
 
   const fieldADOM$ = logicFieldA.DOM;
