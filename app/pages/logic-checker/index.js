@@ -14,7 +14,7 @@ import {insertStringDriver} from '../../drivers/rangy';
 import LogicField from '../../components/logic/input-field';
 import {compareNetworks} from '../../components/logic/lib/diff';
 import {expressionToString} from '../../components/logic/lib/formatter';
-import formatter from '../../components/logic/lib/formatter/math';
+import formatter from '../../components/logic/lib/formatter/c-bitwise';
 
 import './index.styl';
 
