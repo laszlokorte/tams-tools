@@ -78,9 +78,10 @@ const switchMode = (mode, state) =>
 ;
 
 export default (props$, data$, actions) => {
-  return data$
-  .map(graphFromJson)
-  .map((baseGraph) =>
+  return O.combineLatest(
+    data$.map(graphFromJson),
+    actions.switchMode$.startWith('view'),
+    (baseGraph, mode) =>
     O.merge([
       actions.tryCreateNode$.map((pos) => (state) => tryCreateNode(pos, state)),
       actions.doCreateNode$.map(() => (state) => doCreateNode(state)),
@@ -98,13 +99,12 @@ export default (props$, data$, actions) => {
       actions.selectEdge$.map((index) => (state) => selectEdge(index, state)),
 
       actions.deselect$.map(() => (state) => deselect(state)),
-
-      actions.switchMode$.map((mode) => (state) => switchMode(mode, state)),
     ])
     .startWith(graphUiState({graph: baseGraph}))
     .scan(applyModifier)
     .combineLatest(props$, (state, props) =>
       state
+        .set('mode', mode)
         .update('graph', (graph) =>
           layoutGraph(props.nodeRadius, graph, state.transientNode)
         )
