@@ -46,8 +46,8 @@
     "@cycle/dom": "^9.1.0",
     "@cycle/isolate": "^1.2.0",
     "@cycle/storage": "^2.0.3",
-    "babel-polyfill": "^6.7.2",
     "bitset.js": "^3.1.0",
+    "core-js": "^2.2.1",
     "immutable": "^3.7.6",
     "nib": "^1.1.0",
     "raf": "^3.2.0",
@@ -60,19 +60,19 @@
     ]
   },
   "ava": {
-      "files": [
-        "**/*.spec.js"
-      ],
-      "source": [
-        "**/*.{js,jsx}",
-        "!build/**/*",
-        "!**/*.spec.js"
-      ],
-      "failFast": true,
-      "tap": false,
-      "require": [
-        "babel-register"
-      ],
-      "babel": "inherit"
-    }
+    "files": [
+      "**/*.spec.js"
+    ],
+    "source": [
+      "**/*.{js,jsx}",
+      "!build/**/*",
+      "!**/*.spec.js"
+    ],
+    "failFast": true,
+    "tap": false,
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  }
 }
