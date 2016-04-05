@@ -156,8 +156,8 @@ export const zoom = (
   const owner$ = ownerElement(rootElement);
 
   const touches$ = toucheIds(globalEvents, rootElement);
-  const pinchStart$ = touches$.filter((ids) => ids.size === 2);
-  const pinchEnd$ = touches$.filter((ids) => ids.size !== 2);
+  const pinchStart$ = touches$.filter((ids) => ids.size >= 2);
+  const pinchEnd$ = touches$.filter((ids) => ids.size < 2);
 
   const wheel$ = rootElement.events('wheel')
     .filter((evt) => !evt.altKey)
