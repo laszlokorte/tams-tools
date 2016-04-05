@@ -11,10 +11,10 @@ labelOperator "labelOperator"
 
 noChar = [^0-9A-Za-z_-] / EOF
 
-logicAnd = "&&" / "&" / "*" / "∧" / "\\wedge" & noChar
-logicOr = "||" / "|" / "+" / "∨" / "\\vee" & noChar
-logicXor = "^" / "⊕" / "\\oplus" & noChar
-logicNot = "!" / "~" / "-" / "¬" / "\\neg" & noChar / "\\overline" & noChar
+logicAnd = "∧" / "\\wedge" & noChar
+logicOr = "∨" / "\\vee" & noChar
+logicXor = "⊕" / "\\oplus" & noChar
+logicNot = "¬" / "\\neg" & noChar / "\\overline" & noChar
 
 logicTop = "true" & noChar / "1" / "T" & noChar / "W" & noChar / "⊤" / "\\top" & noChar
 logicBottom = "false" & noChar / "0" / "F" & noChar / "⊥" / "\\bot" & noChar
@@ -23,11 +23,13 @@ logicUndefined = "\\nothing" & noChar
 vectorStart = "<"
 vectorEnd = ">"
 
-operatorMul "binary operator"
+operatorPrec1 "binary operator"
   = logicAnd { return "AND"; }
-  / logicXor { return "XOR"; }
 
-operatorAdd "binary operator"
+operatorPrec2
+  = logicXor { return "XOR"; }
+
+operatorPrec3 "binary operator"
   = logicOr { return "OR"; }
 
 operatorUnary "unary operator"
@@ -102,59 +104,59 @@ parentheses
 
 
 roundParens
-  = '(' _ body:additive _ ')' {
+  = '(' _ body:expression _ ')' {
     return {body: body, style: 1}
   }
-  / "\\bigl(" _ body:additive _ '\\bigr)' {
+  / "\\bigl(" _ body:expression _ '\\bigr)' {
     return {body: body, style: 2}
   }
-  / '\\Bigl(' _ body:additive _ '\\Bigr)' {
+  / '\\Bigl(' _ body:expression _ '\\Bigr)' {
     return {body: body, style: 3}
   }
-  / '\\biggl(' _ body:additive _ '\\biggr)' {
+  / '\\biggl(' _ body:expression _ '\\biggr)' {
     return {body: body, style: 4}
   }
-  / '\\Biggl(' _ body:additive _ '\\Biggr)' {
+  / '\\Biggl(' _ body:expression _ '\\Biggr)' {
     return {body: body, style: 5}
   }
 
 
 angularParens
-  = '[' _ body:additive _ ']' {
+  = '[' _ body:expression _ ']' {
     return {body: body, style: 6}
   }
-  / '\\bigl[' _ body:additive _ '\\bigr]' {
+  / '\\bigl[' _ body:expression _ '\\bigr]' {
     return {body: body, style: 7}
   }
-  / '\\Bigl[' _ body:additive _ '\\Bigr]' {
+  / '\\Bigl[' _ body:expression _ '\\Bigr]' {
     return {body: body, style: 8}
   }
-  / '\\biggl[' _ body:additive _ '\\biggr]' {
+  / '\\biggl[' _ body:expression _ '\\biggr]' {
     return {body: body, style: 9}
   }
-  / '\\Biggl[' _ body:additive _ '\\Biggr]' {
+  / '\\Biggl[' _ body:expression _ '\\Biggr]' {
     return {body: body, style: 10}
   }
 
 
-  / '\\lbrack' _ body:additive _ '\\rbrack' {
+  / '\\lbrack' _ body:expression _ '\\rbrack' {
     return {body: body, style: 6}
   }
-  / '\\bigl\\lbrack' _ body:additive _ '\\bigr\\rbrack' {
+  / '\\bigl\\lbrack' _ body:expression _ '\\bigr\\rbrack' {
     return {body: body, style: 7}
   }
-  / '\\Bigl\\lbrack' _ body:additive _ '\\Bigr\\rbrack' {
+  / '\\Bigl\\lbrack' _ body:expression _ '\\Bigr\\rbrack' {
     return {body: body, style: 8}
   }
-  / '\\biggl\\lbrack' _ body:additive _ '\\biggr\\rbrack' {
+  / '\\biggl\\lbrack' _ body:expression _ '\\biggr\\rbrack' {
     return {body: body, style: 9}
   }
-  / '\\Biggl\\lbrack' _ body:additive _ '\\Biggr\\rbrack' {
+  / '\\Biggl\\lbrack' _ body:expression _ '\\Biggr\\rbrack' {
     return {body: body, style: 10}
   }
 
 curlyParens
-  = '{' _ body:additive _ '}' {
+  = '{' _ body:expression _ '}' {
     return {body: body, style: 1}
   }
 
@@ -198,18 +200,26 @@ labeledExpression
     };
   }
 
-expression = additive
+expression = expressionPrec3
 
-additive
-  = first:multiplicative _ rest:(operatorAdd _ multiplicative)+ {
+expressionPrec3
+  = first:expressionPrec2 _ rest:(operatorPrec3 _ expressionPrec2)+ {
     return rest.reduce(function(memo, curr) {
       return {node: 'binary', operator: curr[0], lhs: memo, rhs: curr[2]};
     }, first);
   }
-  / multiplicative
+  / expressionPrec2
 
-multiplicative
-  = first:primary _ rest:(operatorMul? _ primary)+ {
+expressionPrec2
+  = first:expressionPrec1 _ rest:(operatorPrec2 _ expressionPrec1)+ {
+    return rest.reduce(function(memo, curr) {
+      return {node: 'binary', operator: curr[0], lhs: memo, rhs: curr[2]};
+    }, first);
+  }
+  / expressionPrec1
+
+expressionPrec1
+  = first:primary _ rest:(operatorPrec1? _ primary)+ {
     return rest.reduce(function(memo, curr) {
       return {node: 'binary', operator: curr[0] || "AND", lhs: memo, rhs: curr[2]};
     }, first);

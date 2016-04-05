@@ -2,7 +2,7 @@ import {Observable as O} from 'rx';
 import I from 'immutable';
 
 import {
-  C, Python, Latex, Math,
+  CBitwise, CBoolean, Python, Latex, Math,
 } from './languages';
 
 import parser from './parser';
@@ -16,7 +16,8 @@ import {
 
 // a mapping from languageId to language object
 const LANGUAGE_MAP = {
-  c: C,
+  c_bitwise: CBitwise,
+  c_boolean: CBoolean,
   latex: Latex,
   math: Math,
   python: Python,

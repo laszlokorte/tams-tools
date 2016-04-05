@@ -11,23 +11,25 @@ labelOperator "labelOperator"
 
 noChar = [^0-9A-Za-z_-] / EOF
 
-logicAnd = "&&" / "&"
-logicOr = "||" / "|"
-logicXor = "^"
-logicNot = "!" / "~"
+logicAnd = "&&"
+logicOr = "||"
+logicXor = "!="
+logicNot = "!" & [^\=]
 
-logicTop = "true" & noChar / "1"
-logicBottom = "false" & noChar / "0"
+logicTop = "true" & noChar
+logicBottom = "false" & noChar
 logicUndefined = "void" & noChar
 
 vectorStart = "<"
 vectorEnd = ">"
 
-operatorMul "binary operator"
+operatorPrec1 "binary operator"
   = logicAnd { return "AND"; }
-  / logicXor { return "XOR"; }
 
-operatorAdd "binary operator"
+operatorPrec2
+  = logicXor { return "XOR"; }
+
+operatorPrec3 "binary operator"
   = logicOr { return "OR"; }
 
 operatorUnary "unary operator"
@@ -93,7 +95,7 @@ literalVector
   }
 
 parentheses
-  = "(" _ body:additive _ ")" {
+  = "(" _ body:expressionPrec3 _ ")" {
     return {body: body, style: 1}
   }
 
@@ -137,20 +139,28 @@ labeledExpression
     };
   }
 
-expression = additive
+expression = expressionPrec3
 
-additive
-  = first:multiplicative _ rest:(operatorAdd _ multiplicative)+ {
+expressionPrec3
+  = first:expressionPrec2 _ rest:(operatorPrec3 _ expressionPrec2)+ {
     return rest.reduce(function(memo, curr) {
       return {node: 'binary', operator: curr[0], lhs: memo, rhs: curr[2]};
     }, first);
   }
-  / multiplicative
+  / expressionPrec2
 
-multiplicative
-  = first:primary _ rest:(operatorMul _ primary)+ {
+expressionPrec2
+  = first:expressionPrec1 _ rest:(operatorPrec2 _ expressionPrec1)+ {
     return rest.reduce(function(memo, curr) {
       return {node: 'binary', operator: curr[0], lhs: memo, rhs: curr[2]};
+    }, first);
+  }
+  / expressionPrec1
+
+expressionPrec1
+  = first:primary _ rest:(operatorPrec1? _ primary)+ {
+    return rest.reduce(function(memo, curr) {
+      return {node: 'binary', operator: curr[0] || "AND", lhs: memo, rhs: curr[2]};
     }, first);
   }
   / primary

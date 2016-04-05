@@ -11,14 +11,14 @@ labelOperator "labelOperator"
 
 noChar = [^0-9A-Za-z_-] / EOF
 
-logicAnd = "and" & noChar
-logicOr = "or" & noChar
-logicXor = "xor" & noChar
-logicNot = "not" & noChar
+logicAnd =  "&"
+logicOr = "|"
+logicXor = "^"
+logicNot = "~"
 
-logicTop = "True" & noChar / "1"
-logicBottom = "False" & noChar / "0"
-logicUndefined = "None" & noChar
+logicTop = "1"
+logicBottom = "0"
+logicUndefined = "void" & noChar
 
 vectorStart = "<"
 vectorEnd = ">"
@@ -36,17 +36,35 @@ operatorUnary "unary operator"
   = logicNot { return "NOT"; }
 
 identifierName
-  = name:([A-Za-z_][_a-zA-Z0-9]*) {
-      return name[0] + name[1].reduce((acc, current) => acc+current, "");
+  = first:[A-Za-z_] tail:[\-_a-zA-Z0-9]* {
+      return first + tail.join("");
     }
+  / '"' chars:charNoDoubleQuote+ '"' {
+      return chars.join("");
+    }
+  / "'" chars:charNoSingleQuote+ "'" {
+      return chars.join("");
+    }
+
+charNoDoubleQuote
+  = charEscapeSequence
+    / [^"]
+
+charNoSingleQuote
+  = charEscapeSequence
+    / [^']
+
+charEscapeSequence
+  = "\\\\"    { return "\\"; }
+    / "\\'"   { return "'";  }
+    / '\\"'   { return '"';  }
 
 literalValue
   = logicTop { return true; }
   / logicBottom { return false; }
   / logicUndefined { return null; }
 
-
-vectorHead
+vectorHead "vectorHead"
   = head:identifier _ tail:(expressionSeparator _ identifier)+ {
     return [head, ...tail.map((t) => t[2])];
   }
@@ -77,7 +95,7 @@ literalVector
   }
 
 parentheses
-  = "(" _ body:expression _ ")" {
+  = "(" _ body:expressionPrec3 _ ")" {
     return {body: body, style: 1}
   }
 
@@ -149,9 +167,9 @@ expressionPrec1
 
 primary
   = _ lit:literal _ { return lit; }
+  / _ id:identifier _ { return id; }
   / _ group:group _ { return group; }
   / _ un:unary { return un; }
-  / _ id:identifier _ { return id; }
 
 group
   = paren:parentheses {

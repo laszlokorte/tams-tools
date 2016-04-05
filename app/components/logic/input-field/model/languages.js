@@ -1,6 +1,7 @@
 import I from 'immutable';
 
-import cParser from '../../lib/syntax/logic-c.pegjs';
+import cBitwiseParser from '../../lib/syntax/logic-c-bitwise.pegjs';
+import cBooleanParser from '../../lib/syntax/logic-c-boolean.pegjs';
 import latexParser from '../../lib/syntax/logic-latex.pegjs';
 import mathParser from '../../lib/syntax/logic-math.pegjs';
 import pythonParser from '../../lib/syntax/logic-python.pegjs';
@@ -18,13 +19,22 @@ const language = I.Record({
   parse: (/*string*/) => { throw new Error("not implemented"); },
 });
 
-export const C = language({
-  name: 'C',
+export const CBitwise = language({
+  name: 'C - Bitwise',
   completions: I.List([
     '&','|','^','~',
     '1','0', 'void',
   ]),
-  parse: (string) => cParser.parse(string),
+  parse: (string) => cBitwiseParser.parse(string),
+});
+
+export const CBoolean = language({
+  name: 'C - Boolean',
+  completions: I.List([
+    '&&','||','!=','!',
+    'true','false', 'void',
+  ]),
+  parse: (string) => cBooleanParser.parse(string),
 });
 
 export const Python = language({
