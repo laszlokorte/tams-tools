@@ -4,19 +4,22 @@ import {IF} from '../../../lib/h-helper';
 
 import './index.styl';
 
-const renderArc = (dots, selected, radius) =>
+const renderArc = (dots, selected, radius, overflowAngle) =>
   IF(selected !== null, () => {
     const dot = dots[selected];
+    const zeroDot = dots[dot.baseIndex];
     const angle = dot.angle;
+    const zeroAngle = zeroDot.angle;
     const x = Math.sin(angle) * radius;
     const y = -Math.cos(angle) * radius;
-    const mid = angle > Math.PI;
-    const midAngle = dots[dots.length / 2 - 1].angle;
-    const reverse = angle > midAngle;
+    const zeroX = Math.sin(zeroAngle) * radius;
+    const zeroY = -Math.cos(zeroAngle) * radius;
+    const mid = Math.abs(angle - zeroAngle) > Math.PI;
+    const reverse = angle > overflowAngle;
 
     return svg('path', {
       class: 'selection-arc',
-      d: `M 0 ${-radius}
+      d: `M ${zeroX} ${zeroY}
           A ${radius} ${radius} 0
           ${mid !== reverse ? 1 : 0} ${reverse ? 0 : 1}
           ${x} ${y}`,
@@ -111,7 +114,7 @@ const render = ({radius, dots, dotRadius, overflowAngle, selected}) => {
         'dominant-baseline': baseLine(dot.angle),
       }, dot.pattern.toString()),
     ])),
-    renderArc(dots, selected, radius - dotRadius * 1.5),
+    renderArc(dots, selected, radius - dotRadius * 1.5, overflowAngle),
     svg('line', {
       class: 'overflow-line',
       x1: 0,

@@ -13,11 +13,12 @@ export default ({
   DOM, // DOM driver source
   globalEvents, // globalEvent driver sources
   bitCount$ = O.just(3), // the number of bit's the circle should display
+  encoding$ = O.just('signed'),
 }) => {
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent(isolateSource(DOM, 'graphicsContent'));
-  const state$ = model(bitCount$, actions);
+  const state$ = model(encoding$, bitCount$, actions);
   const vtree$ = view(state$);
 
   const stage = isolate(graphics, 'mygraphics')({
