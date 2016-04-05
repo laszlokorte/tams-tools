@@ -16,12 +16,16 @@ export default (DOM, stageDOM, globalEvents) => {
     .filter((evt) => evt.keyCode === 27)
     .share();
 
-  const moveableNode = stageDOM.select('[data-node-index][data-action="move"]');
-  const connectableNode = stageDOM.select('[data-node-index][data-action="connect"]');
-  const selectableNode = stageDOM.select('[data-node-index][data-action="select"]');
-  const selectableEdge = stageDOM.select('[data-edge][data-action="select"]');
+  const moveableNode = stageDOM
+    .select('[data-node-index][data-action="move"]');
+  const connectableNode = stageDOM
+    .select('[data-node-index][data-action="connect"]');
+  const selectableNode = stageDOM
+    .select('[data-node-index][data-action="select"]');
+  const selectableEdge = stageDOM
+    .select('[data-edge][data-action="select"]');
 
-  const target = stageDOM.select('[data-target]');
+  const creationTarget = stageDOM.select('[data-background="create"]');
   const background = stageDOM.select('[data-background]');
 
   const modeButton = DOM.select('[data-mode]');
@@ -32,9 +36,9 @@ export default (DOM, stageDOM, globalEvents) => {
   const selectEdge$ = selectableEdge.events('mousedown', {useCapture: true});
 
   const createStart$ = O.amb(
-    target.events('mousedown', {useCapture: true})
+    creationTarget.events('mousedown', {useCapture: true})
       .filter((evt) => evt.which === 1),
-    target.events('touchstart', {useCapture: true})
+    creationTarget.events('touchstart', {useCapture: true})
   );
 
   const moveStart$ = O.amb(
@@ -60,7 +64,9 @@ export default (DOM, stageDOM, globalEvents) => {
   );
 
   const tryMoveNode$ = moveStart$.map((startEvt) => {
-    const nodeIndex = startEvt.ownerTarget.getAttribute('data-node-index');
+    const nodeIndex = parseInt(
+      startEvt.ownerTarget.getAttribute('data-node-index'), 10
+    );
 
     const startPosition = svgEventPosition({
       x: startEvt.clientX,

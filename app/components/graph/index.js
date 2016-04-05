@@ -33,12 +33,13 @@ export default ({
       },
     ],
   }),
+  enabled$ = O.just(true),
 }) => {
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(
     DOM, isolateSource(DOM, 'graphicsContent'), globalEvents
   );
-  const state$ = model(props$, data$, actions);
+  const state$ = model(props$, data$, enabled$, actions);
   const vtree$ = view(state$);
 
   const stage = isolate(graphics, 'mygraphics')({

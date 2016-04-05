@@ -31,6 +31,7 @@ const fsmEditor = (sources) => {
     DOM,
     globalEvents,
     data$: fsmComponent.graph$,
+    enabled$: fsmComponent.mode$.map((m) => m === 'edit'),
   });
 
   // The split component to display the left and right

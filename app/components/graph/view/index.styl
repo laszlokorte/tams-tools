@@ -1,15 +1,26 @@
 [data-target]
 [data-background]
-  pointer-events: all
+  pointer-events all
+
+.graph-edge-line-background
+  pointer-events all
+  stroke-linecap round
+  stroke-linejoin round
+
+.state-selected
+  .graph-node-circle
+  .graph-edge-line-background
+    stroke-width 20px
+    stroke green
+
+.state-transient
+  .graph-node-circle
+    opacity 0.7
+
+
 
 [data-action="none"]
   pointer-events none
+  *
+    pointer-events none
 
-.graph-node
-  stroke green
-
-.graph-edge
-  stroke blue
-
-.state-selected
-  stroke-width 60px

@@ -20,5 +20,6 @@ export default ({
     graph$: state$.map((fsmViewState) => {
       return toGraph(fsmViewState.fsm);
     }),
+    mode$: state$.map((s) => s.currentEditMode),
   };
 };

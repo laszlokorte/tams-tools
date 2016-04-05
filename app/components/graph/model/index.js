@@ -77,21 +77,28 @@ const switchMode = (mode, state) =>
   state.set('mode', mode)
 ;
 
-export default (props$, data$, actions) => {
+export default (props$, data$, enabled$, actions) => {
   return O.combineLatest(
     data$.map(graphFromJson),
+    enabled$,
     actions.switchMode$.startWith('view'),
-    (baseGraph, mode) =>
+    (baseGraph, enabled, mode) =>
     O.merge([
       actions.tryCreateNode$.map((pos) => (state) => tryCreateNode(pos, state)),
-      actions.doCreateNode$.map(() => (state) => doCreateNode(state)),
+      actions.doCreateNode$.map(() => (state) =>
+        selectNode(state.graph.nodes.size, doCreateNode(state))
+      ),
       actions.stopCreateNode$.map(() => (state) => stopCreateNode(state)),
 
       actions.tryMoveNode$.map((move) =>
-        (state) => tryMoveNode(move.nodeIndex, move, state)
+        (state) => tryMoveNode(move.nodeIndex, move,
+          selectNode(move.nodeIndex, state)
+        )
       ),
       actions.doMoveNode$.map((move) =>
-        (state) => doMoveNode(move.nodeIndex, move, state)
+        (state) => doMoveNode(move.nodeIndex, move,
+          selectNode(move.nodeIndex, state)
+        )
       ),
       actions.stopMoveNode$.map(() => (state) => stopMoveNode(state)),
 
@@ -104,7 +111,7 @@ export default (props$, data$, actions) => {
     .scan(applyModifier)
     .combineLatest(props$, (state, props) =>
       state
-        .set('mode', mode)
+        .set('mode', enabled ? mode : 'disabled')
         .update('graph', (graph) =>
           layoutGraph(props.nodeRadius, graph, state.transientNode)
         )

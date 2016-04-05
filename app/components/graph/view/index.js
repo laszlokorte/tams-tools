@@ -101,8 +101,7 @@ const render = (state) =>
       height: state.graph.bounds.maxY - state.graph.bounds.minY,
       fill: 'none',
       attributes: {
-        'data-target': state.mode === 'create' ? true : void 0,
-        'data-background': state.mode !== 'create' ? true : void 0,
+        'data-background': state.mode,
       },
     }),
     state.graph.edges.map((e) => svg('g', {
@@ -113,15 +112,29 @@ const render = (state) =>
         'data-edge': `${e.fromIndex},${e.toIndex}`,
       },
     },[
+      svg('polygon', {
+        class: 'graph-edge-line-background',
+        points: arrowHeadString(e.path, 40),
+        fill: 'none',
+      }),
       svg('path', {
+        class: 'graph-edge-line-background',
+        d: bezierString(e.path),
+        stroke: 'none',
+        'stroke-width': 100,
+        fill: 'none',
+      }),
+      svg('polygon', {
+        class: 'graph-edge-head',
+        points: arrowHeadString(e.path, 40),
+        fill: 'black',
+      }),
+      svg('path', {
+        class: 'graph-edge-line',
         d: bezierString(e.path),
         stroke: 'black',
         'stroke-width': 5,
         fill: 'none',
-      }),
-      svg('polygon', {
-        points: arrowHeadString(e.path, 40),
-        fill: 'black',
       }),
     ])).toArray(),
 
@@ -136,35 +149,43 @@ const render = (state) =>
       },
     }, [
       svg('circle', {
+        class: 'graph-node-circle',
         cx: n.x,
         cy: n.y,
         r: state.nodeRadius,
         fill: 'black',
       }),
       svg('text', {
+        class: 'graph-node-label',
         x: n.x,
         y: n.y,
         'text-anchor': 'middle',
         'dominant-baseline': 'central',
         fill: 'white',
+        'font-size': state.nodeRadius * 0.7,
       }, n.label),
     ])).toArray(),
 
     IF(state.transientNode !== null, () =>
-      svg('g', [
+      svg('g', {
+        class: 'graph-node state-transient',
+      }, [
         svg('circle', {
+          class: 'graph-node-circle',
           cx: state.transientNode.x,
           cy: state.transientNode.y,
-          r: 50,
+          r: state.nodeRadius,
           fill: 'black',
         }),
         svg('text', {
+          class: 'graph-node-label',
           x: state.transientNode.x,
           y: state.transientNode.y,
+          'font-size': state.nodeRadius * 0.7,
           'text-anchor': 'middle',
           'dominant-baseline': 'central',
           fill: 'white',
-        }, "New Node"),
+        }, "new"),
       ])
     ),
   ])

@@ -22,6 +22,7 @@ const MODES = [
 ];
 
 export default (state) =>
+  state.mode === 'disabled' ? null :
   div('.mode-panel', [
     ul('.mode-list', MODES.map((mode) =>
       li('.mode-list-item', [
