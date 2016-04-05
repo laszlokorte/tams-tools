@@ -8,6 +8,8 @@ import model from './model';
 import view from './view';
 import intent from './intent';
 
+import modePanel from './view/mode-panel';
+
 // initialize the graph component
 export default ({
   DOM, // DOM driver source
@@ -33,7 +35,9 @@ export default ({
   }),
 }) => {
   const {isolateSource, isolateSink} = DOM;
-  const actions = intent(isolateSource(DOM, 'graphicsContent'), globalEvents);
+  const actions = intent(
+    DOM, isolateSource(DOM, 'graphicsContent'), globalEvents
+  );
   const state$ = model(props$, data$, actions);
   const vtree$ = view(state$);
 
@@ -51,7 +55,11 @@ export default ({
   });
 
   return {
-    DOM: stage.DOM.map(wrapInDiv),
+    DOM: O.combineLatest(
+      state$.map(modePanel),
+      stage.DOM,
+      (a,b) => [a,b]
+    ).map(wrapInDiv),
     preventDefault: O.merge([
       actions.preventDefault,
       stage.preventDefault,

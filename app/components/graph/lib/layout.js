@@ -51,18 +51,25 @@ const calculateEdgePivotAngle = (nodes, edges, nodeIndex) => {
   return angleSum;
 };
 
-const boundingBox = (nodes, radius, padding) => {
+const boundingBox = (nodes, radius, padding, extraNode) => {
+  const initial = extraNode ? {
+    minX: extraNode.x - padding,
+    maxX: extraNode.x + padding,
+    minY: extraNode.y - padding,
+    maxY: extraNode.y + padding,
+  } : {
+    minX: Infinity,
+    maxX: -Infinity,
+    minY: Infinity,
+    maxY: -Infinity,
+  };
+
   return bounds(nodes.reduce((box, node) => ({
     minX: Math.min(box.minX, node.x - padding),
     maxX: Math.max(box.maxX, node.x + padding),
     minY: Math.min(box.minY, node.y - padding),
     maxY: Math.max(box.maxY, node.y + padding),
-  }), {
-    minX: Infinity,
-    maxX: -Infinity,
-    minY: Infinity,
-    maxY: -Infinity,
-  }));
+  }), initial));
 };
 
 const calculateNodeLayout = (nodes, edges) => {
@@ -198,11 +205,11 @@ const calculateLayout = (nodeRadius, graph) => {
     );
 };
 
-export const layoutGraph = (nodeRadius, graph) => {
+export const layoutGraph = (nodeRadius, graph, extraNode) => {
   const layouted = calculateLayout(nodeRadius, graph);
 
   return layouted.set(
     'bounds',
-    boundingBox(layouted.nodes, nodeRadius, 10 * nodeRadius)
+    boundingBox(layouted.nodes, nodeRadius, 10 * nodeRadius, extraNode)
   );
 };

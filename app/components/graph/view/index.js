@@ -57,6 +57,41 @@ const arrowHeadString = (path, length) => {
   ].join(',');
 };
 
+const nodeAction = (state) => {
+  if (state.mode === 'move') {
+    return 'move';
+  } else if (state.mode === 'connect') {
+    return 'connect';
+  } else if (state.mode === 'view') {
+    return 'select';
+  } else {
+    return 'none';
+  }
+};
+
+const edgeAction = (state) => {
+  if (state.mode === 'connect') {
+    return 'select';
+  } else if (state.mode === 'view') {
+    return 'select';
+  } else {
+    return 'none';
+  }
+};
+
+const isNodeSelected = (nodeIndex, state) =>
+  state.selection !== null &&
+  state.selection.type === 'node' &&
+  state.selection.value === nodeIndex
+;
+
+const isEdgeSelected = (edge, state) =>
+  state.selection !== null &&
+  state.selection.type === 'edge' &&
+  state.selection.value.from === edge.fromIndex &&
+  state.selection.value.to === edge.toIndex
+;
+
 const render = (state) =>
   svg('g', [
     svg('rect', {
@@ -66,10 +101,18 @@ const render = (state) =>
       height: state.graph.bounds.maxY - state.graph.bounds.minY,
       fill: 'none',
       attributes: {
-        'data-target': true,
+        'data-target': state.mode === 'create' ? true : void 0,
+        'data-background': state.mode !== 'create' ? true : void 0,
       },
     }),
-    state.graph.edges.map((e) => svg('g', [
+    state.graph.edges.map((e) => svg('g', {
+      class: 'graph-edge' + (isEdgeSelected(e, state) ?
+        ' state-selected' : ''),
+      attributes: {
+        'data-action': edgeAction(state),
+        'data-edge': `${e.fromIndex},${e.toIndex}`,
+      },
+    },[
       svg('path', {
         d: bezierString(e.path),
         stroke: 'black',
@@ -83,8 +126,13 @@ const render = (state) =>
     ])).toArray(),
 
     state.graph.nodes.map((n, i) => svg('g', {
+      class: 'graph-node' + (isNodeSelected(i, state) ?
+        ' state-selected' : ''),
       attributes: {
         'data-node-index': i,
+        'data-node-x': n.x,
+        'data-node-y': n.y,
+        'data-action': nodeAction(state),
       },
     }, [
       svg('circle', {
