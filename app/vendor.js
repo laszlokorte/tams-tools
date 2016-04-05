@@ -4,10 +4,13 @@
   This list is used to bundle all libraries into one file.
 */
 module.exports = [
-  'core-js/es6/set',
-  'core-js/es6/object',
-  'core-js/es6/array',
-  'core-js/es7/object',
+  "core-js/es6/set",
+  "core-js/es6/symbol",
+  "core-js/fn/object/create",
+  "core-js/fn/object/assign",
+  "core-js/fn/object/keys",
+  "core-js/fn/object/values",
+  "core-js/fn/array/from",
   "@cycle/core",
   "@cycle/dom",
   "@cycle/isolate",
