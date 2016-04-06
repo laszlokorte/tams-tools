@@ -31,8 +31,26 @@
   &, >*
     pointer-events none
   .graph-node-circle
-  &.graph-edge
     opacity 0.7
+  .graph-edge-line
+    stroke-width 14
+  .graph-edge-head
+    stroke-width 20
+
+  &.state-valid
+    .graph-edge-line
+      stroke color-success
+    .graph-edge-head
+      fill color-success
+      stroke color-success
+
+  &.state-invalid
+    .graph-edge-line
+      stroke-dasharray 14,14
+      stroke color-failure
+    .graph-edge-head
+      fill color-failure
+      stroke color-failure
 
 [data-action]
   pointer-events all

@@ -82,16 +82,16 @@ const edgeAction = (state) => {
   }
 };
 
-const renderEdge = (state, edge, transient = false) => svg('g', {
+const renderEdge = (state, edge, index, transient = false) => svg('g', {
   class: 'graph-edge' +
   (isEdgeSelected(edge, state) ? ' state-selected' : '') +
-  (transient ? ' state-transient' : ''),
+  (transient ? ' state-transient' : '') +
+  (edge.toIndex !== null ? ' state-valid' : ' state-invalid'),
   attributes: transient ? void 0 : {
     'data-action': edgeAction(state),
     'data-edge': `${edge.fromIndex},${edge.toIndex}`,
-    'data-key': `edge-${edge.fromIndex}-${transient ? '?' : edge.toIndex}`,
   },
-  key: `edge-${edge.fromIndex}-${transient ? '?' : edge.toIndex}`,
+  key: `edge-${index}-${edge.fromIndex}-${transient ? '?' : edge.toIndex}`,
 },[
   svg('polygon', {
     class: 'graph-edge-line-background',
@@ -174,12 +174,12 @@ const render = (state) =>
       renderNode(state, node, nodeIndex)
     ).toArray(),
 
-    state.graph.edges.map((edge) =>
-      renderEdge(state, edge)
+    state.graph.edges.map((edge, edgeIndex) =>
+      renderEdge(state, edgeIndex, edge)
     ).toArray(),
 
     IF(state.transientEdge, () =>
-      renderEdge(state, state.transientEdge, true)
+      renderEdge(state, state.transientEdge, state.graph.edges.size, true)
     ),
 
     IF(state.transientNode !== null, () =>

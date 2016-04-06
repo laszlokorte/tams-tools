@@ -33,7 +33,7 @@ const fsmEditor = (sources) => {
   const graphComponent = isolate(GraphComponent)({
     DOM,
     globalEvents,
-    data$: fsmComponent.graph$,
+    data$: fsmComponent.graph$.debounce(5),
     enabled$: fsmComponent.mode$.map((m) => m === 'edit'),
   });
 
@@ -44,7 +44,7 @@ const fsmEditor = (sources) => {
   const splitComponent = isolate(splitPane)({
     DOM,
     globalEvents,
-    props$: O.just({proportion: 0.65}),
+    props$: O.just({proportion: 0.55}),
     firstChild$: fsmComponent.DOM,
     secondChild$: graphComponent.DOM,
   });

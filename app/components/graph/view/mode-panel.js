@@ -24,7 +24,7 @@ const MODES = [
 export default (state) =>
   state.mode === 'disabled' ? null :
   div('.mode-panel', [
-    ul('.mode-list', MODES.map((mode) =>
+    ul('.mode-list', [MODES.map((mode) =>
       li('.mode-list-item', [
         button('.mode-button' + (
           state.mode === mode.id ? '.state-active' : ''
@@ -35,6 +35,14 @@ export default (state) =>
           disabled: state.mode === mode.id ? 'true' : void 0,
         }, mode.name),
       ])
-    )),
+    ),
+    li('.mode-list-item', [
+      button('.mode-button', {
+        attributes: {
+          'data-action': 'autolayout',
+        },
+      }, 'Auto'),
+    ]),
+    ]),
   ])
 ;

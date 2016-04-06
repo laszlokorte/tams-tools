@@ -139,7 +139,7 @@ const numberCircleApp = (sources) => {
     DOM: DOM,
     globalEvents: globalEvents,
     bitCount$: state$.map((s) => s.bitCount),
-    encoding$: state$.map((s) => s.encoding)
+    encoding$: state$.map((s) => s.encoding),
   });
 
   const vtree$ = view(state$, circle.DOM);

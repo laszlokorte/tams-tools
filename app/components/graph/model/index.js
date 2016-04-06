@@ -37,6 +37,25 @@ const initGraph = (graph, state) =>
     .set('graph', graph)
     .set('transientNode', null)
     .set('transientEdge', null)
+    .update('selection', (selection) => {
+      return selection;
+      if (state.transientNode !== null) {
+        return _selection({
+          type: 'node',
+          value: 0,
+        });
+      } else if (
+        state.transientEdge !== null &&
+        state.transientEdge.toIndex !== null
+        ) {
+        return _selection({
+          type: 'edge',
+          value: state.transientEdge,
+        });
+      } else {
+        return selection;
+      }
+    })
 ;
 
 const tryCreateNode = (pos, state) =>
@@ -137,61 +156,62 @@ const layoutTransientEdge = (state, edge, radius) => {
 };
 
 export default (props$, data$, enabled$, actions) => {
-  return O.combineLatest(
-    enabled$,
-    actions.switchMode$.startWith('view'),
-    (enabled, mode) =>
+  return O.merge([
+    data$.map(graphFromJson).map((graph) => (state) =>
+      initGraph(graph, state)
+    ),
+    actions.tryCreateNode$.map((pos) => (state) => tryCreateNode(pos, state)),
+    actions.doCreateNode$.map(() => (state) =>
+      selectNode(state.graph.nodes.size, doCreateNode(state))
+    ),
+    actions.stopCreateNode$.map(() => (state) => stopCreateNode(state)),
+
+    actions.tryMoveNode$.map((move) =>
+      (state) => tryMoveNode(move.nodeIndex, move,
+        selectNode(move.nodeIndex, state)
+      )
+    ),
+    actions.doMoveNode$.map((move) =>
+      (state) => doMoveNode(move.nodeIndex, move,
+        selectNode(move.nodeIndex, state)
+      )
+    ),
+    actions.stopMoveNode$.map(() => (state) => stopMoveNode(state)),
+
+    actions.tryConnectNodes$.map((connection) => (state) =>
+      tryConnectNodes(connection, state)
+    ),
+    actions.doConnectNodes$.map(() => (state) =>
+      state.transientEdge && state.transientEdge.toIndex !== null ?
+      selectEdge(state.transientEdge, doConnectNodes(state)) :
+      doConnectNodes(state)
+    ),
+    actions.stopConnectNodes$.map(() => (state) => stopConnectNodes(state)),
+
+    actions.selectNode$.map((index) => (state) => selectNode(index, state)),
+    actions.selectEdge$.map((index) => (state) => selectEdge(index, state)),
+
     O.merge([
-      data$.map(graphFromJson).map((graph) => (state) =>
-        initGraph(graph, state)
-      ),
-      actions.tryCreateNode$.map((pos) => (state) => tryCreateNode(pos, state)),
-      actions.doCreateNode$.map(() => (state) =>
-        selectNode(state.graph.nodes.size, doCreateNode(state))
-      ),
-      actions.stopCreateNode$.map(() => (state) => stopCreateNode(state)),
+      actions.deselect$ ,
+      enabled$.filter((e) => e === false),
+    ]).map(() => (state) => deselect(state)),
 
-      actions.tryMoveNode$.map((move) =>
-        (state) => tryMoveNode(move.nodeIndex, move,
-          selectNode(move.nodeIndex, state)
-        )
-      ),
-      actions.doMoveNode$.map((move) =>
-        (state) => doMoveNode(move.nodeIndex, move,
-          selectNode(move.nodeIndex, state)
-        )
-      ),
-      actions.stopMoveNode$.map(() => (state) => stopMoveNode(state)),
-
-      actions.tryConnectNodes$.map((connection) => (state) =>
-        tryConnectNodes(connection, state)
-      ),
-      actions.doConnectNodes$.map(() => (state) =>
-        doConnectNodes(state)
-      ),
-      actions.stopConnectNodes$.map(() => (state) => stopConnectNodes(state)),
-
-      actions.selectNode$.map((index) => (state) => selectNode(index, state)),
-      actions.selectEdge$.map((index) => (state) => selectEdge(index, state)),
-
-      actions.deselect$.map(() => (state) => deselect(state)),
-    ])
-    .startWith(graphUiState({graph: graphFromJson({})}))
-    .scan(applyModifier)
-    .combineLatest(props$, (state, props) =>
-      state
-        .set('mode', enabled ? mode : 'disabled')
-        .update('graph', (graph) =>
-          layoutGraph(props.nodeRadius, graph, state.transientNode)
-        )
-        .update('transientEdge', (e) =>
-          e && e.set('path', layoutTransientEdge(
-            state.graph, e, props.nodeRadius
-          ))
-        )
-        .set('nodeRadius', props.nodeRadius)
-    )
-  ).switch()
+    actions.switchMode$.map((mode) => (state) => state.set('mode', mode)),
+  ])
+  .scan(applyModifier, graphUiState({graph: graphFromJson({})}))
+  .combineLatest(props$, enabled$, (state, props, enabled) =>
+    state
+      .set('mode', enabled ? state.mode : 'disabled')
+      .update('graph', (graph) =>
+        layoutGraph(props.nodeRadius, graph, state.transientNode)
+      )
+      .update('transientEdge', (e) =>
+        e && e.set('path', layoutTransientEdge(
+          state.graph, e, props.nodeRadius
+        ))
+      )
+      .set('nodeRadius', props.nodeRadius)
+  )
   .shareReplay(1);
 };
 

@@ -51,9 +51,12 @@ export default ({
       height: 600,
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
-    bounds$: state$.map((s) => s.graph.bounds),
+    bounds$: state$.map((s) => s.graph.bounds).share(),
     content$: isolateSink(vtree$, 'graphicsContent').share(),
-    autoCenter$: state$.take(1).map(() => true),
+    autoCenter$: O.merge([
+      state$.take(1),
+      actions.autoLayout$,
+    ]).map(() => true).delay(50),
   });
 
   return {
@@ -67,6 +70,6 @@ export default ({
       stage.preventDefault,
     ]).share(),
     stopPropagation: actions.stopPropagation,
-    action$: commands(actions),
+    action$: commands(actions, state$).delay(0),
   };
 };

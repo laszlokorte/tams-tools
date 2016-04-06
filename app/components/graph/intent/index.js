@@ -22,6 +22,8 @@ export default (DOM, stageDOM, globalEvents) => {
     .filter((evt) => evt.keyCode === 27)
     .share();
 
+  const autoLayoutButton = DOM.select('[data-action="autolayout"]');
+
   const moveableNode = stageDOM
     .select('[data-node-index][data-action="move"]');
   const connectableNode = stageDOM
@@ -224,8 +226,15 @@ export default (DOM, stageDOM, globalEvents) => {
     switchMode$: switchMode$.map(
       (evt) => evt.ownerTarget.dataset.mode
     ).share(),
+
+    autoLayout$: autoLayoutButton
+      .events('click')
+      .map(() => true)
+      .share(),
+
     preventDefault: O.merge([
       modeButton.events('mousedown'),
+      autoLayoutButton.events('mousedown'),
       moveStart$,
       createStart$,
       switchMode$,
