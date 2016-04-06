@@ -1,4 +1,4 @@
-import {Observable as O} from 'rx';
+import {Observable as O, Subject} from 'rx';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import isolate from '@cycle/isolate';
@@ -20,10 +20,13 @@ const fsmEditor = (sources) => {
     globalEvents, // The globalEvent driver source
   } = sources;
 
+  const graphActionProxy = new Subject();
+
   // The FSM editor to be shown on the left side
   const fsmComponent = isolate(FSMComponent)({
     DOM,
     globalEvents,
+    graphAction$: graphActionProxy,
   });
 
   // The graph editor to be shown on the right side
@@ -33,6 +36,8 @@ const fsmEditor = (sources) => {
     data$: fsmComponent.graph$,
     enabled$: fsmComponent.mode$.map((m) => m === 'edit'),
   });
+
+  graphComponent.action$.subscribe(graphActionProxy);
 
   // The split component to display the left and right
   // side next to each other

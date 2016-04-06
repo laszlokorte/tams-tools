@@ -61,6 +61,24 @@ const switchEditMode = (state, mode) =>
   state.set('currentEditMode', mode)
 ;
 
+const addState = (position, state) =>
+  state.update('fsm', (fsm) =>
+    FSM.addState(position, fsm)
+  )
+;
+
+const moveState = ({index, x, y}, state) =>
+  state.update('fsm', (fsm) =>
+    FSM.moveState(index, {x, y}, fsm)
+  )
+;
+
+const addTransition = (fromIndex, toIndex, state) =>
+  state.update('fsm', (fsm) =>
+    FSM.addTransition(fromIndex, toIndex, fsm)
+  )
+;
+
 const modifiers = (actions) => {
   return O.merge([
     actions.addInput$.map(() => (state) => {
@@ -80,6 +98,15 @@ const modifiers = (actions) => {
     }),
     actions.setType$.map((type) => (state) => {
       return setType(state, type);
+    }),
+    actions.addState$.map((position) => (state) => {
+      return addState(position, state);
+    }),
+    actions.moveState$.map((movement) => (state) => {
+      return moveState(movement, state);
+    }),
+    actions.addTransition$.map(({fromIndex, toIndex}) => (state) => {
+      return addTransition(fromIndex, toIndex, state);
     }),
   ]);
 };

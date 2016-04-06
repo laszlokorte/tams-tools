@@ -225,6 +225,7 @@ export default (DOM, stageDOM, globalEvents) => {
       (evt) => evt.ownerTarget.dataset.mode
     ).share(),
     preventDefault: O.merge([
+      modeButton.events('mousedown'),
       moveStart$,
       createStart$,
       switchMode$,

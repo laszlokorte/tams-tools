@@ -1,20 +1,35 @@
-[data-target]
+@import '../../../styles/global'
+
 [data-background]
   pointer-events all
 
 .graph-edge-line-background
   pointer-events all
-  stroke-linecap round
-  stroke-linejoin round
+
+.graph-edge-line
+  stroke color-background-inverse
+
+.graph-edge-head
+  fill color-background-inverse
+
+.graph-node-circle
+  fill color-foreground-inverse
+  stroke color-background-secondary-strong
+
+.graph-node-label
+  fill color-foreground-primary
 
 .state-selected
   .graph-node-circle
   .graph-edge-line-background
     stroke-width 20px
-    stroke green
+    stroke color-focus
+    stroke-linecap round
+    stroke-linejoin round
 
 .state-transient
-  pointer-events none
+  &, >*
+    pointer-events none
   .graph-node-circle
   &.graph-edge
     opacity 0.7

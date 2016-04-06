@@ -81,6 +81,31 @@ export const setInitialValue = (machine, inputIndex, value) =>
   )
 ;
 
+export const addState = (position, machine) =>
+  machine.update('states', (states) =>
+    states.push(_state({
+      name: "foo",
+      position: _position(position),
+    }))
+  )
+;
+
+export const moveState = (stateIndex, pos, machine) =>
+  machine.updateIn(['states', stateIndex, 'position'], (position) =>
+    position
+      .set('x', pos.x)
+      .set('y', pos.y)
+  )
+;
+
+export const addTransition = (sourceIndex, targetIndex, machine) =>
+  machine.updateIn(['states', sourceIndex, 'transitions'], (transitions) =>
+    transitions.push(_transition({
+      target: targetIndex,
+    })).toOrderedSet().toList()
+  )
+;
+
 export const newMachine = () => {
   return _stateMachine();
 };

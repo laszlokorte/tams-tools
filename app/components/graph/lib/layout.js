@@ -64,7 +64,10 @@ const boundingBox = (nodes, radius, padding, extraNode) => {
     maxY: -Infinity,
   };
 
-  return bounds(nodes.reduce((box, node) => ({
+  const n = nodes.size === 0 ?
+    [{x: 0, y: 0}] : nodes;
+
+  return bounds(n.reduce((box, node) => ({
     minX: Math.min(box.minX, node.x - padding),
     maxX: Math.max(box.maxX, node.x + padding),
     minY: Math.min(box.minY, node.y - padding),

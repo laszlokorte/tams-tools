@@ -32,11 +32,19 @@ const graphUiState = I.Record({
 
 const applyModifier = (state, fn) => fn(state);
 
+const initGraph = (graph, state) =>
+  state
+    .set('graph', graph)
+    .set('transientNode', null)
+    .set('transientEdge', null)
+;
+
 const tryCreateNode = (pos, state) =>
   state.set('transientNode', _position(pos))
 ;
 
 const doCreateNode = (state) =>
+  state.transientNode === null ? state :
   state.updateIn(['graph', 'nodes'], (nodes) =>
     nodes.push(graphNode({
       label: "new",
@@ -75,7 +83,7 @@ const tryConnectNodes = ({fromIndex, toIndex, x, y}, state) =>
 ;
 
 const doConnectNodes = (state) =>
-  !state.transientEdge === null ||
+  state.transientEdge === null ||
   state.transientEdge.toIndex === null ? state :
 
   state.updateIn(['graph', 'edges'], (edges) =>
@@ -130,11 +138,13 @@ const layoutTransientEdge = (state, edge, radius) => {
 
 export default (props$, data$, enabled$, actions) => {
   return O.combineLatest(
-    data$.map(graphFromJson),
     enabled$,
     actions.switchMode$.startWith('view'),
-    (baseGraph, enabled, mode) =>
+    (enabled, mode) =>
     O.merge([
+      data$.map(graphFromJson).map((graph) => (state) =>
+        initGraph(graph, state)
+      ),
       actions.tryCreateNode$.map((pos) => (state) => tryCreateNode(pos, state)),
       actions.doCreateNode$.map(() => (state) =>
         selectNode(state.graph.nodes.size, doCreateNode(state))
@@ -157,8 +167,6 @@ export default (props$, data$, enabled$, actions) => {
         tryConnectNodes(connection, state)
       ),
       actions.doConnectNodes$.map(() => (state) =>
-        state.transientEdge && state.transientEdge.toIndex !== null ?
-        selectEdge(state.transientEdge, doConnectNodes(state)) :
         doConnectNodes(state)
       ),
       actions.stopConnectNodes$.map(() => (state) => stopConnectNodes(state)),
@@ -168,7 +176,7 @@ export default (props$, data$, enabled$, actions) => {
 
       actions.deselect$.map(() => (state) => deselect(state)),
     ])
-    .startWith(graphUiState({graph: baseGraph}))
+    .startWith(graphUiState({graph: graphFromJson({})}))
     .scan(applyModifier)
     .combineLatest(props$, (state, props) =>
       state

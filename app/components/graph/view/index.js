@@ -89,12 +89,15 @@ const renderEdge = (state, edge, transient = false) => svg('g', {
   attributes: transient ? void 0 : {
     'data-action': edgeAction(state),
     'data-edge': `${edge.fromIndex},${edge.toIndex}`,
+    'data-key': `edge-${edge.fromIndex}-${transient ? '?' : edge.toIndex}`,
   },
+  key: `edge-${edge.fromIndex}-${transient ? '?' : edge.toIndex}`,
 },[
   svg('polygon', {
     class: 'graph-edge-line-background',
     points: arrowHeadString(edge.path, 40),
     fill: 'none',
+    key: 'background-head',
   }),
   svg('path', {
     class: 'graph-edge-line-background',
@@ -102,11 +105,13 @@ const renderEdge = (state, edge, transient = false) => svg('g', {
     stroke: 'none',
     'stroke-width': 100,
     fill: 'none',
+    key: 'background-line',
   }),
   svg('polygon', {
     class: 'graph-edge-head',
     points: arrowHeadString(edge.path, 40),
     fill: 'black',
+    key: 'head',
   }),
   svg('path', {
     class: 'graph-edge-line',
@@ -114,6 +119,7 @@ const renderEdge = (state, edge, transient = false) => svg('g', {
     stroke: 'black',
     'stroke-width': 5,
     fill: 'none',
+    key: 'line',
   }),
 ])
 ;
@@ -127,13 +133,16 @@ const renderNode = (state, node, index) => svg('g', {
     'data-node-y': node.y,
     'data-action': nodeAction(state),
   },
+  key: `node-${index}`,
 }, [
   svg('circle', {
     class: 'graph-node-circle',
     cx: node.x,
     cy: node.y,
     r: state.nodeRadius,
-    fill: 'black',
+    fill: 'gray',
+    'stroke-width': state.nodeRadius / 10,
+    key: 'circle',
   }),
   svg('text', {
     class: 'graph-node-label',
@@ -141,8 +150,9 @@ const renderNode = (state, node, index) => svg('g', {
     y: node.y,
     'text-anchor': 'middle',
     'dominant-baseline': 'central',
-    fill: 'white',
+    fill: 'black',
     'font-size': state.nodeRadius * 0.7,
+    key: 'label',
   }, node.label),
 ])
 ;
@@ -159,6 +169,11 @@ const render = (state) =>
         'data-background': state.mode,
       },
     }),
+
+    state.graph.nodes.map((node, nodeIndex) =>
+      renderNode(state, node, nodeIndex)
+    ).toArray(),
+
     state.graph.edges.map((edge) =>
       renderEdge(state, edge)
     ).toArray(),
@@ -167,20 +182,18 @@ const render = (state) =>
       renderEdge(state, state.transientEdge, true)
     ),
 
-    state.graph.nodes.map((node, nodeIndex) =>
-      renderNode(state, node, nodeIndex)
-    ).toArray(),
-
     IF(state.transientNode !== null, () =>
       svg('g', {
         class: 'graph-node state-transient',
+        key: 'transient-node',
       }, [
         svg('circle', {
           class: 'graph-node-circle',
           cx: state.transientNode.x,
           cy: state.transientNode.y,
           r: state.nodeRadius,
-          fill: 'black',
+          fill: 'gray',
+          'stroke-width': state.nodeRadius / 10,
         }),
         svg('text', {
           class: 'graph-node-label',
@@ -189,7 +202,7 @@ const render = (state) =>
           'font-size': state.nodeRadius * 0.7,
           'text-anchor': 'middle',
           'dominant-baseline': 'central',
-          fill: 'white',
+          fill: 'black',
         }, "new"),
       ])
     ),

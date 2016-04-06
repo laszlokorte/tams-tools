@@ -7,6 +7,7 @@ import graphics from '../graphics';
 import model from './model';
 import view from './view';
 import intent from './intent';
+import commands from './model/commands';
 
 import modePanel from './view/mode-panel';
 
@@ -51,7 +52,7 @@ export default ({
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),
     bounds$: state$.map((s) => s.graph.bounds),
-    content$: isolateSink(vtree$, 'graphicsContent'),
+    content$: isolateSink(vtree$, 'graphicsContent').share(),
     autoCenter$: state$.take(1).map(() => true),
   });
 
@@ -66,5 +67,6 @@ export default ({
       stage.preventDefault,
     ]).share(),
     stopPropagation: actions.stopPropagation,
+    action$: commands(actions),
   };
 };
