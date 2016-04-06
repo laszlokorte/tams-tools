@@ -41,7 +41,7 @@ export default (state) =>
         attributes: {
           'data-action': 'autolayout',
         },
-      }, 'Auto'),
+      }, 'Auto Align'),
     ]),
     ]),
   ])
