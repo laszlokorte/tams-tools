@@ -155,6 +155,42 @@ const layoutTransientEdge = (state, edge, radius) => {
   });
 };
 
+const autoLayout = (nodeRadius, state) => {
+  const count = state.graph.nodes.size;
+
+  const centerX = state.graph.nodes.reduce((a,n) => a + n.x, 0) / count;
+  const centerY = state.graph.nodes.reduce((a,n) => a + n.y, 0) / count;
+
+  const nodeIndices = Array.apply(Array, {length: count})
+    .map(Number.call, Number);
+
+  nodeIndices.sort((a,b) => {
+    const posA = state.graph.nodes.get(a);
+    const posB = state.graph.nodes.get(b);
+    const angleA = Math.atan2(centerY - posA.y, centerX - posA.x);
+    const angleB = Math.atan2(centerY - posB.y, centerX - posB.x);
+
+    return Math.sign(
+      angleB - angleA
+    );
+  });
+
+  return state.updateIn(['graph', 'nodes'], (nodes) =>
+    nodes.map((node, nodeIndex) => {
+      const angle = (-Math.PI / 2 - Math.PI * 2 *
+          nodeIndices.indexOf(nodeIndex)) / count;
+
+      const circumference = nodeRadius * 4 * Math.max(7, count);
+      const radius = circumference / 2 / Math.PI;
+
+      const x = centerX + Math.cos(angle) * radius;
+      const y = centerY + Math.sin(angle) * radius;
+
+      return node.set('x', x).set('y', y);
+    }).toList()
+  );
+};
+
 export default (props$, data$, enabled$, actions) => {
   return O.merge([
     data$.map(graphFromJson).map((graph) => (state) =>
@@ -187,6 +223,10 @@ export default (props$, data$, enabled$, actions) => {
       doConnectNodes(state)
     ),
     actions.stopConnectNodes$.map(() => (state) => stopConnectNodes(state)),
+
+    actions.autoLayout$.withLatestFrom(props$, (_, {nodeRadius}) => (state) =>
+      autoLayout(nodeRadius, state)
+    ),
 
     actions.selectNode$.map((index) => (state) => selectNode(index, state)),
     actions.selectEdge$.map((index) => (state) => selectEdge(index, state)),

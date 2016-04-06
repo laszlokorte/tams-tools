@@ -33,7 +33,7 @@ const fsmEditor = (sources) => {
   const graphComponent = isolate(GraphComponent)({
     DOM,
     globalEvents,
-    data$: fsmComponent.graph$.debounce(5),
+    data$: fsmComponent.graph$,
     enabled$: fsmComponent.mode$.map((m) => m === 'edit'),
   });
 

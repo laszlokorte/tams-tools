@@ -56,7 +56,7 @@ export default ({
     autoCenter$: O.merge([
       state$.take(1),
       actions.autoLayout$,
-    ]).map(() => true).delay(50),
+    ]).map(() => true),
   });
 
   return {
