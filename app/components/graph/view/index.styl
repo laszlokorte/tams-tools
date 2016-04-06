@@ -14,10 +14,13 @@
     stroke green
 
 .state-transient
+  pointer-events none
   .graph-node-circle
+  &.graph-edge
     opacity 0.7
 
-
+[data-action]
+  pointer-events all
 
 [data-action="none"]
   pointer-events none

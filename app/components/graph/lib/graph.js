@@ -16,7 +16,7 @@ export const graphEdge = I.Record({
 
 export const _graph = I.Record({
   nodes: I.List(),
-  edges: I.List(),
+  edges: I.Set(),
   bounds: null,
 }, 'graph');
 
@@ -27,7 +27,7 @@ export const graphFromJson = (data) => {
       x: n.x,
       y: n.y,
     })),
-    edges: I.List(data.edges).map((e) => graphEdge({
+    edges: I.Set(data.edges).map((e) => graphEdge({
       label: e.label,
       fromIndex: e.from,
       toIndex: e.to,

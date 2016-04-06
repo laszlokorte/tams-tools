@@ -1,12 +1,19 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import {graphFromJson, graphNode} from '../lib/graph';
-import {layoutGraph} from '../lib/layout';
+import {graphFromJson, graphNode, graphEdge} from '../lib/graph';
+import {layoutGraph, calculateConnectionPath} from '../lib/layout';
 
 const _position = I.Record({
   x: 0,
   y: 0,
+});
+
+const _partialEdge = I.Record({
+  fromIndex: null,
+  toIndex: null,
+  toPosition: null,
+  path: null,
 });
 
 const _selection = I.Record({
@@ -19,6 +26,7 @@ const graphUiState = I.Record({
   graph: null,
   nodeRadius: 10,
   transientNode: null,
+  transientEdge: null,
   selection: null,
 }, 'graphUiState');
 
@@ -55,6 +63,34 @@ const stopMoveNode = (state) =>
   state.set('transientNode', null)
 ;
 
+const tryConnectNodes = ({fromIndex, toIndex, x, y}, state) =>
+  state.set('transientEdge', _partialEdge({
+    fromIndex,
+    toIndex,
+    toPosition: _position({
+      x,
+      y,
+    }),
+  }))
+;
+
+const doConnectNodes = (state) =>
+  !state.transientEdge === null ||
+  state.transientEdge.toIndex === null ? state :
+
+  state.updateIn(['graph', 'edges'], (edges) =>
+    edges.add(graphEdge({
+      label: "Foo",
+      fromIndex: state.transientEdge.fromIndex,
+      toIndex: state.transientEdge.toIndex,
+    }))
+  )
+;
+
+const stopConnectNodes = (state) =>
+  state.set('transientEdge', null)
+;
+
 const selectNode = (value, state) =>
   state.set('selection', _selection({
     type: 'node',
@@ -73,9 +109,24 @@ const deselect = (state) =>
   state.set('selection', null)
 ;
 
-const switchMode = (mode, state) =>
-  state.set('mode', mode)
-;
+const layoutTransientEdge = (state, edge, radius) => {
+  const invalid =
+    edge.toIndex === edge.fromIndex ||
+    edge.toIndex === null;
+  const fromNode = state.nodes.get(edge.fromIndex);
+  const toNode = invalid ?
+    edge.toPosition :
+    state.nodes.get(edge.toIndex);
+  const preferredAngle = fromNode.pivotAngle;
+
+  return calculateConnectionPath({
+    from: fromNode,
+    to: toNode,
+    offset: radius,
+    preferredAngle,
+    streight: invalid,
+  });
+};
 
 export default (props$, data$, enabled$, actions) => {
   return O.combineLatest(
@@ -102,6 +153,16 @@ export default (props$, data$, enabled$, actions) => {
       ),
       actions.stopMoveNode$.map(() => (state) => stopMoveNode(state)),
 
+      actions.tryConnectNodes$.map((connection) => (state) =>
+        tryConnectNodes(connection, state)
+      ),
+      actions.doConnectNodes$.map(() => (state) =>
+        state.transientEdge && state.transientEdge.toIndex !== null ?
+        selectEdge(state.transientEdge, doConnectNodes(state)) :
+        doConnectNodes(state)
+      ),
+      actions.stopConnectNodes$.map(() => (state) => stopConnectNodes(state)),
+
       actions.selectNode$.map((index) => (state) => selectNode(index, state)),
       actions.selectEdge$.map((index) => (state) => selectEdge(index, state)),
 
@@ -115,8 +176,26 @@ export default (props$, data$, enabled$, actions) => {
         .update('graph', (graph) =>
           layoutGraph(props.nodeRadius, graph, state.transientNode)
         )
+        .update('transientEdge', (e) =>
+          e && e.set('path', layoutTransientEdge(
+            state.graph, e, props.nodeRadius
+          ))
+        )
         .set('nodeRadius', props.nodeRadius)
     )
   ).switch()
   .shareReplay(1);
 };
+
+export const isNodeSelected = (nodeIndex, state) =>
+  state.selection !== null &&
+  state.selection.type === 'node' &&
+  state.selection.value === nodeIndex
+;
+
+export const isEdgeSelected = (edge, state) =>
+  state.selection !== null &&
+  state.selection.type === 'edge' &&
+  state.selection.value.fromIndex === edge.fromIndex &&
+  state.selection.value.toIndex === edge.toIndex
+;

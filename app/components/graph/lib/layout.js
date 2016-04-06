@@ -81,7 +81,7 @@ const calculateNodeLayout = (nodes, edges) => {
   });
 };
 
-const calculateConnectionPath = ({
+export const calculateConnectionPath = ({
   from,
   to,
   offset,

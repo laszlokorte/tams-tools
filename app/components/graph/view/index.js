@@ -1,5 +1,6 @@
 import {svg} from '@cycle/dom';
 
+import {isEdgeSelected, isNodeSelected} from '../model';
 import {IF} from '../../../lib/h-helper';
 
 import './index.styl';
@@ -74,22 +75,76 @@ const edgeAction = (state) => {
     return 'select';
   } else if (state.mode === 'view') {
     return 'select';
+  } else if (state.mode === 'move') {
+    return 'select';
   } else {
     return 'none';
   }
 };
 
-const isNodeSelected = (nodeIndex, state) =>
-  state.selection !== null &&
-  state.selection.type === 'node' &&
-  state.selection.value === nodeIndex
+const renderEdge = (state, edge, transient = false) => svg('g', {
+  class: 'graph-edge' +
+  (isEdgeSelected(edge, state) ? ' state-selected' : '') +
+  (transient ? ' state-transient' : ''),
+  attributes: transient ? void 0 : {
+    'data-action': edgeAction(state),
+    'data-edge': `${edge.fromIndex},${edge.toIndex}`,
+  },
+},[
+  svg('polygon', {
+    class: 'graph-edge-line-background',
+    points: arrowHeadString(edge.path, 40),
+    fill: 'none',
+  }),
+  svg('path', {
+    class: 'graph-edge-line-background',
+    d: bezierString(edge.path),
+    stroke: 'none',
+    'stroke-width': 100,
+    fill: 'none',
+  }),
+  svg('polygon', {
+    class: 'graph-edge-head',
+    points: arrowHeadString(edge.path, 40),
+    fill: 'black',
+  }),
+  svg('path', {
+    class: 'graph-edge-line',
+    d: bezierString(edge.path),
+    stroke: 'black',
+    'stroke-width': 5,
+    fill: 'none',
+  }),
+])
 ;
 
-const isEdgeSelected = (edge, state) =>
-  state.selection !== null &&
-  state.selection.type === 'edge' &&
-  state.selection.value.from === edge.fromIndex &&
-  state.selection.value.to === edge.toIndex
+const renderNode = (state, node, index) => svg('g', {
+  class: 'graph-node' + (isNodeSelected(index, state) ?
+    ' state-selected' : ''),
+  attributes: {
+    'data-node-index': index,
+    'data-node-x': node.x,
+    'data-node-y': node.y,
+    'data-action': nodeAction(state),
+  },
+}, [
+  svg('circle', {
+    class: 'graph-node-circle',
+    cx: node.x,
+    cy: node.y,
+    r: state.nodeRadius,
+    fill: 'black',
+  }),
+  svg('text', {
+    class: 'graph-node-label',
+    x: node.x,
+    y: node.y,
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+    fill: 'white',
+    'font-size': state.nodeRadius * 0.7,
+  }, node.label),
+])
 ;
 
 const render = (state) =>
@@ -104,67 +159,17 @@ const render = (state) =>
         'data-background': state.mode,
       },
     }),
-    state.graph.edges.map((e) => svg('g', {
-      class: 'graph-edge' + (isEdgeSelected(e, state) ?
-        ' state-selected' : ''),
-      attributes: {
-        'data-action': edgeAction(state),
-        'data-edge': `${e.fromIndex},${e.toIndex}`,
-      },
-    },[
-      svg('polygon', {
-        class: 'graph-edge-line-background',
-        points: arrowHeadString(e.path, 40),
-        fill: 'none',
-      }),
-      svg('path', {
-        class: 'graph-edge-line-background',
-        d: bezierString(e.path),
-        stroke: 'none',
-        'stroke-width': 100,
-        fill: 'none',
-      }),
-      svg('polygon', {
-        class: 'graph-edge-head',
-        points: arrowHeadString(e.path, 40),
-        fill: 'black',
-      }),
-      svg('path', {
-        class: 'graph-edge-line',
-        d: bezierString(e.path),
-        stroke: 'black',
-        'stroke-width': 5,
-        fill: 'none',
-      }),
-    ])).toArray(),
+    state.graph.edges.map((edge) =>
+      renderEdge(state, edge)
+    ).toArray(),
 
-    state.graph.nodes.map((n, i) => svg('g', {
-      class: 'graph-node' + (isNodeSelected(i, state) ?
-        ' state-selected' : ''),
-      attributes: {
-        'data-node-index': i,
-        'data-node-x': n.x,
-        'data-node-y': n.y,
-        'data-action': nodeAction(state),
-      },
-    }, [
-      svg('circle', {
-        class: 'graph-node-circle',
-        cx: n.x,
-        cy: n.y,
-        r: state.nodeRadius,
-        fill: 'black',
-      }),
-      svg('text', {
-        class: 'graph-node-label',
-        x: n.x,
-        y: n.y,
-        'text-anchor': 'middle',
-        'dominant-baseline': 'central',
-        fill: 'white',
-        'font-size': state.nodeRadius * 0.7,
-      }, n.label),
-    ])).toArray(),
+    IF(state.transientEdge, () =>
+      renderEdge(state, state.transientEdge, true)
+    ),
+
+    state.graph.nodes.map((node, nodeIndex) =>
+      renderNode(state, node, nodeIndex)
+    ).toArray(),
 
     IF(state.transientNode !== null, () =>
       svg('g', {

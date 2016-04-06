@@ -11,6 +11,12 @@ const svgEventPosition = (() => {
   };
 })();
 
+const findAttribute = (attr, element) =>
+  element.getAttribute &&
+  element.getAttribute(attr) ||
+  (element.parentNode && findAttribute(attr, element.parentNode))
+;
+
 export default (DOM, stageDOM, globalEvents) => {
   const cancel$ = globalEvents.events('keydown')
     .filter((evt) => evt.keyCode === 27)
@@ -111,6 +117,39 @@ export default (DOM, stageDOM, globalEvents) => {
     .takeUntil(dragEnd$).takeUntil(cancel$);
   }).mergeAll();
 
+  const tryConnectNodes$ = connectStart$.map((startEvt) => {
+    const fromIndex = parseInt(
+      startEvt.ownerTarget.getAttribute('data-node-index'), 10
+    );
+
+    return dragMove$
+    .startWith(startEvt)
+    .map((evt) => {
+      const pos = svgEventPosition({
+        x: evt.clientX,
+        y: evt.clientY,
+      },
+      startEvt.ownerTarget.ownerSVGElement);
+
+      const toIndexAttr = findAttribute('data-node-index', evt.target);
+      const toIndex = toIndexAttr ? parseInt(toIndexAttr, 10) : null;
+
+      return {
+        x: pos.x,
+        y: pos.y,
+        toIndex,
+      };
+    })
+    .map(({x,y,toIndex}) => ({
+      fromIndex,
+      toIndex,
+      x,
+      y,
+    }))
+    .takeUntil(dragEnd$)
+    .takeUntil(cancel$);
+  }).mergeAll();
+
   const confirmCreateNode$ = tryCreateNode$.sample(
     O.merge([
       createStart$.map(() => dragEnd$),
@@ -121,6 +160,13 @@ export default (DOM, stageDOM, globalEvents) => {
   const confirmMoveNode$ = tryMoveNode$.sample(
     O.merge([
       moveStart$.map(() => dragEnd$),
+      cancel$.map(() => O.empty()),
+    ]).switch()
+  );
+
+  const confirmConnectNodes$ = tryConnectNodes$.sample(
+    O.merge([
+      connectStart$.map(() => dragEnd$),
       cancel$.map(() => O.empty()),
     ]).switch()
   );
@@ -151,6 +197,13 @@ export default (DOM, stageDOM, globalEvents) => {
     ]).share(),
     doMoveNode$: confirmMoveNode$,
 
+    tryConnectNodes$,
+    stopConnectNodes$: O.merge([
+      confirmConnectNodes$,
+      cancel$,
+    ]).share(),
+    doConnectNodes$: confirmConnectNodes$,
+
     selectNode$: selectNode$.map((e) => parseInt(
       e.ownerTarget.getAttribute('data-node-index'), 10
     )),
@@ -158,8 +211,8 @@ export default (DOM, stageDOM, globalEvents) => {
       const edgeId = e.ownerTarget.getAttribute('data-edge').split(',');
 
       return {
-        from: parseInt(edgeId[0], 10),
-        to: parseInt(edgeId[1], 10),
+        fromIndex: parseInt(edgeId[0], 10),
+        toIndex: parseInt(edgeId[1], 10),
       };
     }),
 
@@ -177,6 +230,7 @@ export default (DOM, stageDOM, globalEvents) => {
       switchMode$,
       selectNode$,
       selectEdge$,
+      connectStart$,
     ]).share(),
     stopPropagation: O.merge([
       moveStart$,
