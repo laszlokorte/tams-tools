@@ -1,4 +1,4 @@
-import {div, ul, li, button} from '@cycle/dom';
+import {div, span, ul, li, button} from '@cycle/dom';
 
 import {TYPE_MOORE, TYPE_MEALY} from '../lib/state-machine';
 import {attrBool} from '../../../lib/h-helper';
@@ -7,17 +7,19 @@ import renderMachine from './machine';
 
 import './index.styl';
 const render = (state) => div([
-  ul([
-    li([
-      button({
+  ul('.fsm-edit-mode-list', [
+    li('.fsm-edit-mode-list-item', [
+      button('.fsm-edit-mode-button' +
+      (state.currentEditMode === 'edit' ? '.state-active' : ''), {
         attributes: {
           disabled: attrBool(state.currentEditMode === 'edit'),
           'data-edit-mode': 'edit',
         },
       }, 'Edit'),
     ]),
-    li([
-      button({
+    li('.fsm-edit-mode-list-item', [
+      button('.fsm-edit-mode-button' +
+      (state.currentEditMode === 'simulate' ? '.state-active' : ''), {
         attributes: {
           disabled: attrBool(state.currentEditMode === 'simulate'),
           'data-edit-mode': 'simulate',
@@ -26,24 +28,34 @@ const render = (state) => div([
     ]),
   ]),
 
-  ul([
-    state.currentEditMode === 'edit' ?
-    li([
-      button({
+  ul('.fsm-type-list',
+    state.currentEditMode === 'edit' ? [
+      li('.fsm-type-list-item', [
+        button('.fsm-type-button' +
+        (state.fsm.type === TYPE_MOORE ? '.state-active' : ''), {
+          attributes: {
+            disabled: attrBool(state.fsm.type === TYPE_MOORE),
+            'data-fsm-type': 'moore',
+          },
+        }, 'Moore'),
+      ]),
+      li('.fsm-type-list-item', [
+        button('.fsm-type-button' +
+        (state.fsm.type === TYPE_MEALY ? '.state-active' : ''), {
+          attributes: {
+            disabled: attrBool(state.fsm.type === TYPE_MEALY),
+            'data-fsm-type': 'mealy',
+          },
+        }, 'Mealy'),
+      ]),
+    ] : [
+      li(button('.fsm-type-button.state-active', {
         attributes: {
-          disabled: attrBool(state.fsm.type === TYPE_MOORE),
-          'data-fsm-type': 'moore',
+          disabled: true,
         },
-      }, 'Moore'),
-      button({
-        attributes: {
-          disabled: attrBool(state.fsm.type === TYPE_MEALY),
-          'data-fsm-type': 'mealy',
-        },
-      }, 'Mealy'),
-    ]) :
-    li(state.fsm.type.name),
-  ]),
+      }, state.fsm.type === TYPE_MEALY ? 'Mealy' : 'Moore')
+      ),
+    ]),
 
   renderMachine(state.fsm, state.currentEditMode === 'edit'),
 ])

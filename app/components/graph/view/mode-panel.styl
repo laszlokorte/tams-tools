@@ -14,7 +14,23 @@
 
 .mode-button
   button()
+  width 80px
+  height 45px
   &.state-active
     color color-background-highlight
     font-weight bold
     background-color #222
+    .icon-shape
+      fill color-background-highlight
+    .icon-stroke
+      stroke color-background-highlight
+  .icon-shape
+    fill #fff
+    transform scale(0.8)
+    transform-origin 50% 50%
+  .icon-stroke
+    stroke #fff
+    transform scale(0.8)
+    transform-origin 50% 50%
+
+
