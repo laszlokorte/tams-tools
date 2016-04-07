@@ -246,8 +246,6 @@ export default (machine, editable) => {
           y: -PORT_HEIGHT / 2,
           width: 70,
           height: PORT_HEIGHT,
-          rx: 5,
-          ry: 5,
         }),
         svg('text', {
           class: 'fsm-button-label',
@@ -315,8 +313,6 @@ export default (machine, editable) => {
           y: -PORT_HEIGHT / 2,
           width: 73,
           height: PORT_HEIGHT,
-          rx: 5,
-          ry: 5,
         }),
         svg('text', {
           class: 'fsm-button-label',
