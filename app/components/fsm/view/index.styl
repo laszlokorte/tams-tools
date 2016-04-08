@@ -28,20 +28,28 @@
 
 .fsm-type-list
   plainlist(true)
-  float right
-  margin space(1) space(2) space(1) 0
+  clear both
+  margin space(1) auto 0
+  width 170px
 
 .fsm-type-button
   button(
-    color-background-inverse,
-    color-foreground-inverse
+    #C8C8C8,
+    #111
   )
   opacity 0.7
   width 85px
+  height 50px
   &.state-active
     cursor default
     opacity 1
     font-weight 600
-    color tint(color-background-highlight, 40%)
+    background-color #F0F0F0
+    color darken(color-background-highlight, 10%)
   &.state-readonly
-    color #fff
+  &.state-readonly:hover
+    margin-left (85px / 2)
+    opacity 1
+    font-weight 600
+    background-color #F0F0F0
+    color darken(color-background-highlight, 10%)
