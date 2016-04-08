@@ -5,9 +5,43 @@ import {attrBool} from '../../../lib/h-helper';
 
 import renderMachine from './machine';
 
+import settingsIcon from '../../../icons/settings';
+import openIcon from '../../../icons/open';
+import exportIcon from '../../../icons/export';
+import helpIcon from '../../../icons/help';
+
 import './index.styl';
 const render = (state) => div('.app', [
   div('.app-head', [
+    div('.action-panel', [
+      div('.action-list', [
+        div('.action-list-item', [
+          button('.action-button', {
+            attributes: {'data-panel': 'open'},
+            title: 'Open Diagram...',
+          }, openIcon(24)),
+        ]),
+        div('.action-list-item', [
+          button('.action-button', {
+            attributes: {'data-panel': 'save'},
+            title: 'Export Diagram...',
+          }, exportIcon(24)),
+        ]),
+        div('.action-list-item', [
+          button('.action-button', {
+            attributes: {'data-panel': 'settings'},
+            title: 'Settings...',
+          }, settingsIcon(24)),
+        ]),
+        div('.action-list-item', [
+          button('.action-button', {
+            attributes: {'data-panel': 'help'},
+            title: 'Help...',
+          }, helpIcon(24)),
+        ]),
+      ]),
+    ]),
+
     ul('.fsm-edit-mode-list', [
       li('.fsm-edit-mode-list-item', [
         button('.fsm-edit-mode-button' +

@@ -4,6 +4,8 @@ import I from 'immutable';
 import * as FSM from '../lib/state-machine';
 import * as SIMULATOR from '../lib/simulation';
 
+import {generateUnique} from './unique';
+
 const fsmViewState = I.Record({
   fsm: FSM.newMachine(),
   simulation: SIMULATOR.newSimulation(),
@@ -61,9 +63,20 @@ const switchEditMode = (state, mode) =>
   state.set('currentEditMode', mode)
 ;
 
+const stateName = (n) =>
+  `S${n + 1}`
+;
+
 const addState = (position, state) =>
   state.update('fsm', (fsm) =>
-    FSM.addState(position, fsm)
+    FSM.addState(
+      generateUnique(
+        stateName,
+        state.fsm.states
+        .map((s) => s.name)
+        .toSet()
+      )
+    , position, fsm)
   )
 ;
 

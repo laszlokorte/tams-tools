@@ -81,10 +81,10 @@ export const setInitialValue = (machine, inputIndex, value) =>
   )
 ;
 
-export const addState = (position, machine) =>
+export const addState = (name, position, machine) =>
   machine.update('states', (states) =>
     states.push(_state({
-      name: "foo",
+      name,
       position: _position(position),
     }))
   )
