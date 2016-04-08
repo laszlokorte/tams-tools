@@ -112,7 +112,7 @@ const removeTransitionsTo = (stateIndex, state) =>
       .filter((t) => t.target !== stateIndex)
       .map((t) => t.update('target', (old) =>
         old < stateIndex ? old : old - 1
-      ))
+      )).toList()
   )
 ;
 
@@ -125,7 +125,9 @@ export const removeState = (stateIndex, fsm) =>
 ;
 
 export const removeTransition = (fromIndex, toIndex, fsm) =>
-  fsm.removeIn(['states',fromIndex,'transitions',toIndex])
+  fsm.updateIn(['states',fromIndex,'transitions'], (transitions) =>
+    transitions.filter((t) => t.target !== toIndex).toList()
+  )
 ;
 
 export const newMachine = () => {
