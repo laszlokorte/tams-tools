@@ -45,5 +45,15 @@ export default (actions, state$) =>
       }))
       .share(),
 
+    actions.removeNode$.map((nodeIndex) => ({
+      action: 'removeNode',
+      index: nodeIndex,
+    })).share(),
+
+    actions.removeEdge$.map(({fromIndex, toIndex}) => ({
+      action: 'removeEdge',
+      fromIndex,
+      toIndex,
+    })).share(),
   ])
 ;

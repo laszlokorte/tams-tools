@@ -1,7 +1,11 @@
 import {Observable as O} from 'rx';
 import I from 'immutable';
 
-import {graphFromJson, graphNode, graphEdge} from '../lib/graph';
+import {
+  graphFromJson, graphNode, graphEdge,
+  removeEdge as removeEdgeFromGraph,
+  removeNode as removeNodeFromGraph,
+} from '../lib/graph';
 import {layoutGraph, calculateConnectionPath} from '../lib/layout';
 
 const _position = I.Record({
@@ -29,6 +33,19 @@ const graphUiState = I.Record({
   transientEdge: null,
   selection: null,
 }, 'graphUiState');
+
+export const isNodeSelected = (nodeIndex, state) =>
+  state.selection !== null &&
+  state.selection.type === 'node' &&
+  state.selection.value === nodeIndex
+;
+
+export const isEdgeSelected = (edge, state) =>
+  state.selection !== null &&
+  state.selection.type === 'edge' &&
+  state.selection.value.fromIndex === edge.fromIndex &&
+  state.selection.value.toIndex === edge.toIndex
+;
 
 const applyModifier = (state, fn) => fn(state);
 
@@ -136,6 +153,22 @@ const deselect = (state) =>
   state.set('selection', null)
 ;
 
+const removeNode = (nodeIndex, state) =>
+  state
+    .update('graph', (g) => removeNodeFromGraph(nodeIndex, g))
+    .update('selection', (old) =>
+      isNodeSelected(nodeIndex, state) ? null : old
+    )
+;
+
+const removeEdge = ({fromIndex, toIndex}, state) =>
+  state
+    .update('graph', (g) => removeEdgeFromGraph(fromIndex, toIndex, g))
+    .update('selection', (old) =>
+      isEdgeSelected({fromIndex, toIndex}, state) ? null : old
+    )
+;
+
 const layoutTransientEdge = (state, edge, radius) => {
   const invalid =
     edge.toIndex === edge.fromIndex ||
@@ -236,6 +269,13 @@ export default (props$, data$, enabled$, actions) => {
       enabled$.filter((e) => e === false),
     ]).map(() => (state) => deselect(state)),
 
+    actions.removeNode$.map((nodeIndex) => (state) =>
+      removeNode(nodeIndex, state)
+    ),
+    actions.removeEdge$.map((edgeIndex) => (state) =>
+      removeEdge(edgeIndex, state)
+    ),
+
     actions.switchMode$.map((mode) => (state) => state.set('mode', mode)),
   ])
   .scan(applyModifier, graphUiState({graph: graphFromJson({})}))
@@ -254,16 +294,3 @@ export default (props$, data$, enabled$, actions) => {
   )
   .shareReplay(1);
 };
-
-export const isNodeSelected = (nodeIndex, state) =>
-  state.selection !== null &&
-  state.selection.type === 'node' &&
-  state.selection.value === nodeIndex
-;
-
-export const isEdgeSelected = (edge, state) =>
-  state.selection !== null &&
-  state.selection.type === 'edge' &&
-  state.selection.value.fromIndex === edge.fromIndex &&
-  state.selection.value.toIndex === edge.toIndex
-;

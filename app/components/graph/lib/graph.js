@@ -34,3 +34,27 @@ export const graphFromJson = (data) => {
     })),
   });
 };
+
+export const removeNode = (nodeIndex, graph) =>
+  graph
+    .removeIn(['nodes', nodeIndex])
+    .update('edges', (edges) =>
+      edges.filter((e) =>
+        e.fromIndex !== nodeIndex &&
+        e.toIndex !== nodeIndex
+      ).map((e) =>
+        e
+          .update('fromIndex', (old) => old < nodeIndex ? old : old - 1)
+          .update('toIndex', (old) => old < nodeIndex ? old : old - 1)
+      )
+    )
+;
+
+export const removeEdge = (fromIndex, toIndex, graph) =>
+  graph.update('edges', (edges) =>
+    edges.filter((edge) =>
+      edge.fromIndex !== fromIndex ||
+      edge.toIndex !== toIndex
+    )
+  )
+;

@@ -106,6 +106,28 @@ export const addTransition = (sourceIndex, targetIndex, machine) =>
   )
 ;
 
+const removeTransitionsTo = (stateIndex, state) =>
+  state.update('transitions', (trans) =>
+    trans
+      .filter((t) => t.target !== stateIndex)
+      .map((t) => t.update('target', (old) =>
+        old < stateIndex ? old : old - 1
+      ))
+  )
+;
+
+export const removeState = (stateIndex, fsm) =>
+  fsm
+    .removeIn(['states', stateIndex])
+    .update('states', (states) =>
+      states.map((state) => removeTransitionsTo(stateIndex, state))
+    )
+;
+
+export const removeTransition = (fromIndex, toIndex, fsm) =>
+  fsm.removeIn(['states',fromIndex,'transitions',toIndex])
+;
+
 export const newMachine = () => {
   return _stateMachine();
 };

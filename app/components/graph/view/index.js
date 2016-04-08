@@ -167,6 +167,8 @@ const render = (state) =>
       fill: 'none',
       attributes: {
         'data-background': state.mode,
+        'data-transient-edge':
+          state.transientEdge === null ? void 0 : 'true',
       },
     }),
 

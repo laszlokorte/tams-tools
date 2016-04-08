@@ -23,6 +23,8 @@ export default (DOM, stageDOM, globalEvents) => {
     .share();
 
   const autoLayoutButton = DOM.select('[data-action="autolayout"]');
+  const removeNodeButton = DOM.select('[data-remove-node]');
+  const removeEdgeButton = DOM.select('[data-remove-edge]');
 
   const moveableNode = stageDOM
     .select('[data-node-index][data-action="move"]');
@@ -173,6 +175,24 @@ export default (DOM, stageDOM, globalEvents) => {
     ]).switch()
   );
 
+  const removeNode$ = removeNodeButton.events('click')
+    .map((evt) => parseInt(
+      evt.ownerTarget.dataset.removeNode, 10
+    ))
+    .share();
+
+  const removeEdge$ = removeEdgeButton.events('click')
+    .map((evt) => {
+      const [fromIndex, toIndex] =
+        evt.ownerTarget.dataset.removeEdge.split('-');
+
+      return {
+        fromIndex: parseInt(fromIndex, 10),
+        toIndex: parseInt(toIndex, 10),
+      };
+    })
+    .share();
+
   const emptyClick$ = background
   .events('mousedown')
   .flatMap(() =>
@@ -218,6 +238,9 @@ export default (DOM, stageDOM, globalEvents) => {
       };
     }),
 
+    removeNode$,
+    removeEdge$,
+
     deselect$: O.merge([
       cancel$,
       emptyClick$,
@@ -241,6 +264,8 @@ export default (DOM, stageDOM, globalEvents) => {
       selectNode$,
       selectEdge$,
       connectStart$,
+      removeNodeButton.events('mousedown'),
+      removeEdgeButton.events('mousedown'),
     ]).share(),
     stopPropagation: O.merge([
       moveStart$,

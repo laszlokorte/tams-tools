@@ -24,7 +24,7 @@ export default (machine, editable) => {
     attributes: {
       width: 200,
       height: svgHeight / 2,
-      class: 'graphics-root',
+      class: 'machine-root',
       viewBox: `0 0 235 ${svgHeight}`,
       preserveAspectRatio: 'xMidYMin meet',
     },

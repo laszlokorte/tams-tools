@@ -79,6 +79,18 @@ const addTransition = (fromIndex, toIndex, state) =>
   )
 ;
 
+const removeState = (index, state) =>
+  state.update('fsm', (fsm) =>
+    FSM.removeState(index, fsm)
+  )
+;
+
+const removeTransition = (fromIndex, toIndex, state) =>
+  state.update('fsm', (fsm) =>
+    FSM.removeTransition(fromIndex, toIndex, fsm)
+  )
+;
+
 const modifiers = (actions) => {
   return O.merge([
     actions.addInput$.map(() => (state) => {
@@ -107,6 +119,12 @@ const modifiers = (actions) => {
     }),
     actions.addTransition$.map(({fromIndex, toIndex}) => (state) => {
       return addTransition(fromIndex, toIndex, state);
+    }),
+    actions.removeState$.map((index) => (state) => {
+      return removeState(index, state);
+    }),
+    actions.removeTransition$.map(({fromIndex, toIndex}) => (state) => {
+      return removeTransition(fromIndex, toIndex, state);
     }),
   ]);
 };

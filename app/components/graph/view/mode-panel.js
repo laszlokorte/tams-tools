@@ -2,10 +2,14 @@ import {div, ul, li, button} from '@cycle/dom';
 
 import './mode-panel.styl';
 
+import {IF} from '../../../lib/h-helper';
+
 import cursorIcon from '../../../icons/cursor';
 import newNodeIcon from '../../../icons/new-node';
+import deleteNodeIcon from '../../../icons/delete-node';
 import moveIcon from '../../../icons/move';
-import edgeIcon from '../../../icons/new-edge';
+import newEdgeIcon from '../../../icons/new-edge';
+import deleteEdgeIcon from '../../../icons/delete-edge';
 import autoLayoutIcon from '../../../icons/autolayout';
 
 const MODES = [
@@ -22,7 +26,7 @@ const MODES = [
   {
     id: 'connect',
     name: 'Connect Nodes',
-    icon: edgeIcon(32),
+    icon: newEdgeIcon(32),
   },
   {
     id: 'move',
@@ -45,16 +49,42 @@ export default (state) =>
           },
           disabled: state.mode === mode.id ? 'true' : void 0,
         }, mode.icon),
-      ])
-    ),
-    li('.mode-list-item', [
-      button('.mode-button', {
-        title: 'Auto Layout',
-        attributes: {
-          'data-action': 'autolayout',
-        },
-      }, autoLayoutIcon(32)),
-    ]),
+      ])),
+      li('.mode-list-item', [
+        button('.mode-button', {
+          title: 'Auto Layout',
+          attributes: {
+            'data-action': 'autolayout',
+          },
+        }, autoLayoutIcon(32)),
+      ]),
+
+      IF(state.selection !== null, () => [
+        IF(state.selection.type === 'edge', () =>
+          li('.mode-list-item-secondary', [
+            button('.mode-button.danger', {
+              title: 'Remove edge',
+              attributes: {
+                'data-remove-edge': `${
+                  state.selection.value.fromIndex
+                }-${
+                  state.selection.value.toIndex
+                }`,
+              },
+            }, deleteEdgeIcon(32)),
+          ])
+        ),
+        IF(state.selection.type === 'node', () =>
+          li('.mode-list-item-secondary', [
+            button('.mode-button.danger', {
+              title: 'Remove node',
+              attributes: {
+                'data-remove-node': state.selection.value,
+              },
+            }, deleteNodeIcon(32)),
+          ])
+        ),
+      ]),
     ]),
   ])
 ;

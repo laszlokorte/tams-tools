@@ -9,5 +9,11 @@ export default (graphAction$) => {
     addTransition$: graphAction$
       .filter(({action}) => action === 'connectNodes')
       .map(({fromIndex, toIndex}) => ({fromIndex, toIndex})),
+    removeState$: graphAction$
+      .filter(({action}) => action === 'removeNode')
+      .map(({index}) => index),
+    removeTransition$: graphAction$
+      .filter(({action}) => action === 'removeEdge')
+      .map(({fromIndex, toIndex}) => ({fromIndex, toIndex})),
   };
 };

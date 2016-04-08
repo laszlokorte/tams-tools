@@ -200,12 +200,12 @@ const render = ({state, layout}, index) =>
       ]),
       div('.edit-panel', [
         div('.edit-mode-panel', [
-          button('.edit-mode-button-function' +
+          button('.edit-mode-button' +
             (state.currentEditMode === 'function' ? '.state-active' : '')
             , {
               attributes: {'data-edit-mode': 'function'},
             },'Edit function'),
-          button('.edit-mode-button-loops' +
+          button('.edit-mode-button' +
             (state.currentEditMode === 'loops' ? '.state-active' : '')
             , {
               attributes: {'data-edit-mode': 'loops'},

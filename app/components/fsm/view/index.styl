@@ -1,19 +1,47 @@
-@import '../../../styles/global'
+@import '../../../styles/app'
+
+.app
+  position absolute
+  top 0
+  bottom 0
+  left 0
+  right 0
+  background-color #f0f0f0
 
 .fsm-edit-mode-list
   plainlist(true)
+  margin space(1) 0 space(1) space(2)
+  float left
 
 .fsm-edit-mode-button
-  button()
+  button(
+    color-background-inverse,
+    color-foreground-inverse
+  )
+  opacity 0.7
+  width 150px
   &.state-active
-    font-weight bold
-    color color-background-highlight
+    cursor default
+    opacity 1
+    font-weight 600
+    color tint(color-background-highlight, 40%)
 
 .fsm-type-list
   plainlist(true)
+  float right
+  margin space(1) space(2) space(1) 0
 
 .fsm-type-button
-  button()
+  button(
+    color-background-inverse,
+    color-foreground-inverse
+  )
+  opacity 0.7
+  width 85px
   &.state-active
-    font-weight bold
-    color color-background-highlight
+    cursor default
+    opacity 1
+    font-weight 600
+    color tint(color-background-highlight, 40%)
+  &.state-readonly
+    color #fff

@@ -24,6 +24,8 @@ export default (DOM, globalEvents, graphAction$) => {
     addState$: graphActions.addState$,
     moveState$: graphActions.moveState$,
     addTransition$: graphActions.addTransition$,
+    removeState$: graphActions.removeState$,
+    removeTransition$: graphActions.removeTransition$,
 
     preventDefault: O.merge([
       editModeButton.events('mousedown'),
