@@ -1,4 +1,4 @@
-import {svg} from '@cycle/dom';
+import {svg, input as inputField, body} from '@cycle/dom';
 
 import './machine.styl';
 import {TYPE_MEALY} from '../lib/state-machine';
@@ -229,6 +229,27 @@ export default (machine, editable) => {
           'text-anchor': 'end',
           'dominant-baseline': 'middle',
         }, input.name),
+
+        svg('foreignObject', {
+          attributes: {
+            x: -60,
+            y: -15,
+            width: 60,
+            height: 15,
+            requiredExtension: 'http://www.w3.org/1999/xhtml',
+          },
+        }, [
+          body({
+            attributes: {
+              xmlns: 'http://www.w3.org/1999/xhtml',
+            },
+          }, [
+            inputField({
+              style: {width: '50px', height: '15px', fontSize: '5px'},
+              value: input.name,
+            }),
+          ]),
+        ]),
       ])
     ).toArray(),
 

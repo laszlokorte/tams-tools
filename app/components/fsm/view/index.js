@@ -1,5 +1,8 @@
 import {Observable as O} from 'rx';
-import {div, span, ul, li, button, h2, input} from '@cycle/dom';
+import {
+  div, span, ul, li, button, h2,
+  input, dl, dt, dd, label,
+} from '@cycle/dom';
 
 import {TYPE_MOORE, TYPE_MEALY} from '../lib/state-machine';
 import {attrBool} from '../../../lib/h-helper';
@@ -12,31 +15,82 @@ import helpIcon from '../../../icons/help';
 
 import './index.styl';
 
+const renderStateOutputValues = (stateIndex, fsm) =>
+  fsm.outputs.map((output, outputIndex) => [
+    dt('.property-panel-list-titel', [
+      span('.property-panel-label', output.name),
+    ]),
+    dd('.property-panel-list-value', [
+      fsm.type === TYPE_MOORE ?
+      [
+        label('.property-checkbox-field', [
+          input({
+            type: 'radio',
+            name: `state-${stateIndex}-out-${outputIndex}`,
+            value: 'false',
+          }),
+          'On',
+        ]),
+        label('.property-checkbox-field', [
+          input({
+            type: 'radio',
+            name: `state-${stateIndex}-out-${outputIndex}`,
+            value: 'true',
+          }),
+          'Off',
+        ]),
+      ] :
+      input('.property-panel-field.small', {
+        attributes: {
+          'data-state-index': stateIndex,
+          'data-state-output-index': outputIndex,
+        },
+        value: '',
+      }),
+    ]),
+  ]).toArray()
+;
+
 const renderStateProperties = (fsm, stateIndex) => [
   span('.property-panel-label', 'Name'),
   input('.property-panel-field', {
+    attributes: {
+      'data-state-name': stateIndex,
+    },
     value: fsm.states.get(stateIndex) ?
       fsm.states.get(stateIndex).name : '',
   }),
+  span('.property-panel-headline', 'Output values'),
+  dl('.property-panel-list',
+    renderStateOutputValues(stateIndex, fsm)
+  ),
 ];
 
-const renderTransitionProperties = (fsm, fromIndex, toIndex) => [
-  div('.property-panel-info', `From ${
-    fsm.states.get(fromIndex) ?
-      fsm.states.get(fromIndex).name : '?'
-  } to ${
-    fsm.states.get(toIndex) ?
-      fsm.states.get(toIndex).name : '?'
-  }`),
-  span('.property-panel-label', 'Condition'),
-  input('.property-panel-field', {
-    value: "(in1 ∧ ¬in2) ∨ ¬in2",
-  }),
-];
+const renderTransitionProperties = (fsm, fromIndex, toIndex) => {
+  const transition = fsm.states.get(fromIndex).transitions
+      .filter((t) => t.target === toIndex).first();
+
+  return [
+    div('.property-panel-info', `From ${
+      fsm.states.get(fromIndex) ?
+        fsm.states.get(fromIndex).name : '?'
+    } to ${
+      fsm.states.get(toIndex) ?
+        fsm.states.get(toIndex).name : '?'
+    }`),
+    span('.property-panel-label', 'Condition'),
+    input('.property-panel-field', {
+      attributes: {
+        'data-transition-condition': `${fromIndex}-${toIndex}`,
+      },
+      value: transition ? transition.condition : '?',
+    }),
+  ];
+};
 
 const renderPropertyPanel = (state, selection) =>
-  selection === null ? null : [
-    div('.property-panel-overlay'),
+  selection === null ? null :
+  div('.property-panel-overlay', [
     div('.property-panel', [
       div('.property-panel-body', [
         h2('.property-panel-title',
@@ -49,7 +103,7 @@ const renderPropertyPanel = (state, selection) =>
         ),
       ]),
     ]),
-  ]
+  ])
 ;
 
 const render = (state, selection) => div('.app', [

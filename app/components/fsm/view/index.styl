@@ -88,6 +88,7 @@
     overflow hidden
     border space(2) solid transparent
     border-top-width space(1.5)
+    border-right-width 0
     border-bottom-width space(1.5)
     border-left-color color-focus
 
@@ -109,6 +110,9 @@
   border 2px solid #aaa
   padding space(0.2) space(0.3)
 
+  &.small
+    padding 0 space(0.3)
+
   &:focus
     border-color color-focus
 
@@ -120,3 +124,35 @@
   margin-top space(1)
   &::after
     content ':'
+
+.property-panel-list
+  plainlist()
+
+.property-panel-list-titel
+  margin 0 0 space(0.3)
+  padding 0 space(0.5) 0 0
+  clear both
+  float left
+  width 30%
+  line-height 2
+  text-align right
+  text-overflow ellipsis
+.property-panel-list-value
+  margin 0 0 space(0.3)
+  padding 0
+  float right
+  width 70%
+  line-height 2
+
+.property-panel-headline
+  display block
+  font-weight font-bold
+  margin space(1) 0 space(0.3)
+  border-bottom 1px solid gray
+
+.property-checkbox-field
+  display inline-block
+  background-color darken(tint(color-focus, 90%), 10%)
+  width 49%
+  text-align center
+  margin 0 0 0 1%

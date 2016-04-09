@@ -200,6 +200,16 @@ const renderNode = (state, node, index) => svg('g', {
     key: 'circle',
   }),
   svg('text', {
+    class: 'graph-node-label-background',
+    x: node.x,
+    y: node.y,
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+    fill: 'black',
+    'font-size': state.nodeRadius * 0.7,
+    key: 'label-background',
+  }, node.label),
+  svg('text', {
     class: 'graph-node-label',
     x: node.x,
     y: node.y,

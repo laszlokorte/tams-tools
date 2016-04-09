@@ -6,16 +6,10 @@ import * as SIMULATOR from '../lib/simulation';
 
 import {generateUnique} from './unique';
 
-const selection = I.Record({
-  type: null,
-  value: null,
-});
-
 const fsmViewState = I.Record({
   fsm: FSM.newMachine(),
   simulation: SIMULATOR.newSimulation(),
   currentEditMode: 'edit',
-  selection: null,
 }, 'fsmViewState');
 
 const stateName = (n) =>
@@ -128,6 +122,18 @@ const removeTransition = (fromIndex, toIndex, state) =>
   )
 ;
 
+const renameState = (name, index, state) =>
+  state.update('fsm', (fsm) =>
+    FSM.renameState(name, index, fsm)
+  )
+;
+
+const changeCondition = (fromIndex, toIndex, condition, state) =>
+  state.update('fsm', (fsm) =>
+    FSM.setTransitionCondition(fromIndex, toIndex, condition, fsm)
+  )
+;
+
 const modifiers = (actions) => {
   return O.merge([
     actions.addInput$.map(() => (state) => {
@@ -162,6 +168,12 @@ const modifiers = (actions) => {
     }),
     actions.removeTransition$.map(({fromIndex, toIndex}) => (state) => {
       return removeTransition(fromIndex, toIndex, state);
+    }),
+    actions.renameState$.map(({index, name}) => (state) => {
+      return renameState(name, index, state);
+    }),
+    actions.changeCondition$.map(({fromIndex, toIndex, condition}) => (state) => {
+      return changeCondition(fromIndex, toIndex, condition, state);
     }),
   ]);
 };

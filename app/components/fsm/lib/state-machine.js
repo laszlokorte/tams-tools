@@ -38,7 +38,7 @@ export const _state = I.Record({
 
 export const _transition = I.Record({
   target: null,
-  condition: null,
+  condition: '*',
 }, 'transition');
 
 export const typeFromString = (string) => {
@@ -125,8 +125,22 @@ export const removeState = (stateIndex, fsm) =>
 ;
 
 export const removeTransition = (fromIndex, toIndex, fsm) =>
-  fsm.updateIn(['states',fromIndex,'transitions'], (transitions) =>
+  fsm.updateIn(['states', fromIndex,'transitions'], (transitions) =>
     transitions.filter((t) => t.target !== toIndex).toList()
+  )
+;
+
+export const renameState = (name, stateIndex, fsm) =>
+  fsm.updateIn(['states', stateIndex], (state) =>
+    state.set('name', name)
+  )
+;
+
+export const setTransitionCondition = (fromIndex, toIndex, condition, fsm) =>
+  fsm.updateIn(['states', fromIndex, 'transitions'], (transitions) =>
+    transitions.map((t) =>
+      t.target === toIndex ? t.set('condition', condition) : t
+    ).toList()
   )
 ;
 
