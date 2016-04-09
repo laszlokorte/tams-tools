@@ -28,7 +28,7 @@ const comparison = I.Record({
   expressionA: null, // the one expression
   expressionB: null, // the other expression
   equal: false, // if they are equal
-  reason: null, // the reason explaining why they are not equal
+  reasons: I.List(), // the reason explaining why they are not equal
 });
 
 // the result of comparing two logic networks
@@ -189,32 +189,35 @@ const evaluateBoth = ({
 // the given function table
 const compareResult = (rows, pairs) => {
   return pairs.map((p) => {
-    const difference = rows.reduce((d, {
-      identifierMap,
+    const areEqual = rows.reduce((d, {
       resultMapA,
       resultMapB,
     }) => {
-      if (d === null) {
+      if (d === true) {
         const valueA = resultMapA.get(p.expressionA);
         const valueB = resultMapB.get(p.expressionB);
 
-        if (valueA === valueB) {
-          return null;
-        } else {
-          return reason({
-            valueA, valueB, identifierMap,
-          });
-        }
+        return d && valueA === valueB;
       } else {
-        return d;
+        return false;
       }
-    }, null);
+    }, true);
+
+    const reasons = I.List(rows).map(({
+      identifierMap,
+      resultMapA,
+      resultMapB,
+    }) => reason({
+      identifierMap,
+      valueA: resultMapA.get(p.expressionA),
+      valueB: resultMapB.get(p.expressionB),
+    }));
 
     return comparison({
       expressionA: p.expressionA,
       expressionB: p.expressionB,
-      equal: difference === null,
-      reason: difference,
+      equal: areEqual,
+      reasons,
     });
   });
 };

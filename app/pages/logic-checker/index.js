@@ -2,7 +2,10 @@ import {Observable as O} from 'rx';
 import I from 'immutable';
 import Cycle from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
-import {div, h1, h2, ul, li, p} from '@cycle/dom';
+import {
+  div, h1, h2, ul, li, p,
+  table, tr, th, td, tbody,
+} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 import {preventDefaultDriver} from '../../drivers/prevent-default';
@@ -17,6 +20,56 @@ import {expressionToString} from '../../components/logic/lib/formatter';
 import formatter from '../../components/logic/lib/formatter/c-bitwise';
 
 import './index.styl';
+
+const renderReason = (comparison) => {
+  const freeIdentifiers = I.List(
+    comparison.reasons.get(0).identifierMap.entries()
+  )
+  .filter(([id]) => id._name === 'identifier')
+  .map(([id]) => id);
+
+  return table('.table', [
+    tr('.table-head-row', [
+      freeIdentifiers
+      .map((id) => th('.table-head-cell', [
+        id.name,
+      ]))
+      .toArray(),
+      th('.table-head-cell', [
+        expressionToString(
+          comparison.expressionA.body, formatter
+        ),
+      ]),
+      th('.table-head-cell', [
+        expressionToString(
+          comparison.expressionB.body, formatter
+        ),
+      ]),
+    ]),
+    tbody(comparison.reasons.map((row) => tr(
+    '.table-body-row' + (
+      row.valueA !== row.valueB ? '.difference' : ''
+    ), [
+      freeIdentifiers
+      .map((id) => td('.table-body-cell', [
+        formatter.formatValue(
+          row.identifierMap.get(id)
+        ),
+      ]))
+      .toArray(),
+      td('.table-body-cell.marked', [
+        formatter.formatValue(
+          row.valueA
+        ),
+      ]),
+      td('.table-body-cell.marked', [
+        formatter.formatValue(
+          row.valueB
+        ),
+      ]),
+    ])).toArray()),
+  ]);
+};
 
 const render = (state, field1, field2) =>
   div([
@@ -63,26 +116,7 @@ const render = (state, field1, field2) =>
               className: comparison.equal ? 'state-success' : 'state-fail',
             }, [
               comparison.equal ? 'Equal!' : 'Not Equal!',
-              comparison.reason && div('.comparison-reason', [
-                `For assignment (${
-                  I.List(comparison.reason.identifierMap.entries())
-                  .filter(([id]) => id._name === 'identifier')
-                  .map(([id, value]) =>
-                    formatter.formatLabel(
-                      formatter.formatName(id.name),
-                      formatter.formatValue(value)
-                    )
-                  ).join(', ')
-                }): ${
-                  expressionToString(comparison.expressionA.body, formatter)
-                } is ${
-                  formatter.formatValue(comparison.reason.valueA)
-                } but ${
-                  expressionToString(comparison.expressionB.body, formatter)
-                } is ${
-                  formatter.formatValue(comparison.reason.valueB)
-                }`,
-              ]),
+              renderReason(comparison),
             ]),
           ])
         ).toArray()),
