@@ -97,10 +97,14 @@ const pairUpExpressions = (networkA, networkB) => {
   const labelsOnlyA = labelsA.subtract(labelsB);
   const labelsOnlyB = labelsB.subtract(labelsA);
 
-  const unlabeledA = networkA.toplevelExpressions
-    .filter(isNotLabeled);
+  const unlabeledA = networkA.toplevelExpressions.isEmpty() ?
+    networkA.sortedExpressions :
+    networkA.toplevelExpressions
+      .filter(isNotLabeled);
 
-  const unlabeledB = networkB.toplevelExpressions
+  const unlabeledB = networkB.toplevelExpressions.isEmpty() ?
+    networkB.sortedExpressions :
+    networkB.toplevelExpressions
     .filter(isNotLabeled);
 
   const commonLabels = labelsA.intersect(labelsB);
