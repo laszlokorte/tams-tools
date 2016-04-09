@@ -182,7 +182,7 @@ const layoutTransientEdge = (state, edge, radius) => {
   return calculateConnectionPath({
     from: fromNode,
     to: toNode,
-    offset: radius,
+    radius,
     preferredAngle,
     streight: invalid,
   });

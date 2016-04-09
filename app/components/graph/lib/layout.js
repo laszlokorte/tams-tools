@@ -2,6 +2,8 @@ import I from 'immutable';
 
 import bounds from '../../graphics/lib/bounds';
 
+import {clamp} from '../../../lib/utils';
+
 const path = I.Record({
   fromX: 0,
   fromY: 0,
@@ -87,102 +89,80 @@ const calculateNodeLayout = (nodes, edges) => {
 export const calculateConnectionPath = ({
   from,
   to,
-  offset,
+  radius,
   preferredAngle = Math.PI,
   streight = false,
 }) => {
-  let deltaX = to.x - from.x;
-  let deltaY = to.y - from.y;
-  let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  const deltaX = to.x - from.x;
+  const deltaY = to.y - from.y;
 
-  const rad = Math.atan2(deltaY, deltaX);
-  const radExit = rad - 0.25;
-  const radEnter = rad + 0.25;
+  const deltaXHalf = deltaX / 2;
+  const deltaYHalf = deltaY / 2;
 
-  let offsetMultiplierEnter = 1;
-  let offsetMultiplierExit = 1;
-  const compact = distance < offset * 2 && !streight;
+  const distance2 = deltaX * deltaX + deltaY * deltaY;
+  const distance = Math.sqrt(distance2);
 
-  if (compact) {
-    offsetMultiplierEnter = 0.2;
-    offsetMultiplierExit = 0.5;
-  } else if (streight) {
-    offsetMultiplierEnter = 0;
-    offsetMultiplierExit = 0.2;
-  } else if (distance - 40 < offset * 2) {
-    offsetMultiplierEnter = 0.7;
-    offsetMultiplierExit = 0.7;
-  }
-
-  const offsetExitX = Math.cos(radExit) * offset * offsetMultiplierExit;
-  const offsetExitY = Math.sin(radExit) * offset * offsetMultiplierExit;
-  const offsetEnterX = Math.cos(radEnter) *
-    (offset + 20) * offsetMultiplierEnter;
-  const offsetEnterY = Math.sin(radEnter) *
-    (offset + 20) * offsetMultiplierEnter;
-
-  const adjustedDeltaX = deltaX - offsetEnterX - offsetExitX;
-  const adjustedDeltaY = deltaY - offsetEnterY - offsetExitY;
-
-  const adjustedDistance = Math.sqrt(
-    adjustedDeltaX * adjustedDeltaX +
-    adjustedDeltaY * adjustedDeltaY
+  const arcOffset = 18 * radius / Math.sqrt(
+    clamp(distance - radius, radius, 20 * radius)
   );
-  const bending = (Math.log(adjustedDistance) + 20) / adjustedDistance;
+  const arcSpread = Math.max(distance / 3, arcOffset);
 
-  const ctrlPointX = (adjustedDeltaX / 2 + adjustedDeltaY * bending);
-  const ctrlPointY = (adjustedDeltaY / 2 - adjustedDeltaX * bending);
+  const deltaXNorm = deltaX / distance;
+  const deltaYNorm = deltaY / distance;
 
-  const startX = from.x + offsetExitX;
-  const startY = from.y + offsetExitY;
-  const ctrlAX = ctrlPointX;
-  const ctrlAY = ctrlPointY;
-  const ctrlBX = ctrlPointX;
-  const ctrlBY = ctrlPointY;
-  const endX = adjustedDeltaX;
-  const endY = adjustedDeltaY;
+  const orthoXNorm = deltaYNorm;
+  const orthoYNorm = -deltaXNorm;
 
-  if (compact) {
-    let fromX = from.x;
-    let fromY = from.y;
-    const reflexive = Math.abs(distance) < 1;
-    if (reflexive) {
-      distance = offset;
-      deltaX = -distance * Math.sin(preferredAngle);
-      deltaY = distance * Math.cos(preferredAngle);
-      fromX -= deltaX / 2;
-      fromY -= deltaY / 2;
-    }
-    const rotatedDeltaX = deltaY / distance;
-    const rotatedDeltaY = -deltaX / distance;
-    const refOffsetX = rotatedDeltaX * offset;
-    const refOffsetY = rotatedDeltaY * offset;
+  const midX = from.x + deltaXHalf;
+  const midY = from.y + deltaYHalf;
 
-    const extraX = deltaX * offset / (distance || 1) / 2;
-    const extraY = deltaY * offset / (distance || 1) / 2;
+  const midXOffset = midX + orthoXNorm * arcOffset;
+  const midYOffset = midY + orthoYNorm * arcOffset;
 
-    return path({
-      fromX: fromX + refOffsetX,
-      fromY: fromY + refOffsetY,
-      c1X: refOffsetX - extraX,
-      c1Y: refOffsetY - extraY,
-      c2X: refOffsetX + extraX + deltaX,
-      c2Y: refOffsetY + extraY + deltaY,
-      toX: deltaX + rotatedDeltaX * 10,
-      toY: deltaY + rotatedDeltaY * 20,
-    });
-  } else {
-    return path({
-      fromX: startX,
-      fromY: startY,
-      c1X: ctrlAX,
-      c1Y: ctrlAY,
-      c2X: ctrlBX,
-      c2Y: ctrlBY,
-      toX: endX,
-      toY: endY,
-    });
-  }
+  const midXSpreadA = midXOffset - deltaXNorm * arcSpread;
+  const midYSpreadA = midYOffset - deltaYNorm * arcSpread;
+
+  const midXSpreadB = midXOffset + deltaXNorm * arcSpread;
+  const midYSpreadB = midYOffset + deltaYNorm * arcSpread;
+
+  const spreadADeltaX = midXSpreadA - from.x;
+  const spreadADeltaY = midYSpreadA - from.y;
+
+  const spreadBDeltaX = midXSpreadB - to.x;
+  const spreadBDeltaY = midYSpreadB - to.y;
+
+  const spreadBDistance2 =
+    spreadBDeltaX * spreadBDeltaX +
+    spreadBDeltaY * spreadBDeltaY;
+  const spreadADistance2 =
+    spreadADeltaX * spreadADeltaX +
+    spreadADeltaY * spreadADeltaY;
+
+  const spreadADistance = Math.sqrt(spreadADistance2);
+  const spreadBDistance = Math.sqrt(spreadBDistance2);
+
+  const spreadADeltaXNorm = spreadADeltaX / spreadADistance;
+  const spreadADeltaYNorm = spreadADeltaY / spreadADistance;
+
+  const spreadBDeltaXNorm = spreadBDeltaX / spreadBDistance;
+  const spreadBDeltaYNorm = spreadBDeltaY / spreadBDistance;
+
+  const fromX = from.x + radius * spreadADeltaXNorm;
+  const fromY = from.y + radius * spreadADeltaYNorm;
+
+  const toX = streight ? to.x : to.x + radius * 1.2 * spreadBDeltaXNorm;
+  const toY = streight ? to.y : to.y + radius * 1.2 * spreadBDeltaYNorm;
+
+  return path({
+    fromX,
+    fromY,
+    c1X: midXSpreadA,
+    c1Y: midYSpreadA,
+    c2X: midXSpreadB,
+    c2Y: midYSpreadB,
+    toX,
+    toY,
+  });
 };
 
 const calculateEdgeLayout = (nodeRadius, edges, layoutedNodes) => {
@@ -192,7 +172,7 @@ const calculateEdgeLayout = (nodeRadius, edges, layoutedNodes) => {
     return e.set('path', calculateConnectionPath({
       from: startNode,
       to: endNode,
-      offset: nodeRadius,
+      radius: nodeRadius,
       preferredAngle: startNode.pivotAngle + Math.PI,
       streight: false,
     }));

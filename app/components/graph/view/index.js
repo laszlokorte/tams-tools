@@ -5,9 +5,32 @@ import {IF} from '../../../lib/h-helper';
 
 import './index.styl';
 
+const debugBezier = (path) => [
+  svg('circle', {
+    cx: path.fromX,
+    cy: path.fromY,
+    r: 20,
+  }),
+  svg('circle', {
+    cx: path.toX,
+    cy: path.toY,
+    r: 20,
+  }),
+  svg('circle', {
+    cx: path.c1X,
+    cy: path.c1Y,
+    r: 20,
+  }),
+  svg('circle', {
+    cx: path.c2X,
+    cy: path.c2Y,
+    r: 20,
+  }),
+];
+
 const bezierString = (path) =>
   `M${path.fromX},${path.fromY} ` +
-    `c${path.c1X},${path.c1Y} ` +
+    `C${path.c1X},${path.c1Y} ` +
     `${path.c2X},${path.c2Y} ` +
     `${path.toX},${path.toY} `
 ;
@@ -30,12 +53,12 @@ const arrowHeadString = (path, length) => {
   length / 1.3 : length;
 
   const cx = interpCubic({
-    t: 0.9, start: 0,
+    t: 0.9, start: path.fromX,
     ctrl1: path.c1X, ctrl2: path.c2X,
     end: path.toX,
   });
   const cy = interpCubic({
-    t: 0.9, start: 0,
+    t: 0.9, start: path.fromY,
     ctrl1: path.c1Y, ctrl2: path.c2Y,
     end: path.toY,
   });
@@ -45,8 +68,8 @@ const arrowHeadString = (path, length) => {
 
   const angleA = angle + extend / 2;
   const angleB = angle - extend / 2;
-  const tipX = path.fromX + path.toX + Math.cos(angle) * realLength / 2;
-  const tipY = path.fromY + path.toY + Math.sin(angle) * realLength / 2;
+  const tipX = path.toX + Math.cos(angle) * realLength / 2;
+  const tipY = path.toY + Math.sin(angle) * realLength / 2;
 
   return [
     tipX,
@@ -93,6 +116,7 @@ const renderEdge = (state, edge, index, transient = false) => svg('g', {
   },
   key: `edge-${index}-${edge.fromIndex}-${transient ? '?' : edge.toIndex}`,
 },[
+  //debugBezier(edge.path),
   svg('polygon', {
     class: 'graph-edge-line-background',
     points: arrowHeadString(edge.path, 40),
