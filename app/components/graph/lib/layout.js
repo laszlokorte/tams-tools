@@ -99,8 +99,9 @@ export const calculateConnectionPath = ({
   const deltaXHalf = deltaX / 2;
   const deltaYHalf = deltaY / 2;
 
-  const distance2 = deltaX * deltaX + deltaY * deltaY;
-  const distance = Math.sqrt(distance2);
+  const distance = Math.sqrt(
+    deltaX * deltaX + deltaY * deltaY
+  );
 
   const arcOffset = 18 * radius / Math.pow(
     clamp(distance - 1.5 * radius, radius, 4 * radius),
@@ -134,27 +135,25 @@ export const calculateConnectionPath = ({
   const spreadBDeltaX = midXSpreadB - to.x;
   const spreadBDeltaY = midYSpreadB - to.y;
 
-  const spreadBDistance2 =
+  const spreadADistance = Math.sqrt(
     spreadBDeltaX * spreadBDeltaX +
-    spreadBDeltaY * spreadBDeltaY;
-  const spreadADistance2 =
+    spreadBDeltaY * spreadBDeltaY
+  );
+
+  const spreadBDistance = Math.sqrt(
     spreadADeltaX * spreadADeltaX +
-    spreadADeltaY * spreadADeltaY;
+    spreadADeltaY * spreadADeltaY
+  );
 
-  const spreadADistance = Math.sqrt(spreadADistance2);
-  const spreadBDistance = Math.sqrt(spreadBDistance2);
+  const fromX = from.x + radius *
+    spreadADeltaX / spreadADistance;
+  const fromY = from.y + radius *
+    spreadADeltaY / spreadADistance;
 
-  const spreadADeltaXNorm = spreadADeltaX / spreadADistance;
-  const spreadADeltaYNorm = spreadADeltaY / spreadADistance;
-
-  const spreadBDeltaXNorm = spreadBDeltaX / spreadBDistance;
-  const spreadBDeltaYNorm = spreadBDeltaY / spreadBDistance;
-
-  const fromX = from.x + radius * spreadADeltaXNorm;
-  const fromY = from.y + radius * spreadADeltaYNorm;
-
-  const toX = streight ? to.x : to.x + radius * 1.2 * spreadBDeltaXNorm;
-  const toY = streight ? to.y : to.y + radius * 1.2 * spreadBDeltaYNorm;
+  const toX = streight ? to.x : to.x +
+    radius * 1.2 * spreadBDeltaX / spreadBDistance;
+  const toY = streight ? to.y : to.y +
+    radius * 1.2 * spreadBDeltaY / spreadBDistance;
 
   return path({
     fromX,

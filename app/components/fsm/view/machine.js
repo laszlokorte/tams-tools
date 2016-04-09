@@ -1,4 +1,4 @@
-import {svg, input as inputField, body} from '@cycle/dom';
+import {svg} from '@cycle/dom';
 
 import './machine.styl';
 import {TYPE_MEALY} from '../lib/state-machine';

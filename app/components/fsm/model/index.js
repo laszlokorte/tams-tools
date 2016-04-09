@@ -172,7 +172,8 @@ const modifiers = (actions) => {
     actions.renameState$.map(({index, name}) => (state) => {
       return renameState(name, index, state);
     }),
-    actions.changeCondition$.map(({fromIndex, toIndex, condition}) => (state) => {
+    actions.changeCondition$.map(({fromIndex, toIndex, condition}) =>
+    (state) => {
       return changeCondition(fromIndex, toIndex, condition, state);
     }),
   ]);
