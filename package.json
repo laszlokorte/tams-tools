@@ -47,7 +47,6 @@
     "@cycle/core": "^6.0.3",
     "@cycle/dom": "^9.1.0",
     "@cycle/isolate": "^1.2.0",
-    "@cycle/storage": "^2.0.3",
     "bitset.js": "^3.1.0",
     "immutable": "^3.7.6",
     "nib": "^1.1.0",
