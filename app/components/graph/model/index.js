@@ -13,6 +13,12 @@ const _position = I.Record({
   y: 0,
 });
 
+const _movingNode = I.Record({
+  x: 0,
+  y: 0,
+  index: null,
+});
+
 const _partialEdge = I.Record({
   fromIndex: null,
   toIndex: null,
@@ -31,6 +37,7 @@ const graphUiState = I.Record({
   nodeRadius: 10,
   transientNode: null,
   transientEdge: null,
+  movingNode: null,
   selection: null,
 }, 'graphUiState');
 
@@ -52,8 +59,6 @@ const applyModifier = (state, fn) => fn(state);
 const initGraph = (graph, state) =>
   state
     .set('graph', graph)
-    .set('transientNode', null)
-    .set('transientEdge', null)
     .update('selection', (selection) => {
       return selection;
       if (state.transientNode !== null) {
@@ -94,17 +99,26 @@ const stopCreateNode = (state) =>
 
 const tryMoveNode = (nodeIndex, pos, state) =>
   state
-  .updateIn(['graph', 'nodes', nodeIndex], (node) =>
-    node.set('x', pos.x).set('y', pos.y)
+  .set('movingNode', _movingNode({
+    index: nodeIndex,
+    x: pos.x,
+    y: pos.y,
+  }))
+;
+
+const doMoveNode = (state) =>
+  state.updateIn(
+    ['graph', 'nodes', state.movingNode.index],
+    (node) =>
+      node.merge({
+        x: state.movingNode.x,
+        y: state.movingNode.y,
+      })
   )
 ;
 
-const doMoveNode = (nodeIndex, pos, state) =>
-  state
-;
-
 const stopMoveNode = (state) =>
-  state.set('transientNode', null)
+  state.set('movingNode', null)
 ;
 
 const tryConnectNodes = ({fromIndex, toIndex, x, y}, state) =>
@@ -219,10 +233,22 @@ const autoLayout = (nodeRadius, state) => {
       const x = centerX + Math.cos(angle) * radius;
       const y = centerY + Math.sin(angle) * radius;
 
-      return node.set('x', x).set('y', y);
+      return node.merge({x, y});
     }).toList()
   );
 };
+
+const applyPartialNodeMovement = (state) =>
+  !state.movingNode ? state :
+   state.updateIn(
+    ['graph', 'nodes', state.movingNode.index],
+    (node) =>
+    node.merge({
+      x: state.movingNode.x,
+      y: state.movingNode.y,
+    })
+  )
+;
 
 export default (props$, data$, enabled$, actions) => {
   return O.merge([
@@ -240,10 +266,8 @@ export default (props$, data$, enabled$, actions) => {
         selectNode(move.nodeIndex, state)
       )
     ),
-    actions.doMoveNode$.map((move) =>
-      (state) => doMoveNode(move.nodeIndex, move,
-        selectNode(move.nodeIndex, state)
-      )
+    actions.doMoveNode$.map(() =>
+      (state) => doMoveNode(state)
     ),
     actions.stopMoveNode$.map(() => (state) => stopMoveNode(state)),
 
@@ -279,6 +303,7 @@ export default (props$, data$, enabled$, actions) => {
     actions.switchMode$.map((mode) => (state) => state.set('mode', mode)),
   ])
   .scan(applyModifier, graphUiState({graph: graphFromJson({})}))
+  .map(applyPartialNodeMovement)
   .combineLatest(props$, enabled$, (state, props, enabled) =>
     state
       .set('mode', enabled ? state.mode : 'disabled')
