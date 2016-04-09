@@ -102,13 +102,16 @@ export const calculateConnectionPath = ({
   const distance2 = deltaX * deltaX + deltaY * deltaY;
   const distance = Math.sqrt(distance2);
 
-  const arcOffset = 18 * radius / Math.sqrt(
-    clamp(distance - radius, radius, 20 * radius)
+  const arcOffset = 18 * radius / Math.pow(
+    clamp(distance - 1.5 * radius, radius, 4 * radius),
+    0.509
   );
-  const arcSpread = Math.max(distance / 3, arcOffset);
+  const arcSpread = Math.max(distance / 5, arcOffset);
 
-  const deltaXNorm = deltaX / distance;
-  const deltaYNorm = deltaY / distance;
+  const deltaXNorm = distance > 0 ?
+    deltaX / distance : Math.cos(preferredAngle + Math.PI / 2);
+  const deltaYNorm = distance > 0 ?
+    deltaY / distance : Math.sin(preferredAngle + Math.PI / 2);
 
   const orthoXNorm = deltaYNorm;
   const orthoYNorm = -deltaXNorm;
