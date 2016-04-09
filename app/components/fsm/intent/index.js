@@ -2,10 +2,12 @@ import {Observable as O} from 'rx';
 
 import editIntent from './edit';
 import graphIndent from './graph';
+import panelIntent from './panels';
 
 export default (DOM, globalEvents, graphAction$) => {
   const editActions = editIntent(DOM);
   const graphActions = graphIndent(graphAction$);
+  const panelsActions = panelIntent({DOM});
 
   const editModeButton = DOM.select('[data-edit-mode]');
   const editModeEvent$ = editModeButton.events('click');
@@ -27,10 +29,13 @@ export default (DOM, globalEvents, graphAction$) => {
     removeState$: graphActions.removeState$,
     removeTransition$: graphActions.removeTransition$,
 
+    panel$: panelsActions.open$,
+
     preventDefault: O.merge([
       editModeButton.events('mousedown'),
 
+      panelsActions.preventDefault,
       editActions.preventDefault,
-    ]),
+    ]).share(),
   };
 };

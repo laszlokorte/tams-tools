@@ -71,5 +71,6 @@ export default ({
     ]).share(),
     stopPropagation: actions.stopPropagation,
     action$: commands(actions, state$).delay(0),
+    selection$: state$.map((state) => state.selection).share().delay(0),
   };
 };

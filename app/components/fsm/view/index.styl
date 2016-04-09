@@ -53,3 +53,70 @@
     font-weight 600
     background-color #F0F0F0
     color darken(color-background-highlight, 10%)
+
+.property-panel-overlay
+  position absolute
+  top 0
+  left 0
+  right 0
+  bottom 0
+  background-color rgba(0,0,0,0.4)
+  z-index 1000
+
+.property-panel
+  position absolute
+  top 30%
+  right space(1)
+  width 50%
+  max-width 350px
+  margin space(1)
+  color #000
+  background-color darken(tint(color-focus, 98%), 5%)
+  border space(0.5) solid color-focus
+  box-shadow 0 0 20px rgba(0,0,0,0.4)
+  z-index 10000
+
+  &::after
+    content ' '
+    position absolute
+    left 100%
+    margin-left space(0.4)
+    margin-top space(-1.5)
+    top 50%
+    width 0
+    height 0
+    overflow hidden
+    border space(2) solid transparent
+    border-top-width space(1.5)
+    border-bottom-width space(1.5)
+    border-left-color color-focus
+
+.property-panel-body
+  overflow hidden
+  padding space(0.5) space(1) space(1)
+
+.property-panel-title
+  margin 0
+  padding 0
+  font-size font-size-big
+  font-weight font-bold
+  color darken(color-focus, 50%)
+
+.property-panel-field
+  font-size font-size-big
+  width 100%
+  outline none
+  border 2px solid #aaa
+  padding space(0.2) space(0.3)
+
+  &:focus
+    border-color color-focus
+
+.property-panel-info
+  font-weight font-bold
+  padding 0 0 space(0.5)
+
+.property-panel-label
+  margin-top space(1)
+  &::after
+    content ':'

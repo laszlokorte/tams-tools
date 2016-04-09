@@ -21,12 +21,14 @@ const fsmEditor = (sources) => {
   } = sources;
 
   const graphActionProxy = new Subject();
+  const graphSelectionProxy = new Subject();
 
   // The FSM editor to be shown on the left side
   const fsmComponent = isolate(FSMComponent)({
     DOM,
     globalEvents,
     graphAction$: graphActionProxy,
+    graphSelection$: graphSelectionProxy,
   });
 
   // The graph editor to be shown on the right side
@@ -38,6 +40,7 @@ const fsmEditor = (sources) => {
   });
 
   graphComponent.action$.subscribe(graphActionProxy);
+  graphComponent.selection$.subscribe(graphSelectionProxy);
 
   // The split component to display the left and right
   // side next to each other

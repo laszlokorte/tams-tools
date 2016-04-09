@@ -1,17 +1,58 @@
-import {div, ul, li, button} from '@cycle/dom';
+import {Observable as O} from 'rx';
+import {div, span, ul, li, button, h2, input} from '@cycle/dom';
 
 import {TYPE_MOORE, TYPE_MEALY} from '../lib/state-machine';
 import {attrBool} from '../../../lib/h-helper';
 
 import renderMachine from './machine';
 
-import settingsIcon from '../../../icons/settings';
 import openIcon from '../../../icons/open';
 import exportIcon from '../../../icons/export';
 import helpIcon from '../../../icons/help';
 
 import './index.styl';
-const render = (state) => div('.app', [
+
+const renderStateProperties = (fsm, stateIndex) => [
+  span('.property-panel-label', 'Name'),
+  input('.property-panel-field', {
+    value: fsm.states.get(stateIndex) ?
+      fsm.states.get(stateIndex).name : '',
+  }),
+];
+
+const renderTransitionProperties = (fsm, fromIndex, toIndex) => [
+  div('.property-panel-info', `From ${
+    fsm.states.get(fromIndex) ?
+      fsm.states.get(fromIndex).name : '?'
+  } to ${
+    fsm.states.get(toIndex) ?
+      fsm.states.get(toIndex).name : '?'
+  }`),
+  span('.property-panel-label', 'Condition'),
+  input('.property-panel-field', {
+    value: "(in1 ∧ ¬in2) ∨ ¬in2",
+  }),
+];
+
+const renderPropertyPanel = (state, selection) =>
+  selection === null ? null : [
+    div('.property-panel-overlay'),
+    div('.property-panel', [
+      div('.property-panel-body', [
+        h2('.property-panel-title',
+          selection.type === 'node' ? 'State' : 'Transition'
+        ),
+        selection.type === 'node' ?
+        renderStateProperties(state.fsm, selection.value) :
+        renderTransitionProperties(
+          state.fsm, selection.value.fromIndex, selection.value.toIndex
+        ),
+      ]),
+    ]),
+  ]
+;
+
+const render = (state, selection) => div('.app', [
   div('.app-head', [
     div('.action-panel', [
       div('.action-list', [
@@ -26,12 +67,6 @@ const render = (state) => div('.app', [
             attributes: {'data-panel': 'save'},
             title: 'Export Diagram...',
           }, exportIcon(24)),
-        ]),
-        div('.action-list-item', [
-          button('.action-button', {
-            attributes: {'data-panel': 'settings'},
-            title: 'Settings...',
-          }, settingsIcon(24)),
         ]),
         div('.action-list-item', [
           button('.action-button', {
@@ -93,9 +128,16 @@ const render = (state) => div('.app', [
     ),
   ]),
   renderMachine(state.fsm, state.currentEditMode === 'edit'),
+  renderPropertyPanel(state, selection),
 ])
 ;
 
-export default (state$) =>
-  state$.map(render)
+export default (state$, selection$, panels$) =>
+  O.combineLatest(state$, selection$, panels$,
+    (state, selection, panels) =>
+      div([
+        panels,
+        render(state, selection),
+      ])
+  )
 ;

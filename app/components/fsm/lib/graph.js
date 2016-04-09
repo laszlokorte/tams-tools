@@ -7,7 +7,7 @@ export default (fsm) => {
     })).toArray(),
     edges: fsm.states.map((s, fromIndex) =>
       s.transitions.map((t) => ({
-        label: 'Transition Label',
+        label: '(in1 ∧ ¬in2) ∨ ¬in2',
         from: fromIndex,
         to: t.target,
       }))

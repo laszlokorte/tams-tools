@@ -6,10 +6,16 @@ import * as SIMULATOR from '../lib/simulation';
 
 import {generateUnique} from './unique';
 
+const selection = I.Record({
+  type: null,
+  value: null,
+});
+
 const fsmViewState = I.Record({
   fsm: FSM.newMachine(),
   simulation: SIMULATOR.newSimulation(),
   currentEditMode: 'edit',
+  selection: null,
 }, 'fsmViewState');
 
 const stateName = (n) =>
