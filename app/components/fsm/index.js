@@ -49,5 +49,6 @@ export default ({
         (s) => s,
         (a, b) => a === b
       ).share(),
+    resetSelection$: actions.closeProperties$,
   };
 };

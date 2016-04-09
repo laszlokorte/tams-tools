@@ -234,7 +234,7 @@ export default (machine, editable) => {
           attributes: {
             x: -60,
             y: -15,
-            width: 60,
+            width: 50,
             height: 15,
             requiredExtension: 'http://www.w3.org/1999/xhtml',
           },

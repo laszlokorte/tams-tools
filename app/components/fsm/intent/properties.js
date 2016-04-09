@@ -1,6 +1,7 @@
 import {Observable as O} from 'rx';
 
 export default (DOM) => {
+  const closeButton = DOM.select('[data-property-action="close"]');
   const stateNameField = DOM.select('[data-state-name]');
   const transitionConditionField = DOM.select('[data-transition-condition]');
 
@@ -27,9 +28,27 @@ export default (DOM) => {
     .share()
     .debounce(200);
 
+  const confirm$ = O.merge([
+    stateNameField.events('keydown')
+      .filter((e) => e.which === 13),
+    transitionConditionField.events('keydown')
+      .filter((e) => e.which === 13),
+  ]);
+
+  const closeProperties$ = O.merge([
+    closeButton
+      .events('click')
+      .map(() => true),
+    confirm$
+      .map(() => true),
+  ]).share();
+
   return {
+    closeProperties$,
     renameState$,
     changeCondition$,
-    preventDefault: O.empty(),
+    preventDefault: O.merge([
+      closeButton.events('mousedown'),
+    ]),
   };
 };

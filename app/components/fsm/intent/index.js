@@ -35,6 +35,7 @@ export default (DOM, globalEvents, graphAction$) => {
 
     renameState$: propertiesActions.renameState$,
     changeCondition$: propertiesActions.changeCondition$,
+    closeProperties$: propertiesActions.closeProperties$,
 
     preventDefault: O.merge([
       editModeButton.events('mousedown'),

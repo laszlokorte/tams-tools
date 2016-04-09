@@ -35,10 +35,12 @@ export default ({
     ],
   }),
   enabled$ = O.just(true),
+  resetSelection$ = O.empty(),
 }) => {
   const {isolateSource, isolateSink} = DOM;
   const actions = intent(
-    DOM, isolateSource(DOM, 'graphicsContent'), globalEvents
+    DOM, isolateSource(DOM, 'graphicsContent'),
+    globalEvents, resetSelection$
   );
   const state$ = model(props$, data$, enabled$, actions);
   const vtree$ = view(state$);

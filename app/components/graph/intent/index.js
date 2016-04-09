@@ -12,12 +12,13 @@ const svgEventPosition = (() => {
 })();
 
 const findAttribute = (attr, element) =>
+  element &&
   element.getAttribute &&
   element.getAttribute(attr) ||
   (element.parentNode && findAttribute(attr, element.parentNode))
 ;
 
-export default (DOM, stageDOM, globalEvents) => {
+export default (DOM, stageDOM, globalEvents, resetSelection$) => {
   const cancel$ = globalEvents.events('keydown')
     .filter((evt) => evt.keyCode === 27)
     .share();
@@ -79,8 +80,8 @@ export default (DOM, stageDOM, globalEvents) => {
     );
 
     const startPosition = svgEventPosition({
-      x: startEvt.clientX,
-      y: startEvt.clientY,
+      x: startEvt.pageX,
+      y: startEvt.pageY,
     }, startEvt.ownerTarget.ownerSVGElement);
 
     const offsetX = parseInt(
@@ -93,8 +94,8 @@ export default (DOM, stageDOM, globalEvents) => {
     return dragMove$
     .startWith(startEvt)
     .map((evt) => svgEventPosition({
-      x: evt.clientX,
-      y: evt.clientY,
+      x: evt.pageX,
+      y: evt.pageY,
     },
     startEvt.ownerTarget.ownerSVGElement)
     )
@@ -113,12 +114,13 @@ export default (DOM, stageDOM, globalEvents) => {
     return dragMove$
     .startWith(startEvt)
     .map((evt) => svgEventPosition({
-      x: evt.clientX,
-      y: evt.clientY,
+      x: evt.pageX,
+      y: evt.pageY,
     },
     startEvt.ownerTarget.ownerSVGElement))
     .map(({x,y}) => ({x,y}))
-    .takeUntil(dragEnd$).takeUntil(cancel$);
+    .takeUntil(dragEnd$)
+    .takeUntil(cancel$);
   }).mergeAll();
 
   const tryConnectNodes$ = connectStart$.map((startEvt) => {
@@ -126,16 +128,25 @@ export default (DOM, stageDOM, globalEvents) => {
       startEvt.ownerTarget.getAttribute('data-node-index'), 10
     );
 
+    const touchId = startEvt.touches ?
+      startEvt.touches[0].identifier : null;
+
     return dragMove$
     .startWith(startEvt)
     .map((evt) => {
-      const pos = svgEventPosition({
-        x: evt.clientX,
-        y: evt.clientY,
-      },
-      startEvt.ownerTarget.ownerSVGElement);
+      const touch = touchId ? Array.prototype.filter.call(
+        evt.touches, (t) => t.identifier === touchId
+      )[0] : null;
 
-      const toIndexAttr = findAttribute('data-node-index', evt.target);
+      const x = touch ? touch.clientX : evt.pageX;
+      const y = touch ? touch.clientY : evt.pageY;
+
+      const pos = svgEventPosition({x,y},
+        startEvt.ownerTarget.ownerSVGElement
+      );
+
+      const target = document.elementFromPoint(x, y);
+      const toIndexAttr = findAttribute('data-node-index', target);
       const toIndex = toIndexAttr ? parseInt(toIndexAttr, 10) : null;
 
       return {
@@ -244,6 +255,7 @@ export default (DOM, stageDOM, globalEvents) => {
     deselect$: O.merge([
       cancel$,
       emptyClick$,
+      resetSelection$,
     ]).share(),
 
     switchMode$: switchMode$.map(

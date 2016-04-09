@@ -124,7 +124,7 @@ const nodeAction = (state) => {
 };
 
 const edgeAction = (state) => {
-  if (state.mode === 'connect') {
+  if (state.mode === 'connect' && state.transientEdge === null) {
     return 'select';
   } else if (state.mode === 'view') {
     return 'select';

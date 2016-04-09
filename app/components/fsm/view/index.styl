@@ -67,7 +67,7 @@
   position absolute
   top 30%
   right space(1)
-  width 50%
+  width 100%
   max-width 350px
   margin space(1)
   color #000
@@ -91,6 +91,33 @@
     border-right-width 0
     border-bottom-width space(1.5)
     border-left-color color-focus
+
+.property-panel-close-button
+  position absolute
+  top space(0.7)
+  right space(0.7)
+  width space(2)
+  height space(2)
+  padding 3px
+  background none
+  border none
+  outline none
+
+  .icon-shape
+    fill darken(color-focus, 50%)
+    transform-origin 50% 50%
+    transform scale(0.8)
+  &:hover
+    .icon-shape
+      fill darken(color-focus, 40%)
+  &:active
+    .icon-shape
+      fill darken(color-focus, 60%)
+  &:focus
+    .icon-shape
+      transform scale(0.9)
+      stroke-width 5%
+      stroke tint(color-focus, 30%)
 
 .property-panel-body
   overflow hidden

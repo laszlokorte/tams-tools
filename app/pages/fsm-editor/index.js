@@ -37,6 +37,7 @@ const fsmEditor = (sources) => {
     globalEvents,
     data$: fsmComponent.graph$,
     enabled$: fsmComponent.mode$.map((m) => m === 'edit'),
+    resetSelection$: fsmComponent.resetSelection$,
   });
 
   graphComponent.action$.subscribe(graphActionProxy);

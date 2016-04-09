@@ -12,6 +12,7 @@ import renderMachine from './machine';
 import openIcon from '../../../icons/open';
 import exportIcon from '../../../icons/export';
 import helpIcon from '../../../icons/help';
+import tickIcon from '../../../icons/tick';
 
 import './index.styl';
 
@@ -92,6 +93,13 @@ const renderPropertyPanel = (state, selection) =>
   selection === null ? null :
   div('.property-panel-overlay', [
     div('.property-panel', [
+      button('.property-panel-close-button', {
+        attributes: {
+          'data-property-action': 'close',
+        },
+      }, [
+        tickIcon(24),
+      ]),
       div('.property-panel-body', [
         h2('.property-panel-title',
           selection.type === 'node' ? 'State' : 'Transition'
