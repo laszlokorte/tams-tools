@@ -83,7 +83,7 @@ const doCreateNode = (state) =>
   state.transientNode === null ? state :
   state.updateIn(['graph', 'nodes'], (nodes) =>
     nodes.push(graphNode({
-      label: "new",
+      label: "?",
       x: state.transientNode.x,
       y: state.transientNode.y,
     })))

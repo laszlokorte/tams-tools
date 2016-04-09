@@ -12,6 +12,18 @@ const fsmViewState = I.Record({
   currentEditMode: 'edit',
 }, 'fsmViewState');
 
+const stateName = (n) =>
+  `S${n + 1}`
+;
+
+const inputName = (n) =>
+  `in${n + 1}`
+;
+
+const outputName = (n) =>
+  `out${n + 1}`
+;
+
 const resetSimulation = (state) =>
   state.update('simulation', (simulation) =>
     SIMULATOR.reset(simulation)
@@ -22,7 +34,12 @@ const addInput = (state) =>
   resetSimulation(state)
   .update('fsm', (fsm) =>
     FSM.addInput(
-      "Input " + (fsm.inputs.size + 1),
+      generateUnique(
+        inputName,
+        state.fsm.inputs
+        .map((i) => i.name)
+        .toSet()
+      ),
       fsm
     )
   )
@@ -32,7 +49,12 @@ const addOutput = (state) =>
   resetSimulation(state)
   .update('fsm', (fsm) =>
     FSM.addOutput(
-      "Output " + (fsm.outputs.size + 1),
+      generateUnique(
+        outputName,
+        state.fsm.outputs
+        .map((i) => i.name)
+        .toSet()
+      ),
       fsm
     )
   )
@@ -61,10 +83,6 @@ const setType = (state, type) =>
 
 const switchEditMode = (state, mode) =>
   state.set('currentEditMode', mode)
-;
-
-const stateName = (n) =>
-  `S${n + 1}`
 ;
 
 const addState = (position, state) =>

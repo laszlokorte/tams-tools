@@ -63,7 +63,7 @@ export default (state) =>
         IF(state.selection.type === 'edge', () =>
           li('.mode-list-item-secondary', [
             button('.mode-button.danger', {
-              title: 'Remove edge',
+              title: 'Remove Edge',
               attributes: {
                 'data-remove-edge': `${
                   state.selection.value.fromIndex
@@ -77,7 +77,7 @@ export default (state) =>
         IF(state.selection.type === 'node', () =>
           li('.mode-list-item-secondary', [
             button('.mode-button.danger', {
-              title: 'Remove node',
+              title: 'Remove Node',
               attributes: {
                 'data-remove-node': state.selection.value,
               },

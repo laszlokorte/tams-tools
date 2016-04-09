@@ -197,15 +197,6 @@ const render = (state) =>
           fill: 'gray',
           'stroke-width': state.nodeRadius / 10,
         }),
-        svg('text', {
-          class: 'graph-node-label',
-          x: state.transientNode.x,
-          y: state.transientNode.y,
-          'font-size': state.nodeRadius * 0.7,
-          'text-anchor': 'middle',
-          'dominant-baseline': 'central',
-          fill: 'black',
-        }, "new"),
       ])
     ),
   ])
