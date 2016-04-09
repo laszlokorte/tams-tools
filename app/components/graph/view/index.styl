@@ -6,6 +6,12 @@
 .graph-edge-line-background
   pointer-events all
 
+.graph-edge-label-background
+  stroke white
+  stroke-width 10px
+  stroke-linecap round
+  stroke-linejoin round
+
 .graph-edge-line
   stroke color-background-inverse
 
@@ -26,6 +32,10 @@
     stroke color-focus
     stroke-linecap round
     stroke-linejoin round
+  .graph-edge-label
+    fill darken(color-focus, 30%)
+  .graph-edge-label-background
+    stroke tint(color-focus, 80%)
 
 .state-transient
   &, >*

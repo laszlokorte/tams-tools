@@ -5,29 +5,6 @@ import {IF} from '../../../lib/h-helper';
 
 import './index.styl';
 
-const debugBezier = (path) => [
-  svg('circle', {
-    cx: path.fromX,
-    cy: path.fromY,
-    r: 20,
-  }),
-  svg('circle', {
-    cx: path.toX,
-    cy: path.toY,
-    r: 20,
-  }),
-  svg('circle', {
-    cx: path.c1X,
-    cy: path.c1Y,
-    r: 20,
-  }),
-  svg('circle', {
-    cx: path.c2X,
-    cy: path.c2Y,
-    r: 20,
-  }),
-];
-
 const bezierString = (path) =>
   `M${path.fromX},${path.fromY} ` +
     `C${path.c1X},${path.c1Y} ` +
@@ -41,6 +18,59 @@ const interpCubic = ({t, start, ctrl1, ctrl2, end}) => {
     3 * tInv * tInv * t * ctrl1 +
     3 * tInv * t * t * ctrl2 +
     t * t * t * end;
+};
+
+const pathLabel = (path, label, fontSize) => {
+  const dx = path.toX - path.fromX;
+  const dy = path.toY - path.fromY;
+  const d = Math.sqrt(dx * dx + dy * dy);
+  const orthoX = dy / d;
+  const orthoY = -dx / d;
+
+  const leftRight = orthoX > 0 ? 'start' : 'end';
+  const anchor = Math.abs(orthoY / orthoX) > 3 ?
+    'middle' : leftRight;
+
+  const upDown = orthoY > 0 ? 'before-edge' : 'after-edge';
+  const baseLine = Math.abs(orthoX / orthoY) > 3 ?
+    'middle' : upDown;
+
+  const x = interpCubic({
+    t: 0.5, start: path.fromX,
+    ctrl1: path.c1X, ctrl2: path.c2X,
+    end: path.toX,
+  }) + fontSize / 2 * orthoX;
+
+  const y = interpCubic({
+    t: 0.5, start: path.fromY,
+    ctrl1: path.c1Y, ctrl2: path.c2Y,
+    end: path.toY,
+  }) + fontSize / 2 * orthoY;
+
+  return [
+    svg('text', {
+      class: 'graph-edge-label-background',
+      x,
+      y,
+      'text-anchor': anchor,
+      'alignment-baseline': baseLine,
+      'dominant-baseline': 'middle',
+      fill: 'none',
+      'font-size': fontSize,
+      key: 'label-background',
+    }, label),
+    svg('text', {
+      class: 'graph-edge-label',
+      x,
+      y,
+      'text-anchor': anchor,
+      'alignment-baseline': baseLine,
+      'dominant-baseline': 'middle',
+      fill: 'black',
+      'font-size': fontSize,
+      key: 'label',
+    }, label),
+  ];
 };
 
 const arrowHeadString = (path, length) => {
@@ -145,6 +175,7 @@ const renderEdge = (state, edge, index, transient = false) => svg('g', {
     fill: 'none',
     key: 'line',
   }),
+  pathLabel(edge.path, edge.label, state.nodeRadius * 0.5),
 ])
 ;
 

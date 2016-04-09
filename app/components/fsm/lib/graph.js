@@ -7,6 +7,7 @@ export default (fsm) => {
     })).toArray(),
     edges: fsm.states.map((s, fromIndex) =>
       s.transitions.map((t) => ({
+        label: 'Transition Label',
         from: fromIndex,
         to: t.target,
       }))
