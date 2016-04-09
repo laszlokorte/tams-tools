@@ -230,26 +230,26 @@ export default (machine, editable) => {
           'dominant-baseline': 'middle',
         }, input.name),
 
-        svg('foreignObject', {
-          attributes: {
-            x: -60,
-            y: -15,
-            width: 50,
-            height: 15,
-            requiredExtension: 'http://www.w3.org/1999/xhtml',
-          },
-        }, [
-          body({
-            attributes: {
-              xmlns: 'http://www.w3.org/1999/xhtml',
-            },
-          }, [
-            inputField({
-              style: {width: '50px', height: '15px', fontSize: '5px'},
-              value: input.name,
-            }),
-          ]),
-        ]),
+      //   svg('foreignObject', {
+      //     attributes: {
+      //       x: -60,
+      //       y: -15,
+      //       width: 50,
+      //       height: 15,
+      //       requiredExtension: 'http://www.w3.org/1999/xhtml',
+      //     },
+      //   }, [
+      //     body({
+      //       attributes: {
+      //         xmlns: 'http://www.w3.org/1999/xhtml',
+      //       },
+      //     }, [
+      //       inputField({
+      //         style: {width: '50px', height: '15px', fontSize: '5px'},
+      //         value: input.name,
+      //       }),
+      //     ]),
+      //   ]),
       ])
     ).toArray(),
 
