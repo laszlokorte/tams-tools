@@ -239,9 +239,10 @@ const addOutput = (state) => {
     state.diagram
   );
 
-  return state
-    .set('diagram', newDiagram)
-    .set('currentOutput', newDiagram.outputs.size - 1);
+  return state.merge({
+    diagram: newDiagram,
+    currentOutput: newDiagram.outputs.size - 1,
+  });
 };
 
 // remove the output at the given index from the state's kv diagram
@@ -278,10 +279,12 @@ const switchEditMode = (mode, state) =>
 // begin renaming the output of given index
 const startRename = (outputIndex, state) =>
   state
-    .set('renameOutput', outputIndex)
-    .set('renameOutputValue',
-      state.diagram.outputs.get(outputIndex).name)
-    .set('renameOutputValid', true)
+    .merge({
+      renameOutput: outputIndex,
+      renameOutputValue:
+        state.diagram.outputs.get(outputIndex).name,
+      renameOutputValid: true,
+    })
 ;
 
 // cancel renaming the output
@@ -312,9 +315,11 @@ const confirmOutputName = (state) =>
 // try reanming the output at given index
 const tryOutputName = (outputIndex, newName, state) =>
   state
-    .set('renameOutput', outputIndex)
-    .set('renameOutputValue', newName)
-    .set('renameOutputValid', KVD.isValidOutputName(newName))
+    .merge({
+      renameOutput: outputIndex,
+      renameOutputValue: newName,
+      renameOutputValid: KVD.isValidOutputName(newName),
+    })
 ;
 
 // import the given json as kv diagram
@@ -324,8 +329,10 @@ const openDiagram = (jsonDiagram, state) => {
     const openedDiagram = KVD.fromJSON(parsed);
     if (openedDiagram) {
       return state
-        .set('diagram', openedDiagram)
-        .set('currentOutput', 0);
+        .merge({
+          diagram: openedDiagram,
+          currentOutput: 0,
+        });
     }
   } catch (e) {
   }

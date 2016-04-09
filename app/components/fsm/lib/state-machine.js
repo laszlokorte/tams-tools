@@ -92,9 +92,7 @@ export const addState = (name, position, machine) =>
 
 export const moveState = (stateIndex, pos, machine) =>
   machine.updateIn(['states', stateIndex, 'position'], (position) =>
-    position
-      .set('x', pos.x)
-      .set('y', pos.y)
+    position.merge(pos)
   )
 ;
 

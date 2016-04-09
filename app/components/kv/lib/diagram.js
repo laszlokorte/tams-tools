@@ -217,10 +217,10 @@ const resizeCube = (
   ) => {
   const mask = BitSet().setRange(0, inputCount, 1);
 
-  return cube
-    .set('include', mask.and(cube.include))
-    .set('exclude', mask.and(cube.exclude))
-  ;
+  return cube.merge({
+    include: mask.and(cube.include),
+    exclude: mask.and(cube.exclude),
+  });
 };
 
 /// Adjust the given loop for a new number of inputs.
