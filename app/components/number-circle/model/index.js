@@ -37,9 +37,12 @@ const ENCODINGS = {
 
   complement1: {
     formatter: (pattern) => {
-      const offset = pattern.substr(0,1) === '1' ?
+      const negative = pattern.substr(0, 1) === '1';
+      const offset = negative ?
         -Math.pow(2, pattern.length - 1) + 1 : 0;
-      return offset + parseInt(pattern.substr(1), 2);
+      return (negative ? '-' : '') + Math.abs(
+        offset + parseInt(pattern.substr(1), 2)
+      );
     },
     overflowAngle: (dots) => {
       const half = (dots.length - 1) / 2;
