@@ -18,16 +18,17 @@ module.exports = merge(commonConfig, {
     loaders: [
       {
         test: /\.styl$/,
-        loader: "style-loader!css-loader?-autoprefixer!stylus-loader?resolve url",
+        loader: "style-loader!css-loader?-autoprefixer" +
+                "!stylus-loader?resolve url",
       },
     ],
   },
 
-  plugins: [
+  // plugins: [
     // hot reloading is enabled via command line argument --hot
     // (see package.json)
     // new webpack.HotModuleReplacementPlugin(),
-  ],
+  // ],
 
   devServer: {
     contentBase: "./app/static",
