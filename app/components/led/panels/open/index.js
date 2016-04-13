@@ -11,7 +11,7 @@ export default ({DOM, globalEvents, visible$}) => {
 
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
   const state$ = model(visible$, actions);
-  const modal = isolate(ModalBox)({
+  const modal = isolate(ModalBox, 'modal')({
     DOM,
     globalEvents,
     props$: state$.map(({props}) => props),

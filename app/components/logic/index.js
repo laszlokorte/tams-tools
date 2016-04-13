@@ -31,7 +31,7 @@ export default ({
   });
 
   // the text field for entering the logic expression
-  const field = isolate(Field)({
+  const field = isolate(Field, 'logic-field')({
     DOM,
     input$: actions.openData$.map(::JSON.parse),
   });
@@ -58,7 +58,7 @@ export default ({
     .share();
 
   // the table component displaying the function table
-  const tableComponent = isolate(TableComponent)({
+  const tableComponent = isolate(TableComponent, 'table')({
     DOM,
     table$,
   });

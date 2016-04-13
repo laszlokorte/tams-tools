@@ -144,11 +144,11 @@ const logicApp = (sources) => {
     globalEvents,
   } = sources;
 
-  const logicFieldA = isolate(LogicField)({
+  const logicFieldA = isolate(LogicField, 'logic-field-a')({
     DOM, globalEvents,
   });
 
-  const logicFieldB = isolate(LogicField)({
+  const logicFieldB = isolate(LogicField, 'logic-field-b')({
     DOM, globalEvents,
   });
 

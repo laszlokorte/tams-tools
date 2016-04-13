@@ -27,12 +27,12 @@ const kvdApp = (sources) => {
   } = sources;
 
   // initialize the kv editor component
-  const kvComponent = isolate(kv)({
+  const kvComponent = isolate(kv, 'kv-editor')({
     DOM, globalEvents,
   });
 
   // initialize the PLA component
-  const plaComponent = isolate(pla)({
+  const plaComponent = isolate(pla, 'pla-viewer')({
     DOM,
     globalEvents,
     data$: kvComponent.plaData$.take(1).merge(
@@ -43,7 +43,7 @@ const kvdApp = (sources) => {
 
   // The split component to display the left and right
   // side next to each other
-  const splitComponent = isolate(splitPane)({
+  const splitComponent = isolate(splitPane, 'splitpane')({
     DOM,
     globalEvents,
     props$: O.just({proportion: 0.65}),

@@ -135,7 +135,7 @@ const numberCircleApp = (sources) => {
   const actions = intent(sources.DOM);
   const state$ = model({initial: 3, max: 7}, actions);
 
-  const circle = isolate(Circle)({
+  const circle = isolate(Circle, 'circle')({
     DOM: DOM,
     globalEvents: globalEvents,
     bitCount$: state$.map((s) => s.bitCount),

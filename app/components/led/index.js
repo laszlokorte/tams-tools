@@ -28,7 +28,7 @@ export default ({
   const state$ = model(openData$, actions);
   const table$ = state$.map(toTable).shareReplay(1);
 
-  const tableComponent = isolate(TableComponent)({
+  const tableComponent = isolate(TableComponent, 'table')({
     DOM,
     table$,
   });

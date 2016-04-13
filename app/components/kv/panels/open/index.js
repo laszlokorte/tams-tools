@@ -13,7 +13,7 @@ export default ({DOM, globalEvents, visible$}) => {
   const {isolateSource, isolateSink} = DOM;
   const isolatedDOM = isolateSource(DOM, 'modalBody');
 
-  const logicField = isolate(LogicField)({
+  const logicField = isolate(LogicField, 'logic-field')({
     DOM: isolatedDOM,
     props$: O.just({showCompletion: false}),
   });
@@ -24,7 +24,7 @@ export default ({DOM, globalEvents, visible$}) => {
     expression$,
   });
   const state$ = model(visible$, expression$, actions);
-  const modal = isolate(ModalBox)({
+  const modal = isolate(ModalBox, 'modal')({
     DOM,
     globalEvents,
     props$: state$.map(({props}) => props),

@@ -6,7 +6,7 @@ import ModalBox from '../../../modal';
 import view from './view';
 
 export default ({DOM, globalEvents, visible$}) => {
-  const modal = isolate(ModalBox)({
+  const modal = isolate(ModalBox, 'modal')({
     DOM,
     globalEvents,
     props$: visible$.startWith(false).map((visible) => ({visible})),

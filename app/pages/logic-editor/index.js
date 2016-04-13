@@ -21,11 +21,11 @@ const logicApp = (sources) => {
     globalEvents,
   } = sources;
 
-  const logicComponent = isolate(logic)({
+  const logicComponent = isolate(logic, 'logic')({
     DOM, globalEvents, autoResize, selectAll,
   });
 
-  const treeComponent = isolate(tree)({
+  const treeComponent = isolate(tree, 'tree')({
     DOM, globalEvents,
     data$: logicComponent.tree$,
     props$: O.just({
@@ -37,7 +37,7 @@ const logicApp = (sources) => {
   const logicDOM = logicComponent.DOM;
   const treeDOM = treeComponent.DOM;
 
-  const splitComponent = isolate(splitPane)({
+  const splitComponent = isolate(splitPane, 'splitpane')({
     DOM,
     globalEvents,
     props$: O.just({proportion: 0.65}),

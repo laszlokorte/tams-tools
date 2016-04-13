@@ -13,7 +13,7 @@ export default ({DOM, globalEvents, visible$, viewSetting$ = O.empty()}) => {
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
 
   const state$ = model(viewSetting$, actions);
-  const modal = isolate(ModalBox)({
+  const modal = isolate(ModalBox, 'modal')({
     DOM,
     globalEvents,
     props$: visible$.startWith(false).map((visible) => ({visible})),
