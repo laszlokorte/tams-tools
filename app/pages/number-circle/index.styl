@@ -49,7 +49,23 @@
   &:disabled
     opacity 0.8
 
+  .short-label
+    display none
+
 .bit-count
   margin-top space(1)
   font-size font-size-big
   text-align center
+
+@media (max-width: 950px)
+  .bit-button
+    .short-label
+      display inline
+    .long-label
+      display none
+
+  .number-circle-head-left
+    right 60%
+
+  .number-circle-head-right
+    left 40%

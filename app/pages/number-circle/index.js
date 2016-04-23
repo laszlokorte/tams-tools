@@ -2,7 +2,7 @@ import {Observable as O} from 'rx';
 import Cycle from '@cycle/core';
 import isolate from '@cycle/isolate';
 import {makeDOMDriver} from '@cycle/dom';
-import {div, button} from '@cycle/dom';
+import {div, span, button} from '@cycle/dom';
 
 import Circle from '../../components/number-circle';
 
@@ -11,6 +11,27 @@ import {stopPropagationDriver} from '../../drivers/stop-propagation';
 import {globalEventDriver} from '../../drivers/global-events';
 
 import './index.styl';
+
+const ENCODINGS = [
+  {
+    key: 'positive',
+    label: 'Positive',
+  },
+  {
+    key: 'signed',
+    label: 'Signed',
+  },
+  {
+    key: 'complement1',
+    label: '1s Complement',
+    short: '1s Comp',
+  },
+  {
+    key: 'complement2',
+    label: '2s Complement',
+    short: '2s Comp',
+  },
+];
 
 const renderBitButtons = (state) => div('.button-bar',[
   // The button for removing a bit
@@ -30,32 +51,19 @@ const renderBitButtons = (state) => div('.button-bar',[
   }, 'Add Bit'),
 ]);
 
-const renderEncodingButtons = (state) => div('.button-bar',[
-  button('.bit-button', {
-    attributes: {
-      'data-encoding': 'positive',
-    },
-    disabled: state.encoding !== 'positive' ? void 0 : 'true',
-  }, 'Positive'),
-  button('.bit-button', {
-    attributes: {
-      'data-encoding': 'signed',
-    },
-    disabled: state.encoding !== 'signed' ? void 0 : 'true',
-  }, 'Signed'),
-  button('.bit-button', {
-    attributes: {
-      'data-encoding': 'complement1',
-    },
-    disabled: state.encoding !== 'complement1' ? void 0 : 'true',
-  }, '1s Complement'),
-  button('.bit-button', {
-    attributes: {
-      'data-encoding': 'complement2',
-    },
-    disabled: state.encoding !== 'complement2' ? void 0 : 'true',
-  }, '2s Complement'),
-]);
+const renderEncodingButtons = (state) => div('.button-bar',
+  ENCODINGS.map((enc) =>
+    button('.bit-button', {
+      attributes: {
+        'data-encoding': enc.key,
+      },
+      disabled: state.encoding !== enc.key ? void 0 : 'true',
+    }, enc.short ? [
+      span('.short-label', enc.short),
+      span('.long-label', enc.label),
+    ] : enc.label)
+  )
+);
 
 // convert array of angles into svg
 const render = (state, circle) =>
