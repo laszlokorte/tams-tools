@@ -12,20 +12,18 @@ const renderArc = (dots, selected, radius, negativeClockwise) =>
     const zeroAngle = zeroDot.angle;
     const x = Math.sin(angle) * radius;
     const y = -Math.cos(angle) * radius;
-    const zeroX = Math.sin(zeroAngle) * radius;
-    const zeroY = -Math.cos(zeroAngle) * radius;
-    const mid = Math.abs(angle - zeroAngle) > Math.PI;
-    const reverse = negativeClockwise && dot.negative;
+    const zeroX = Math.sin(zeroAngle) * (radius - 0.1);
+    const zeroY = -Math.cos(zeroAngle) * (radius - 0.1);
+    const mid = Math.abs(angle - zeroAngle) >= Math.PI;
 
     const largeArc = mid && !dot.negative;
     const sweep = !negativeClockwise && dot.negative;
 
-    console.log(largeArc);
-
     return svg('path', {
+      key: 'arc',
       class: 'selection-arc',
-      d: `M ${zeroX} ${zeroY}
-          A ${radius} ${radius} 0
+      d: `M ${~~zeroX} ${~~zeroY}
+          A ${~~radius - 0.05} ${~~radius - 0.05} 0
           ${largeArc ? 1 : 0} ${sweep ? 0 : 1}
           ${x} ${y}`,
       fill: 'none',
@@ -70,29 +68,33 @@ const dotColor = (neg, mag) =>
 ;
 
 const renderDot = (radius, selected, dot, dotIndex) => svg('g', {
+  key: `dot-${dot.pattern}`,
+  class: 'number-dot' +
+    (selected === dotIndex ? ' state-selected' : ''),
   attributes: {
-    class: 'number-dot' +
-      (selected === dotIndex ? ' state-selected' : ''),
     'data-dot-index': dotIndex,
   },
 }, [
   svg('circle', {
+    key: 'dot-background',
     class: 'number-dot-background',
-    cx: Math.sin(dot.angle) * radius,
-    cy: -Math.cos(dot.angle) * radius,
+    cx: ~~(Math.sin(dot.angle) * radius),
+    cy: ~~(-Math.cos(dot.angle) * radius),
     r: 50,
     fill: dotColor(dot.negative, dot.magnitude),
   }),
   svg('text', {
+    key: 'dot-label',
     class: 'number-dot-label',
-    x: Math.sin(dot.angle) * radius,
-    y: -Math.cos(dot.angle) * radius,
+    x: ~~(Math.sin(dot.angle) * radius),
+    y: ~~(-Math.cos(dot.angle) * radius),
     fill: '#fff',
     'font-size': '60',
     'text-anchor': 'middle',
     'dominant-baseline': 'central',
   }, dot.value.toString()),
   svg('text', {
+    key: 'dot-pattern',
     class: 'number-dot-pattern',
     x: Math.sin(dot.angle) * (radius * 1 + 70),
     y: -Math.cos(dot.angle) * (radius * 1 + 70),
@@ -102,6 +104,18 @@ const renderDot = (radius, selected, dot, dotIndex) => svg('g', {
     'dominant-baseline': baseLine(dot.angle),
   }, dot.pattern.toString()),
 ]);
+
+const renderOverflowLine = (angle, radius, dotRadius) =>
+  svg('line', {
+    class: 'overflow-line',
+    x1: 0,
+    y1: 0,
+    x2: ~~(Math.sin(angle) * (radius + dotRadius * 3)),
+    y2: ~~(-Math.cos(angle) * (radius + dotRadius * 3)),
+    stroke: 'black',
+    'stroke-width': '10',
+  })
+;
 
 const renderWarning = (angle, radius, dotRadius) => {
   const x = Math.sin(angle) * (radius + 1.5 * dotRadius);
@@ -114,24 +128,24 @@ const renderWarning = (angle, radius, dotRadius) => {
   }, [
     svg('line', {
       class: 'warning-line',
-      x1: x,
-      y1: y,
-      x2: xInner,
-      y2: yInner,
+      x1: ~~x,
+      y1: ~~y,
+      x2: ~~xInner,
+      y2: ~~yInner,
       stroke: 'orange',
       'stroke-width': '10',
     }),
     svg('circle', {
-      cx: x,
-      cy: y,
-      r: dotRadius * 0.7,
+      cx: ~~x,
+      cy: ~~y,
+      r: ~~dotRadius * 0.7,
       class: 'warning-background',
       fill: 'orange',
     }),
     svg('text', {
-      x: x,
-      y: y,
-      'font-size': dotRadius,
+      x: ~~x,
+      y: ~~y,
+      'font-size': ~~dotRadius,
       'text-anchor': 'middle',
       'dominant-baseline': 'central',
       class: 'warning-text',
@@ -166,24 +180,22 @@ const render = ({
       class: 'number-circle-circumference',
       cx: 0,
       cy: 0,
-      r: radius,
+      r: ~~radius,
     }),
     ...dots.map((d,i) => renderDot(radius, selected, d, i)),
     renderArc(dots, selected, radius - dotRadius * 1.5, negativeClockwise),
     overflowAngles.map((angle) =>
-      svg('line', {
-        class: 'overflow-line',
-        x1: 0,
-        y1: 0,
-        x2: Math.sin(angle) * (radius + dotRadius * 3),
-        y2: -Math.cos(angle) * (radius + dotRadius * 3),
-        stroke: 'black',
-        'stroke-width': '10',
-      })
+      renderOverflowLine(angle, radius, dotRadius)
     ),
     warningAngles.map((angle) =>
       renderWarning(angle, radius, dotRadius)
     ),
+    svg('circle', {
+      class: 'number-circle-center',
+      cx: 0,
+      cy: 0,
+      r: 10,
+    }),
   ]);
 };
 

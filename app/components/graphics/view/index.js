@@ -4,20 +4,20 @@ import './index.styl';
 
 // create the viewbox string
 const viewbox = (width, height, camera) =>
-  `${camera.x - width / 2 / camera.zoom}
-   ${camera.y - height / 2 / camera.zoom}
-   ${width / camera.zoom}
-   ${height / camera.zoom}`
+  `${~~(camera.x - width / 2 / camera.zoom)}
+   ${~~(camera.y - height / 2 / camera.zoom)}
+   ${~~(width / camera.zoom)}
+   ${~~(height / camera.zoom)}`
 ;
 
 // create a rectangle covering the whole element
 const renderBackground = (width, height, camera) =>
   svg('rect', {
     attributes: {
-      x: camera.x - width / camera.zoom / 2,
-      y: camera.y - height / camera.zoom / 2,
-      width: width / camera.zoom,
-      height: height / camera.zoom,
+      x: ~~(camera.x - width / camera.zoom / 2),
+      y: ~~(camera.y - height / camera.zoom / 2),
+      width: ~~(width / camera.zoom),
+      height: ~~(height / camera.zoom),
       class: 'graphics-background',
     },
   })
@@ -27,10 +27,10 @@ const renderBackground = (width, height, camera) =>
 const renderBounds = ({minX, maxX, minY, maxY}) =>
   svg('rect', {
     attributes: {
-      x: minX,
-      y: minY,
-      width: (maxX - minX),
-      height: (maxY - minY),
+      x: ~~minX,
+      y: ~~minY,
+      width: ~~(maxX - minX),
+      height: ~~(maxY - minY),
       class: 'graphics-camera-bounds',
     },
   })
@@ -79,10 +79,10 @@ const renderGrid = ({minX, maxX, minY, maxY}) => [
   ]),
   svg('rect', {
     attributes: {
-      x: minX,
-      y: minY,
-      width: (maxX - minX),
-      height: (maxY - minY),
+      x: ~~minX,
+      y: ~~minY,
+      width: ~~(maxX - minX),
+      height: ~~(maxY - minY),
       class: 'graphics-grid-container',
       fill: 'url(#grid)',
     },
@@ -94,8 +94,8 @@ const render = ({width, height, camera, bounds, content}) =>
   div('.graphics-container', [
     svg('svg', {
       attributes: {
-        width: width,
-        height: height,
+        width: ~~width,
+        height: ~~height,
         class: 'graphics-root',
         viewBox:
           viewbox(width, height,
