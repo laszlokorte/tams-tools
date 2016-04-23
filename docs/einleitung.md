@@ -154,15 +154,6 @@ Ordner und Dateien im Projekt
 * .eslintrc       Definiert JavaScript Coding-Styles
 * .gitignore      List mit Dateien, die nicht in Git eingecheckt werden sollen
 * package.json    NPM Konfigurations-Datei, in der alle Abhängigkeiten definiert sind
-* testem.json     (Derzeit nicht verwendet) Config-Datei für Unittests
-
-#### Weitere Dateien
-
-* Dockerfile
-* Vagrantfile
-* README.md
-* LICENSE.md
-* CHANGELOG.md
 
 ### der /app/ Ordner
 
