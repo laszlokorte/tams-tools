@@ -31,6 +31,8 @@ module.exports = merge(commonConfig, {
   // ],
 
   devServer: {
+    outputPath: "./build",
+
     contentBase: "./app/static",
     port: 3000,
 
