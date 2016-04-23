@@ -18,12 +18,18 @@
 .led
   fill #ff5555
   cursor pointer
+  &:active
+    fill tint(#ff5555, 20%)
 
   &.state-enabled
     fill #20f655
+    &:active
+      fill darken(#20f655, 20%)
 
   &.state-undefined
     fill #55bbbb
+    &:active
+      fill darken(#55bbbb, 20%)
 
   &:hover
     opacity 0.9
