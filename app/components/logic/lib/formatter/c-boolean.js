@@ -2,7 +2,7 @@ const operators = {
   AND: '&&',
   OR: '||',
   NOT: '!',
-  XOR: '^',
+  XOR: '!=',
 };
 
 const tryFetch = (map, key) =>
