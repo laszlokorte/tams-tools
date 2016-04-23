@@ -15,12 +15,14 @@
   cursor pointer
   &.state-selected
     .number-dot-background
-      fill color-focus
+      stroke-width 15
+      stroke color-focus
     .number-dot-pattern
       fill color-focus
 
 .number-dot-background
-  fill color-background-inverse
+  stroke-width 5
+  stroke color-background-secondary-strong
 
 .number-dot-label
   color color-foreground-inverse
@@ -39,3 +41,17 @@
   stroke-dasharray 10, 30
   stroke color-foreground-inverse-weak
   stroke-linecap round
+
+.warning-background
+  fill #FF6501
+  stroke #FF6501
+  stroke-width 2
+
+.warning-line
+  stroke #FF6501
+  stroke-width 5
+  stroke-linecap round
+
+.warning-text
+  fill #fff
+  font-weight bold

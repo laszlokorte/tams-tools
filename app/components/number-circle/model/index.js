@@ -1,81 +1,6 @@
 import {Observable as O} from 'rx';
 
-const ENCODINGS = {
-  positive: {
-    formatter: (pattern) => {
-      return parseInt(pattern, 2);
-    },
-    overflowAngle: (dots) => {
-      return 2 * Math.PI - (
-        dots[0].angle +
-        dots[1].angle
-      ) / 2;
-    },
-    baseIndex: () => 0,
-  },
-
-  signed: {
-    formatter: (pattern) => {
-      const sign = pattern.substr(0,1) === '1' ?
-        '-' : '';
-      return sign + parseInt(pattern.substr(1), 2).toString(10);
-    },
-    overflowAngle: (dots) => {
-      return 2 * Math.PI - (
-        dots[0].angle +
-        dots[1].angle
-      ) / 2;
-    },
-    baseIndex: (pattern) => {
-      if (pattern.substr(0, 1) === '1') {
-        return Math.pow(2, pattern.length - 1);
-      } else {
-        return 0;
-      }
-    },
-  },
-
-  complement1: {
-    formatter: (pattern) => {
-      const negative = pattern.substr(0, 1) === '1';
-      const offset = negative ?
-        -Math.pow(2, pattern.length - 1) + 1 : 0;
-      return (negative ? '-' : '') + Math.abs(
-        offset + parseInt(pattern.substr(1), 2)
-      );
-    },
-    overflowAngle: (dots) => {
-      const half = (dots.length - 1) / 2;
-      return (
-        dots[Math.floor(half)].angle +
-        dots[Math.ceil(half)].angle
-      ) / 2;
-    },
-    baseIndex: (pattern) => {
-      if (pattern.substr(0, 1) === '1') {
-        return Math.pow(2, pattern.length) - 1;
-      } else {
-        return 0;
-      }
-    },
-  },
-
-  complement2: {
-    formatter: (pattern) => {
-      const offset = pattern.substr(0,1) === '1' ?
-        -Math.pow(2, pattern.length - 1) : 0;
-      return offset + parseInt(pattern.substr(1), 2);
-    },
-    overflowAngle: (dots) => {
-      const half = (dots.length - 1) / 2;
-      return (
-        dots[Math.floor(half)].angle +
-        dots[Math.ceil(half)].angle
-      ) / 2;
-    },
-    baseIndex: () => 0,
-  },
-};
+import ENCODINGS from './encodings';
 
 // convert numbert into bit pattern string of length
 // bitCount.
@@ -96,11 +21,15 @@ const dotArray = (encoding, bitCount) =>
   // map array to angles
   .map((_, index, {length}) => {
     const pattern = bitPattern(index, bitCount);
+    const value = encoding.formatter(pattern);
+    const negative = value.substr(0, 1) === '-';
 
     return {
       baseIndex: encoding.baseIndex(pattern),
       angle: 2 * Math.PI * index / length,
-      value: encoding.formatter(pattern),
+      value,
+      magnitude: encoding.magnitude(pattern),
+      negative,
       pattern,
     };
   })
@@ -140,8 +69,12 @@ export default (encoding$, bitCount$, actions) => {
         dotRadius,
         // the radius of the circle
         radius,
-        // the angle at which the overflow occurs
-        overflowAngle: encoding.overflowAngle(dots),
+        // the angles at which the overflow occurs
+        overflowAngles: encoding.overflowAngles(dots),
+        // the angles at which a warning should be displayed
+        warningAngles: encoding.warningAngles(dots),
+        //
+        negativeClockwise: encoding.negativeClockwise,
         // the bounding box of the circle
         bounds: {
           minX: -sizeHalf,
