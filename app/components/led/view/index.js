@@ -116,6 +116,7 @@ const render = (state, table) =>
               }),
               svg('text', {
                 attributes: {
+                  class: 'led-label',
                   x: led.labelPosition.x,
                   y: led.labelPosition.y,
                   'text-anchor': 'middle',

@@ -2,7 +2,7 @@
   "segments": [
     {
       "name": "A1",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 45, "y": -5},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -12,7 +12,7 @@
     },
     {
       "name": "A2",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 115, "y": -5},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -22,7 +22,7 @@
     },
     {
       "name": "B",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 170, "y": 62},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -32,7 +32,7 @@
     },
     {
       "name": "C",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 170, "y": 160},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -42,7 +42,7 @@
     },
     {
       "name": "D1",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 45, "y": 235},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -52,7 +52,7 @@
     },
     {
       "name": "D2",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 115, "y": 235},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -62,7 +62,7 @@
     },
     {
       "name": "E",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": -10, "y": 160},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -72,7 +72,7 @@
     },
     {
       "name": "F",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": -10, "y": 62},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -82,7 +82,7 @@
     },
     {
       "name": "G1",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 45, "y": 113},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -92,7 +92,7 @@
     },
     {
       "name": "G2",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 115, "y": 113},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -102,7 +102,7 @@
     },
     {
       "name": "H",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 79, "y": 60},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -112,7 +112,7 @@
     },
     {
       "name": "I",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 79, "y": 160},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -122,7 +122,7 @@
     },
     {
       "name": "J",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 45, "y": 60},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -132,7 +132,7 @@
     },
     {
       "name": "K",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 115, "y": 60},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -142,7 +142,7 @@
     },
     {
       "name": "L",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 115, "y": 160},
       "shape": {
         "type" : "polygon",
         "attributes" : {
@@ -152,7 +152,7 @@
     },
     {
       "name": "M",
-      "labelPosition": {"x": 66, "y": -10},
+      "labelPosition": {"x": 45, "y": 160},
       "shape": {
         "type" : "polygon",
         "attributes" : {
