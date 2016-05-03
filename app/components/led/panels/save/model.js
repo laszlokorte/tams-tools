@@ -1,9 +1,11 @@
 import {Observable as O} from 'rx';
 
-export default (table$/*, actions*/) =>
+export default (table$, formula$/*, actions*/) =>
   O.combineLatest(
+    formula$.startWith(''),
     table$.startWith(''),
-    (table) => ({
+    (formula, table) => ({
+      formula,
       table,
     })
   )

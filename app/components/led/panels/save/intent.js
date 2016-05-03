@@ -1,5 +1,5 @@
 export default ({DOM}) => {
-  const textField = DOM.select('.export-text');
+  const textField = DOM.select('.export-text, .export-text-single');
 
   const clickEvent$ = textField.events('click');
 

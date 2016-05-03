@@ -5,6 +5,7 @@ import model from './model';
 import view from './view';
 import intent from './intent';
 import toTable from './lib/table';
+import toExpression from './lib/expression';
 
 import TableComponent from '../table';
 import asciiTable from '../table/lib/format-ascii';
@@ -38,6 +39,7 @@ export default ({
   const panels = modalPanels({
     DOM, globalEvents, open$: actions.panel$,
     asciiTable$: table$.map(asciiTable),
+    formula$: state$.map(toExpression),
   });
 
   const vtree$ = view(

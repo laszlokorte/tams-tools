@@ -10,11 +10,12 @@ import model from './model';
 export default ({
     DOM, globalEvents, visible$,
     table$ = O.empty(),
+    formula$ = O.empty(),
 }) => {
   const {isolateSource, isolateSink} = DOM;
 
   const actions = intent({DOM: isolateSource(DOM, 'modalBody')});
-  const state$ = model(table$, actions);
+  const state$ = model(table$, formula$, actions);
   const modal = isolate(ModalBox, 'modal')({
     DOM,
     globalEvents,
