@@ -1,6 +1,6 @@
-# KV Generator CycleJS
+# TAMS Tools for eLearning
 
-A tool to generate and edit KV Diagrams.
+A set of tools for teaching and learning computer science. Developed by Laszlo Korte <me@laszlokorte.de> as part of the Thesis *A JavaScript framework for interactive presentations and animations on computer science*.
 
 ## Getting started
 
@@ -31,3 +31,7 @@ $ npm run compile
 ```
 
 The output will be saved into the `./build` folder.
+
+## More
+
+See the `docs` folder for further explanation
