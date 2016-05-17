@@ -1,4 +1,4 @@
 Tree component
 ==============
 
-This component renders a tree as SVG
+This component renders a tree graph as SVG.

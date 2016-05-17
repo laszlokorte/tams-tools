@@ -1,7 +1,7 @@
 PLA component
 =============
 
-This component renders PLA (progammable logic array) data as interactive svg canvas.
+This component renders PLA (progammable logic array) data as interactive SVG canvas.
 
 It also does some cost calculations based on the PLA data.
 
