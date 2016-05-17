@@ -65,8 +65,8 @@ export const kvLoop = I.Record({
   mode: MODE_DNF,
 }, 'loop');
 
-/// a diagram represents a complete kv diagram
-/// it contains of all the input variables,
+/// A diagram represents a complete karnaugh map.
+/// It contains of all the input variables,
 /// all the outputs with their values
 /// and a set of all the loops
 const kvDiagram = I.Record({

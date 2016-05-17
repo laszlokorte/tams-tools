@@ -86,7 +86,7 @@ module.exports = {
       favicon: './app/pages/home/home.ico',
     }),
     new HtmlWebpackPlugin({
-      title: 'KV Diagram Editor',
+      title: 'Karnaugh map editor',
       minify: htmlMinifyOptions,
       chunks: ['kvdEditor', 'vendor'],
       template: './app/index.html',
@@ -94,7 +94,7 @@ module.exports = {
       favicon: './app/pages/kvd-editor/kvd.ico',
     }),
     new HtmlWebpackPlugin({
-      title: 'Logic Editor',
+      title: 'Logic editor',
       minify: htmlMinifyOptions,
       chunks: ['logicEditor', 'vendor'],
       template: './app/index.html',
@@ -102,7 +102,7 @@ module.exports = {
       favicon: './app/pages/logic-editor/logic.ico',
     }),
     new HtmlWebpackPlugin({
-      title: 'LED Editor',
+      title: 'LED editor',
       minify: htmlMinifyOptions,
       chunks: ['ledEditor', 'vendor'],
       template: './app/index.html',
@@ -110,7 +110,7 @@ module.exports = {
       favicon: './app/pages/led-editor/led.ico',
     }),
     new HtmlWebpackPlugin({
-      title: 'FSM Editor',
+      title: 'FSM editor',
       minify: htmlMinifyOptions,
       chunks: ['fsmEditor', 'vendor'],
       template: './app/index.html',
@@ -126,7 +126,7 @@ module.exports = {
       favicon: './app/pages/number-circle/number-circle.ico',
     }),
     new HtmlWebpackPlugin({
-      title: 'Logic Checker',
+      title: 'Logic checker',
       minify: htmlMinifyOptions,
       chunks: ['logicChecker', 'vendor'],
       template: './app/index.html',

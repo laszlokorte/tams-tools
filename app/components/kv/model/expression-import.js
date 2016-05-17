@@ -7,7 +7,7 @@ const sanitizeName = (name) =>
   name.replace(spaces, '_')
 ;
 
-// convert logic expressions into a kv diagram
+// convert logic expressions into a Karnaugh map
 // the expressions are provided as logicNetwork object.
 //
 // maxInputs limits the number of used identifiers

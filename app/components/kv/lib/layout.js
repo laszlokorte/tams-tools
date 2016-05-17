@@ -18,7 +18,7 @@ const layoutRow = I.Record({
   cells: I.List(),
 }, 'row');
 
-/// The layouts for different KV diagram sizes
+/// The layouts for different Karnaugh map sizes
 const layouts = [
   /// Layout for 0 inputs (1 value)
   (s) => {

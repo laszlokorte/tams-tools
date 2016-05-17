@@ -1,6 +1,6 @@
 import I from 'immutable';
 
-// object representing one loop in a kv diagram
+// object representing one loop in a Karnaugh map
 const loop = I.Record({
   // the input values.
   // A list of true|false|null values
@@ -15,7 +15,7 @@ const loop = I.Record({
   highlight: false,
 }, 'plaLoop');
 
-// object representing PLA data extracted from a KV diagram
+// object representing PLA data extracted from a Karnaugh map
 export const pla = I.Record({
   mode: null, // "knf" or "dnf"
   inputs: I.List(), // List of input names (strings)

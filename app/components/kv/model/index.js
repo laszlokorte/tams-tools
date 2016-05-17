@@ -23,7 +23,7 @@ const kvState = I.Record({
   renameOutput: -1, // the output currently being renamed
   renameOutputValue: null, // the new name for the currently renamed output
   renameOutputValid: false, // if the new output name is valid
-  diagram: KVD.newDiagram(), // the kv diagram being edited
+  diagram: KVD.newDiagram(), // the Karnaugh map being edited
   errorMessage: null, // The current error message
   viewSetting: 'function', // the style in which cells are displayed.
                            // function - the function's value inside a cell
@@ -83,7 +83,7 @@ const clearError = (state) =>
   state ? state.remove('errorMessage') : state
 ;
 
-// add an input the kv diagram of state
+// add an input the Karnaugh map of state
 const addInput = (state) =>
   state.update('diagram', (diagram) =>
     KVD.appendInput(
@@ -97,7 +97,7 @@ const addInput = (state) =>
   )
 ;
 
-// remove an input from the kv diagram of state
+// remove an input from the Karnaugh map of state
 const removeInput = (state) =>
   state.update('diagram', (diagram) =>
     KVD.popInput(
@@ -227,7 +227,7 @@ const addLoop = ({
   );
 };
 
-// create a new output to the state's kv diagram
+// create a new output to the state's Karnaugh map
 const addOutput = (state) => {
   const newDiagram = KVD.appendOutput(
     generateUnique(
@@ -245,7 +245,7 @@ const addOutput = (state) => {
   });
 };
 
-// remove the output at the given index from the state's kv diagram
+// remove the output at the given index from the state's Karnaugh map
 const removeOutput = (outputIndex, state) =>
   state.update('currentOutput', (currentOutput) =>
     Math.max(0,
@@ -322,7 +322,7 @@ const tryOutputName = (outputIndex, newName, state) =>
     })
 ;
 
-// import the given json as kv diagram
+// import the given json as Karnaugh map
 const openDiagram = (jsonDiagram, state) => {
   try {
     const parsed = JSON.parse(jsonDiagram);
@@ -340,7 +340,7 @@ const openDiagram = (jsonDiagram, state) => {
   return state.set('errorMessage', 'InvalidData');
 };
 
-// import the given logic network as kv diagram
+// import the given logic network as Karnaugh map
 const importExpression = (logicNetwork, state) => {
   try {
     const diagram = expressionImport(logicNetwork, MAX_INPUTS, MAX_OUTPUTS);

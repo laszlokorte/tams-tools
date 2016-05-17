@@ -8,7 +8,7 @@ import './index.styl';
 // The list of links to be shown on the home page
 const COMPONENTS = [
   {
-    name: 'KV diagram editor',
+    name: 'Karnaugh map editor',
     url: './kvd-editor.html',
   },
   {
