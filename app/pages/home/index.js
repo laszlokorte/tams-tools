@@ -16,7 +16,7 @@ const COMPONENTS = [
     url: './logic-editor.html',
   },
   {
-    name: 'Logic Checker',
+    name: 'Logic checker',
     url: './logic-checker.html',
   },
   {
