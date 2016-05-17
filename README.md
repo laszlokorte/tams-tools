@@ -2,6 +2,8 @@
 
 A set of tools for teaching and learning computer science. Developed by Laszlo Korte <me@laszlokorte.de> as part of the Thesis *A JavaScript framework for interactive presentations and animations on computer science*.
 
+Demo: https://thesis.laszlokorte.de
+
 ## Getting started
 
 First you need to make sure you have installed `node`(v5.1.0) and `npm`(3.5.0) on your system.
