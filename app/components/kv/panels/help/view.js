@@ -6,7 +6,7 @@ const helpItem = (title, body) => [
 ];
 
 export default () => div([
-  h1('.modal-box-title', 'Karnaugh-Veitch-Diagram Editor'),
+  h1('.modal-box-title', 'Karnaugh map editor'),
   h2('Edit function'),
   dl([
     helpItem('Change Size:', [

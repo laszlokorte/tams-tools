@@ -6,7 +6,7 @@ const helpItem = (title, body) => [
 ];
 
 export default () => div([
-  h1('.modal-box-title', 'Logic Expression Editor'),
+  h1('.modal-box-title', 'Logic expression editor'),
   h2('Languages'),
   dl([
     helpItem('Auto detection:', [

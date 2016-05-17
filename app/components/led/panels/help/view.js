@@ -6,7 +6,7 @@ const helpItem = (title, body) => [
 ];
 
 export default () => div([
-  h1('.modal-box-title', 'LED Editor'),
+  h1('.modal-box-title', 'LED editor'),
   dl([
     helpItem('Input state:', [
       'Enter a decimal number or click on the input LEDs',
