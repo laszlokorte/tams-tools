@@ -75,6 +75,9 @@ const defaultFormatter = {
   formatExpressions: (expressions) => {
     return expressions.join(', ');
   },
+
+  binaryOperator: (op) => op,
+  unaryOperator: (op) => op,
 };
 
 // convert an expression into a string using the given formatter

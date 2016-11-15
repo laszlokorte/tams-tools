@@ -89,13 +89,17 @@ export default (actions, expressionOutput$, selectedRow$) => {
           fieldOutput.network, showSubExpressions,
           FORMAT_MAP[outputFormat]
         ),
-        tree: buildTree(fieldOutput.network),
+        tree: buildTree(fieldOutput.network, FORMAT_MAP[outputFormat]),
       })).scan((state, rowIndex) =>
         // update the state with the latest row index
         // and rebuild the tree in order to upate it's colors
         state
           .set('selectedRow', rowIndex)
-          .set('tree', buildTree(state.fieldOutput.network, rowIndex))
+          .set('tree', buildTree(
+            state.fieldOutput.network,
+            FORMAT_MAP[outputFormat],
+            rowIndex)
+          )
       )
   )
   .switch()

@@ -3,7 +3,7 @@ import {
   textarea, input,
 } from '@cycle/dom';
 
-const render = ({table, formula}) => div([
+const render = ({table, formula, tree}) => div([
   h1('.modal-box-title', 'Export...'),
   h3('ASCII Table'),
   div([
@@ -16,6 +16,13 @@ const render = ({table, formula}) => div([
     input('.export-text-single', {
       attributes: {readonly: true},
       value: formula,
+    }),
+  ]),
+  h3('LaTeX Forest Tree'),
+  div([
+    input('.export-text-single', {
+      attributes: {readonly: true},
+      value: tree,
     }),
   ]),
 ])

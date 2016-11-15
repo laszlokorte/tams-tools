@@ -64,6 +64,8 @@ const formatter = {
   formatExpressions: (expressions) => {
     return expressions.join(', ');
   },
+  binaryOperator: (op) => tryFetch(operators, op),
+  unaryOperator: (op) => tryFetch(operators, op),
 };
 
 export default formatter;

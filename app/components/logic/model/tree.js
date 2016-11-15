@@ -21,7 +21,7 @@ const evaluateSubExpressions = (logicNetwork, selectedRow) => {
 // builds a colored operator tree of the given logicNetwork
 // selectedRow is the row of the function table and determines
 // the input values used for evaluation
-export const buildTree = (logicNetwork, selectedRow = null) => {
+export const buildTree = (logicNetwork, formatter, selectedRow = null) => {
   if (logicNetwork === null ||
     logicNetwork.expressions.size === 0
   ) {
@@ -35,15 +35,16 @@ export const buildTree = (logicNetwork, selectedRow = null) => {
   if (logicNetwork.expressions.size === 1) {
     // If the network contains only one expression the tree is build
     // for this single expression
-    return toTree(logicNetwork.expressions.get(0), subEvalutation);
+    return toTree(logicNetwork.expressions.get(0), formatter, subEvalutation);
   } else {
     // Ff the network contains more than one expression
     // an additional root node is created to contain all
     // expression nodes
     return {
       name: 'Expression List',
+      formattedName: ' ',
       children: logicNetwork.expressions.map(
-        (e) => toTree(e, subEvalutation)
+        (e) => toTree(e, formatter, subEvalutation)
       ).toArray(),
       hidden: true,
     };

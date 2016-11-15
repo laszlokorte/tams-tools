@@ -59,6 +59,29 @@ const name = (expression) => {
   }
 };
 
+const formattedName = (expression, formatter) => {
+  switch (expression._name) {
+  case 'binary':
+    return formatter.binaryOperator(expression.operator.toString());
+  case 'unary':
+    return formatter.unaryOperator(expression.operator.toString());
+  case 'group':
+    return "(...)";
+  case 'label':
+    return formatter.label(expression.name.toString());
+  case 'identifier':
+    return formatter.formatName(expression.name.toString());
+  case 'constant':
+    return formatter.formatVector(
+      expression.identifiers, expression.values
+    );
+  case 'vector':
+    return '<Vector:...>';
+  default:
+    throw new Error(`unknown node: ${expression._name}`);
+  }
+};
+
 // get the color of a constant expression
 const constantColor = (expression) => {
   if (expression.value === null) {
@@ -97,16 +120,17 @@ const color = (expression, evalutationMap) => {
 };
 
 // build an expression tree
-const toTree = (expression, evalutationMap = null) => {
+const toTree = (expression, formatter, evalutationMap = null) => {
   // skip group expressions
   if (expression._name === 'group') {
-    return toTree(expression.body, evalutationMap);
+    return toTree(expression.body, formatter, evalutationMap);
   }
 
   return {
     name: name(expression),
+    formattedName: formattedName(expression, formatter),
     children: children(expression).map(
-      (e) => toTree(e, evalutationMap)
+      (e) => toTree(e, formatter, evalutationMap)
     ),
     // color the node if an evaluation mal is available
     color: evalutationMap && color(expression, evalutationMap),
@@ -116,12 +140,12 @@ const toTree = (expression, evalutationMap = null) => {
 // build an operator tree of the given expression
 // to be displayed via the tree component
 // use the evalutaionMap to color the nodes
-export default (expression, evalutationMap = null) => {
+export default (expression, formatter, evalutationMap = null) => {
   // if the expression is a label but has no name set
   // skip it and only use the sub expression
   if (expression._name === 'label' && expression.name === null) {
-    return toTree(expression.body, evalutationMap);
+    return toTree(expression.body, formatter, evalutationMap);
   } else {
-    return toTree(expression.body, evalutationMap);
+    return toTree(expression.body, formatter, evalutationMap);
   }
 };

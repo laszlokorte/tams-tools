@@ -67,7 +67,7 @@ export default ({
   const panels = modalPanels({
     DOM, globalEvents, open$: actions.panel$,
     asciiTable$: table$.map(asciiTable),
-    formula$,
+    formula$, tree$,
   });
 
   const vtree$ = view(
