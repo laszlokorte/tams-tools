@@ -10,13 +10,15 @@ const render = ({visible, content}) =>
     className: visible ? 'state-visible' : 'state-hidden',
   }, [
     div('.modal-background'),
-    div('.modal-box', [
-      button('.modal-box-close', {
-        attributes: {'data-modal-close': true},
-      }, closeIcon(24)),
-      div('.modal-box-body',
-        visible ? [content] : null
-      ),
+    div('.modal-scroll', [
+      div('.modal-box', [
+        button('.modal-box-close', {
+          attributes: {'data-modal-close': true},
+        }, closeIcon(24)),
+        div('.modal-box-body',
+          visible ? [content] : null
+        ),
+      ]),
     ]),
   ])
 ;
