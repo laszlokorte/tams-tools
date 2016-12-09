@@ -72,9 +72,7 @@ const formattedName = (expression, formatter) => {
   case 'identifier':
     return formatter.formatName(expression.name.toString());
   case 'constant':
-    return formatter.formatVector(
-      expression.identifiers, expression.values
-    );
+    return formatter.formatValue(expression.value);
   case 'vector':
     return '<Vector:...>';
   default:
