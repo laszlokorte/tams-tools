@@ -71,10 +71,7 @@ export const expressionFromJson = (jsonData) => {
       operand: expressionFromJson(jsonData.operand),
     });
   case 'group':
-    return groupExpression({
-      body: expressionFromJson(jsonData.body),
-      style: jsonData.style,
-    });
+    return expressionFromJson(jsonData.body);
   case 'identifier':
     return identifierExpression({
       name: jsonData.name.toString(),
