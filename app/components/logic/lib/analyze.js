@@ -2,7 +2,7 @@ import I from 'immutable';
 
 // collect the set of all subexpression from the AST of th given expression
 export const collectSubExpressions = (
-  expression, acc = I.OrderedSet(), collect = false
+  expression, acc = I.OrderedSet(), collect = (expression._name !== 'group')
 ) => {
   const newAcc = collect === true ? acc.add(expression) : acc;
 
@@ -13,7 +13,7 @@ export const collectSubExpressions = (
   case 'unary':
     return collectSubExpressions(expression.operand, newAcc, true);
   case 'group':
-    return collectSubExpressions(expression.body, acc, collect);
+    return collectSubExpressions(expression.body, acc);
   case 'identifier':
     return acc;
   case 'constant':
