@@ -35,8 +35,19 @@ operatorPrec3 "binary operator"
 operatorUnary "unary operator"
   = logicNot { return "NOT"; }
 
+reserved = labelOperator
+  / logicAnd
+  / logicOr
+  / logicXor
+  / logicNot
+  / logicTop
+  / logicBottom
+  / logicUndefined
+  / vectorStart
+  / vectorEnd
+
 identifierName
-  = first:[A-Za-z_] tail:[\-_a-zA-Z0-9\{\}]* {
+  = !reserved first:[A-Za-z_] tail:[\-_a-zA-Z0-9\{\}]* {
       return first + tail.join("");
     }
   / '"' chars:charNoDoubleQuote+ '"' {
