@@ -4,6 +4,8 @@
   https://github.com/llimllib/pymag-trees/
 */
 /* eslint-disable no-class/no-class */
+/* eslint-disable complexity */
+
 class LayoutNode {
   constructor(node, parent = null, depth = 0, number = 1) {
     this.x = -1;

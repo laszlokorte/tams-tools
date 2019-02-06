@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 import {
   tr, th,
 } from '@cycle/dom';

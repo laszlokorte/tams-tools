@@ -1,8 +1,7 @@
-import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import nib from 'nib';
+import webpack from 'webpack';
+import path from 'path';
 
 const vendorModules = /(node_modules|bower_components)/;
 
@@ -25,62 +24,67 @@ const htmlMinifyOptions = process.env.NODE_ENV === 'production' ? {
 module.exports = {
   target: "web",
   entry: {
-    home: "./app/pages/home/index.js",
-    kvdEditor: "./app/pages/kvd-editor/index.js",
-    debug: "./app/pages/debug/index.js",
-    logicEditor: "./app/pages/logic-editor/index.js",
-    ledEditor: "./app/pages/led-editor/index.js",
-    fsmEditor: "./app/pages/fsm-editor/index.js",
-    numberCircle: "./app/pages/number-circle/index.js",
-    logicChecker: "./app/pages/logic-checker/index.js",
-    vendor: require("../app/vendor.js"),
+    home: path.resolve(__dirname, "../app/pages/home/index.js"),
+    kvdEditor: path.resolve(__dirname, "../app/pages/kvd-editor/index.js"),
+    logicEditor: path.resolve(__dirname, "../app/pages/logic-editor/index.js"),
+    ledEditor: path.resolve(__dirname, "../app/pages/led-editor/index.js"),
+    fsmEditor: path.resolve(__dirname, "../app/pages/fsm-editor/index.js"),
+    numberCircle: path.resolve(__dirname, "../app/pages/number-circle/index.js"),
+    logicChecker: path.resolve(__dirname, "../app/pages/logic-checker/index.js"),
   },
 
   output: {
-    path: "./build",
+    path: path.resolve(__dirname, '../build/'),
     filename: "[name]-[hash].js",
     pathinfo: true,
     publicPath: "",
   },
 
   module: {
-    preLoaders: [
-      {test: /\.js$/, loader: "eslint-loader", exclude: vendorModules},
-    ],
-    loaders: [
+    rules: [
       {
         test: /\.pegjs$/,
-        loader: 'babel!pegjs-loader',
-      },
-      {
-        test: /\.(json)$/,
-        loader: "json",
+        use: [{
+          loader: 'babel-loader'
+        }, {
+          loader: 'pegjs-loader'
+        }],
       },
       {
         test: /\.(png|jpg|svg|ttf|eot|woff|woff2)$/,
-        loader: 'url?name=[path][name]-[hash].[ext]',
+        use: [{
+          loader: 'url-loader',
+
+          options: {
+            name: '[path][name]-[hash].[ext]'
+          }
+        }],
       },
       {
         test: /\.js$/,
         exclude: vendorModules,
-        loader: "babel",
+        use: [{
+          loader: 'babel-loader'
+        }],
       },
-    ],
-  },
+      {
+        test: /\.js$/,
 
-  stylus: {
-    use: [nib()],
+        use: [{
+          loader: 'eslint-loader'
+        }],
+
+        exclude: vendorModules,
+        enforce: 'pre'
+      },
+    ]
   },
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin(
-      'vendor', 'vendor-[hash].js', Infinity
-    ),
-    new ExtractTextPlugin('[name]-[contenthash].css', {allChunks: true}),
     new HtmlWebpackPlugin({
       title: 'Home',
       minify: htmlMinifyOptions,
-      chunks: ['home', 'vendor'],
+      chunks: ['vendors', 'home'],
       template: './app/index.html',
       filename: 'index.html',
       favicon: './app/pages/home/home.ico',
@@ -88,7 +92,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Karnaugh map editor',
       minify: htmlMinifyOptions,
-      chunks: ['kvdEditor', 'vendor'],
+      chunks: ['vendors', 'kvdEditor'],
       template: './app/index.html',
       filename: 'kvd-editor.html',
       favicon: './app/pages/kvd-editor/kvd.ico',
@@ -96,7 +100,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Logic editor',
       minify: htmlMinifyOptions,
-      chunks: ['logicEditor', 'vendor'],
+      chunks: ['vendors', 'logicEditor'],
       template: './app/index.html',
       filename: 'logic-editor.html',
       favicon: './app/pages/logic-editor/logic.ico',
@@ -104,7 +108,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'LED editor',
       minify: htmlMinifyOptions,
-      chunks: ['ledEditor', 'vendor'],
+      chunks: ['vendors', 'ledEditor'],
       template: './app/index.html',
       filename: 'led-editor.html',
       favicon: './app/pages/led-editor/led.ico',
@@ -112,7 +116,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'FSM editor',
       minify: htmlMinifyOptions,
-      chunks: ['fsmEditor', 'vendor'],
+      chunks: ['vendors', 'fsmEditor'],
       template: './app/index.html',
       filename: 'fsm-editor.html',
       favicon: './app/pages/fsm-editor/fsm.ico',
@@ -120,7 +124,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Number circle',
       minify: htmlMinifyOptions,
-      chunks: ['numberCircle', 'vendor'],
+      chunks: ['vendors', 'numberCircle'],
       template: './app/index.html',
       filename: 'number-circle.html',
       favicon: './app/pages/number-circle/number-circle.ico',
@@ -128,7 +132,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Logic checker',
       minify: htmlMinifyOptions,
-      chunks: ['logicChecker', 'vendor'],
+      chunks: ['vendors', 'logicChecker'],
       template: './app/index.html',
       filename: 'logic-checker.html',
       favicon: './app/pages/logic-checker/logic-checker.ico',
@@ -136,7 +140,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Debug',
       minify: htmlMinifyOptions,
-      chunks: ['debug', 'vendor'],
+      chunks: ['vendors', 'debug'],
       template: './app/index.html',
       filename: 'debug.html',
       favicon: './app/pages/debug/debug.ico',
@@ -144,7 +148,21 @@ module.exports = {
     new CopyWebpackPlugin([
       {from: 'app/static'},
     ]),
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    })
   ],
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+        }
+      }
+    }
+  },
   node: {
     fs: 'empty',
   },

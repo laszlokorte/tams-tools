@@ -197,6 +197,7 @@ const addLoop = ({
   const newCube = KVD.newCubeFromTo(
     startCell, targetCell, state.diagram.inputs.size
   );
+
   const values = state.diagram.outputs.get(outputIndex).values;
   if (!KVD.isValidCubeForValuesInMode(
     newCube, values, state.currentKvMode

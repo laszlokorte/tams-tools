@@ -28,7 +28,6 @@ module.exports = {
     fsmEditor: "./app/pages/fsm-editor/index.js",
     // Deklaration des Einstiegspunktes
 +   numberCircle: "./app/pages/number-circle/index.js",
-    vendor: require("../app/vendor.js"),
   },
 //...
   plugins: [

@@ -1,13 +1,13 @@
 import merge from 'webpack-merge';
+import nib from 'nib';
 
 import commonConfig from './common.config.babel.js';
 
 //export default
 module.exports = merge(commonConfig, {
-  debug: true,
   devtool: "cheap-module-inline-source-map",
   profile: false,
-
+  mode: "development",
   watch: true,
   watchOptions: {
     aggregateTimeout: 300,
@@ -15,11 +15,24 @@ module.exports = merge(commonConfig, {
   },
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.styl$/,
-        loader: "style-loader!css-loader?-autoprefixer" +
-                "!stylus-loader?resolve url",
+        use: [
+          {
+            loader:"style-loader",
+          },
+          {
+            loader:"css-loader",
+            //"!?-autoprefixer"
+          },
+          {
+            loader:"stylus-loader",
+            options: {
+              use: [nib()],
+            },
+          },
+        ],
       },
     ],
   },
@@ -31,8 +44,6 @@ module.exports = merge(commonConfig, {
   // ],
 
   devServer: {
-    outputPath: "./build",
-
     contentBase: "./app/static",
     port: 3000,
 
@@ -45,7 +56,6 @@ module.exports = merge(commonConfig, {
 
     historyApiFallback: true,
 
-    colors: true,
     stats: 'normal',
   },
 });

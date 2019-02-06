@@ -1,5 +1,5 @@
 import I from 'immutable';
-import BitSet from 'bitset.js';
+import BitSet from 'bitset';
 
 const _stride = (length, value) =>
   I.List(Array.apply(Array, {length: length}).map(() => value))
@@ -141,9 +141,9 @@ export const loopBelongsToOutput = (
 export const insideCube = (
   /*BitSet*/cell,
   /*kvCube*/cube
-  ) =>
+  ) => (
   cube.include.and(cell).equals(cube.include) &&
-  cube.exclude.and(cell).isEmpty()
+  cube.exclude.and(cell).isEmpty())
 ;
 
 /// check if the given cell is inside the given cube
@@ -157,11 +157,11 @@ export const insideCubeMasked = (
   /*BitSet*/cell,
   /*kvCube*/cube,
   /*BitSet*/mask
-  ) =>
+  ) => (
     mask.and(cube.include.and(cell))
       .equals(mask.and(cube.include)) &&
     mask.and(cube.exclude.and(cell))
-      .isEmpty()
+      .isEmpty())
 ;
 
 /// check if the given cell is inside the given loop.
@@ -178,8 +178,7 @@ export const insideLoop = (
 const isEmptyCube = (
   /*kvCube*/cube,
   /*int*/inputCount
-  ) =>
-  !cube.include.and(cube.exclude).isEmpty() ||
+  ) => !cube.include.and(cube.exclude).isEmpty() ||
   !cube.include.and(inputCount === 0 ?
     cube.include : BitSet().setRange(0, inputCount - 1, 1).not()
   ).isEmpty()
@@ -447,11 +446,10 @@ export const newCubeFromTo = (
   /*BitSet*/start,
   /*BitSet*/end,
   /*int*/inputCount
-  ) =>
-  inputCount > 0 ?
+  ) => inputCount > 0 ?
   kvCube({
-    include: start.and(end).getRange(0, inputCount - 1),
-    exclude: start.or(end).not().getRange(0, inputCount - 1),
+    include: start.and(end).slice(0, inputCount - 1),
+    exclude: start.or(end).not().slice(0, inputCount - 1),
   }) :
   kvCube({
     include: BitSet(),

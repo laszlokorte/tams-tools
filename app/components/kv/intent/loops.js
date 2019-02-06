@@ -1,5 +1,5 @@
 import {Observable as O} from 'rx';
-import BitSet from 'bitset.js';
+import BitSet from 'bitset';
 
 const touchTarget = (evt) =>
   document.elementFromPoint(

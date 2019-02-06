@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 import I from 'immutable';
 
 import bounds from '../../graphics/lib/bounds';
@@ -202,7 +204,7 @@ const layoutOutputs = (pla, outputGateWidth) => {
       pla.loops
         .map((loop, idx) => ({idx, loop}))
         .filter(({loop}) => loop.out.get(index) === true)
-        .reduce((accInner, {loop, idx}, wireIndex, all) =>
+        .reduce((accInner, {idx}, wireIndex, all) =>
           accInner.push(wire({
             type: 'vertical',
             from: position({

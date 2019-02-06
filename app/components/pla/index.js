@@ -63,7 +63,7 @@ export default ({
     DOM,
     globalEvents,
     props$: O.just({ // Dimensions of the SVG element
-      width: 600,    // get overridden by CSS anyway
+      width: 600, // get overridden by CSS anyway
       height: 600,
     }),
     camera$: O.just({x: 0, y: 0, zoom: 1}),

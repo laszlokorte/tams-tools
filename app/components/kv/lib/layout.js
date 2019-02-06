@@ -1,4 +1,4 @@
-import BitSet from 'bitset.js';
+import BitSet from 'bitset';
 import I from 'immutable';
 
 const layout = I.Record({

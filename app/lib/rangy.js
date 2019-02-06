@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 // FROM: https://github.com/timdown/rangyinputs
 //
 // Functions to manipulate the carret of text fields

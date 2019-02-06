@@ -121,17 +121,18 @@ const evalUnary = (unaryExpression, identifierMap, evalExpr) => {
 const doEvaluateExpression = (expression, identifierMap) => {
   switch (expression._name) {
   case 'binary':
-    return evalBinary(expression, identifierMap,
+  return evalBinary(expression, identifierMap,
+    // eslint-disable-next-line no-use-before-define
       evaluateExpression
     );
   case 'unary':
-    return evalUnary(expression, identifierMap,
+  return evalUnary(expression, identifierMap,
+    // eslint-disable-next-line no-use-before-define
       evaluateExpression
     );
   case 'group':
-    return evaluateExpression(expression.body, identifierMap,
-      evaluateExpression
-    );
+    // eslint-disable-next-line no-use-before-define
+    return evaluateExpression(expression.body, identifierMap);
   case 'identifier':
     return identifierMap.get(expression);
   case 'vector':
@@ -139,6 +140,7 @@ const doEvaluateExpression = (expression, identifierMap) => {
   case 'constant':
     return expression.value;
   case 'label':
+    // eslint-disable-next-line no-use-before-define
     return evaluateExpression(expression.body, identifierMap);
   default:
     throw new Error(`unknown node: ${expression._name}`);
