@@ -27,6 +27,9 @@ export default ({
   const outputItem = DOM
     .select('[data-kv-output]');
 
+  const inputEditButton = DOM
+    .select('[data-kv-remove-input],[data-kv-rename-input]');
+
   const selectOutputEvent$ = outputItem
     .events('click')
     .filter(isNoInput);
@@ -91,6 +94,7 @@ export default ({
 
       selectOutputEvent$,
       outputItem.events('mousedown').filter(isNoInput),
+      inputEditButton.events('mousedown').filter(isNoInput),
       switchKvModeEvent$,
       kvModeButton.events('mousedown'),
       switchEditModeEvent$,

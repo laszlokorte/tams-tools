@@ -1,6 +1,6 @@
 import {
   div,
-  table, tr, td,
+  table, tr, td, thead, tfoot,
 } from '@cycle/dom';
 
 import {
@@ -62,7 +62,7 @@ export const renderTable = ({
       className: 'kv-mode-' + kvMode.name,
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
-      compact ? null : renderTableHead(colCount, labels, inputsEditable),
+      compact ? null : thead(renderTableHead(colCount, labels, inputsEditable)),
       layout.grid.map((row, rowIndex) =>
         tr('.kv-table-row-body', {
           key: `body-row${rowIndex}`,
@@ -96,7 +96,9 @@ export const renderTable = ({
           compact ? null : renderTableRowEnd(rowIndex, labels, inputsEditable),
         ])
       ).toArray(),
-      compact ? null : renderTableFoot(colCount, labels, inputsEditable),
+      compact ? null : tfoot(
+        renderTableFoot(colCount, labels, inputsEditable)
+      ),
     ]),
   ]);
 };

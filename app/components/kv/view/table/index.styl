@@ -115,6 +115,7 @@
   margin 0
 
 .kv-row-top > .kv-table-cell-title
+.kv-row-top > .kv-table-cell-edit
   height 30px
   min-height 30px
   max-height 30px
@@ -124,11 +125,16 @@
 
 
 .kv-row-bottom > .kv-table-cell-title
+.kv-row-bottom > .kv-table-cell-edit
   height 30px
   border-top-width 4px
   white-space nowrap
   max-width 30px
 
+.kv-row-top > .kv-table-cell-edit
+  vertical-align bottom
+.kv-row-bottom > .kv-table-cell-edit
+  vertical-align top
 
 .kv-col-right
   width 30px
@@ -145,10 +151,17 @@
   direction rtl
   overflow visible
 
+.kv-col-left-edit
+.kv-col-right-edit
+  width 30px
+  min-width 30px
+  max-width 30px
+
 .kv-cell-container
   padding 0
 
 [data-kv-height='1']
+  .kv-table-cell-edit
   .kv-row-top > .kv-table-cell-title,
   .kv-row-bottom > .kv-table-cell-title
     height 25px

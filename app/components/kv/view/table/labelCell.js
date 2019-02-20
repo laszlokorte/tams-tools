@@ -11,6 +11,7 @@ export const labelCell = ({index, name}, inputsEditable) =>
       attributes: {
         'data-kv-remove-input': index,
       },
+      title: 'Remove input ' + name,
       disabled: false,
     }, deleteIcon(24)),
     button('.input-button-rename', {
@@ -18,8 +19,7 @@ export const labelCell = ({index, name}, inputsEditable) =>
         'data-kv-rename-input': index,
       },
       disabled: false,
+      title: 'Rename input ' + name,
     }, editIcon(24)),
-    span(`${name}`),
   ] : [
-    span(`${name}`),
   ];

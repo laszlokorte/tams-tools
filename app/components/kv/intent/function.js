@@ -173,6 +173,8 @@ export default ({DOM}) => {
       addOutputEvent$,
       addOutputButton.events('mousedown'),
       removeOutputEvent$,
+      renameInput$,
+      removeSpecificInput$,
     ]),
   };
 };
