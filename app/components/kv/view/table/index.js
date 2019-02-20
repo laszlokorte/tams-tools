@@ -67,7 +67,9 @@ export const renderTable = ({
         tr('.kv-table-row-body', {
           key: `body-row${rowIndex}`,
         }, [
-          compact ? null : renderTableRowStart(rowIndex, rowCount, labels, inputsEditable),
+          compact ? null : renderTableRowStart(
+            rowIndex, rowCount, labels, inputsEditable
+          ),
           row.cells.map((cell, colIndex) => {
             if (cell.children) {
               return td('.kv-table-cell-body.kv-cell-container' + styleClass, {

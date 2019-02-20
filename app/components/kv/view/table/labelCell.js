@@ -1,5 +1,5 @@
 import {
-  button, span, br,
+  button, span,
 } from '@cycle/dom';
 
 import deleteIcon from '../../../../icons/delete';
