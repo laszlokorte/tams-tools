@@ -51,6 +51,6 @@ export default (colCount, {top, left, right, bottom}, inputsEditable) =>
       ]) || null,
 
       right !== null && th('.kv-table-corner', {colSpan: 2}) || null,
-    ]) || null
+    ]) || null,
   ]
 ;
