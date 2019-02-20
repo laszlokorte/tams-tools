@@ -29,6 +29,7 @@ export const renderTable = ({
   compact = false,
   labelOffset: offset = diagram.inputs.size,
   cellStyle = 'function',
+  inputsEditable = false,
   }) => {
   const cols = layout.columns;
   const rows = layout.rows;
@@ -61,12 +62,12 @@ export const renderTable = ({
       className: 'kv-mode-' + kvMode.name,
       attributes: {'data-kv-height': layout.treeHeight},
     }, [
-      compact ? null : renderTableHead(colCount, labels),
+      compact ? null : renderTableHead(colCount, labels, inputsEditable),
       layout.grid.map((row, rowIndex) =>
         tr('.kv-table-row-body', {
           key: `body-row${rowIndex}`,
         }, [
-          compact ? null : renderTableRowStart(rowIndex, rowCount, labels),
+          compact ? null : renderTableRowStart(rowIndex, rowCount, labels, inputsEditable),
           row.cells.map((cell, colIndex) => {
             if (cell.children) {
               return td('.kv-table-cell-body.kv-cell-container' + styleClass, {
@@ -76,7 +77,9 @@ export const renderTable = ({
                   layout: cell.children,
                   diagram, kvMode, editMode, output,
                   currentLoop, compact,
-                  labelOffset, cellStyle}),
+                  labelOffset, cellStyle,
+                  inputsEditable: cell.get('scope').isEmpty(),
+                }),
               ]);
             } else {
               return renderTableCell({
@@ -88,10 +91,10 @@ export const renderTable = ({
               });
             }
           }).toArray(),
-          compact ? null : renderTableRowEnd(rowIndex, labels),
+          compact ? null : renderTableRowEnd(rowIndex, labels, inputsEditable),
         ])
       ).toArray(),
-      compact ? null : renderTableFoot(colCount, labels),
+      compact ? null : renderTableFoot(colCount, labels, inputsEditable),
     ]),
   ]);
 };

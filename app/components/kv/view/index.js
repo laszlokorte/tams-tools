@@ -151,6 +151,7 @@ const renderBody = (layout, state) =>
     currentLoop: state.currentLoop,
     compact: false,
     cellStyle: state.viewSetting,
+    inputsEditable: true,
   })
 ;
 

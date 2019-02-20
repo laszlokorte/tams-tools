@@ -40,6 +40,14 @@ export default ({DOM}) => {
     .select('[data-kv-remove-output]')
     .events('click');
 
+  const removeSpecificInput$ = DOM
+    .select('[data-kv-remove-input]')
+    .events('click');
+
+  const renameInput$ = DOM
+    .select('[data-kv-rename-input]')
+    .events('click');
+
   const decrementOutputsEvent$ = decrementOutputsButton
     .events('click');
 
@@ -106,6 +114,17 @@ export default ({DOM}) => {
       removeOutputEvent$
         .map((evt) => parseInt(evt.ownerTarget.dataset.kvRemoveOutput, 10))
         .filter(isFinite)
+        .share(),
+    removeSpecificInput$:
+      removeSpecificInput$
+        .map((evt) => ({
+          inputIndex: parseInt(evt.ownerTarget.dataset.kvRemoveInput, 10),
+          reverse: evt.altKey,
+        }))
+        .share(),
+    renameInput$:
+      renameInput$
+        .map((evt) => parseInt(evt.ownerTarget.dataset.kvRenameInput, 10))
         .share(),
     removeLastOutput$:
       decrementOutputsEvent$

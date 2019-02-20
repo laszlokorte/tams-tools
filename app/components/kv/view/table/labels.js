@@ -4,7 +4,10 @@ const _labelFor = ({inputs, offset}, rowsOrColumns, {include, exclude}) => {
     ) {
     const intersect = rowsOrColumns.get(exclude)
       .not().and(rowsOrColumns.get(include));
-    return inputs.get(offset + intersect.msb()).name;
+    return {
+      name: inputs.get(offset + intersect.msb()).name,
+      index: offset + intersect.msb(),
+    };
   } else {
     return null;
   }

@@ -71,7 +71,6 @@
 .output-list-item
   position relative
   margin 0 space(0.5)
-  cursor pointer
   outline none
   border 3px solid color-background-secondary
   border-bottom-width 0
@@ -96,6 +95,7 @@
   min-width space(5)
   min-height space(5)
   width 100%
+  cursor pointer
 
   > *
     margin 0 auto
@@ -133,6 +133,113 @@
     pointer-events none
     cursor default
 
+.input-button-delete
+  text-align center
+  line-height 1.3rem
+  width 1.3rem
+  height 1.3rem
+  display inline-block
+  padding 3px
+  border-radius 50%
+  overflow hidden
+  font-size 0
+  outline none
+  border 2px solid transparent
+  color color-danger
+  background-size 50% 50%
+  background-position 50% 50%
+  background-repeat no-repeat
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill currentColor
+
+  &:hover
+    background-color lighten(color-danger, 5%)
+    .icon-shape
+      fill white
+  &:focus
+    border-color color-focus
+    background-color lighten(color-danger, 5%)
+    .icon-shape
+      fill white
+
+  &:active
+    background-color darken(color-danger, 10%)
+    .icon-shape
+      fill white
+
+  &:disabled
+    transform scale(0)
+    opacity 0
+    pointer-events none
+    cursor default
+
+.kv-col-left
+.kv-col-right
+  .input-button-delete
+    margin-top -1.5rem
+    margin-bottom 0.1rem
+    vertical-align top
+  .input-button-rename
+    margin-top -1.5rem
+    margin-bottom 0.1rem
+    vertical-align top
+    & + span
+      margin-top -1.5rem
+      vertical-align top
+      display inline-block
+
+
+.input-button-rename
+  text-align center
+  line-height 1.3rem
+  width 1.3rem
+  height 1.3rem
+  display inline-block
+  padding 3px
+  border-radius 50%
+  overflow hidden
+  font-size 0
+  outline none
+  border 2px solid transparent
+  color color-foreground-primary
+  background-size 50% 50%
+  background-position 50% 50%
+  background-repeat no-repeat
+  transition transform 0.3s ease-out, opacity 0.3s ease-out
+
+  .icon-shape
+    fill currentColor
+
+  &:hover
+    background-color lighten(color-foreground-primary, 20%)
+    .icon-shape
+      fill white
+  &:focus
+    border-color color-focus
+    background-color lighten(color-foreground-primary, 20%)
+    .icon-shape
+      fill white
+
+  &:active
+    background-color darken(color-foreground-primary, 10%)
+    .icon-shape
+      fill white
+
+  &:disabled
+    transform scale(0)
+    opacity 0
+    pointer-events none
+    cursor default
+
+.kv-container.edit-loops
+  .input-button-delete
+  .input-button-rename
+    transform scale(0)
+    opacity 0
+    pointer-events none
+
 .output-label
   display block
   height button-size
@@ -145,6 +252,7 @@
   background-color transparent
   clear both
   overflow hidden
+  cursor pointer
 
   &.state-editable
     cursor text

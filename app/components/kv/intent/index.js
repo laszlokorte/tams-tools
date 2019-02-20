@@ -70,6 +70,8 @@ export default ({
 
     addInput$: functions.addInput$,
     removeInput$: functions.removeInput$,
+    removeSpecificInput$: functions.removeSpecificInput$,
+    renameInput$: functions.renameInput$,
     cycleValue$: functions.cycleValue$,
     addOutput$: functions.addOutput$,
     removeOutput$: functions.removeOutput$,

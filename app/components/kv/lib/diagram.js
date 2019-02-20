@@ -319,13 +319,39 @@ export const popInput = (
   )
 ;
 
+/// Remove one input from the given diagram.
+export const removeInput = (
+  /*int*/inputIndex,
+  /*bool*/reverse = false,
+  /*kvDiagram*/diagram
+  ) =>
+  diagram
+  .update('inputs', (inputs) => inputs.remove(inputIndex))
+  .update('outputs', (outputs) =>
+    outputs.map(
+      (output) => output.set('values',
+        output.values.filter(
+          (_, i) => !reverse === !((1 << inputIndex) & i)
+        )
+      )
+    ).toList()
+  )
+  .update('loops', (loops) =>
+    loops.map(
+      (loop) => resizeLoop(diagram.inputs.size - 1, loop)
+    )
+    .filter((loop) => !isEmptyLoop(loop, diagram.inputs.size - 1))
+    .toList()
+  )
+;
+
 /// Rename the input at the given index.
 export const renameInput = (
   /*int*/inputIndex,
   /*String*/name,
   /*kvDiagram*/diagram
   ) =>
-  diagram.updateIn(['inputs', inputIndex,'name'], name)
+  diagram.setIn(['inputs', inputIndex, 'name'], name)
 ;
 
 /// Add an output with the given name to the given diagram.

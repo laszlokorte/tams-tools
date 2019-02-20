@@ -106,6 +106,27 @@ const removeInput = (state) =>
   )
 ;
 
+// remove a specific input from the Karnaugh map of state
+const removeSpecificInput = (inputIndex, reverse = false) => (state) =>
+  state.update('diagram', (diagram) =>
+    KVD.removeInput(
+      inputIndex,
+      reverse,
+      diagram
+    )
+  )
+;
+
+const renameInput = (inputIndex, newName) => (state) =>
+  state.update('diagram', (diagram) =>
+    KVD.renameInput(
+      inputIndex,
+      newName,
+      diagram
+    )
+  )
+;
+
 // cycles through possible output values:
 // true -> null -> false
 // true -> false -> null (if reverse)
@@ -365,6 +386,16 @@ const modifiers = (actions) => {
     actions.removeInput$.map(() =>
       compose(cancelRename, removeInput)
     ),
+    actions.removeSpecificInput$.map(({inputIndex, reverse}) =>
+      compose(cancelRename, removeSpecificInput(inputIndex, reverse))
+    ),
+    actions.renameInput$.map((inputIndex) => {
+      // eslint-disable-next-line no-alert
+      const newName = prompt("Rename Input");
+      return newName ?
+        compose(cancelRename, renameInput(inputIndex, newName)) :
+        (s) => s;
+    }),
     actions.cycleValue$.map(({output, cell, reverse}) => (state) =>
       cycleValue(output, cell, reverse, cancelRename(state))
     ),
