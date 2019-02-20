@@ -19,7 +19,6 @@ export const labelCell = ({index, name}, inputsEditable) =>
       },
       disabled: false,
     }, editIcon(24)),
-    br(),
     span(`${name}`),
   ] : [
     span(`${name}`),
