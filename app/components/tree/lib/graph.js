@@ -3,9 +3,11 @@ import I from 'immutable';
 // object representing a node of the tree graph
 const graphNode = I.Record({
   label: null, // name of the node
+  title: null, // optional additional label
   x: 0, // 2d cartesian x position of the node
   y: 0, // 2d cartesian y position of the node
   leaf: false, // if it is a leaf node
+  siblings: false, // if the node has siblings
   // text alignment of the node's label
   // (start | middle | end)
   labelAlignment: 'middle',
@@ -34,7 +36,12 @@ export const graph = I.Record({
 
 // get a list of a child nodes of the given node
 // the list also includes the given node itself
-const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
+const nodeList = (
+  layoutNode,
+  acc = I.List(),
+  rel = 'middle',
+  siblings = false
+) => {
   if (layoutNode === null) {
     return acc;
   }
@@ -57,14 +64,16 @@ const nodeList = (layoutNode, acc = I.List(), rel = 'middle') => {
     } else if (i > mid) {
       newRel = 'start';
     } else {
-      newRel = rel;
+      newRel = (rel === 'middle') ? 'end' : rel;
     }
-    return nodeList(c, prev, newRel);
+    return nodeList(c, prev, newRel, layoutNode.children.length > 1);
   }, acc.push(graphNode({
     label: layoutNode.node.name,
+    title: layoutNode.node.title,
     x: layoutNode.x,
     y: layoutNode.y,
     leaf: layoutNode.children.length === 0,
+    siblings: siblings,
     labelAlignment: labelAlignment,
     xOffset: xOffset,
     color: layoutNode.node.color,

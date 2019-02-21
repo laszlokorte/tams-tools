@@ -4,6 +4,7 @@ import {
   div, h2,
   select, option,
   label, input, button,
+  br,
 } from '@cycle/dom';
 
 import openIcon from '../../../icons/open';
@@ -43,23 +44,24 @@ const render = (state, field, table) =>
       state.fieldOutput.network &&
       state.fieldOutput.network.expressions.size ?
       div([
-        h2('Table'),
-
-        select('.format-select', state.formatList.map((f) =>
-          option({
-            value: f.id,
-            selected: state.outputFormat === 'math',
-          }, f.format.name)
-        ).toArray()),
-
-        label([
-          input({
-            type: 'checkbox',
-            name: 'subexpressions',
-            checked: state.showSubExpressions,
-          }),
-          'Show sub expressions',
+        div({style: {float: 'right'}}, [
+          "Formatter:",
+          select('.format-select', state.formatList.map((f) =>
+            option({
+              value: f.id,
+            }, f.name)
+          ).toArray()),
+          br(),
+          label([
+            input({
+              type: 'checkbox',
+              name: 'subexpressions',
+              checked: state.showSubExpressions,
+            }),
+            'Show sub expressions',
+          ]),
         ]),
+        h2('Table'),
         table,
       ]) : null,
     ]),

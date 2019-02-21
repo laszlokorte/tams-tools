@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 import {svg} from '@cycle/dom';
 
 import {attrBool} from '../../../lib/h-helper';
@@ -51,8 +53,14 @@ const renderNode = (state, node) => [
     },
   }),
   renderLabel({
-    x: node.x * state.scaleX + (node.leaf ? 0 : node.xOffset),
-    y: node.y * state.scaleY + (node.leaf ? 25 : -15),
+    x: node.x * state.scaleX +
+      (node.leaf ? 0 :
+        node.xOffset *
+        ((node.siblings || node.labelAlignment === 'middle') ? 1 : 2)),
+    y: node.y * state.scaleY +
+    // eslint-disable-next-line no-nested-ternary
+      (node.leaf ? 25 :
+        ((node.siblings || node.labelAlignment === 'middle') ? -15 : 5)),
     anchor: node.leaf ? 'middle' : node.labelAlignment,
     faded: node.faded,
     color: node.color,

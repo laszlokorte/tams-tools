@@ -19,7 +19,8 @@ const formatter = {
     return formatter.formatBinaryChain(op, lhs, rhs);
   },
   formatBinaryChain: (op, ...operands) => {
-    return `(${operands.join(` ${tryFetch(operators, op)} `)})`;
+    const joined = operands.join(` ${tryFetch(operators, op)} `);
+    return `(${joined})`;
   },
   formatUnary: (op, content/*, depth*/) => {
     return `(${formatter.formatUnarySimple(op, content)})`;
@@ -58,7 +59,7 @@ const formatter = {
       return '*';
     }
   },
-  formatLabel: (name, body) => {
+  formatLabel: (name, body = '') => {
     return `${name}=${body}`;
   },
   formatExpressions: (expressions) => {

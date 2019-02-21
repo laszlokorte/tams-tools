@@ -41,8 +41,7 @@ export const buildTree = (logicNetwork, formatter, selectedRow = null) => {
     // an additional root node is created to contain all
     // expression nodes
     return {
-      name: 'Expression List',
-      formattedName: ' ',
+      name: 'Multiple Expressions',
       children: logicNetwork.expressions.map(
         (e) => toTree(e, formatter, subEvalutation)
       ).toArray(),

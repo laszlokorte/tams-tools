@@ -20,7 +20,7 @@ import cBooleanFormatter from '../lib/formatter/c-boolean';
 const DEBOUNCE_RATE = 300;
 
 // the default output format
-const DEFAULT_FORMAT = 'math';
+const DEFAULT_FORMAT = '';
 
 // If sub expressions should be visible by default
 const DEFAULT_SUB_EXPRESSIONS = false;
@@ -42,8 +42,12 @@ const formatList = I.List(Object
   .keys(FORMAT_MAP)
   .map((id) => ({
     id: id,
-    format: FORMAT_MAP[id],
+    name: FORMAT_MAP[id].name,
   })))
+  .unshift({
+    id: "",
+    name: "Same as input",
+  })
 ;
 
 // The object representing the state of the logic component
@@ -75,33 +79,36 @@ export default (actions, expressionOutput$, selectedRow$) => {
     ),
     actions.selectFormat$.startWith(DEFAULT_FORMAT),
     actions.showSubExpressions$.startWith(DEFAULT_SUB_EXPRESSIONS),
-    (fieldOutput, outputFormat, showSubExpressions) =>
-      selectedRow$
-      .startWith(_state({
-        fieldOutput,
-        showSubExpressions,
-        formatId: outputFormat,
-        formatList: formatList,
-        formula: buildFormula(
-          fieldOutput.network, FORMAT_MAP[outputFormat]
-        ),
-        table: buildTable(
-          fieldOutput.network, showSubExpressions,
-          FORMAT_MAP[outputFormat]
-        ),
-        tree: buildTree(fieldOutput.network, FORMAT_MAP[outputFormat]),
-      })).scan((state, rowIndex) =>
-        // update the state with the latest row index
-        // and rebuild the tree in order to upate it's colors
-        state
-          .set('selectedRow', rowIndex)
-          .set('tree', buildTree(
-            state.fieldOutput.network,
-            FORMAT_MAP[outputFormat],
-            rowIndex)
-          )
-      )
-  )
+    (fieldOutput, outputFormat, showSubExpressions) => {
+      const formatter = FORMAT_MAP[
+        outputFormat || fieldOutput.language.shortName
+      ];
+      return selectedRow$
+        .startWith(_state({
+          fieldOutput,
+          showSubExpressions,
+          formatId: outputFormat,
+          formatList: formatList,
+          formula: buildFormula(
+            fieldOutput.network, formatter
+          ),
+          table: buildTable(
+            fieldOutput.network, showSubExpressions,
+            formatter
+          ),
+          tree: buildTree(fieldOutput.network, formatter),
+        })).scan((state, rowIndex) =>
+          // update the state with the latest row index
+          // and rebuild the tree in order to upate it's colors
+          state
+            .set('selectedRow', rowIndex)
+            .set('tree', buildTree(
+              state.fieldOutput.network,
+              formatter,
+              rowIndex)
+            )
+        );
+  })
   .switch()
   .shareReplay(1);
 };

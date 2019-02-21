@@ -8,7 +8,7 @@ const latexTree = (tree) => {
   } else {
     return `[${[
       tree.hidden ? phantom :
-      `$${tree.formattedName}$, text centered`,
+      `$${tree.name}$, text centered`,
       ...tree.children.map(latexTree),
     ].join(' ')}]`;
   }

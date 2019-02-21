@@ -58,7 +58,7 @@ const formatter = {
       return '*';
     }
   },
-  formatLabel: (name, body) => {
+  formatLabel: (name, body = '') => {
     return `${name}=${body}`;
   },
   formatExpressions: (expressions) => {

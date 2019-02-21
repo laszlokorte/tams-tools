@@ -17,6 +17,7 @@ export default ({
   }),
   data$ = O.just({ // The tree simply as nested objects.
     name: "Root", // The name of the node
+    title: null, // Optional additional label
     color: 'black', // The color of the node
     hidden: false, // If the node should be faded out
     children: [ // The child nodes

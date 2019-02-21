@@ -24,10 +24,10 @@ export default (props$, data$/*, actions*/) => {
           scaleY: props.scaleX,
           bounds: !isGraphEmpty(layout.graph) ?
             bounds({
-              minX: (layout.bounds.minX - 0.5) * props.scaleX,
-              maxX: (layout.bounds.maxX + 0.5) * props.scaleX,
-              minY: (layout.bounds.minY - 0.5) * props.scaleX,
-              maxY: (layout.bounds.maxY + 0.5) * props.scaleX,
+              minX: (layout.bounds.minX - 0.8) * props.scaleX,
+              maxX: (layout.bounds.maxX + 0.8) * props.scaleX,
+              minY: (layout.bounds.minY - 0.8) * props.scaleX,
+              maxY: (layout.bounds.maxY + 0.8) * props.scaleX,
             }) : bounds(),
         });
       })

@@ -11,6 +11,8 @@ import pythonParser from '../../lib/syntax/logic-python.pegjs';
 const language = I.Record({
   // the name of the language
   name: null,
+  // short name used for finding correct formatter,
+  shortName: null,
   // important tokens used in the language
   // which a user might not be able to type
   // on the keyboard
@@ -21,6 +23,7 @@ const language = I.Record({
 
 export const CBitwise = language({
   name: 'C - Bitwise',
+  shortName: 'cbitwise',
   completions: I.List([
     '&','|','^','~',
     '1','0', 'void',
@@ -30,6 +33,7 @@ export const CBitwise = language({
 
 export const CBoolean = language({
   name: 'C - Boolean',
+  shortName: 'cboolean',
   completions: I.List([
     '&&','||','!=','!',
     'true','false', 'void',
@@ -39,6 +43,7 @@ export const CBoolean = language({
 
 export const Python = language({
   name: 'Python',
+  shortName: 'python',
   completions: I.List([
     'and','or','xor','not',
     'True','False', 'None',
@@ -48,6 +53,7 @@ export const Python = language({
 
 export const Latex = language({
   name: 'Latex',
+  shortName: 'latex',
   completions: I.List([
     '\\wedge','\\vee','\\oplus','\\neg',
     '\\top','\\bot', '\\nothing',
@@ -57,6 +63,7 @@ export const Latex = language({
 
 export const Math = language({
   name: 'Math',
+  shortName: 'math',
   completions: I.List([
     '∧','∨','⊕','¬',
     '⊤','⊥', 'Ø',

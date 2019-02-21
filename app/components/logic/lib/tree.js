@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 // node colors
 // TODO(Laszlo Korte): move color defintions to css
 //
@@ -47,7 +49,11 @@ const name = (expression) => {
   case 'group':
     return "(...)";
   case 'label':
-    return `${expression.name} = `;
+    if (expression.name === null) {
+      return '';
+    } else {
+      return `${expression.name} x= `;
+    }
   case 'identifier':
     return expression.name.toString();
   case 'constant':
@@ -68,7 +74,11 @@ const formattedName = (expression, formatter) => {
   case 'group':
     return "(...)";
   case 'label':
-    return formatter.label(expression.name.toString());
+    if (expression.name === null) {
+      return null;
+    } else {
+      return formatter.formatLabel(expression.name.toString());
+    }
   case 'identifier':
     return formatter.formatName(expression.name.toString());
   case 'constant':
@@ -125,8 +135,8 @@ const toTree = (expression, formatter, evalutationMap = null) => {
   }
 
   return {
-    name: name(expression),
-    formattedName: formattedName(expression, formatter),
+    name: formattedName(expression, formatter),
+    title: name(expression),
     children: children(expression).map(
       (e) => toTree(e, formatter, evalutationMap)
     ),
@@ -141,9 +151,5 @@ const toTree = (expression, formatter, evalutationMap = null) => {
 export default (expression, formatter, evalutationMap = null) => {
   // if the expression is a label but has no name set
   // skip it and only use the sub expression
-  if (expression._name === 'label' && expression.name === null) {
-    return toTree(expression.body, formatter, evalutationMap);
-  } else {
-    return toTree(expression.body, formatter, evalutationMap);
-  }
+  return toTree(expression, formatter, evalutationMap);
 };
