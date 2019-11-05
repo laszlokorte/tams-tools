@@ -587,9 +587,9 @@ const toPLATerms = (
         (loop) => ({
           in: diagram.inputs.map((_, iIndex) => {
             if (loop.cube.include.get(iIndex) === 1) {
-              return true;
+              return (loop.mode === MODE_DNF);
             } else if (loop.cube.exclude.get(iIndex) === 1) {
-              return false;
+              return (loop.mode === MODE_KNF);
             } else {
               return null;
             }
