@@ -569,7 +569,7 @@ const toPLATerms = (
         .map((cell) => ({
           in:
             diagram.inputs
-            .map((i, iIndex) => cell.get(iIndex) ? true : false)
+            .map((i, iIndex) => cell.get(iIndex) ? (mode === MODE_DNF) : (mode === MODE_KNF))
             .toArray(),
           out:
             diagram.outputs

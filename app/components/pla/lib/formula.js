@@ -10,9 +10,9 @@ const terms = (formatter, disjunctive, loops, inputNames) => {
       .map((name,i) => {
         const v = loop.in[i];
 
-        if (v === disjunctive) {
+        if (v === true) {
           return `${name}`;
-        } else if (v === !disjunctive) {
+        } else if (v === false) {
           return formatter.formatUnarySimple('NOT', name);
         } else {
           return null;
