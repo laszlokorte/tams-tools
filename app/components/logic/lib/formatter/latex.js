@@ -1,6 +1,6 @@
 const operators = {
   AND: '\\wedge',
-  OR: '\\oplus',
+  OR: '\\vee',
   NOT: '\\neg',
   XOR: '\\oplus',
 };
