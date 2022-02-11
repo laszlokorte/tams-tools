@@ -19,7 +19,7 @@
     "@babel/preset-env": "^7.7.1",
     "@babel/register": "^7.7.0",
     "@webpack-cli/migrate": "^0.1.8",
-    "ajv": "^6.10.2",
+    "ajv": "^6.12.3",
     "ava": "^1.4.1",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
